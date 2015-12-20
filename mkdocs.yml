@@ -1,0 +1,8 @@
+site_name: MultidimensionalTables
+pages:
+- Home: index.md
+- Introduction: introduction.md
+- Getting Started: getting_started.md
+- Where To Look: where_to_look.md
+- API: api.md
+theme: readthedocs
