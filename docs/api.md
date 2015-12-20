@@ -88,7 +88,7 @@ e |5 10
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:614](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L614)
+[MultidimensionalTables/src/util/array_util.jl:614](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L614)
 
 ---
 
@@ -129,7 +129,7 @@ a b  |a  b  |a  b  |a  b  |a  b
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:203](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L203)
+[MultidimensionalTables/src/util/array_util.jl:203](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L203)
 
 ---
 
@@ -181,7 +181,7 @@ a b
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1275](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1275)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1288](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1288)
 
 ---
 
@@ -238,7 +238,7 @@ julia> delete(t, :k, :b)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:979](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L979)
+[MultidimensionalTables/src/util/array_util.jl:979](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L979)
 
 ---
 
@@ -289,7 +289,7 @@ b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:1312](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L1312)
+[MultidimensionalTables/src/util/array_helper_functions.jl:1312](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1312)
 
 ---
 
@@ -375,7 +375,7 @@ V  |o 15
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1611](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1611)
+[MultidimensionalTables/src/util/array_util.jl:1611](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1611)
 
 ---
 
@@ -430,7 +430,7 @@ N |  x |5
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1067](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1067)
+[MultidimensionalTables/src/util/array_util.jl:1067](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1067)
 
 ---
 
@@ -497,7 +497,7 @@ julia> enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/enumeration_array.jl:178](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/enumeration_array.jl#L178)
+[MultidimensionalTables/src/datatypes/enumeration_array.jl:178](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L178)
 
 ---
 
@@ -581,7 +581,7 @@ V  |e 5 |j 10
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1399](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1399)
+[MultidimensionalTables/src/util/array_util.jl:1399](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1399)
 
 ---
 
@@ -635,7 +635,7 @@ newaxis |a        |b
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:509](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L509)
+[MultidimensionalTables/src/util/array_util.jl:509](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L509)
 
 ---
 
@@ -689,7 +689,7 @@ MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:483](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L483)
+[MultidimensionalTables/src/na/na.jl:483](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L483)
 
 ---
 
@@ -725,7 +725,7 @@ julia> ignabool(@nalift([true true NA;false NA true]))
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:568](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L568)
+[MultidimensionalTables/src/na/na.jl:568](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L568)
 
 ---
 
@@ -815,7 +815,7 @@ u |u   |v 2
 
 
 *source:*
-[MultidimensionalTables/src/util/join.jl:288](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/join.jl#L288)
+[MultidimensionalTables/src/util/join.jl:288](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L288)
 
 ---
 
@@ -866,7 +866,7 @@ julia> isna(@nalift([1 2 NA;NA 5 6]))
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:619](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L619)
+[MultidimensionalTables/src/na/na.jl:619](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L619)
 
 ---
 
@@ -915,7 +915,7 @@ i |X   5 5 X |Y   6 6 X
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1409](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1409)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1409](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1409)
 
 ---
 
@@ -1006,7 +1006,7 @@ y |z 2 |u 4 |v 6
 
 
 *source:*
-[MultidimensionalTables/src/util/join.jl:85](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/join.jl#L85)
+[MultidimensionalTables/src/util/join.jl:85](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L85)
 
 ---
 
@@ -1043,7 +1043,7 @@ julia> mapna((x,y)->Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1110](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1110)
+[MultidimensionalTables/src/util/array_util.jl:1110](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1110)
 
 ---
 
@@ -1102,7 +1102,7 @@ MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:706](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L706)
+[MultidimensionalTables/src/util/array_util.jl:706](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L706)
 
 ---
 
@@ -1162,7 +1162,7 @@ julia> mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:979](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L979)
+[MultidimensionalTables/src/util/array_helper_functions.jl:979](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L979)
 
 ---
 
@@ -1222,7 +1222,7 @@ julia> mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:811](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L811)
+[MultidimensionalTables/src/util/array_helper_functions.jl:811](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L811)
 
 ---
 
@@ -1282,7 +1282,7 @@ julia> mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:1043](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L1043)
+[MultidimensionalTables/src/util/array_helper_functions.jl:1043](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1043)
 
 ---
 
@@ -1342,7 +1342,7 @@ julia> mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:1108](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L1108)
+[MultidimensionalTables/src/util/array_helper_functions.jl:1108](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1108)
 
 ---
 
@@ -1402,7 +1402,7 @@ julia> mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:915](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L915)
+[MultidimensionalTables/src/util/array_helper_functions.jl:915](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L915)
 
 ---
 
@@ -1462,7 +1462,7 @@ julia> mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:727](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L727)
+[MultidimensionalTables/src/util/array_helper_functions.jl:727](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L727)
 
 ---
 
@@ -1523,7 +1523,7 @@ julia> mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, rev=
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:1174](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L1174)
+[MultidimensionalTables/src/util/array_helper_functions.jl:1174](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1174)
 
 ---
 
@@ -1583,7 +1583,7 @@ julia> msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:642](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L642)
+[MultidimensionalTables/src/util/array_helper_functions.jl:642](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L642)
 
 ---
 
@@ -1644,7 +1644,7 @@ julia> nafill(t, window=2)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:491](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L491)
+[MultidimensionalTables/src/util/array_helper_functions.jl:491](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L491)
 
 ---
 
@@ -1689,7 +1689,7 @@ a b |a b
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:224](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L224)
+[MultidimensionalTables/src/na/na.jl:224](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L224)
 
 ---
 
@@ -1740,7 +1740,7 @@ julia> namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:2162](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L2162)
+[MultidimensionalTables/src/util/array_util.jl:2162](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2162)
 
 ---
 
@@ -1774,7 +1774,7 @@ a b
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:763](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L763)
+[MultidimensionalTables/src/util/array_util.jl:763](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L763)
 
 ---
 
@@ -1868,7 +1868,7 @@ a k |a k
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:855](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L855)
+[MultidimensionalTables/src/util/array_util.jl:855](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L855)
 
 ---
 
@@ -1925,7 +1925,7 @@ julia> pickaxis(t, 1, :k)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:923](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L923)
+[MultidimensionalTables/src/util/array_util.jl:923](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L923)
 
 ---
 
@@ -1969,7 +1969,7 @@ Y  |4  |5  |6
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1996](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1996)
+[MultidimensionalTables/src/util/array_util.jl:1996](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1996)
 
 ---
 
@@ -1984,7 +1984,7 @@ The rest field names remain the same.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1230](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1230)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1230](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1230)
 
 ---
 
@@ -1999,7 +1999,7 @@ The rest field names are placed sequentially after that.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1220](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1220)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1220](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1220)
 
 ---
 
@@ -2016,7 +2016,7 @@ e.g. `replace_axes(labeled_array, 1=>[:c1,:c2], 3=>[:c3])`
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:353](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L353)
+[MultidimensionalTables/src/util/array_util.jl:353](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L353)
 
 ---
 
@@ -2107,7 +2107,7 @@ d |a   b |a   b |a    b
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:825](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L825)
+[MultidimensionalTables/src/util/select.jl:823](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L823)
 
 ---
 
@@ -2176,7 +2176,7 @@ julia> shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:1408](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L1408)
+[MultidimensionalTables/src/util/array_helper_functions.jl:1408](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1408)
 
 ---
 
@@ -2225,7 +2225,7 @@ p |  3 |
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1198](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1198)
+[MultidimensionalTables/src/util/array_util.jl:1198](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1198)
 
 ---
 
@@ -2295,7 +2295,7 @@ julia> ungroup(m, 2)
 
 
 *source:*
-[MultidimensionalTables/src/util/ungroup.jl:64](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/ungroup.jl#L64)
+[MultidimensionalTables/src/util/ungroup.jl:64](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/ungroup.jl#L64)
 
 ---
 
@@ -2396,7 +2396,7 @@ julia> update(t, a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:1044](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L1044)
+[MultidimensionalTables/src/util/select.jl:1042](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1042)
 
 ---
 
@@ -2453,7 +2453,7 @@ Y |4 |5 |6
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:2068](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L2068)
+[MultidimensionalTables/src/util/array_util.jl:2068](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2068)
 
 ---
 
@@ -2470,7 +2470,7 @@ A new `LabeledArray` whose first few field names of the base of `arr` are `ks`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1256](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1256)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1256](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1256)
 
 ---
 
@@ -2494,7 +2494,7 @@ MultidimensionalTables.LDict{Any,Int64} with 3 entries:
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:300](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L300)
+[MultidimensionalTables/src/datatypes/ldict.jl:300](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L300)
 
 ---
 
@@ -2512,7 +2512,7 @@ A new `LabeledArray` whose base fields are shuffled from `arr` so that the first
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1244](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1244)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1244](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1244)
 
 ---
 
@@ -2536,7 +2536,7 @@ MultidimensionalTables.LDict{Symbol,Int64} with 3 entries:
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:281](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L281)
+[MultidimensionalTables/src/datatypes/ldict.jl:281](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L281)
 
 ---
 
@@ -2593,7 +2593,7 @@ a b |k |k |k
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:407](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L407)
+[MultidimensionalTables/src/util/array_util.jl:407](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L407)
 
 ---
 
@@ -2628,7 +2628,7 @@ DictArray(;kwargs...)
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:31](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L31)
+[MultidimensionalTables/src/datatypes/dict_array.jl:31](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L31)
 
 ---
 
@@ -2642,7 +2642,7 @@ Use `enumeration` to create an `EnumerationArray`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/enumeration_array.jl:8](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/enumeration_array.jl#L8)
+[MultidimensionalTables/src/datatypes/enumeration_array.jl:8](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L8)
 
 ---
 
@@ -2664,7 +2664,7 @@ LDict(ps::Tuple...)
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:18](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L18)
+[MultidimensionalTables/src/datatypes/ldict.jl:18](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L18)
 
 ---
 
@@ -2684,7 +2684,7 @@ A `LabeledArray` consists of one main array, which we call the *base* array, and
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:16](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L16)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:16](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L16)
 
 ---
 
@@ -2727,7 +2727,7 @@ a b   c d |a b   c d
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1196](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1196)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1209](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1209)
 
 ---
 
@@ -2792,7 +2792,7 @@ julia> @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/enumeration_array.jl:247](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/enumeration_array.jl#L247)
+[MultidimensionalTables/src/datatypes/enumeration_array.jl:247](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L247)
 
 ---
 
@@ -2840,7 +2840,7 @@ i |  X   5 X |  Y   6 X
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1299](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1299)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1299](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1299)
 
 ---
 
@@ -2889,7 +2889,7 @@ julia> @nalift(larr(a=[1 2;3 4;5 6], b=[:x :y;:z :w;:u :v]))
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:335](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L335)
+[MultidimensionalTables/src/na/na.jl:335](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L335)
 
 ---
 
@@ -2921,7 +2921,7 @@ julia> @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:282](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L282)
+[MultidimensionalTables/src/util/array_util.jl:282](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L282)
 
 ---
 
@@ -3018,7 +3018,7 @@ d |a   b |a   b |a    b
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:736](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L736)
+[MultidimensionalTables/src/util/select.jl:734](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L734)
 
 ---
 
@@ -3125,7 +3125,7 @@ julia> @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:945](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L945)
+[MultidimensionalTables/src/util/select.jl:943](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L943)
 
 ## Internal
 
@@ -3160,7 +3160,7 @@ Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},MultidimensionalTables.LDict{Sy
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1063](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1063)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1063](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1063)
 
 ---
 
@@ -3223,7 +3223,7 @@ Y |0.8424940964507834  2
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1516](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1516)
+[MultidimensionalTables/src/util/array_util.jl:1516](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1516)
 
 ---
 
@@ -3291,7 +3291,7 @@ V |0.9315379228053462 15
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:1303](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L1303)
+[MultidimensionalTables/src/util/array_util.jl:1303](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1303)
 
 ---
 
@@ -3304,7 +3304,7 @@ If `inds` is `nothing`, it chooses an entire `fld` from `t`.
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:504](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L504)
+[MultidimensionalTables/src/util/select.jl:502](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L502)
 
 ---
 
@@ -3362,7 +3362,7 @@ Y |4 u |5 v |6 w
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:414](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L414)
+[MultidimensionalTables/src/na/na.jl:414](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L414)
 
 ---
 
@@ -3400,7 +3400,7 @@ julia> type_array(Any[1, 3.0, 'x'])
 
 
 *source:*
-[MultidimensionalTables/src/util/array_util.jl:34](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_util.jl#L34)
+[MultidimensionalTables/src/util/array_util.jl:34](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L34)
 
 ---
 
@@ -3461,7 +3461,7 @@ julia> diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:574](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L574)
+[MultidimensionalTables/src/util/array_helper_functions.jl:574](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L574)
 
 ---
 
@@ -3484,7 +3484,7 @@ julia> allfieldnames(darr(a=reshape(1:6,3,2),b=rand(3,2)))
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:535](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L535)
+[MultidimensionalTables/src/datatypes/dict_array.jl:535](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L535)
 
 ---
 
@@ -3496,7 +3496,7 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:754](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L754)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:754](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L754)
 
 ---
 
@@ -3544,7 +3544,7 @@ y |a |4 5 6 14 15 16
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:804](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L804)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:804](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L804)
 
 ---
 
@@ -3580,7 +3580,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:613](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L613)
+[MultidimensionalTables/src/datatypes/dict_array.jl:613](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L613)
 
 ---
 
@@ -3592,7 +3592,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/util/dataframe_interface.jl:96](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/dataframe_interface.jl#L96)
+[MultidimensionalTables/src/util/dataframe_interface.jl:96](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L96)
 
 ---
 
@@ -3604,7 +3604,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/util/dataframe_interface.jl:102](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/dataframe_interface.jl#L102)
+[MultidimensionalTables/src/util/dataframe_interface.jl:102](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L102)
 
 ---
 
@@ -3616,7 +3616,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/util/dataframe_interface.jl:84](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/dataframe_interface.jl#L84)
+[MultidimensionalTables/src/util/dataframe_interface.jl:84](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L84)
 
 ---
 
@@ -3628,7 +3628,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/util/dataframe_interface.jl:108](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/dataframe_interface.jl#L108)
+[MultidimensionalTables/src/util/dataframe_interface.jl:108](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L108)
 
 ---
 
@@ -3640,7 +3640,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[MultidimensionalTables/src/util/dataframe_interface.jl:90](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/dataframe_interface.jl#L90)
+[MultidimensionalTables/src/util/dataframe_interface.jl:90](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L90)
 
 ---
 
@@ -3660,7 +3660,7 @@ MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:155](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L155)
+[MultidimensionalTables/src/datatypes/ldict.jl:155](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L155)
 
 ---
 
@@ -3686,7 +3686,7 @@ julia> for x in dropnaiter(@nalift([1,2,NA,4,5]))
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:24](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L24)
+[MultidimensionalTables/src/util/array_helper_functions.jl:24](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L24)
 
 ---
 
@@ -3711,7 +3711,7 @@ julia> for x in enum_dropnaiter(@nalift([:A,:B,NA,NA,:C]))
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:44](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L44)
+[MultidimensionalTables/src/util/array_helper_functions.jl:44](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L44)
 
 ---
 
@@ -3728,7 +3728,7 @@ A new `DictArray` whose elements are `ldict` and whose dimensions are `dims...`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1128](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1128)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1141](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1141)
 
 ---
 
@@ -3781,7 +3781,7 @@ a b |a b |a b
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1116](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1116)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1129](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1129)
 
 ---
 
@@ -3795,7 +3795,7 @@ Return `arr[args...]`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:190](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L190)
+[MultidimensionalTables/src/datatypes/dict_array.jl:190](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L190)
 
 ---
 
@@ -3809,7 +3809,7 @@ Return the value tuple of `arr` at index `args`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:180](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L180)
+[MultidimensionalTables/src/datatypes/dict_array.jl:180](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L180)
 
 ---
 
@@ -3866,7 +3866,7 @@ julia> intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2], 
 
 
 *source:*
-[MultidimensionalTables/src/util/intersect.jl:53](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/intersect.jl#L53)
+[MultidimensionalTables/src/util/intersect.jl:53](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/intersect.jl#L53)
 
 ---
 
@@ -3889,7 +3889,7 @@ julia> keys(darr(a=[1,2,3], b=[:x,:y,:z]))
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:988](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L988)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1001](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1001)
 
 ---
 
@@ -3924,7 +3924,7 @@ c   |c
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:719](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L719)
+[MultidimensionalTables/src/datatypes/dict_array.jl:719](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L719)
 
 ---
 
@@ -3969,7 +3969,7 @@ c  d
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:797](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L797)
+[MultidimensionalTables/src/datatypes/dict_array.jl:797](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L797)
 
 ---
 
@@ -3996,7 +3996,7 @@ a b c
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:338](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L338)
+[MultidimensionalTables/src/datatypes/dict_array.jl:338](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L338)
 
 ---
 
@@ -4023,7 +4023,7 @@ a b c
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:317](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L317)
+[MultidimensionalTables/src/datatypes/dict_array.jl:317](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L317)
 
 ---
 
@@ -4051,7 +4051,7 @@ c |Z p 6
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1530](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1530)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1530](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1530)
 
 ---
 
@@ -4079,7 +4079,7 @@ c |3 p 6
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1504](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1504)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1504](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1504)
 
 ---
 
@@ -4105,7 +4105,7 @@ MultidimensionalTables.LDict{Any,Any} with 4 entries:
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:98](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L98)
+[MultidimensionalTables/src/datatypes/ldict.jl:98](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L98)
 
 ---
 
@@ -4138,7 +4138,7 @@ Nullable(21)
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:747](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L747)
+[MultidimensionalTables/src/datatypes/dict_array.jl:747](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L747)
 
 ---
 
@@ -4152,7 +4152,7 @@ Apply `repeat` field by field to the `DictArray` `arr`.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:640](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L640)
+[MultidimensionalTables/src/datatypes/dict_array.jl:640](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L640)
 
 ---
 
@@ -4175,7 +4175,7 @@ for the field k in the table t at the coordinates selected so far.
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:1120](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L1120)
+[MultidimensionalTables/src/util/select.jl:1118](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1118)
 
 ---
 
@@ -4250,7 +4250,7 @@ ERROR: ArgumentError: dims (3,2) are inconsistent.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:1177](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L1177)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:1177](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1177)
 
 ---
 
@@ -4303,7 +4303,7 @@ a b |a b |a b
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1059](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1059)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1072](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1072)
 
 ---
 
@@ -4327,7 +4327,7 @@ for the field `k` in the table `t` at the coordinates selected so far.
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:599](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L599)
+[MultidimensionalTables/src/util/select.jl:597](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L597)
 
 ---
 
@@ -4347,7 +4347,7 @@ main select function. This function is internal and is meant to be used via `sel
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:34](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L34)
+[MultidimensionalTables/src/util/select.jl:34](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L34)
 
 ---
 
@@ -4370,7 +4370,7 @@ MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/ldict.jl:186](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/ldict.jl#L186)
+[MultidimensionalTables/src/datatypes/ldict.jl:186](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L186)
 
 ---
 
@@ -4408,7 +4408,7 @@ b |z
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:376](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L376)
+[MultidimensionalTables/src/datatypes/dict_array.jl:376](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376)
 
 ---
 
@@ -4446,7 +4446,7 @@ b |z
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:376](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L376)
+[MultidimensionalTables/src/datatypes/dict_array.jl:376](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376)
 
 ---
 
@@ -4465,7 +4465,7 @@ Show a LabeledArray.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:244](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L244)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:244](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244)
 
 ---
 
@@ -4484,7 +4484,7 @@ Show a LabeledArray.
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:244](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L244)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:244](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244)
 
 ---
 
@@ -4563,7 +4563,7 @@ Y |5 e |7 d |3 f
 
 
 *source:*
-[MultidimensionalTables/src/util/sort.jl:132](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/sort.jl#L132)
+[MultidimensionalTables/src/util/sort.jl:132](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/sort.jl#L132)
 
 ---
 
@@ -4671,7 +4671,7 @@ Z |1 a |2 b
 
 
 *source:*
-[MultidimensionalTables/src/util/unique.jl:102](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/unique.jl#L102)
+[MultidimensionalTables/src/util/unique.jl:102](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/unique.jl#L102)
 
 ---
 
@@ -4691,7 +4691,7 @@ main update function. This function is internal and is meant to be used via `upd
 
 
 *source:*
-[MultidimensionalTables/src/util/select.jl:111](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/select.jl#L111)
+[MultidimensionalTables/src/util/select.jl:111](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L111)
 
 ---
 
@@ -4714,7 +4714,7 @@ julia> values(darr(a=[1,2,3], b=[:x,:y,:z]))
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/dict_array.jl:1006](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/dict_array.jl#L1006)
+[MultidimensionalTables/src/datatypes/dict_array.jl:1019](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1019)
 
 ---
 
@@ -4728,7 +4728,7 @@ Wrap an array by `AbstractArrayWrapper` if it is not `DictArray` or `labeledArra
 
 
 *source:*
-[MultidimensionalTables/src/na/naarray_operators.jl:11](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/naarray_operators.jl#L11)
+[MultidimensionalTables/src/na/naarray_operators.jl:11](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/naarray_operators.jl#L11)
 
 ---
 
@@ -4754,7 +4754,7 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 
 
 *source:*
-[MultidimensionalTables/src/util/array_helper_functions.jl:132](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/util/array_helper_functions.jl#L132)
+[MultidimensionalTables/src/util/array_helper_functions.jl:132](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L132)
 
 ---
 
@@ -4781,7 +4781,7 @@ best to introduce a new wrapper class for that.
 
 
 *source:*
-[MultidimensionalTables/src/na/na.jl:25](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/na/na.jl#L25)
+[MultidimensionalTables/src/na/na.jl:25](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L25)
 
 ---
 
@@ -4796,5 +4796,5 @@ In this case, the result array of reduced size will again have a `DefaultAxis` o
 
 
 *source:*
-[MultidimensionalTables/src/datatypes/labeled_array.jl:47](https://github.com/c-s/MultidimensionalTables.jl/tree/fd1e15dbd3535f2b2b2d03755f1369736344946f/src/datatypes/labeled_array.jl#L47)
+[MultidimensionalTables/src/datatypes/labeled_array.jl:47](https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L47)
 

@@ -9,7 +9,7 @@ Below, we give a brief description of the package. For more detail, please refer
 
 # Installation
 
-At the Julia REPL, `Pkg.clone("https://github.com/c-s/MultidimensionalTables.jl.git")`.
+At the Julia REPL, `Pkg.add("MultidimensionalTables")`.
 The package requires [DataFrames](https://github.com/juliastats/dataframes.jl) to convert to and from `DataFrame`,
 and [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) to run some tests.
 The package itself is functionally stand alone.

@@ -5,7 +5,7 @@
 To install ``MultidimensionalTables``, at the Julia REPL:
 
 ```julia
-Pkg.clone("https://github.com/c-s/MultidimensionalTables.jl.git")
+Pkg.add("MultidimensionalTables")
 ```
 
 
