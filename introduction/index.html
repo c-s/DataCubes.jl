@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction - MultidimensionalTables</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Introduction";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> MultidimensionalTables</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Introduction</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#introduction-to-the-multidimensionaltables-package">Introduction to the MultidimensionalTables package</a></li>
+                
+                    <li><a class="toctree-l4" href="#dictarray">DictArray</a></li>
+                
+                    <li><a class="toctree-l4" href="#labeledarray">LabeledArray</a></li>
+                
+                    <li><a class="toctree-l4" href="#select">@select</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../getting_started/">Getting Started</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../where_to_look/">Where To Look</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../api/">API</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">MultidimensionalTables</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Introduction</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="introduction-to-the-multidimensionaltables-package">Introduction to the MultidimensionalTables package</h2>
+<p>The MultidimensionalTables package provides several new data types and associated functions/macros, to deal with multidimensional tables. The package has the following notable features:</p>
+<ul>
+<li>It includes data types <code>DictArray</code> and <code>LabeledArray</code> that can describe multimensional tables.</li>
+<li>Extensive number of functions/macros are available to process common type of table manipulations and they can cover multidimensional tables as well.</li>
+<li>Each element in any field of a multidimensional table is <code>Nullable</code>. So there is no type instability when you access an element: a non <code>NA</code>(i.e. null) value will be represented by <code>Nullable(value)</code> and a <code>NA</code> value by <code>Nullable{T}()</code> for some <code>T</code>.</li>
+</ul>
+<h3 id="dictarray">DictArray</h3>
+<p>Conceptually, <code>DictArray</code> is an array of ordered dictionaries with identical keys. For example, a table with two columns <code>col1=[10, 11]</code> and <code>col2=[:sym1, :sym2]</code> can be considered as a one-dimensional array of length 2, whose elements are <code>[LDict(:col1=&gt;10, :col2=&gt;:sym1), LDict(:col1=&gt;11, :col2=&gt;:sym2)]</code> where <code>LDict</code> represents a kind of ordered dictionary, which will be described in detail later. This is a conceptual level description, and the methods in the packages utilizes as much as possible the fact that each ordered dictionary is from a set of arrays. One advantage of describing a table in terms of a one-dimensional array of ordered dictionaries is that it is straightforward to generalize this to multidimensional arrays. For example, <code>@darr</code> is a macro in the package to create a <code>DictArray</code> like this:</p>
+<pre><code class="julia">julia&gt; using MultidimensionalTables
+
+julia&gt; d = @darr(A=[1 2 3;4 5 6], B=['a' 'b' 'a';'a' 'a' 'b'])
+2 x 3 DictArray
+
+A B |A B |A B 
+----+----+----
+1 a |2 b |3 a 
+4 a |5 a |6 b 
+</code></pre>
+
+<p>Here, the <code>DictArray</code> <code>d</code> has two fields <code>A</code> and <code>B</code> and each is a two-dimensional array. A component of <code>d</code> is an ordered dictionary:</p>
+<pre><code class="julia">julia&gt; d[1, 2]
+MultidimensionalTables.LDict{Symbol,Nullable{T}} with 2 entries:
+  :A =&gt; Nullable(2)
+  :B =&gt; Nullable('b')
+</code></pre>
+
+<p>Note that each value is <code>Nullable</code>: It is typical for a value to be <code>NA</code> during an array transformation, and it makes more sense to make any values in the elements of a <code>DictArray</code> to be <code>Nullable</code>.
+Note also that we use the term <em>fields</em> and not <em>column</em> to denote the two dimensional arrays represented by <code>A</code> and <code>B</code> above. The reason is, in multidimensional situations, they are not <em>columns</em> anymore.</p>
+<h3 id="labeledarray">LabeledArray</h3>
+<p>A <code>LabeledArray</code> is a <code>DictArray</code> or usual array with labels attached to each axis. The labels for each axis is an array: It can be a normal array, or a <code>DictArray</code>. For example, <code>@larr</code> is a macro in the package to create a <code>LabeledArray</code>:</p>
+<pre><code class="julia">julia&gt; using MultidimensionalTables
+
+julia&gt; l = @larr(A=[1 2 3;4 5 6],
+                       B=['a' 'b' 'a';'a' 'a' 'b'],
+                       axis1[a1=[:row1, :row2]],
+                       axis2[a2=[&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;]])
+2 x 3 LabeledArray
+
+a2   |X   |Y   |Z   
+-----+----+----+----
+a1   |A B |A B |A B 
+-----+----+----+----
+row1 |1 a |2 b |3 a 
+row2 |4 a |5 a |6 b 
+</code></pre>
+
+<p>The <code>LabeledArray</code> along with <code>DictArray</code> are the main data types that represent multidimensional tables.</p>
+<h3 id="select">@select</h3>
+<p>The macro <code>@select</code> transforms a <code>LabeledArray</code> into another <code>LabeledArray</code>. This macro is similar to the <code>select</code> statement in SQL. As an example:</p>
+<pre><code class="julia">julia&gt; using MultidimensionalTables
+
+julia&gt; l = @larr(A=[1 2 3;4 5 6],
+                 B=['a' 'b' 'a';'a' 'a' 'b'],
+                 axis1[axis1=[:row1, :row2]],
+                 axis2[axis2=[&quot;col1&quot;, &quot;col2&quot;, &quot;col3&quot;]])
+2 x 3 LabeledArray
+
+axis2 |col1   |col2   |col3   
+------+-------+-------+-------
+axis1 |A    B |A    B |A    B 
+------+-------+-------+-------
+row1  |1    a |2    b |3    a 
+row2  |4    a |5    a |6    b 
+
+
+julia&gt; @select(l, S=sum(_A), by[:B], where[_A .&lt; 5])
+2 LabeledArray
+
+B |S 
+--+--
+a |8 
+b |2 
+</code></pre>
+
+<p>This <code>@select</code> macro chooses all elements in the <code>LabeledArray</code> <code>l</code> where the <code>A</code> field is less than 5, and sum the <code>A</code> field values after grouping by the <code>B</code> field value.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../getting_started/" class="btn btn-neutral float-right" title="Getting Started"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../getting_started/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>

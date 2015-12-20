@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting Started - MultidimensionalTables</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Getting Started";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> MultidimensionalTables</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../introduction/">Introduction</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Getting Started</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#getting-started">Getting Started</a></li>
+                
+                    <li><a class="toctree-l4" href="#installation">Installation</a></li>
+                
+                    <li><a class="toctree-l4" href="#using-the-multidimensionaltables-package">Using the MultidimensionalTables package</a></li>
+                
+                    <li><a class="toctree-l4" href="#creating-a-multidimensional-table">Creating a multidimensional table</a></li>
+                
+                    <li><a class="toctree-l4" href="#manipulating-labeledarray">Manipulating LabeledArray</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../where_to_look/">Where To Look</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../api/">API</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">MultidimensionalTables</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Getting Started</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="getting-started">Getting Started</h2>
+<h3 id="installation">Installation</h3>
+<p>To install <code>MultidimensionalTables</code>, at the Julia REPL:</p>
+<pre><code class="julia">Pkg.clone(&quot;https://github.com/c-s/MultidimensionalTables.jl.git&quot;)
+</code></pre>
+
+<h3 id="using-the-multidimensionaltables-package">Using the MultidimensionalTables package</h3>
+<p>To use <code>MultidimensionalTables</code>,</p>
+<pre><code class="julia">using MultidimensionalTables
+</code></pre>
+
+<p>This will introduce the core functions into namespace.
+A few helper functions have the form <code>tbltool.*</code> and they can be introduced into namespace as well by:</p>
+<pre><code class="julia">using MultidimensionalTables.Tools
+</code></pre>
+
+<p>Below, we assume you already executed <code>using MultidimensionalTables</code>.</p>
+<h3 id="creating-a-multidimensional-table">Creating a multidimensional table</h3>
+<h4 id="dictarray">DictArray</h4>
+<p>A multidimensional table can be represented by either the <a href="../api/#type__dictarray.1"><code>DictArray</code></a> or <a href="../api/#type__labeledarray.1"><code>LabeledArray</code></a> data type.
+A <code>DictArray</code> is an array of ordered dictionaries with the common keys, and represents a table with no speicial axis information.
+A <code>LabeledArray</code> is a <code>DictArray</code> with an additional vector for each axis for their labels.
+The macro <code>@darr</code> is used to create a <code>DictArray</code>:</p>
+<pre><code class="julia">julia&gt; d = @darr(c1=[1,1,2], c2=[&quot;x&quot;, &quot;y&quot;, &quot;z&quot;])
+
+3 DictArray
+
+c1 c2 
+------
+1  x  
+1  y  
+2  z  
+</code></pre>
+
+<p>Note that this is a <em>one</em>-dimensional array. There are 3 elements in the array:</p>
+<pre><code class="julia">julia&gt; for elem in d
+         println(elem)
+       end
+MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=&gt;Nullable(1),:c2=&gt;Nullable(&quot;x&quot;))
+MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=&gt;Nullable(1),:c2=&gt;Nullable(&quot;y&quot;))
+MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=&gt;Nullable(2),:c2=&gt;Nullable(&quot;z&quot;))
+</code></pre>
+
+<p><code>LDict</code> is an ordered dictionary. That is, it is similar to <code>Dict</code> but keeps track of the order of the insertion of elements. Each element has two keys <code>:c1</code> and <code>:c2</code>. Their values are all <code>Nullable</code>: the macro <code>@darr</code> wraps values appropriately by <code>Nullable</code> if they are not wrapped already.
+To choose an element, e.g. <code>y</code> in the <code>DictArray</code> <code>d</code>, you can use <code>d[2][:c2]</code>.
+To choose one field, a function <code>pick</code> is provided:</p>
+<pre><code class="julia">julia&gt; pick(d, :c1)
+3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+ Nullable(1)
+ Nullable(1)
+ Nullable(2)
+</code></pre>
+
+<p><code>pick</code> has many types of methods, and the meaning is different depending on the situation.
+For example, to get a <code>DictArray</code> with only <code>c1</code> field, use <code>pick(d, [:c1])</code>.
+An array access expression such as <code>d[2,:c2]</code> cannot be provided because the field name (<code>:c2</code>) can be actually any type. For example:</p>
+<pre><code class="julia">julia&gt; d1 = @darr(:one=&gt;[1,2,3], 2=&gt;[:x,:y,:z], &quot;three&quot;=&gt;['u','v','w'])
+3 DictArray
+
+one 2 three 
+------------
+1   x u     
+2   y v     
+3   z w     
+</code></pre>
+
+<h4 id="labeledarray">LabeledArray</h4>
+<p>A <code>LabeledArray</code> adds axes information to a <code>DictArray</code>.
+A convenient way to create a <code>LabeledArray</code> by hand is using the macro <code>@larr</code>.
+For example,</p>
+<pre><code class="julia">julia&gt; t = @larr(c1=[1 ,1 ,2], c2=[&quot;x&quot;, &quot;y&quot;, &quot;z&quot;], axis1[k1=[10,11,12], k2=[:r1, :r2, :r3]])
+3 LabeledArray
+
+k1 k2 |c1 c2 
+------+------
+10 r1 |1  x  
+11 r2 |1  y  
+12 r3 |2  z  
+</code></pre>
+
+<p>Note the appearance of labels in the first column whose field names are <code>k1</code> and <code>k2</code>.
+You can also construct a <code>LabeledArray</code> from a <code>DictArray</code> and axes labels:</p>
+<pre><code class="julia">julia&gt; d = @darr(c1=[1 ,1 ,2], c2=[&quot;x&quot;, &quot;y&quot;, &quot;z&quot;])
+3 DictArray
+
+c1 c2 
+------
+1  x  
+1  y  
+2  z  
+
+
+julia&gt; t = @larr(d, axis1[k=[:r1, :r2, :r3]])
+3 LabeledArray
+
+k  |c1 c2 
+---+------
+r1 |1  x  
+r2 |1  y  
+r3 |2  z  
+</code></pre>
+
+<p><code>peel(t)</code> will return the underlying <code>DictArray</code>, stripping off all axes information.
+<code>pick(t, :c1)</code> will return the field value array of <code>c1</code>.</p>
+<h4 id="multidimensional-tables">Multidimensional Tables</h4>
+<p>Both <code>DictArray</code> and <code>LabeledArray</code> can be multidimensional.
+For example,</p>
+<pre><code class="julia">julia&gt; m = @larr(c1=[1 2;3 4;5 6],
+                 c2=['a' 'b';'b' 'a';'a' 'a'],
+                 axis1[k1=[&quot;x&quot;,&quot;y&quot;,&quot;z&quot;]],
+                 axis2[r1=[:A,:B]])
+3 x 2 LabeledArray
+
+r1 |A     |B     
+---+------+------
+k1 |c1 c2 |c1 c2 
+---+------+------
+x  |1  a  |2  b  
+y  |3  b  |4  a  
+z  |5  a  |6  a  
+</code></pre>
+
+<p>You can choose elements in the array using usual array indexing expressions:</p>
+<pre><code class="julia">julia&gt; m[2:3,2]
+2 LabeledArray
+
+k1 |c1 c2 
+---+------
+y  |4  a  
+z  |6  a  
+</code></pre>
+
+<p>Many operations for multidimensional arrays are also applicable:</p>
+<pre><code class="julia">julia&gt; transpose(m)
+2 x 3 LabeledArray
+
+k1 |x     |y     |z     
+---+------+------+------
+r1 |c1 c2 |c1 c2 |c1 c2 
+---+------+------+------
+A  |1  a  |3  b  |5  a  
+B  |2  b  |4  a  |6  a  
+
+
+julia&gt; sub(m, 1:2, 1:2)
+2 x 2 LabeledArray
+
+r1 |A     |B     
+---+------+------
+k1 |c1 c2 |c1 c2 
+---+------+------
+x  |1  a  |2  b  
+y  |3  b  |4  a  
+</code></pre>
+
+<p>Some operations take slightly differnt set of arguments. For example, to sort a <code>LabeledArray</code> <code>m</code> along the first axis using the field <code>c2</code>:</p>
+<pre><code class="julia">julia&gt; sort(m, 1, :c2)
+3 x 2 LabeledArray
+
+r1 |A     |B     
+---+------+------
+k1 |c1 c2 |c1 c2 
+---+------+------
+x  |1  a  |2  b  
+z  |5  a  |6  a  
+y  |3  b  |4  a  
+</code></pre>
+
+<h3 id="manipulating-labeledarray">Manipulating LabeledArray</h3>
+<p>The macro <code>@select</code> uses a SQL-like syntax to transform one <code>LabeledArray</code> into another (or into a dictionary).
+Let's use this <code>LabeledArray</code> <code>m</code> as an example:</p>
+<pre><code class="julia">julia&gt; m = @larr(c1=[1 2;3 4;5 6],
+                 c2=['a' 'b';'b' 'a';'a' 'a'],
+                 c3=[10.0 NA;NA 12.0;20.0 20.0],
+                 axis1[k1=[&quot;x&quot;,&quot;y&quot;,&quot;z&quot;]],
+                 axis2[r1=[:A,:B]])
+3 x 2 LabeledArray
+
+r1 |A          |B          
+---+-----------+-----------
+k1 |c1 c2 c3   |c1 c2 c3   
+---+-----------+-----------
+x  |1  a  10.0 |2  b       
+y  |3  b       |4  a  12.0 
+z  |5  a  20.0 |6  a  20.0 
+</code></pre>
+
+<p>To select only the fields <code>c1</code> and <code>c2</code>,</p>
+<pre><code class="julia">julia&gt; @select(m, :c1, :c2)
+3 x 2 LabeledArray
+
+r1 |A     |B     
+---+------+------
+k1 |c1 c2 |c1 c2 
+---+------+------
+x  |1  a  |2  b  
+y  |3  b  |4  a  
+z  |5  a  |6  a  
+</code></pre>
+
+<p>An example to create a new column from the existing one:</p>
+<pre><code class="julia">julia&gt; @select(m, c=_c1 .* 2 .+ _c3)
+3 x 2 LabeledArray
+
+r1 |A    |B    
+---+-----+-----
+k1 |c    |c    
+---+-----+-----
+x  |12.0 |     
+y  |     |20.0 
+z  |30.0 |32.0 
+</code></pre>
+
+<p><code>_c1</code> refers to the <code>c1</code> field and <code>.*</code> does the component-wise multiplication.</p>
+<p>To choose only relevant elements, use the <code>where[...]</code> expression,</p>
+<pre><code class="julia">julia&gt; @select(m, :c1, :c2, where[_c2 .== 'b'])
+2 x 2 LabeledArray
+
+r1 |A     |B     
+---+------+------
+k1 |c1 c2 |c1 c2 
+---+------+------
+x  |      |2  b  
+y  |3  b  |      
+</code></pre>
+
+<p><code>where[...]</code> can have many conditions inside <code>...</code>, and they will be applied sequentially.
+Multiple <code>where[...]</code> are also possible, and they will be simply concatenated.</p>
+<p>To group the array elements by some fields, use the <code>by[...]</code> expression,</p>
+<pre><code class="julia">julia&gt; @select(m,c1=sum(_c1), c3=sum(_c3), by[:c2])
+2 LabeledArray
+
+c2 |c1 c3   
+---+--------
+a  |16 62.0 
+b  |5  0.0  
+</code></pre>
+
+<p>You can provide multiple fields to group by:</p>
+<pre><code class="julia">julia&gt; @select(m,c1=sum(_c1), c3=mean(_c3), by[:c2,c4=_c1 .&gt; 5])
+3 LabeledArray
+
+c2 c4    |c1 c3   
+---------+--------
+a  false |10 14.0 
+a  true  |6  20.0 
+b  false |5       
+</code></pre>
+
+<p>But it is also possible to group by the array in a multidimensional way:</p>
+<pre><code class="julia">julia&gt; @select(m,c1=sum(_c1), c3=mean(_c3), by[:c2], by[c4=_c1 .&gt; 5])
+2 x 2 LabeledArray
+
+c4 |false      |true      
+---+-----------+----------
+c2 |c1    c3   |c1   c3   
+---+-----------+----------
+a  |10    14.0 |6    20.0 
+b  |5          |          
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../where_to_look/" class="btn btn-neutral float-right" title="Where To Look"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../introduction/" class="btn btn-neutral" title="Introduction"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../introduction/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../where_to_look/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>
