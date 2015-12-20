@@ -4,7 +4,7 @@ MultidimensionalTables.jl
 [![Build Status](https://travis-ci.org/c-s/MultidimensionalTables.jl.svg?branch=master)](https://travis-ci.org/c-s/MultidimensionalTables.jl)
 
 The **MultidimensionalTables** package provides several data types and tools to handle multidimensional tables.
-Below, we give a brief description of the package. For more detail, please refer to [documentation](http://tbltooljl.readthedocs.org/en/latest/).
+Below, we give a brief description of the package. For more detail, please refer to [documentation](http://c-s.github.io/MultidimensionalTables.jl).
 
 
 # Installation
@@ -412,5 +412,5 @@ the result `LabeledArray` is 1+2-1=2 dimensional.
 
 # Documentation
 
-More detailed documentation is [available here](http://tbltooljl.readthedocs.org/en/latest/).
+More detailed documentation is [available here](http://c-s.github.io/MultidimensionalTables.jl).
 
