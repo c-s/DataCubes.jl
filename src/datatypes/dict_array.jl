@@ -829,14 +829,15 @@ end
     fill!(coords, Colon())
     coords[$slice_indices] = 1
     testslice = $slice_exp
+    # testres is the first component.
     testres = f(testslice)
     reseltype = typeof(testres)
     result = Array(reseltype, sizearr[$slice_indices]...)
-    mapslices_inner_typed!(result, f, arr, dims)
+    mapslices_inner_typed!(result, f, arr, dims, testres)
   end
 end
 
-@generated mapslices_inner_typed!{KK,VV,M,K,N,VS,SV,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T) = begin
+@generated mapslices_inner_typed!{KK,VV,M,K,N,VS,SV,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T, testres::LDict{KK,VV}) = begin
   dimtypes = dims.types
   slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
   slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
@@ -851,11 +852,17 @@ end
     # assume that the types are all the same.
     ldict_keys_sofar = Nullable{Vector{KK}}() #testres.keys
     same_ldict::Bool = true
+    is_the_first = true
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
       fill!(coords, Colon())
       @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
       oneslice = $slice_exp
-      oneres = f(oneslice)
+      oneres = if is_the_first
+        is_the_first = false
+        testres
+      else
+        f(oneslice)
+      end
       if same_ldict
         same_ldict &= (ldict_keys_sofar.isnull || ldict_keys_sofar.value == oneres.keys)
         if ldict_keys_sofar.isnull
@@ -880,7 +887,7 @@ end
   end
 end
 
-@generated mapslices_inner_typed!{U,M,K,N,VS,SV,T}(result::AbstractArray{U,M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T) = begin
+@generated mapslices_inner_typed!{U,M,K,N,VS,SV,T}(result::AbstractArray{U,M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T, testres::U) = begin
   dimtypes = dims.types
   slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
   slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
@@ -892,12 +899,18 @@ end
   quote
     sizearr = size(arr)
     coords = Array(Any, $N)
+    is_the_first = true
     # assume that the types are all the same.
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
       fill!(coords, Colon())
       @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
       oneslice = $slice_exp #slice(arr, coords...)
-      oneres = f(oneslice)
+      oneres = if is_the_first
+        is_the_first = false
+        testres
+      else
+        f(oneslice)
+      end
       @nref($slice_ndims, result, i) = oneres
     end
     @rap wrap_array nalift result

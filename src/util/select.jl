@@ -190,8 +190,6 @@ end
   subarrays_buf = Array(NTuple{$N,Int}, length(indices))
   index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},1})
   indsumsofar::Int = 0
-  # this unsafe_ptr doesn't gain any at all.
-  #unsafe_ptr = Base.unsafe_convert(Ptr{NTuple{$N,Int}}, subarrays_buf)
   lenindcountmat::Int = length(indcountmat)
   for i in 1:lenindcountmat
     prevsum = indsumsofar

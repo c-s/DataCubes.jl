@@ -14,7 +14,8 @@
 * Choose elements using index (normal way): index notation(`getindex`).
 * Choose/Remove based on labels in [`LabeledArray`](api/#type__labeledarray.1): [`extract`](api/#function__extract.1), [`discard`](api/#function__discard.1).
 * Choose the underlying *base* of [`LabeledArray`](api/#type__labeledarray.1): [`peel`](api/#function__peel.1)
-* Choose the underlying ordered dictionary(`LDict`) of [`DictArray`](api/#type__labeledarray.1): [`peel`](api/#function__peel.1)
+* Choose the underlying ordered dictionary(`LDict`) of [`DictArray`](api/#type__dictarray.1): [`peel`](api/#function__peel.1)
+* Choose field name(s) from [`DictArray`](api/#type__dictarray.1) or [`LabeledArray`](api/#type__labeledarray.1): [`pick`](api/#function__pick.1)
 * Choose the axis or axes of [`LabeledArray`](api/#type__labeledarray.1): [`pickaxis`](api/#function__pickaxis.1)
 * Remove fields in [`DictArray`](api/#type__dictarray.1)/[`LabeledArray`](api/#type__labeledarray.1) or keys in [`LDict`](api/#type__ldict.1): [`delete`](api/#function__delete.1)
 
