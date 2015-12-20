@@ -82,33 +82,31 @@ end
 
 """
 Base.convert(::Type{DictArray}, df::DataFrame) = dataframe_to_dictarray(df)
+
 """
 
 `convert(::Type{LabeledArray}, df::DataFrame)` converts a `DataFrame` into `LabeledArray` simply by wrapping `convert(DictArray, df)` by `LabeledArray`.
 
 """
 Base.convert(::Type{LabeledArray}, df::DataFrame) = LabeledArray(dataframe_to_dictarray(df))
+
 """
 
 `convert(::Type{DataFrame}, arr::DictArray)` converts a `DictArray` into a `DataFrame`. If the dimensions of `arr` are greater than 1, `arr` is first flattend into 1 dimension using `collapse_axes`, and then converted into a `DataFrame`.
 
 """
 Base.convert(::Type{DataFrame}, arr::DictArray) = dictarray_to_dataframe(collapse_axes(arr, 1, ndims(arr)))
+
 """
 
 `convert(::Type{DataFrame}, arr::LabeledArray)` converts a `LabeledArray` into a `DataFrame` by first creating a `DictArray` by broadcasting all axes, and then convert that `DictArray` into a `DataFrame`.
 
 """
 Base.convert(::Type{DataFrame}, arr::LabeledArray) = dictarray_to_dataframe((darr=selectfields(arr, allfieldnames(arr)...);collapse_axes(darr,1,ndims(darr))))
+
 """
 
 `convert(::Type{EnumerationArray}, arr::PooledDataArray)` converts a `PooledDataArray` into an `EnumerationArray`.
 
 """
 Base.convert(::Type{EnumerationArray}, arr::PooledDataArray) = EnumerationArray((arr.refs, arr.pool))
-#dictarray_to_dataframe(replace_axes(collapse_axes(arr, 1, ndims(arr)), 1=>[]).data)
-
-
-#v = ["x", "y", "z"][rand(1:3, 10)]
-#df1 = DataFrame(Any[collect(1:10), v, rand(10)], [:A, :B, :C])
-#df2 = DataFrame(A=1:10, B=v, C=rand(10))
