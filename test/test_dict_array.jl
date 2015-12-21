@@ -48,7 +48,7 @@ facts("DictArray tests") do
                   :third=>nalift(reshape(map(i->string("str_",i), 1:20), 5, 4)))
     @fact d[3,2] --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
     @fact d[1:3,2] --> DictArray(:a=>nalift([6,7,8]),2=>nalift([:sym,:sym,:sym]),:third=>nalift(["str_6","str_7","str_8"]))
-    @fact d[2,2:4] --> DictArray(:a=>nalift([7 12 17]),2=>nalift([:sym :sym :sym]),:third=>nalift(["str_7" "str_12" "str_17"]))
+    @fact d[2:2,2:4] --> DictArray(:a=>nalift([7 12 17]),2=>nalift([:sym :sym :sym]),:third=>nalift(["str_7" "str_12" "str_17"]))
     @fact findfirst(d, LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))) --> 8
     @fact (setindex!(d,LDict(:a=>Nullable(108),2=>Nullable(:newsym),:third=>Nullable("newstr_8")), 3, 2);d[3,2]) -->
       LDict(:a=>Nullable(108),2=>Nullable(:newsym),:third=>Nullable("newstr_8"))

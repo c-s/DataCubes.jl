@@ -312,7 +312,11 @@ for op = [:cov, :cor]
       assert(arr1.axes == arr2.axes)
       $(op)(arr1.data, arr2.data)
     end
+    $(op)(arr::DictArray{TypeVar(:T),1}) = $(op)(arr, arr)
+    $(op)(arr::DictArray{TypeVar(:T),2}) = $(op)(arr, arr)
     $(op)(arr::DictArray) = $(op)(arr, arr)
+    $(op)(arr::LabeledArray{TypeVar(:T),1}) = $(op)(arr, arr)
+    $(op)(arr::LabeledArray{TypeVar(:T),2}) = $(op)(arr, arr)
     $(op)(arr::LabeledArray) = $(op)(arr, arr)
   end
 end

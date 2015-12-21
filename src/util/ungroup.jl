@@ -69,7 +69,10 @@ ungroup(arr::AbstractArray, ref_field::AbstractArray) = begin
   ungroup(arr, ref_field, cumsum, offsets)
 end
 ungroup(arr::AbstractArray, indices::Tuple) = ungroup(arr, arr[indices...])
-ungroup(arr::AbstractArray, axis::Integer) = ungroup(arr, ntuple(d->d==axis ? Colon() : 1, ndims(arr)))
+ungroup(arr::AbstractArray, axis::Integer) =
+  ungroup(arr, ntuple(d->d==axis ? Colon() :
+                          d>axis ? 1 :
+                          (1:1), ndims(arr)))
 
 create_ungroup_offsets(ref_field::AbstractArray) = begin
   lenref = length(ref_field)

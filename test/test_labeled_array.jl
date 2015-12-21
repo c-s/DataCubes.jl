@@ -37,7 +37,7 @@ facts("LabeledArray tests") do
                                       2=>nalift([:sym,:sym,:sym]),
                                       :third=>nalift(["str_6","str_7","str_8"])),
                             axis1=DictArray(k1=nalift(["a","a","b"]), k2=nalift(collect(101:103))))
-    @fact larr[2,2:4] --> LabeledArray(
+    @fact larr[2:2,2:4] --> LabeledArray(
                             DictArray(:a=>nalift([7 12 17]),
                                       2=>nalift([:sym :sym :sym]),
                                       :third=>nalift(["str_7" "str_12" "str_17"])),
@@ -123,6 +123,14 @@ facts("LabeledArray tests") do
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=[10 11]', d=[:m :n]',axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=[:x,:y,:z]), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=[Nullable(:x),Nullable(:y),Nullable(:z),Nullable{Symbol}()])
     @fact merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),darr(c=[4,5,6],b=[:m,:n,:p]),darr(a=["X","Y","Z"])) --> larr(a=["X","Y","Z"],b=[:m,:n,:p],c=[4,5,6],axis1=[:a,:b,:c])
+    @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[2:-1:1,2] --> larr(a=[5,2])
+    @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2] --> larr(a=[5,2])
+    @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2:3] --> larr(a=[5 6;2 3],axis2=darr(r=[:y,:z]))
+    @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
+    @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
+    @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
+    @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
+    @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
   end
 end
 

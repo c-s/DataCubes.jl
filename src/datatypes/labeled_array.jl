@@ -620,38 +620,66 @@ Base.getindex{N}(arr::LabeledArray, args::Tuple{N,Symbol}) = map(a->selectfield(
 Base.getindex(arr::LabeledArray, args::AbstractVector{Symbol}) = selectfields(arr, args...)
 Base.getindex(arr::LabeledArray, indices::CartesianIndex) = getindex(arr, indices.I...)
 Base.getindex(table::LabeledArray, indices...) = begin
-  dataelem = getindex(table.data, indices...)
   if is_scalar_indexing(indices)
-    int_indices = Array(Int, ndims(table))
-    loc_ind = 1
-    # this is a hackish way to deal a CartesianIndex, but I don't know a better way yet...
-    for index in indices
-      if isa(index, Real)
-        int_indices[loc_ind] = index
-        loc_ind += 1
-      elseif isa(index, CartesianIndex)
-        for j = 1:length(index)
-          int_indices[loc_ind+j-1] = index[j]
-        end
-        loc_ind += length(index)
-      else
-        error("this cannot happen. the index is ", index, " and we don't know how to handle it.")
-      end
-    end
-    getindex(table, int_indices...)
+    getindex_labeledarray_scalar_indexing(table, indices)
   else
-    axeselem = [(if isa(axis, DefaultAxis)
-      isa(index,Int) ? DefaultAxis(1) :
-      isa(index,Colon) ? axis :
-      isa(index,AbstractArray{Bool}) ?
-      DefaultAxis(length(find(index))) : DefaultAxis(length(index))
-    else
-      getindex(axis, isa(index,Int) ? collect(index) : index)
-    end) for (axis, index) in zip(table.axes,indices)]
-    newN = ndims(dataelem)
-    LabeledArray(dataelem, (axeselem[1:newN]...))
+    getindex_labeledarray_nonscalar_indexing(table, indices)
   end
 end
+
+getindex_labeledarray_scalar_indexing(table::LabeledArray, indices) = begin
+  int_indices = Array(Int, ndims(table))
+  loc_ind = 1
+  # this is a hackish way to deal a CartesianIndex, but I don't know a better way yet...
+  for index in indices
+    if isa(index, Real)
+      int_indices[loc_ind] = index
+      loc_ind += 1
+    elseif isa(index, CartesianIndex)
+      for j = 1:length(index)
+        int_indices[loc_ind+j-1] = index[j]
+      end
+      loc_ind += length(index)
+    else
+      error("this cannot happen. the index is ", index, " and we don't know how to handle it.")
+    end
+  end
+  getindex(table, int_indices...)
+end
+
+getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
+  dataelem = getindex(table.data, indices...)
+  zippedindices = zip(table.axes, indices)
+  filtered_zippedindices = [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]
+  axeselem = [axis_index(axis,index) for (axis, index) in zippedindices]
+  ndimstable = ndims(table)
+  v04ndims = ndimstable
+  for i in ndimstable:-1:1
+    if !isa(axeselem[i], Real)
+      v04ndims = i
+      break
+    end
+  end
+  if ndims(dataelem) == v04ndims
+    # this is the expected behavior for v0.4:
+    LabeledArray(dataelem, (axeselem[1:v04ndims]...))
+  else
+    # this is the expected behavior for v0.5, if one direction before the last non integer index is an integer index.
+    LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
+  end
+end
+
+axis_index(axis, index) = axis[index]
+axis_sub(axis, index) = sub(axis, index)
+axis_slice(axis, index) = slice(axis, index)
+
+axis_index(axis::DefaultAxis, i::Int) = i
+axis_index(axis::DefaultAxis, ::Colon) = axis
+axis_index(axis::DefaultAxis, index::AbstractArray{Bool}) = DefaultAxis(length(find(index)))
+axis_index(axis::DefaultAxis, index) = DefaultAxis(length(index))
+axis_sub(axis::DefaultAxis, index) = axis_index(axis, index)
+axis_slice(axis::DefaultAxis, index) = axis_index(axis, index)
+
 Base.getindex(table::LabeledArray, indices::Int) =
   getindex_inner(table, ind2sub(table, indices))
 Base.getindex(table::LabeledArray, indices::Int...) =
@@ -689,13 +717,13 @@ Base.setindex!(table::LabeledArray, v, args...) = setindex!(table.data, v, args.
 Base.Multimedia.writemime(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
 Base.sub(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
   dataelem = sub(table.data, indices...)
-  axeselem = [sub(axis, isa(index,Int) ? collect(index) : index) for (axis, index) in zip(table.axes,indices)]
+  axeselem = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(table.axes,indices)]
   newN = ndims(dataelem)
   LabeledArray(dataelem, (axeselem[1:newN]...))
 end
 Base.slice(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
   dataelem = slice(table.data, indices...)
-  axeselem = [slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
+  axeselem = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
   newN = ndims(dataelem)
   LabeledArray(dataelem, (axeselem[1:newN]...))
 end
