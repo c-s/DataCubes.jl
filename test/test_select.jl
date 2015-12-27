@@ -9,7 +9,7 @@ end
 
 facts("Select tests") do
   col1 = nalift(reshape(500:-1:1, 10, 50))
-  col2 = nalift(reshape(1:500, 10, 50))
+  col2 = nalift(reshape(1.0*(1:500), 10, 50))
   col3 = nalift(reshape(map(i->string("sym_",i), 1:500), 10, 50))
   col4 = nalift(hcat(rand(10,30), fill(:testsym, 10, 20)))
   axis1c1 = DictArray(k1=nalift(collect(101:110)), k2=nalift(collect(201:210)))
@@ -53,12 +53,12 @@ facts("Select tests") do
       @fact selct(lar,c2=d->d[:c2] .* 2,:c3) --> reorder(@select(lar,c2=_[:c2].*2,:c3), :c3)
     end
     context("condition tests") do
-      @fact selct(lar, where=d->10 .< d[:c2] .< 25) --> begin
+      @fact selct(lar, where=d->10.0 .< d[:c2] .< 25) --> begin
         base = @larr(c1=col1[1:10,2:3],c2=col2[1:10,2:3],c3=col3[1:10,2:3],c4=col4[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
         tbltool.setna!(base, 5:10, 2)
         base
       end
-      @fact selct(lar, c1=d->d[:c1] .* 2, where=Any[d->10 .< d[:c2] .< 25]) --> begin
+      @fact selct(lar, c1=d->d[:c1] .* 2, where=Any[d->10 .< d[:c2] .< 25.0]) --> begin
         base = @larr(c1=2 .* col1[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
         tbltool.setna!(base, 5:10, 2)
         base

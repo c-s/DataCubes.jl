@@ -19,11 +19,16 @@ Base.setindex!{T,N}(arr::AbstractArrayWrapper{T,N}, v::T, args::Int...) = setind
 Base.setindex!{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, v::T, args::Int...) = setindex!(arr.a, v, args...)
 Base.eltype{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = T
 Base.linearindexing{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = Base.linearindexing(A)
+Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
+Base.slice(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(slice(arr.a, args...))
+Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args...))
+Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args...))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find)
 @delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims, Base.repeat,
                                    Base.repeat, Base.transpose, Base.permutedims,
-                                   Base.sort, Base.sort!, Base.sortperm, Base.similar, Base.reverse)
+                                   Base.sort, Base.sort!, Base.sortperm, Base.similar, Base.reverse,
+                                   Base.sub, Base.slice)
 Base.repeat(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(repeat(arr.a; kwargs...))
 Base.sort(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort(arr.a; kwargs...))
 Base.sort!(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort!(arr.a; kwargs...))
@@ -64,37 +69,52 @@ const LiftToNullableTypes = [Bool,
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     quote
-      $(esc(op.args[1]))(x::AbstractArrayWrapper{Nullable}, y::AbstractArrayWrapper{Nullable}) =
-        AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
-      $(esc(op.args[1])){T}(x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable}) =
-        AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
-      $(esc(op.args[1])){T}(x::AbstractArrayWrapper{Nullable}, y::AbstractArrayWrapper{Nullable{T}}) =
-        AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
-      $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) =
+      $(esc(op.args[1])){T<:Nullable,U<:Nullable}(x::AbstractArrayWrapper{T},
+                                                  y::AbstractArrayWrapper{U}) =
         AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
 
-      $(esc(op.args[1]))(x::AbstractArrayWrapper{Nullable}, y::Nullable) =
+      $(esc(op.args[1])){T<:Nullable}(x::AbstractArrayWrapper{T}, y::Nullable) =
         AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
-      $(esc(op.args[1]))(x::Nullable, y::AbstractArrayWrapper{Nullable}) =
-        AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
-      $(esc(op.args[1])){T}(x::AbstractArrayWrapper{Nullable{T}}, y::Nullable) =
-        AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
-      $(esc(op.args[1])){T}(x::Nullable, y::AbstractArrayWrapper{Nullable{T}}) =
+      $(esc(op.args[1])){T<:Nullable}(x::Nullable, y::AbstractArrayWrapper{T}) =
         AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
 
       for nulltype in $LiftToNullableTypes
-        $(esc(op.args[1]))(x::AbstractArrayWrapper{Nullable}, y::nulltype) =
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,Nullable(y)), x.a))
-        $(esc(op.args[1]))(x::nulltype, y::AbstractArrayWrapper{Nullable}) =
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(Nullable(x),v), y.a))
-        $(esc(op.args[1])){T}(x::AbstractArrayWrapper{Nullable{T}}, y::nulltype) =
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,Nullable(y)), x.a))
-        $(esc(op.args[1])){T}(x::nulltype, y::AbstractArrayWrapper{Nullable{T}}) =
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(Nullable(x),v), y.a))
+        $(esc(op.args[1])){T<:Nullable,U<:nulltype}(x::AbstractArrayWrapper{T}, y::U) = begin
+          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          #returntype = Base.return_types($(esc(op.args[2])), (T, U))[1]
+          #xa = x.a
+          #result = similar(xa, returntype)
+          #absarray_binnary_wrapper_inner1!(result, $(esc(op.args[2])), xa, y)
+          #AbstractArrayWrapper(result)
+        end
+        $(esc(op.args[1])){T<:Nullable}(x::nulltype, y::AbstractArrayWrapper{T}) = begin
+          # version 1. what is correct, but could be slower. I am experimenting.
+          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+        end
+        #$(esc(op.args[1])){T<:Nullable,U<:nulltype}(x::U, y::AbstractArrayWrapper{T}) = begin
+        #  # version 2. correct as well, but could be faster. Let's experiment.
+        #  returntype = Base.return_types($(esc(op.args[2])), (U, T))[1]
+        #  ya = y.a
+        #  result = similar(ya, returntype)
+        #  absarray_binnary_wrapper_inner2!(result, $(esc(op.args[2])), x, ya)
+        #  AbstractArrayWrapper(result)
+        #end
       end
     end
   end
   Expr(:block, targetexpr...)
+end
+
+absarray_binnary_wrapper_inner1!{T<:Nullable,U<:Nullable,V,N}(result::AbstractArray{T,N}, f::Function, xa::AbstractArray{U,N}, y::V) = begin
+  for i in eachindex(xa)
+    @inbounds result[i] = f(xa[i], y)::T
+  end
+end
+
+absarray_binnary_wrapper_inner2!{T<:Nullable,U,V<:Nullable,N}(result::AbstractArray{T,N}, f::Function, x::U, ya::AbstractArray{V,N}) = begin
+  for i in eachindex(ya)
+    @inbounds result[i] = f(x, ya[i])::T
+  end
 end
 
 macro nullable_unary_wrapper(ops...)
@@ -127,6 +147,13 @@ macro nullable_binary_wrapper(ops...)
       $(esc(op.args[2])){T,V}(x::T, y::Nullable{V}) =
         y.isnull ? $nullelem() : Nullable($(esc(op.args[1]))(x, y.value))
       $(esc(op.args[2])){T,V}(x::T, y::V) = $(esc(op.args[1]))(x, y)
+
+      #$(esc(op.args[2])){T,V}(x::Nullable{T}, y::Nullable{V}, nullelem::Nullable) =
+      #  x.isnull || y.isnull ? nullelem : Nullable($(esc(op.args[1]))(x.value, y.value))
+      #$(esc(op.args[2])){T,V}(x::Nullable{T}, y::V, nullelem::Nullable) =
+      #  x.isnull ? nullelem : Nullable($(esc(op.args[1]))(x.value, y))
+      #$(esc(op.args[2])){T,V}(x::T, y::Nullable{V}, nullelem::Nullable) =
+      #  y.isnull ? nullelem : Nullable($(esc(op.args[1]))(x, y.value))
     end
   end
   Expr(:block, targetexpr...)
@@ -150,46 +177,37 @@ end
                          (.!=, naop_noeq, Bool), (.<=, naop_le, Bool), (.%, naop_mod), (.<<, naop_lsft),
                          (.>>, naop_rsft), (.^, naop_exp),
                          (&, naop_and), (|, naop_or), ($, naop_xor))
-(==){T,U}(x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) = x===y ||
-  all(map(x, y) do elx,ely
-    if elx.isnull && ely.isnull
-      return true
-    elseif elx.isnull || ely.isnull
-      return false
-    else
-      elx.value == ely.value
+
+(==){T<:Nullable,U<:Nullable}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
+  if x === y
+    return true
+  else
+    for (elx, ely) in zip(x.a, y.a)
+      if elx.isnull && !ely.isnull
+        return false
+      elseif !elx.isnull && ely.isnull
+        return false
+      elseif !elx.isnull && !ely.isnull && elx.value != ely.value
+        return false
+      end
     end
-  end)
-(==)(x::AbstractArrayWrapper{Nullable}, y::AbstractArrayWrapper{Nullable}) = x===y ||
-  all(map(x, y) do elx,ely
-    if elx.isnull && ely.isnull
-      return true
-    elseif elx.isnull || ely.isnull
-      return false
-    else
-      elx.value == ely.value
+    return true
+  end
+end
+
+(==){T<:AbstractFloat,U<:AbstractFloat,N,A,B}(x::AbstractArrayWrapper{T,N,FloatNAArray{T,N,A}}, y::AbstractArrayWrapper{U,N,FloatNAArray{U,N,B}}) = begin
+  if x === y
+    return true
+  else
+    for (elx, ely) in zip(x.a.data, y.a.data)
+      if elx != ely
+        return false
+      end
     end
-  end)
-(==){T}(x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable}) = x===y ||
-  all(map(x, y) do elx,ely
-    if elx.isnull && ely.isnull
-      return true
-    elseif elx.isnull || ely.isnull
-      return false
-    else
-      elx.value == ely.value
-    end
-  end)
-(==){T}(x::AbstractArrayWrapper{Nullable}, y::AbstractArrayWrapper{Nullable{T}}) = x===y ||
-  all(map(x, y) do elx,ely
-    if elx.isnull && ely.isnull
-      return true
-    elseif elx.isnull || ely.isnull
-      return false
-    else
-      elx.value == ely.value
-    end
-  end)
+    return true
+  end
+end
+
 
 # TODO make sure this blanket definition is okay.
 # remvoed in favor of using == instead of .== for naop_eq (and similarly for naop_noeq).

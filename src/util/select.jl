@@ -73,10 +73,14 @@ selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
       # yescond, noby
       aggvecs = if noagg
         if isa(t.data, DictArray)
-          darr([(k, eltype(onefld)[onefld[i...] for i in selected_cartesian_indices]) for (k,onefld) in t.data.data]...)
+          darr([(k, select_cartesian_elements_helper(onefld, selected_cartesian_indices)) for (k,onefld) in t.data.data]...)
+          #above gives better result than below.
+          #darr([(k, eltype(onefld)[onefld[i...] for i in selected_cartesian_indices]) for (k,onefld) in t.data.data]...)
         else
           tdata = t.data
-          eltype(tdata)[tdata[i...] for i in selected_cartesian_indices]
+          select_cartesian_elements_helper(tdata, selected_cartesian_indices)
+          #above gives better result than below.
+          #eltype(tdata)[tdata[i...] for i in selected_cartesian_indices]
         end
       else
         if isa(t.data, DictArray)
@@ -94,6 +98,32 @@ selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
     end
   end
 end
+
+#select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = begin
+#  result = Array(T, length(indices))
+#  select_cartesian_elements_helper2(fld
+
+@generated select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = quote
+  result = Array(T, length(indices))
+  #result::T = similar(fld, length(indices))
+  for i in eachindex(result)
+    index = indices[i]
+    result[i] = @nref $N fld d->index[d]
+  end
+  result
+end
+
+@generated select_cartesian_elements_helper{T<:AbstractFloat,N,A}(fld::AbstractArrayWrapper{T,N,FloatNAArray{T,N,A}},
+                                                                indices::Vector{NTuple{N,Int}}) = quote
+  result = Array(T, length(indices))
+  #result::T = similar(fld, length(indices))
+  for i in eachindex(result)
+    index = indices[i]
+    result[i] = @nref $N fld d->index[d]
+  end
+  AbstractArrayWrapper(FloatNAArray(result))
+end
+
 
 """
 
@@ -421,38 +451,42 @@ byarray_isless{N}(x::NTuple{N}, y::NTuple{N}) = begin
   false
 end
 
-
-
-create_square_array{T,N}(vec, t::AbstractArray{T,N}, inds::AbstractArray{NTuple{N,Int},1}) = begin
+create_square_array{T,N}(aggvec, t::AbstractArray{T,N}, inds::Vector{NTuple{N,Int}}) = begin
   sz::NTuple{N,Int} = size(t)
-  boolvecs = [falses(onesz) for onesz in sz]
+  boolvecs::NTuple{N,BitVector} = ntuple(d->falses(sz[d]), N)
   for ind in inds
     for (v,i) in zip(boolvecs, ind)
       @inbounds v[i] = true
     end
   end
-  wherevecs = [find(v) for v in boolvecs]
-  reversemapvec = map(boolvecs, wherevecs) do boolvec, wherevec
+  wherevecs::NTuple{N,Vector{Int}} = ntuple(d->find(boolvecs[d]), N)
+  reversemapvec::NTuple{N,Vector{Int}} = map(boolvecs, wherevecs) do boolvec, wherevec
     v = Array(Int, length(boolvec))
     @inbounds v[wherevec] = 1:length(wherevec)
     v
   end
-  ressize = (map(length, wherevecs)...)
-  result = similar(vec, ressize)
+  ressize = map(length, wherevecs)
+  result = similar(aggvec, ressize)
 
   setna!(result)
-  newinds = map(inds) do ind
-    newind::NTuple{N,Int} = ntuple(N) do d
-      @inbounds r = reversemapvec[d][ind[d]]
-      r
-    end
-    newind
-  end
-  setcartesian!(result, vec, newinds)
+  newinds = create_square_array_helper(inds, reversemapvec)
+  setcartesian!(result, aggvec, newinds)
   # result is the data field of the return value. Now work on the axes part.
   @inbounds newaxes = map((axis, wherevec) -> isa(axis, DefaultAxis) ? DefaultAxis(length(wherevec)) : axis[wherevec], t.axes, wherevecs)
   LabeledArray(result, (newaxes...))
 end
+
+@generated create_square_array_helper{N}(inds::AbstractVector{NTuple{N,Int}}, reversemapvec::NTuple{N,Vector{Int}}) = quote
+  newinds = Array(NTuple{$N,Int}, length(inds))
+  for i in eachindex(newinds)
+    tpl = @ntuple $N d->reversemapvec[d][inds[i][d]]
+    @inbounds newinds[i] = tpl
+  end
+  newinds
+end
+# the current version of create_square_array_helper in julia 0.4.1 turns out to be definitely faster than below.
+# map(ind->ntuple(d->reversemapvec[d][ind[d]], N), inds)
+
 setcartesian!{N}(tgt::DictArray, src::DictArray, inds::AbstractArray{NTuple{N,Int},1}) = begin
   for (k, v) in src.data
     @inbounds onefield = tgt.data[k]
@@ -531,7 +565,8 @@ end
     @inbounds indices[index] = tupleind
     index += 1
   end
-  foldl((inds, onec) -> onec(t, inds), indices, c)
+  res = foldl((inds, onec) -> onec(t, inds), indices, c)
+  res
 end
 
 # larray -> indices -> field name -> element.

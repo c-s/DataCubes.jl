@@ -1,4 +1,4 @@
-import Base.==, Base.!=
+import Base.==
 
 """
 
@@ -57,13 +57,12 @@ labeledarray_mapnullable_inner(i::Int) = Nullable(i)
 labeledarray_mapnullable_inner(i::AbstractArray) = map(Nullable, i)
 
 Base.start(::DefaultAxis) = 1
-Base.next(arr::DefaultAxis, state) = (state, state+1)
-Base.done(arr::DefaultAxis, s) = s > s.counts
+Base.next(arr::DefaultAxis, state) = (Nullable(state), state+1)
+Base.done(arr::DefaultAxis, s) = s > arr.counts
 Base.eltype(::Type{DefaultAxis}) = Nullable{Int}
 Base.length(axis::DefaultAxis) = axis.counts
 Base.ndims(::DefaultAxis) = 1
 (==)(arr1::DefaultAxis, arr2::DefaultAxis) = arr1.counts == arr2.counts
-(!=)(arr1::DefaultAxis, arr2::DefaultAxis) = arr1.counts != arr2.counts
 
 LabeledArray{T,N,AXES<:Tuple}(data::AbstractArray{T,N}, axes::AXES) = begin
   LabeledArray{T,N,AXES,typeof(data)}(data, axes)

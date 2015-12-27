@@ -2,7 +2,7 @@ module TestNA
 
 using FactCheck
 using MultidimensionalTables
-using MultidimensionalTables: AbstractArrayWrapper, FloatNAArray, simplify_array, wrap_array
+using MultidimensionalTables: AbstractArrayWrapper, FloatNAArray, simplify_array, wrap_array, naop_plus
 
 facts("NA tests") do
   @fact AbstractArrayWrapper(nalift([1,2,3])) --> AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable(3)])
@@ -30,6 +30,8 @@ facts("NA tests") do
   @fact @nalift([1,NA]) --> wrap_array([Nullable(1), Nullable{Int}()])
   @fact @nalift([1 NA]) --> wrap_array([Nullable(1)  Nullable{Int}()])
   @fact @nalift([1 NA;NA NA]) --> wrap_array([Nullable(1)  Nullable{Int}();Nullable{Int}() Nullable{Int}()])
+  @fact map(x->x, nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
+  @fact map((x,y)->naop_plus(x, y), nalift([1.0,2.0,3.0]), nalift([2.0,3.0,4.0])) --> nalift([3.0,5.0,7.0])
 end
 
 end

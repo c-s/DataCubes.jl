@@ -129,16 +129,23 @@ immutable FloatNAArray{T<:AbstractFloat,N,A} <: AbstractArray{Nullable{T},N}
 end
 
 FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{T,N}) = FloatNAArray{T,N,typeof(data)}(data)
+FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
+  nulldata = convert(T, NaN)
+  projdata = map(x->x.isnull ? nulldata : x.value, data)
+  FloatNAArray(projdata)
+end
 Base.eltype{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Nullable{T}
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::Int) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args::Int...) = (r=getindex(arr.data, args...);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = map(r->isnan(r) ? Nullable{T}() : Nullable(r), getindex(arr.data, args...))
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractArray, args::Int) = throw(ArgumentError("cannot set an array at a point."))
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractArray, args::Int...) = throw(ArgumentError("cannot set an array at some cartesian coordinates."))
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::T, arg::Int) = setindex!(arr.data, if v.isnull;convert(T,NaN) else v.value end, arg)
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::T, args::Int...) = setindex!(arr.data, if v.isnull;convert(T,NaN) else v.value end, args...)
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractArray, args...) = setindex!(arr.data, map(x->if x.isnull;convert(T,NaN) else x.value end, v), args...)
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v, args...) = setindex!(arr.data, if v.isnull;convert(T,NaN) else v.value end, args...)
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, arg::Int) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, arg))
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args::Int...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, args::Int...) = setindex!(arr.data, v, args...)
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, arg::Int) = setindex!(arr.data, v, arg)
+Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, arg::Int) = setindex!(arr.data, v, arg)
+Base.setindex!{T<:AbstractFloat,V<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractArray{V}, args...) = setindex!(arr.data, v, args...)
+Base.setindex!{T<:AbstractFloat,V<:Nullable}(arr::FloatNAArray{T}, v::AbstractArray{V}, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, map(x->if x.isnull;nulldata else x.value end, v), args...))
 
 Base.reshape(arr::FloatNAArray, args::Tuple{Vararg{Int}}) = FloatNAArray(reshape(arr.data, args))
 Base.reshape(arr::FloatNAArray, args::Int...) = FloatNAArray(reshape(arr.data, args...))
@@ -146,8 +153,31 @@ Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs
 
 Base.next{T}(arr::FloatNAArray{T}, state) = ((x,ns)=next(arr.data, state);isnan(x) ? (Nullable{T}(),ns) : (Nullable(x),ns))
 Base.linearindexing{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Base.linearindexing(A)
+Base.sub(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
+Base.slice(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
+Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= FloatNAArray(sub(arr.data, args...))
+Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(slice(arr.data, args...))
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
-@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse)
+@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
+                                      Base.similar, Base.sub, Base.slice)
+Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
+  # not ideal, but what can I do for an empty input arrays?
+  returntype = typeof(f(arr0[1], map(x->x[1], arrs)...))
+  result = similar(arr0.data, returntype)
+  floatnaarray_map_inner!(result, f, arr0, arrs)
+  result
+end
+
+floatnaarray_map_inner!(result::AbstractArray, f::Function, arr0::FloatNAArray, arrs) = begin
+  after_first = false
+  result[1] = f(arr0[1], map(x->x[1], arrs)...)
+  for i in eachindex(result)
+    if after_first
+      result[i] = f(arr0[i], map(x->x[i], arrs)...)
+    end
+    after_first = true
+  end
+end
 
 Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs...))
 Base.sort(arr::FloatNAArray; kwargs...) = FloatNAArray(sort(arr.data; kwargs...))
@@ -169,9 +199,9 @@ simplify_floatarray{T<:AbstractFloat,N}(arr::AbstractArray{Nullable{T},N}) = beg
   else
     FloatNAArray(map(arr) do elem
       if elem.isnull
-        convert(T, NaN)
+        convert(T, NaN)::T
       else
-        elem.value
+        elem.value::T
       end
     end)
   end
@@ -357,6 +387,7 @@ end
 recursive_wrap_array(x) = x
 recursive_wrap_array(x::DictArray) = x
 recursive_wrap_array(x::LabeledArray) = x
+recursive_wrap_array{T,N,A<:FloatNAArray}(x::AbstractArrayWrapper{T,N,A}) = x
 
 type NAElementException <: Exception end
 
@@ -621,6 +652,11 @@ function isna end
 isna{T}(arr::AbstractArray{Nullable{T}}) = map(elem->elem.isnull, arr)
 isna(arr::AbstractArray{Nullable}) = map(elem->elem.isnull, arr)
 isna{T<:AbstractFloat}(arr::FloatNAArray{T}) = map(isnan, arr.data)
+isna{T,N,A}(arr::AbstractArrayWrapper{T,N,A}) = AbstractArrayWrapper(isna(arr.a))
 isna{T<:AbstractFloat}(arr::AbstractArray{Nullable{T}}) = map(elem->elem.isnull || isnan(elem.value), arr)
 isna(x::Nullable) = x.isnull
 isna(arr::AbstractArray, coords...) = isna(arr[coords...])
+
+# this is a little bit out of place...
+(==)(::AbstractArrayWrapper, ::DefaultAxis) = false
+(==)(::DefaultAxis, ::AbstractArrayWrapper) = false
