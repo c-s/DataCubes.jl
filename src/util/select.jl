@@ -113,13 +113,14 @@ end
   result
 end
 
-@generated select_cartesian_elements_helper{T<:AbstractFloat,N,A}(fld::AbstractArrayWrapper{T,N,FloatNAArray{T,N,A}},
+@generated select_cartesian_elements_helper{T<:AbstractFloat,N,A}(fld::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                                 indices::Vector{NTuple{N,Int}}) = quote
   result = Array(T, length(indices))
   #result::T = similar(fld, length(indices))
+  fldunderlying = fld.a.data
   for i in eachindex(result)
     index = indices[i]
-    result[i] = @nref $N fld d->index[d]
+    result[i] = @nref $N fldunderlying d->index[d]
   end
   AbstractArrayWrapper(FloatNAArray(result))
 end
@@ -454,11 +455,7 @@ end
 create_square_array{T,N}(aggvec, t::AbstractArray{T,N}, inds::Vector{NTuple{N,Int}}) = begin
   sz::NTuple{N,Int} = size(t)
   boolvecs::NTuple{N,BitVector} = ntuple(d->falses(sz[d]), N)
-  for ind in inds
-    for (v,i) in zip(boolvecs, ind)
-      @inbounds v[i] = true
-    end
-  end
+  create_square_array_helper1!(boolvecs, inds)
   wherevecs::NTuple{N,Vector{Int}} = ntuple(d->find(boolvecs[d]), N)
   reversemapvec::NTuple{N,Vector{Int}} = map(boolvecs, wherevecs) do boolvec, wherevec
     v = Array(Int, length(boolvec))
@@ -469,14 +466,20 @@ create_square_array{T,N}(aggvec, t::AbstractArray{T,N}, inds::Vector{NTuple{N,In
   result = similar(aggvec, ressize)
 
   setna!(result)
-  newinds = create_square_array_helper(inds, reversemapvec)
+  newinds = create_square_array_helper2(inds, reversemapvec)
   setcartesian!(result, aggvec, newinds)
   # result is the data field of the return value. Now work on the axes part.
   @inbounds newaxes = map((axis, wherevec) -> isa(axis, DefaultAxis) ? DefaultAxis(length(wherevec)) : axis[wherevec], t.axes, wherevecs)
   LabeledArray(result, (newaxes...))
 end
 
-@generated create_square_array_helper{N}(inds::AbstractVector{NTuple{N,Int}}, reversemapvec::NTuple{N,Vector{Int}}) = quote
+@generated create_square_array_helper1!{N}(boolvecs::NTuple{N,BitVector}, inds::Vector{NTuple{N,Int}}) = quote
+  for ind in inds
+    @nexprs $N d->boolvecs[d][ind[d]] = true
+  end
+end
+
+@generated create_square_array_helper2{N}(inds::AbstractVector{NTuple{N,Int}}, reversemapvec::NTuple{N,Vector{Int}}) = quote
   newinds = Array(NTuple{$N,Int}, length(inds))
   for i in eachindex(newinds)
     tpl = @ntuple $N d->reversemapvec[d][inds[i][d]]
@@ -565,8 +568,7 @@ end
     @inbounds indices[index] = tupleind
     index += 1
   end
-  res = foldl((inds, onec) -> onec(t, inds), indices, c)
-  res
+  foldl((inds, onec) -> onec(t, inds), indices, c)
 end
 
 # larray -> indices -> field name -> element.

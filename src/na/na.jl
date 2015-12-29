@@ -189,6 +189,7 @@ Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = Flo
 Base.slice(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
 simplify_floatarray(arr::FloatNAArray) = arr
 simplify_floatarray{T<:AbstractFloat,N,A}(arr::FloatNAArray{T,N,A}) = arr
+simplify_floatarray{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = arr
 simplify_floatarray{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}) =
   AbstractArrayWrapper(simplify_floatarray(arr.a))
 simplify_floatarray{T<:AbstractFloat,N}(arr::AbstractArray{Nullable{T},N}) = begin

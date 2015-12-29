@@ -1,3 +1,5 @@
+# it seems that currently, map operation over Nullable array is not optimzed in julia 0.4.1.
+
 import Base: .+, .-, .*, ./, .\, .//, .==, .<, .!=, .<=, .%, .<<, .>>, .^, +, -, ~, &, |, $, ==, !=
 import DataFrames: DataFrame
 
@@ -44,7 +46,7 @@ Base.getindex(arr::AbstractArrayWrapper, args...) = begin
   end
 end
 Base.map(f, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
-Base.map(f, arr::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arr)...))
+Base.map(f, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
 
 macro absarray_unary_wrapper(ops...)
   targetexpr = map(ops) do op
@@ -79,17 +81,19 @@ macro absarray_binary_wrapper(ops...)
         AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
 
       for nulltype in $LiftToNullableTypes
-        $(esc(op.args[1])){T<:Nullable,U<:nulltype}(x::AbstractArrayWrapper{T}, y::U) = begin
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
-          #returntype = Base.return_types($(esc(op.args[2])), (T, U))[1]
-          #xa = x.a
-          #result = similar(xa, returntype)
-          #absarray_binnary_wrapper_inner1!(result, $(esc(op.args[2])), xa, y)
-          #AbstractArrayWrapper(result)
+        $(esc(op.args[1])){T<:Nullable}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
+          AbstractArrayWrapper(specialized_map(u->$(esc(op.args[2]))(u,y), x.a))
         end
         $(esc(op.args[1])){T<:Nullable}(x::nulltype, y::AbstractArrayWrapper{T}) = begin
           # version 1. what is correct, but could be slower. I am experimenting.
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+          #@show "r is"
+          #@time temp = [$(esc(op.args[2]))(x,v) for v in y.a]
+          #@show typeof(y.a)
+          @time temp = specialized_map(v->$(esc(op.args[2]))(x,v), y.a)
+          @time r = AbstractArrayWrapper(temp)
+          #@time r = AbstractArrayWrapper(fill(Nullable(true), size(y.a)))
+          #@show "r shown"
+          r
         end
         #$(esc(op.args[1])){T<:Nullable,U<:nulltype}(x::U, y::AbstractArrayWrapper{T}) = begin
         #  # version 2. correct as well, but could be faster. Let's experiment.
@@ -104,6 +108,168 @@ macro absarray_binary_wrapper(ops...)
   end
   Expr(:block, targetexpr...)
 end
+
+unary_ops = [(:.+,:+), (:.-,:-), (:~,:~)]
+binary_ops = [(:.+,:+), (:.-,:-), (:.*,:*), (:./,:/), (:~,:~),
+              (:.//,://), (:(.==),:(==),Bool), (:(.!=),:(!=),Bool),
+              (:.<,:<,Bool), (:.<=,:<=,Bool),
+              (:.^,:^), (:.%,:%), (:.<<,:<<), (:.>>,:>>),
+              (:&,:&), (:|,:|), (:$,:$)]
+
+for op in unary_ops
+  @eval $(op[1]){T<:Nullable}(arr::AbstractArrayWrapper{T}) = AbstractArrayWrapper(map(x->x.isnull ? Nullable{T}() : $(op[2])(x), arr.a))
+end
+
+for op in binary_ops
+  if length(op) == 3
+    nulltype = :(Nullable{$(op[3])})
+    nullelem = :(Nullable{$(op[3])}())
+  else
+    nulltype = :(Nullable{promote_type(T,U)})
+    nullelem = :(Nullable{promote_type(T,U)}())
+  end
+  @eval begin
+    $(op[1]){T<:Nullable,U<:Nullable}(arr1::AbstractArrayWrapper{T}, arr2::AbstractArrayWrapper{U}) = begin
+      ne = $nullelem
+      AbstractArrayWrapper(map((u,v) -> (u.isnull || v.isnull) ? ne : Nullable($(op[2])(u.value,v.value)), arr1.a, arr2.a))
+    end
+    $(op[1]){T<:Nullable,U<:Nullable}(arr1::AbstractArrayWrapper{T}, elem2::U) = begin
+      ne = $nullelem
+      if elem2.isnull
+        result = similar(arr1, $nulltype)
+        fill!(result, ne)
+        result
+      else
+        elem2v = elem2.value
+        AbstractArrayWrapper(map(u -> u.isnull ? ne : Nullable($(op[2])(u.value,elem2v)), arr1.a))
+      end
+    end
+    $(op[1]){T<:Nullable,U<:Nullable}(elem1::T, arr2::AbstractArrayWrapper{U}) = begin
+      ne = $nullelem
+      if elem1.isnull
+        result = similar(arr2, $nulltype)
+        fill!(result, ne)
+        result
+      else
+        elem1v = elem1.value
+        AbstractArrayWrapper(map(v -> v.isnull ? ne : Nullable($(op[2])(elem1v,v.value)), arr2.a))
+      end
+    end
+    for nulltype in LiftToNullableTypes
+      $(op[1]){T<:Nullable,U<:nulltype}(arr1::AbstractArrayWrapper{T}, elem2::U) = begin
+        ne = $nullelem
+        AbstractArrayWrapper(map(u -> u.isnull ? ne : Nullable($(op[2])(u.value,elem2)), arr1.a))
+      end
+      $(op[1]){T<:nulltype,U<:Nullable}(elem1::T, arr2::AbstractArrayWrapper{U}) = begin
+        ne = $nullelem
+        AbstractArrayWrapper(map(v -> v.isnull ? ne : Nullable($(op[2])(elem1,v.value)), arr2.a))
+      end
+    end
+  end
+end
+
+#@nullable_unary_wrapper((.+, naop_plus), (.-, naop_minus), (~, naop_not))
+#@nullable_binary_wrapper((.+, naop_plus), (.-, naop_minus), (.*, naop_mul),
+#                         (./, naop_div),
+#                         # could not use .== or .!= over general types such as AbstractString.
+#                         # let's settle down to using == and != instead for now.
+#                         # at least, we don't have to provide a blanket definition (.==)(x,y) = x==y then.
+#                         (.\, naop_invdiv), (.//, naop_frac), (==, naop_eq, Bool), (.<, naop_lt, Bool),
+#                         (!=, naop_noeq, Bool), (.<=, naop_le, Bool), (.%, naop_mod), (.<<, naop_lsft),
+#                         (.>>, naop_rsft), (.^, naop_exp),
+#                         (&, naop_and), (|, naop_or), ($, naop_xor))
+#
+#@absarray_unary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (~, naop_not))
+#@absarray_binary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (.*, naop_mul),
+#                         (./, naop_div),
+#                         (.\, naop_invdiv), (.//, naop_frac), (.==, naop_eq, Bool), (.<, naop_lt, Bool),
+#                         (.!=, naop_noeq, Bool), (.<=, naop_le, Bool), (.%, naop_mod), (.<<, naop_lsft),
+#                         (.>>, naop_rsft), (.^, naop_exp),
+#                         (&, naop_and), (|, naop_or), ($, naop_xor))
+
+specialized_map(f::Function, x::AbstractArrayWrapper) = AbstractArrayWrapper(specialized_map(f, x.a))
+specialized_map(f::Function, xs::AbstractArrayWrapper...) = AbstractArrayWrapper(specialized_map(f, map(x->x.a, xs)...))
+specialized_map(f::Function, xs...) = map(f, xs...)
+#specialized_map{T}(f::Function, x::AbstractArray{T,1}) = typeof(f(x[1]))[f(elem) for elem in x]
+#specialized_map{T,U}(f::Function, x::AbstractArray{T,1}, y::AbstractArray{U,1}) = typeof(f(x[1],y[1]))[f(ex,ey) for (ex,ey) in zip(x,y)]
+
+
+#specialized_map(f::Function, arr) = begin
+#  #if isempty(arr)
+#  #  # there is no other better way...
+#  #  return similar(arr, 0)
+#  #end
+#  @show "this called with size ", size(arr)
+#  returntype = typeof(f(first(arr)))
+#  @show returntype
+#  result = similar(arr, returntype)
+#  @show typeof(result)
+#  @show eltype(result)
+#  @show typeof(arr)
+#  @show eltype(arr)
+#  specialized_map!(f, ntuple(d->0, ndims(arr)), result, arr)
+#  result
+#end
+#@generated specialized_map!{R,T,N}(f::Function, dim::NTuple{N,Int}, result::R, arr::T) = quote
+#  @nloops $N i result begin
+#    temp = f(@nref($N,arr,i))
+#    @inbounds @nref($N,result,i) = true #f(@nref($N,arr,i))
+#  end
+#end
+
+#specialized_map{T<:AbstractFloat}(f::Function, arr::FloatNAArray{T}) = begin
+#  onereturnelem = f(first(arr))
+#  specialized_map_float_typed(f, onereturnelem, arr)
+#end
+#
+#specialized_map_float_typed{R<:AbstractFloat,T<:AbstractFloat}(f::Function, oneelem::Nullable{R}, arr::FloatNAArray{T}) = begin
+#  result = similar(arr, R)
+#  specialized_map_nullfloat_to_nullfloat!(f, result, convert(R,NaN), arr)
+#  FloatNAArray(result)
+#end
+#@generated specialized_map_nullfloat_to_nullfloat!{V,R<:AbstractFloat,T<:AbstractFloat,N,A}(f::Function, result::V, nullelem::Nullable{R}, arr::FloatNAArray{T,N,A}) = quote
+#  @nloops $N i result begin
+#    v = f(@nref($N,arr,i))
+#    @inbounds @nref($N,result,i) = v.isnull ? nullelem : v.value
+#  end
+#end
+#
+#specialized_map_float_typed{R<:AbstractFloat,T<:AbstractFloat}(f::Function, oneelem::R, arr::FloatNAArray{T}) = begin
+#  result = similar(arr, R)
+#  specialized_map_nullfloat_to_float!(f, result, arr)
+#  FloatNAArray(result)
+#end
+#@generated specialized_map_nullfloat_to_float!{V,T<:AbstractFloat,N,A}(f::Function, result::V, arr::FloatNAArray{T,N,A}) = quote
+#  @nloops $N i result begin
+#    v = f(@nref($N,arr,i))
+#    @inbounds @nref($N,result,i) = v
+#  end
+#end
+#
+#specialized_map_float_typed{R,T<:AbstractFloat}(f::Function, oneelem::R, arr::FloatNAArray{T}) = begin
+#  result = similar(arr, Nullable{R})
+#  specialized_map_nullfloat_to_some!(f, result, arr)
+#  FloatNAArray(result)
+#end
+#@generated specialized_map_nullfloat_to_some!{V,T<:AbstractFloat,N,A}(f::Function, result::V, arr::FloatNAArray{T,N,A}) = quote
+#  @nloops $N i result begin
+#    v = f(@nref($N,arr,i))
+#    @inbounds @nref($N,result,i) = Nullable(v)
+#  end
+#end
+#
+#specialized_map_float_typed{R,T<:AbstractFloat}(f::Function, oneelem::Nullable{R}, arr::FloatNAArray{T}) = begin
+#  result = similar(arr, Nullable{R})
+#  specialized_map_nullfloat_to_nullsome!(f, result, arr)
+#  FloatNAArray(result)
+#end
+#@generated specialized_map_nullfloat_to_nullsome!{V,T<:AbstractFloat,N,A}(f::Function, result::V, arr::FloatNAArray{T,N,A}) = quote
+#  @nloops $N i result begin
+#    v = f(@nref($N,arr,i))
+#    @inbounds @nref($N,result,i) = v
+#  end
+#end
+
 
 absarray_binnary_wrapper_inner1!{T<:Nullable,U<:Nullable,V,N}(result::AbstractArray{T,N}, f::Function, xa::AbstractArray{U,N}, y::V) = begin
   for i in eachindex(xa)
@@ -195,12 +361,12 @@ end
   end
 end
 
-(==){T<:AbstractFloat,U<:AbstractFloat,N,A,B}(x::AbstractArrayWrapper{T,N,FloatNAArray{T,N,A}}, y::AbstractArrayWrapper{U,N,FloatNAArray{U,N,B}}) = begin
+(==){T<:AbstractFloat,U<:AbstractFloat,N,A,B}(x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,B}}) = begin
   if x === y
     return true
   else
     for (elx, ely) in zip(x.a.data, y.a.data)
-      if elx != ely
+      if !(isnan(elx) && isnan(ely)) && elx != ely
         return false
       end
     end
