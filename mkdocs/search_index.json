@@ -2,12 +2,12 @@
     "docs": [
         {
             "location": "/",
-            "text": "Welcome to MultidimensionalTables.jl\n\n\nMultidimensionalTables provides a framework to handle multidimensional tables.",
+            "text": "Welcome to MultidimensionalTables.jl\n\n\nMultidimensionalTables provides a framework to handle multidimensional tables.\nPlease visit \nhere\n for source code.",
             "title": "Home"
         },
         {
             "location": "/#welcome-to-multidimensionaltablesjl",
-            "text": "MultidimensionalTables provides a framework to handle multidimensional tables.",
+            "text": "MultidimensionalTables provides a framework to handle multidimensional tables.\nPlease visit  here  for source code.",
             "title": "Welcome to MultidimensionalTables.jl"
         },
         {
