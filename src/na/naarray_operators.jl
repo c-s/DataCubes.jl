@@ -109,24 +109,36 @@ macro absarray_binary_wrapper(ops...)
   Expr(:block, targetexpr...)
 end
 
-unary_ops = [(:.+,:+), (:.-,:-), (:~,:~)]
-binary_ops = [(:.+,:+), (:.-,:-), (:.*,:*), (:./,:/), (:~,:~),
+unary_ops = [(:.+,:+), (:.-,:-), (:~,:~), (:+,:+), (:-,:-)]
+binary_ops = [(:.+,:+), (:.-,:-), (:+,:+), (:-,:-),
+              (:.*,:*), (:./,:/), (:~,:~),
               (:.//,://), (:(.==),:(==),Bool), (:(.!=),:(!=),Bool),
               (:.<,:<,Bool), (:.<=,:<=,Bool),
               (:.^,:^), (:.%,:%), (:.<<,:<<), (:.>>,:>>),
               (:&,:&), (:|,:|), (:$,:$)]
 
 for op in unary_ops
-  @eval $(op[1]){T<:Nullable}(arr::AbstractArrayWrapper{T}) = AbstractArrayWrapper(map(x->x.isnull ? Nullable{T}() : $(op[2])(x), arr.a))
+  @eval begin
+    $(op[1]){T<:Nullable}(arr::AbstractArrayWrapper{T}) = begin
+      nullelem = T()
+      AbstractArrayWrapper(map(x->x.isnull ? nullelem : Nullable($(op[2])(x.value)), arr.a))
+    end
+    $(op[1]){T}(arr::AbstractArrayWrapper{T}) = begin
+      AbstractArrayWrapper(map(x->Nullable($(op[2])(x)), arr.a))
+    end
+  end
 end
+
+promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{promote_type(T,U)}
+promote_nullable_types(::DataType,::DataType) = Any
 
 for op in binary_ops
   if length(op) == 3
     nulltype = :(Nullable{$(op[3])})
     nullelem = :(Nullable{$(op[3])}())
   else
-    nulltype = :(Nullable{promote_type(T,U)})
-    nullelem = :(Nullable{promote_type(T,U)}())
+    nulltype = :(promote_nullable_types(T,U))
+    nullelem = :(promote_nullable_types(T,U)())
   end
   @eval begin
     $(op[1]){T<:Nullable,U<:Nullable}(arr1::AbstractArrayWrapper{T}, arr2::AbstractArrayWrapper{U}) = begin
@@ -155,12 +167,14 @@ for op in binary_ops
         AbstractArrayWrapper(map(v -> v.isnull ? ne : Nullable($(op[2])(elem1v,v.value)), arr2.a))
       end
     end
-    for nulltype in LiftToNullableTypes
-      $(op[1]){T<:Nullable,U<:nulltype}(arr1::AbstractArrayWrapper{T}, elem2::U) = begin
+    for nulltype in $LiftToNullableTypes
+      $(op[1]){T<:Nullable,V<:nulltype}(arr1::AbstractArrayWrapper{T}, elem2::V) = begin
+        U = Nullable{V}
         ne = $nullelem
         AbstractArrayWrapper(map(u -> u.isnull ? ne : Nullable($(op[2])(u.value,elem2)), arr1.a))
       end
-      $(op[1]){T<:nulltype,U<:Nullable}(elem1::T, arr2::AbstractArrayWrapper{U}) = begin
+      $(op[1]){R<:nulltype,U<:Nullable}(elem1::R, arr2::AbstractArrayWrapper{U}) = begin
+        T = Nullable{R}
         ne = $nullelem
         AbstractArrayWrapper(map(v -> v.isnull ? ne : Nullable($(op[2])(elem1,v.value)), arr2.a))
       end
@@ -271,17 +285,17 @@ specialized_map(f::Function, xs...) = map(f, xs...)
 #end
 
 
-absarray_binnary_wrapper_inner1!{T<:Nullable,U<:Nullable,V,N}(result::AbstractArray{T,N}, f::Function, xa::AbstractArray{U,N}, y::V) = begin
-  for i in eachindex(xa)
-    @inbounds result[i] = f(xa[i], y)::T
-  end
-end
-
-absarray_binnary_wrapper_inner2!{T<:Nullable,U,V<:Nullable,N}(result::AbstractArray{T,N}, f::Function, x::U, ya::AbstractArray{V,N}) = begin
-  for i in eachindex(ya)
-    @inbounds result[i] = f(x, ya[i])::T
-  end
-end
+#absarray_binnary_wrapper_inner1!{T<:Nullable,U<:Nullable,V,N}(result::AbstractArray{T,N}, f::Function, xa::AbstractArray{U,N}, y::V) = begin
+#  for i in eachindex(xa)
+#    @inbounds result[i] = f(xa[i], y)::T
+#  end
+#end
+#
+#absarray_binnary_wrapper_inner2!{T<:Nullable,U,V<:Nullable,N}(result::AbstractArray{T,N}, f::Function, x::U, ya::AbstractArray{V,N}) = begin
+#  for i in eachindex(ya)
+#    @inbounds result[i] = f(x, ya[i])::T
+#  end
+#end
 
 macro nullable_unary_wrapper(ops...)
   targetexpr = map(ops) do op
@@ -336,13 +350,13 @@ end
                          (.>>, naop_rsft), (.^, naop_exp),
                          (&, naop_and), (|, naop_or), ($, naop_xor))
 
-@absarray_unary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (~, naop_not))
-@absarray_binary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (.*, naop_mul),
-                         (./, naop_div),
-                         (.\, naop_invdiv), (.//, naop_frac), (.==, naop_eq, Bool), (.<, naop_lt, Bool),
-                         (.!=, naop_noeq, Bool), (.<=, naop_le, Bool), (.%, naop_mod), (.<<, naop_lsft),
-                         (.>>, naop_rsft), (.^, naop_exp),
-                         (&, naop_and), (|, naop_or), ($, naop_xor))
+#@absarray_unary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (~, naop_not))
+#@absarray_binary_wrapper((+, naop_plus), (-, naop_minus), (.+, naop_plus), (.-, naop_minus), (.*, naop_mul),
+#                         (./, naop_div),
+#                         (.\, naop_invdiv), (.//, naop_frac), (.==, naop_eq, Bool), (.<, naop_lt, Bool),
+#                         (.!=, naop_noeq, Bool), (.<=, naop_le, Bool), (.%, naop_mod), (.<<, naop_lsft),
+#                         (.>>, naop_rsft), (.^, naop_exp),
+#                         (&, naop_and), (|, naop_or), ($, naop_xor))
 
 (==){T<:Nullable,U<:Nullable}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
   if x === y

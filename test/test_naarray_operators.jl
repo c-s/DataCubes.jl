@@ -21,6 +21,8 @@ facts("NAArrayOperators tests") do
     @fact @nalift([1.0,2.0,NA]) .- 1 --> @nalift([0.0,1.0,NA])
     @fact 1 .- @nalift([1.0,2.0,NA]) --> @nalift([0.0,-1.0,NA])
     @fact @nalift([1.0,2.0,NA]) .* @nalift([NA,2.0,3.0]) --> @nalift([NA,4.0,NA])
+    @fact -@nalift([1.0,2.0,NA]) --> @nalift([-1.0,-2.0,NA])
+    @fact ~@nalift([1,2,NA]) --> @nalift([~1,~2,NA])
   end
 end
 
