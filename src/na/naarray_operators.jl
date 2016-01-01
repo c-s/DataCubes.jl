@@ -81,6 +81,7 @@ preset_nullable_type{T,U}(::Type{T},::Type{U}, tpe) = tpe
 
 const naop_suffix = "!"
 
+# not used anymore.
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     nullelem = if length(op.args) == 2
@@ -92,6 +93,7 @@ macro absarray_binary_wrapper(ops...)
     end
     quote
       $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
+        @assert(size(x) == size(y))
         #AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
         result = similar(x.a, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result, x, y)
@@ -242,6 +244,7 @@ map_typed!{T,U,N,A,B}(f::Function,
                       result::AbstractArrayWrapper{T,N,A},
                       arr1::AbstractArrayWrapper{U,N,B},
                       arr2::AbstractArrayWrapper{U,N,B}) = begin
+  @assert(size(arr1) == size(arr2))
   resulta = result.a
   arr1a = arr1.a
   arr2a = arr2.a

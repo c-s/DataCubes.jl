@@ -107,8 +107,8 @@ end
   result = Array(T, length(indices))
   #result::T = similar(fld, length(indices))
   for i in eachindex(result)
-    index = indices[i]
-    result[i] = @nref $N fld d->index[d]
+    @inbounds index = indices[i]
+    @inbounds result[i] = @nref $N fld d->index[d]
   end
   result
 end
@@ -119,8 +119,8 @@ end
   #result::T = similar(fld, length(indices))
   fldunderlying = fld.a.data
   for i in eachindex(result)
-    index = indices[i]
-    result[i] = @nref $N fldunderlying d->index[d]
+    @inbounds index = indices[i]
+    @inbounds result[i] = @nref $N fldunderlying d->index[d]
   end
   AbstractArrayWrapper(FloatNAArray(result))
 end
@@ -507,6 +507,10 @@ setcartesian_inner!{T,N}(inds::AbstractArray{NTuple{N,Int},1}, onefield::Abstrac
   for (ind,onev) in zip(inds,v)
     @inbounds onefield[ind...] = onev
   end
+  # this hardly gains any.
+  #for i in eachindex(inds)
+  #  @inbounds onefield[inds[i]...] = v[i]
+  #end
 end
 
 # A view of an array, to be used in selectfield below.

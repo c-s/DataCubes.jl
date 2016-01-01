@@ -160,7 +160,7 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
 @delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
                                       Base.sub, Base.slice)
-Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = Array(T, dims)
+Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   # not ideal, but what can I do for an empty input arrays?
@@ -601,7 +601,16 @@ julia> ignabool(@nalift([true true NA;false NA true]))
 """
 function ignabool end
 
-ignabool(arr::AbstractArray{Nullable{Bool}}) = map(ignabool, arr)
+ignabool(arr::AbstractArrayWrapper{Nullable{Bool}}) = AbstractArrayWrapper(ignabool(arr.a))
+# this turns to be definitely faster than `map`.
+ignabool(arr::AbstractArray{Nullable{Bool}}) = begin
+  result = similar(arr, Bool)
+  for i in eachindex(arr)
+    @inbounds result[i] = ignabool(arr[i])
+  end
+  result
+end
+#ignabool(arr::AbstractArray{Nullable{Bool}}) = map(ignabool, arr)
 ignabool(elem::Nullable{Bool}) = !elem.isnull && elem.value
 ignabool(arr::AbstractArray{Bool}) = arr
 ignabool(elem::Bool) = elem
