@@ -68,41 +68,186 @@ const LiftToNullableTypes = [Bool,
                              Char,
                              Symbol]
 
+promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{promote_type(T,U)}
+promote_nullable_types{T,U}(::Type{T},::Type{Nullable{U}}) = Nullable{promote_type(T,U)}
+promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{U}) = Nullable{promote_type(T,U)}
+promote_nullable_types{T,U}(::Type{T},::Type{U}) = promote_type(T,U)
+#promote_nullable_types(::DataType,::DataType) = Nullable{Any}
+
+preset_nullable_type{T,U}(::Type{Nullable{T}},::Type{Nullable{U}}, tpe) = Nullable{tpe}
+preset_nullable_type{T,U}(::Type{T},::Type{Nullable{U}}, tpe) = Nullable{tpe}
+preset_nullable_type{T,U}(::Type{Nullable{T}},::Type{U}, tpe) = Nullable{tpe}
+preset_nullable_type{T,U}(::Type{T},::Type{U}, tpe) = tpe
+
+const naop_suffix = "!"
+
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
+    nullelem = if length(op.args) == 2
+      #Expr(:curly, :Nullable, Expr(:call, :promote_type, :T, :U))
+      :(promote_nullable_types(T,U))
+    elseif length(op.args) == 3
+      #Expr(:curly, :Nullable, op.args[3])
+      :(preset_nullable_type(T,U,$(op.args[3])))
+    end
     quote
-      $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{T},
-                                                  y::AbstractArrayWrapper{U}) =
-        AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
+      $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
+        #AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
+        result = similar(x.a, $nullelem)
+        $(symbol(op.args[1],naop_suffix))(result, x, y)
+        AbstractArrayWrapper(result)
+      end
+      $(symbol(op.args[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
+        xa = x.a
+        ya = y.a
+        for i in eachindex(xa)
+          @inbounds result[i] = $(esc(op.args[2]))(xa[i],ya[i])
+        end
+      end
 
-      $(esc(op.args[1])){T}(x::AbstractArrayWrapper{T}, y::Nullable) =
-        AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
-      $(esc(op.args[1])){T}(x::Nullable, y::AbstractArrayWrapper{T}) =
-        AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+      $(esc(op.args[1])){T,U<:Nullable}(x::AbstractArrayWrapper{T}, y::U) = begin
+        result = similar(x.a, $nullelem)
+        $(symbol(op.args[1],naop_suffix))(result, x, y)
+        AbstractArrayWrapper(result)
+      end
+      $(symbol(op.args[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::U) = begin
+        xa = x.a
+        for i in eachindex(xa)
+          @inbounds result[i] = $(esc(op.args[2]))(xa[i],y)
+        end
+      end
+
+      $(esc(op.args[1])){T<:Nullable,U}(x::T, y::AbstractArrayWrapper{U}) = begin
+        #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+        result = similar(y.a, $nullelem)
+        $(symbol(op.args[1],naop_suffix))(result, x, y)
+        AbstractArrayWrapper(result)
+      end
+      $(symbol(op.args[1],naop_suffix)){T,U}(result, x::T, y::AbstractArrayWrapper{U}) = begin
+        ya = y.a
+        for i in eachindex(ya)
+          @inbounds result[i] = $(esc(op.args[2]))(x,ya[i])
+        end
+      end
 
       for nulltype in $LiftToNullableTypes
         $(esc(op.args[1]))(x::AbstractArrayWrapper{nulltype}, y::nulltype) = begin
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          T = eltype(x)
+          U = typeof(y)
+          result = similar(x.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
         end
+        $(symbol(op.args[1],naop_suffix))(result, x::AbstractArrayWrapper{nulltype}, y::nulltype) = begin
+          xa = x.a
+          for i in eachindex(xa)
+            @inbounds result[i] = $(esc(op.args[2]))(xa[i],y)
+          end
+        end
+
         $(esc(op.args[1]))(x::nulltype, y::AbstractArrayWrapper{nulltype}) = begin
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+          T = typeof(x)
+          U = eltype(y)
+          result = similar(y.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
         end
+        $(symbol(op.args[1],naop_suffix))(result, x::nulltype, y::AbstractArrayWrapper{nulltype}) = begin
+          ya = y.a
+          for i in eachindex(ya)
+            @inbounds result[i] = $(esc(op.args[2]))(x,ya[i])
+          end
+        end
+
         $(esc(op.args[1])){T<:nulltype}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          U = typeof(y)
+          result = similar(x.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
         end
-        $(esc(op.args[1])){T<:nulltype}(x::nulltype, y::AbstractArrayWrapper{T}) = begin
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+        $(symbol(op.args[1],naop_suffix)){T<:nulltype}(result, x::AbstractArrayWrapper{T}, y::nulltype) = begin
+          xa = x.a
+          for i in eachindex(xa)
+            @inbounds result[i] = $(esc(op.args[2]))(xa[i],y)
+          end
         end
+
+        $(esc(op.args[1])){U<:nulltype}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
+          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+          T = typeof(x)
+          result = similar(y.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
+        end
+        $(symbol(op.args[1],naop_suffix)){U<:nulltype}(result, x::nulltype, y::AbstractArrayWrapper{U}) = begin
+          ya = y.a
+          for i in eachindex(ya)
+            @inbounds result[i] = $(esc(op.args[2]))(x,ya[i])
+          end
+        end
+
         $(esc(op.args[1])){T<:Nullable}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-          AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
+          U = typeof(y)
+          result = similar(x.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
         end
-        $(esc(op.args[1])){T<:Nullable}(x::nulltype, y::AbstractArrayWrapper{T}) = begin
-          AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+        $(symbol(op.args[1],naop_suffix)){T<:Nullable}(result, x::AbstractArrayWrapper{T}, y::nulltype) = begin
+          xa = x.a
+          for i in eachindex(xa)
+            @inbounds result[i] = $(esc(op.args[2]))(xa[i],y)
+          end
+        end
+
+        $(esc(op.args[1])){U<:Nullable}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
+          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
+          T = typeof(x)
+          #map_typed($nullelem, v->$(esc(op.args[2]))(x,v), y)
+          result = similar(y.a, $nullelem)
+          $(symbol(op.args[1],naop_suffix))(result, x, y)
+          AbstractArrayWrapper(result)
+        end
+        $(symbol(op.args[1],naop_suffix)){T<:Nullable}(result, x::nulltype, y::AbstractArrayWrapper{T}) = begin
+          ya = y.a
+          for i in eachindex(ya)
+            @inbounds result[i] = $(esc(op.args[2]))(x,ya[i])
+          end
         end
       end
     end
   end
   Expr(:block, targetexpr...)
+end
+
+map_typed(resulttype::DataType, f::Function, arr1::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) = begin
+  result = similar(arr1, resulttype)
+  map_typed!(f, result, arr1, arrs...)
+  result
+end
+
+map_typed!{T,U,N,A,B}(f::Function, result::AbstractArrayWrapper{T,N,A}, arr::AbstractArrayWrapper{U,N,B}) = begin
+  resulta = result.a
+  arra = arr.a
+  for i in eachindex(arra)
+    @inbounds resulta[i] = f(arra[i])
+  end
+end
+
+# assuming that arr1 and arr2 have the same linear indexing.
+map_typed!{T,U,N,A,B}(f::Function,
+                      result::AbstractArrayWrapper{T,N,A},
+                      arr1::AbstractArrayWrapper{U,N,B},
+                      arr2::AbstractArrayWrapper{U,N,B}) = begin
+  resulta = result.a
+  arr1a = arr1.a
+  arr2a = arr2.a
+  for i in eachindex(arra)
+    @inbounds resulta[i] = f(arr1a[i],arr2a[i])
+  end
 end
 
 macro nullable_unary_wrapper(ops...)

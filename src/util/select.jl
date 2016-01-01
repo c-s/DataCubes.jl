@@ -519,6 +519,7 @@ end
 
 # a syb array view of an array to select a portion of a `LabeledArray` during `selct` or `update`.
 SubArrayView{T,N}(data::AbstractArray{T,N}, indices::AbstractVector{NTuple{N,Int}}) = SubArrayView{T,N,typeof(data),typeof(indices)}(data, indices)
+SubArrayView{T,N,A}(data::AbstractArrayWrapper{T,N,A}, indices::AbstractVector{NTuple{N,Int}}) = SubArrayView{T,N,A,typeof(indices)}(data.a, indices)
 Base.getindex{T,N,A,I}(arr::SubArrayView{T,N,A,I}, arg::Int) = arr.data[arr.indices[arg]...]
 # Let's make the array immutable at this stage.
 #Base.setindex!{T,N}(arr::SubArrayView{T,N}, v::T, arg::Int) = setindex!(arr.data, v, arr.indices[arg]...)

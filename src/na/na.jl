@@ -159,7 +159,9 @@ Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}
 Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(slice(arr.data, args...))
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
 @delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
-                                      Base.similar, Base.sub, Base.slice)
+                                      Base.sub, Base.slice)
+Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = Array(T, dims)
+Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   # not ideal, but what can I do for an empty input arrays?
   returntype = typeof(f(arr0[1], map(x->x[1], arrs)...))

@@ -24,6 +24,7 @@ facts("NAArrayOperators tests") do
     @fact -@nalift([1.0,2.0,NA]) --> @nalift([-1.0,-2.0,NA])
     @fact ~@nalift([1,2,NA]) --> @nalift([~1,~2,NA])
     @fact AbstractArrayWrapper([1,2,3]) .> 1 --> AbstractArrayWrapper([false,true,true])
+    @fact AbstractArrayWrapper([1,2,3]) .> 1.5 --> AbstractArrayWrapper([false,true,true])
     @fact 1 .< AbstractArrayWrapper([1,2,3]) --> AbstractArrayWrapper([false,true,true])
     @fact AbstractArrayWrapper([1,2,3]) .> Nullable(1) --> nalift([false,true,true])
     @fact AbstractArrayWrapper([1,2,3]) + 1.0 --> AbstractArrayWrapper([2.0,3.0,4.0])
@@ -33,6 +34,11 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([3,2,1]) .< nalift([1,2,3]) --> nalift([false,false,true])
     @fact @nalift([3,NA,1]) .< AbstractArrayWrapper([1.0,2.0,3.0]) --> @nalift([false,NA,true])
     @fact nalift([3,2,1]) .< nalift([1.0,2.0,3.0]) --> nalift([false,false,true])
+    @fact nalift([3,2,1]) + nalift([1.0,2.0,3.0]) --> nalift([4.0,4.0,4.0])
+    @fact nalift([3,2,1]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> nalift([4.0,4.0,4.0])
+    @fact AbstractArrayWrapper([3,2,1]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> AbstractArrayWrapper([4.0,4.0,4.0])
+    @fact AbstractArrayWrapper([3,2,1]) + 5.0 --> AbstractArrayWrapper([8.0,7.0,6.0])
+    @fact AbstractArrayWrapper([3,2,1]) + Nullable(5.0) --> nalift([8.0,7.0,6.0])
   end
 end
 
