@@ -39,6 +39,37 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([3,2,1]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> AbstractArrayWrapper([4.0,4.0,4.0])
     @fact AbstractArrayWrapper([3,2,1]) + 5.0 --> AbstractArrayWrapper([8.0,7.0,6.0])
     @fact AbstractArrayWrapper([3,2,1]) + Nullable(5.0) --> nalift([8.0,7.0,6.0])
+    @fact -AbstractArrayWrapper([3,2,1]) --> AbstractArrayWrapper([-3,-2,-1])
+    @fact -AbstractArrayWrapper([3.0,2.0,1.0]) --> AbstractArrayWrapper([-3.0,-2.0,-1.0])
+    @fact nalift([1.0,2.0,3.0]) + nalift([1,2,3]) --> nalift([2.0,4.0,6.0])
+    @fact nalift([1.0,2.0,3.0]) + nalift([1.0,2.0,3.0]) --> nalift([2.0,4.0,6.0])
+    @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + nalift([1.0,2.0,3.0]) --> nalift([2.0,4.0,6.0])
+    @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + nalift([1,2,3]) --> nalift([2.0,4.0,6.0])
+    @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + AbstractArrayWrapper([1,2,3]) --> nalift([2.0,4.0,6.0])
+    @fact nalift([1.0,2.0,3.0]) + 1.0 --> nalift([2.0,3.0,4.0])
+    @fact 1.0 + nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0])
+    @fact nalift([1.0,2.0,3.0]) + 1 --> nalift([2.0,3.0,4.0])
+    @fact 1 + nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0])
+    @fact 1.0 + nalift([1,2,3]) --> nalift([2.0,3.0,4.0])
+    @fact nalift([1,2,3]) + 1.0 --> nalift([2.0,3.0,4.0])
+    @fact nalift([1.0,2.0,3.0]) + Nullable(1.0) --> nalift([2.0,3.0,4.0])
+    @fact Nullable(1.0) + nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0])
+    @fact nalift([1.0,2.0,3.0]) + Nullable(1) --> nalift([2.0,3.0,4.0])
+    @fact Nullable(1) + nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0])
+    @fact Nullable(1.0) + nalift([1,2,3]) --> nalift([2.0,3.0,4.0])
+    @fact nalift([1,2,3]) + Nullable(1.0) --> nalift([2.0,3.0,4.0])
+    @fact nalift([1.0,2.0,3.0]) * 1.0 --> nalift([2.0,3.0,4.0]) - 1
+    @fact 1.0 * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1.0,2.0,3.0]) * 1 --> nalift([2.0,3.0,4.0]) - 1
+    @fact 1 * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact 1.0 * nalift([1,2,3]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1,2,3]) * 1.0 --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1.0,2.0,3.0]) * Nullable(1.0) --> nalift([2.0,3.0,4.0]) - 1
+    @fact Nullable(1.0) * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1.0,2.0,3.0]) * Nullable(1) --> nalift([2.0,3.0,4.0]) - 1
+    @fact Nullable(1) * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact Nullable(1.0) * nalift([1,2,3]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1,2,3]) * Nullable(1.0) --> nalift([2.0,3.0,4.0]) - 1
   end
 end
 

@@ -447,16 +447,13 @@ Y |4 u |5 v |6 w
 """
 function setna! end
 
-setna!{T}(arr::AbstractArray{Nullable{T}}) = begin
-  fill!(arr, Nullable{T}())
-  arr
-end
-setna!(arr::AbstractArray{Nullable}) = begin
-  fill!(arr, Nullable{Any}())
-  arr
-end
+setna!{T}(arr::AbstractArray{Nullable{T}}) = fill!(arr, Nullable{T}())
+setna!(arr::AbstractArray{Nullable}) = fill!(arr, Nullable{Any}())
 setna!{T}(arr::AbstractArray{Nullable{T}}, args...) = setindex!(arr, Nullable{T}(), args...)
 setna!(arr::AbstractArray{Nullable}, args...) = setindex!(arr, Nullable{Any}(), args...)
+setna!{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = setindex!(arr.data, convert(T,NaN), args...)
+setna!{T<:AbstractFloat}(arr::FloatNAArray{T}) = fill!(arr.data, convert(T,NaN))
+setna!(arr::AbstractArrayWrapper, args...) = setna!(arr.a, args...)
 setna!(arr::DictArray, args...) = begin
   map(tgt -> setna!(tgt, args...), arr.data.values)
   arr

@@ -168,11 +168,17 @@ Base.sum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
     end
   end
   Nullable(acc)
-  #acc = zero(T)
-  #for x in dropnaiter(arr)
-  #  acc += x::T
-  #end
-  #Nullable(acc)
+end
+Base.sum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+  @debug_stmt @show "sum float"
+  arrdata = arr.a.data
+  acc = zero(T)
+  for x in arrdata
+    if !isnan(x)
+      acc += x
+    end
+  end
+  Nullable(acc)
 end
 
 Base.prod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
@@ -182,13 +188,38 @@ Base.prod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
       acc *= x.value
     end
   end
-  #for x in dropnaiter(arr)
-  #  acc *= x::T
-  #end
+  Nullable(acc)
+end
+Base.prod{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+  @debug_stmt @show "prod float"
+  arrdata = arr.a.data
+  acc = one(T)
+  for x in arrdata
+    if !isnan(x)
+      acc *= x
+    end
+  end
   Nullable(acc)
 end
 
 Base.mean{T}(arr::AbstractArrayWrapper{Nullable{T}}) = (iter=dropnaiter(arr);isempty(iter) ? Nullable{T}() : Nullable(mean(iter)))
+Base.mean{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+  @debug_stmt @show "mean float"
+  acc = zero(T)
+  count = 0
+  for elem in arr.a.data
+    if !isnan(elem)
+      count += 1
+      acc += elem
+    end
+  end
+  if count == 0
+    Nullable{T}()
+  else
+    Nullable(acc / convert(T,count))
+  end
+end
+
 Base.var{T}(arr::AbstractArrayWrapper{Nullable{T}}; corrected::Bool=true, mean=nothing) = begin
   iter = dropnaiter(arr)
   isempty(iter) ? Nullable{T}() : Nullable(var(iter; corrected=corrected, mean=mean))
@@ -249,25 +280,45 @@ Base.minimum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(minimum(r))
 end
+Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "minimum float";r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.maximum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(maximum(r))
 end
+Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "maximum float";r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.median{T}(arr::AbstractArrayWrapper{Nullable{T}}) = median_helper(typeof(one(T) / 2), arr)
 median_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}) = begin
-  r=type_array(collect(dropnaiter(arr)))
+  r=collect_nonnas(arr)
   isempty(r) ? Nullable{DIVTYPE}() : Nullable(median(r))
 end
+
+collect_nonnas{T}(arr::AbstractArrayWrapper{Nullable{T}}) = type_array(collect(dropnaiter(arr)))
+collect_nonnas{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+  @debug_stmt @show "collect_nonnas float"
+  nonnas = similar(arr.a.data, T)
+  count = 0
+  for elem in arr.a.data
+    if !isnan(elem)
+      count += 1
+      nonnas[count] = elem
+    end
+  end
+  resize!(nonnas, count)
+  nonnas
+end
+
 Base.middle{T}(arr::AbstractArrayWrapper{Nullable{T}}) = middle_helper(typeof(one(T) / 2), arr)
 middle_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{DIVTYPE}() : Nullable(middle(r))
 end
+Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "middle float";r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+
 Base.quantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = quantile_helper(typeof(one(T) / 2), arr, q)
 quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = begin
-  r=type_array(collect(dropnaiter(arr)))
+  r=collect_nonnas(arr)
   if isempty(r)
     Nullable{DIVTYPE}[]
   else
@@ -276,7 +327,7 @@ quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T
 end
 Base.quantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::Number) = quantile_helper(typeof(one(T) / 2), arr, q)
 quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}, q::Number) = begin
-  r=type_array(collect(dropnaiter(arr)))
+  r=collect_nonnas(arr)
   if isempty(r)
     Nullable{DIVTYPE}()
   else
@@ -1187,6 +1238,13 @@ mquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::Number, dims::Integer...
   result
 end
 
+moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::AbstractArrayWrapper{Nullable{U}}) = moving_update!(f, window, tgt.a, src.a)
+moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::AbstractArray{Nullable{U}}) = moving_update!(f, window, tgt.a, src)
+moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::FloatNAArray{U}) = moving_update!(f, window, tgt.a, src)
+moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArray{Nullable{T}}, src::AbstractArrayWrapper{Nullable{U}}) = moving_update!(f, window, tgt, src.a)
+moving_update!{T,U}(f::Function, window::Integer, tgt::FloatNAArray{T}, src::AbstractArrayWrapper{Nullable{U}}) = moving_update!(f, window, tgt, src.a)
+
+# generic case.
 function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::AbstractArray{Nullable{T}},
@@ -1202,6 +1260,98 @@ function moving_update!{T,U}(f::Function,
       if !ringbuf[j].isnull
         index += 1
         projbuf[index] = ringbuf[j].value
+      end
+    end
+    tgt[i] = index==0 ? Nullable{T}() : Nullable(f(slice(projbuf, 1:index)))
+
+    if ringbuf_index == window
+      ringbuf_index = 1
+    else
+      ringbuf_index += 1
+    end
+    eff_size = min(window, eff_size+1)
+  end
+end
+
+# tgt, src are float arrays.
+function moving_update!{T,U}(f::Function,
+                             window::Integer,
+                             tgt::FloatNAArray{T},
+                             src::FloatNAArray{U})
+  ringbuf = Array(U, window)
+  projbuf = Array(U, window)
+  ringbuf_index = 1
+  eff_size = 1
+  srcdata = src.data
+  na = convert(T, NaN)
+  for i in eachindex(srcdata)
+    ringbuf[ringbuf_index] = srcdata[i]
+    index = 0
+    for j in 1:eff_size
+      if !isnan(ringbuf[j])
+        index += 1
+        projbuf[index] = ringbuf[j]
+      end
+    end
+    tgt[i] = index==0 ? na : f(slice(projbuf, 1:index))
+
+    if ringbuf_index == window
+      ringbuf_index = 1
+    else
+      ringbuf_index += 1
+    end
+    eff_size = min(window, eff_size+1)
+  end
+end
+
+# tgt is a float array.
+function moving_update!{T,U}(f::Function,
+                             window::Integer,
+                             tgt::FloatNAArray{T},
+                             src::AbstractArray{Nullable{U}})
+  @debug_stmt @show "moving update no float -> float"
+  ringbuf = Array(Nullable{U}, window)
+  projbuf = Array(U, window)
+  ringbuf_index = 1
+  eff_size = 1
+  na = convert(T, NaN)
+  for i in eachindex(src)
+    ringbuf[ringbuf_index] = src[i]
+    index = 0
+    for j in 1:eff_size
+      if !ringbuf[j].isnull
+        index += 1
+        projbuf[index] = ringbuf[j].value
+      end
+    end
+    tgt[i] = index==0 ? na : f(slice(projbuf, 1:index))
+
+    if ringbuf_index == window
+      ringbuf_index = 1
+    else
+      ringbuf_index += 1
+    end
+    eff_size = min(window, eff_size+1)
+  end
+end
+
+# src is a float array.
+function moving_update!{T,U}(f::Function,
+                             window::Integer,
+                             tgt::AbstractArray{Nullable{T}},
+                             src::FloatNAArray{U})
+  ringbuf = Array(U, window)
+  projbuf = Array(U, window)
+  ringbuf_index = 1
+  eff_size = 1
+  srcdata = src.data
+  for i in eachindex(srcdata)
+    ringbuf[ringbuf_index] = srcdata[i]
+    index = 0
+    for j in 1:eff_size
+      if !isnan(ringbuf[j])
+        index += 1
+        projbuf[index] = ringbuf[j]
       end
     end
     tgt[i] = index==0 ? Nullable{T}() : Nullable(f(slice(projbuf, 1:index)))
@@ -1430,6 +1580,26 @@ function shift end
   result
 end
 
+@generated shift{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, offsets::NTuple{N,Int};isbound=false) = quote
+  @debug_stmt @show "shift float"
+  arradata = arr.a.data
+  result = similar(arradata)
+  sizearr = size(arradata)
+  if isbound
+    @nloops $N i arradata d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
+      @nref($N,result,i) = @nref($N,arradata,j)
+    end
+  else
+    @nloops $N i arr d->j_d=i_d+offsets[d] begin
+      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
+        @nref($N,arradata,j)
+      else
+        Nullable{T}()
+      end
+    end
+  end
+  AbstractArrayWrapper(FloatNAArray(result))
+end
 shift{T}(arr::AbstractArrayWrapper{Nullable{T}}, offsets::Integer...;isbound=false) = begin
   lenoffsets = length(offsets)
   shift(arr, ntuple(d->lenoffsets<d ? 0:offsets[d], ndims(arr));isbound=isbound)
