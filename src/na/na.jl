@@ -173,7 +173,7 @@ end
 floatnaarray_map_inner!(result::AbstractArray, f::Function, arr0::FloatNAArray, arrs) = begin
   after_first = false
   result[1] = f(arr0[1], map(x->x[1], arrs)...)
-  for i in eachindex(result)
+  for i in eachindex(arr0,arrs...)
     if after_first
       result[i] = f(arr0[i], map(x->x[i], arrs)...)
     end
@@ -610,7 +610,7 @@ ignabool(arr::AbstractArray{Nullable{Bool}}) = begin
   end
   result
 end
-#ignabool(arr::AbstractArray{Nullable{Bool}}) = map(ignabool, arr)
+#ignabool(arr::AbstractArray{Nullable{Bool}}) = map_typed(ignabool, Bool, arr)
 ignabool(elem::Nullable{Bool}) = !elem.isnull && elem.value
 ignabool(arr::AbstractArray{Bool}) = arr
 ignabool(elem::Bool) = elem

@@ -102,7 +102,7 @@ macro absarray_binary_wrapper(ops...)
       $(symbol(op.args[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
         xa = x.a
         ya = y.a
-        for i in eachindex(xa)
+        for i in eachindex(xa,ya)
           @inbounds result[i] = $(esc(op.args[2]))(xa[i],ya[i])
         end
       end
@@ -225,33 +225,32 @@ macro absarray_binary_wrapper(ops...)
   Expr(:block, targetexpr...)
 end
 
-map_typed(resulttype::DataType, f::Function, arr1::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) = begin
-  result = similar(arr1, resulttype)
-  map_typed!(f, result, arr1, arrs...)
-  result
-end
-
-map_typed!{T,U,N,A,B}(f::Function, result::AbstractArrayWrapper{T,N,A}, arr::AbstractArrayWrapper{U,N,B}) = begin
-  resulta = result.a
-  arra = arr.a
-  for i in eachindex(arra)
-    @inbounds resulta[i] = f(arra[i])
-  end
-end
-
-# assuming that arr1 and arr2 have the same linear indexing.
-map_typed!{T,U,N,A,B}(f::Function,
-                      result::AbstractArrayWrapper{T,N,A},
-                      arr1::AbstractArrayWrapper{U,N,B},
-                      arr2::AbstractArrayWrapper{U,N,B}) = begin
-  @assert(size(arr1) == size(arr2))
-  resulta = result.a
-  arr1a = arr1.a
-  arr2a = arr2.a
-  for i in eachindex(arra)
-    @inbounds resulta[i] = f(arr1a[i],arr2a[i])
-  end
-end
+#map_typed(resulttype::DataType, f::Function, arr1::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) = begin
+#  result = similar(arr1, resulttype)
+#  map_typed!(f, result, arr1, arrs...)
+#  result
+#end
+#
+#map_typed!{T,U,N,A,B}(f::Function, result::AbstractArrayWrapper{T,N,A}, arr::AbstractArrayWrapper{U,N,B}) = begin
+#  resulta = result.a
+#  arra = arr.a
+#  for i in eachindex(arra)
+#    @inbounds resulta[i] = f(arra[i])
+#  end
+#end
+#
+#map_typed!{T,U,N,A,B}(f::Function,
+#                      result::AbstractArrayWrapper{T,N,A},
+#                      arr1::AbstractArrayWrapper{U,N,B},
+#                      arr2::AbstractArrayWrapper{U,N,B}) = begin
+#  @assert(size(arr1) == size(arr2))
+#  resulta = result.a
+#  arr1a = arr1.a
+#  arr2a = arr2.a
+#  for i in eachindex(arr1a,arr2a)
+#    @inbounds resulta[i] = f(arr1a[i],arr2a[i])
+#  end
+#end
 
 macro nullable_unary_wrapper(ops...)
   targetexpr = map(ops) do op
@@ -487,3 +486,39 @@ end
 # TODO make sure this blanket definition is okay.
 # remvoed in favor of using == instead of .== for naop_eq (and similarly for naop_noeq).
 # (.==)(x, y) = x == y
+
+
+map_typed{T}(f::Function, ::Type{T}, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map_typed(f, T, arr.a))
+map_typed{T}(f::Function, ::Type{T}, arr1::AbstractArrayWrapper, arr2::AbstractArrayWrapper) =
+  AbstractArrayWrapper(map_typed(f, T, arr1.a, arr2.a))
+map_typed{T}(f::Function, ::Type{T}, arr1::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) =
+  AbstractArrayWrapper(map_typed(f, T, arr1.a, map(x->x.a, arrs)...))
+
+map_typed{T}(f::Function, ::Type{T}, arr::AbstractArray) = begin
+  result = similar(arr, T)
+  for i in eachindex(arr)
+    @inbounds result[i]::T = f(arr[i])::T
+  end
+  result
+end
+
+map_typed{T}(f::Function, ::Type{T}, arr1::AbstractArray, arr2::AbstractArray) = begin
+  @assert(size(arr1) == size(arr2))
+  result = similar(arr1, T)
+  for i in eachindex(arr1,arr2)
+    @inbounds result[i]::T = f(arr1[i], arr2[i])::T
+  end
+  result
+end
+
+map_typed{T}(f::Function, ::Type{T}, arr1::AbstractArray, arrs::AbstractArray...) = begin
+  sizearr1 = size(arr1)
+  for arr in arrs
+    @assert(sizearr1 == size(arr))
+  end
+  result = similar(arr1, T)
+  for i in eachindex(arr1,arrs...)
+    @inbounds result[i]::T = f(arr1[i], map(x->x[i],arrs)...)::T
+  end
+  result
+end
