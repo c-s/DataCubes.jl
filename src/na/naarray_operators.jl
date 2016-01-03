@@ -62,9 +62,9 @@ macro absarray_unary_wrapper(ops...)
     quote
       $(esc(op.args[1]))(x::AbstractArrayWrapper) = begin
         # AbstractArrayWrapper(map($(esc(op.args[2])), x.a))
-        result = similar(x.a)
-        $(symbol(op.args[1],naop_suffix))(result, x)
-        AbstractArrayWrapper(result)
+        result = similar(x)
+        $(symbol(op.args[1],naop_suffix))(result.a, x)
+        result
       end
       $(symbol(op.args[1],naop_suffix))(result, x::AbstractArrayWrapper) = begin
         xa = x.a
@@ -91,6 +91,8 @@ const LiftToNullableTypes = [Bool,
                              Integer,
                              AbstractFloat,
                              Rational,
+                             Irrational{:e},
+                             Real,
                              Complex,
                              AbstractString,
                              Char,
@@ -109,6 +111,10 @@ preset_nullable_type{T,U}(::Type{T},::Type{U}, tpe) = tpe
 
 const naop_suffix = "!"
 
+# some adhoc definitions to suppress ambiguity warnings clashing with irrationals.jl
+.^(x::Base.Irrational{:e}, y::AbstractArrayWrapper{Real}) = AbstractArrayWrapper(.^(x, y.a))
+.^{T<:Real}(x::Base.Irrational{:e}, y::AbstractArrayWrapper{T}) = AbstractArrayWrapper(.^(x, y.a))
+
 # not used anymore.
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
@@ -125,7 +131,7 @@ macro absarray_binary_wrapper(ops...)
         #AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
         result = similar(x, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result.a, x, y)
-        AbstractArrayWrapper(result)
+        result
       end
       $(symbol(op.args[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
         xa = x.a
@@ -277,7 +283,7 @@ macro absarray_binary_wrapper(ops...)
       $(esc(op.args[1])){T,U<:Nullable}(x::AbstractArrayWrapper{T}, y::U) = begin
         result = similar(x, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result.a, x, y)
-        AbstractArrayWrapper(result)
+        result
       end
       $(symbol(op.args[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::U) = begin
         xa = x.a
@@ -312,7 +318,7 @@ macro absarray_binary_wrapper(ops...)
         #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
         result = similar(y, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result.a, x, y)
-        AbstractArrayWrapper(result)
+        result
       end
       $(symbol(op.args[1],naop_suffix)){T,U}(result, x::T, y::AbstractArrayWrapper{U}) = begin
         ya = y.a
@@ -369,7 +375,7 @@ macro absarray_binary_wrapper(ops...)
           U = typeof(y)
           result = similar(x, $nullelem)
           $(symbol(op.args[1],"nulltype2",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
 
         $(esc(op.args[1]))(x::nulltype, y::AbstractArrayWrapper{nulltype}) = begin
@@ -378,7 +384,7 @@ macro absarray_binary_wrapper(ops...)
           U = eltype(y)
           result = similar(y, $nullelem)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
 
         $(esc(op.args[1])){T<:nulltype}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
@@ -386,7 +392,7 @@ macro absarray_binary_wrapper(ops...)
           U = typeof(y)
           result = similar(x, $nullelem)
           $(symbol(op.args[1],"nulltype2",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
 
         $(esc(op.args[1])){U<:nulltype}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
@@ -394,7 +400,7 @@ macro absarray_binary_wrapper(ops...)
           T = typeof(x)
           result = similar(y, $nullelem)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
 
         $(esc(op.args[1])){T<:Nullable}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
@@ -402,7 +408,7 @@ macro absarray_binary_wrapper(ops...)
           U = typeof(y)
           result = similar(x, $nullelem)
           $(symbol(op.args[1],"nulltype2",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
 
         $(esc(op.args[1])){U<:Nullable}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
@@ -411,7 +417,7 @@ macro absarray_binary_wrapper(ops...)
           #map_typed($nullelem, v->$(esc(op.args[2]))(x,v), y)
           result = similar(y, $nullelem)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
-          AbstractArrayWrapper(result)
+          result
         end
       end
     end
@@ -419,14 +425,14 @@ macro absarray_binary_wrapper(ops...)
   Expr(:block, targetexpr...)
 end
 
-*(x::Integer, y::AbstractArrayWrapper) = x .* y
-*(x::AbstractArrayWrapper, y::Integer) = x .* y
-*(x::AbstractFloat, y::AbstractArrayWrapper) = x .* y
-*(x::AbstractArrayWrapper, y::AbstractFloat) = x .* y
-*{T<:Integer}(x::Nullable{T}, y::AbstractArrayWrapper) = x .* y
-*{T<:Integer}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
-*{T<:AbstractFloat}(x::Nullable{T}, y::AbstractArrayWrapper) = x .* y
-*{T<:AbstractFloat}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
+*(x::Real, y::AbstractArrayWrapper) = x .* y
+*(x::AbstractArrayWrapper, y::Real) = x .* y
+*(x::Complex, y::AbstractArrayWrapper) = x .* y
+*(x::AbstractArrayWrapper, y::Complex) = x .* y
+*{T<:Real}(x::Nullable{T}, y::AbstractArrayWrapper) = x .* y
+*{T<:Real}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
+*{T<:Complex}(x::Nullable{T}, y::AbstractArrayWrapper) = x .* y
+*{T<:Complex}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
 
 #.*{T<:AbstractFloat,N}(x::Integer, y::AbstractArrayWrapper{Nullable{T},N}) = convert(T,x) .* y
 

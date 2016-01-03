@@ -1585,6 +1585,7 @@ end
   arradata = arr.a.data
   result = similar(arradata)
   sizearr = size(arradata)
+  na = convert(T, NaN)
   if isbound
     @nloops $N i arradata d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
       @nref($N,result,i) = @nref($N,arradata,j)
@@ -1594,7 +1595,7 @@ end
       @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
         @nref($N,arradata,j)
       else
-        Nullable{T}()
+        na
       end
     end
   end

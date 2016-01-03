@@ -163,16 +163,19 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
-  # not ideal, but what can I do for an empty input arrays?
-  returntype = typeof(f(arr0[1], map(x->x[1], arrs)...))
-  result = similar(arr0.data, returntype)
-  floatnaarray_map_inner!(result, f, arr0, arrs)
+  if isempty(arr0)
+    return similar(arr0, Nullable{Any})
+  end
+  firstelem = f(arr0[1], map(x->x[1], arrs)...)
+  returntype = typeof(firstelem)
+  result = similar(arr0, returntype)
+  floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
 
-floatnaarray_map_inner!(result::AbstractArray, f::Function, arr0::FloatNAArray, arrs) = begin
+floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin
   after_first = false
-  result[1] = f(arr0[1], map(x->x[1], arrs)...)
+  result[1] = firstelem #f(arr0[1], map(x->x[1], arrs)...)
   for i in eachindex(arr0,arrs...)
     if after_first
       result[i] = f(arr0[i], map(x->x[i], arrs)...)
