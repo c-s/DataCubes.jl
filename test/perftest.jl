@@ -23,13 +23,53 @@ begin
   end
 end
 
-println("test 2")
-for n in [10_000_000, 100_000_000][1:2]
+println("test filter")
+for n in [10_000_000, 100_000_000][1:1]
   for m in [100, 10_000, 1_000_000][1:1]
     d = darr(x=sample(1:m, n, replace=true), y=rand(n))
     dm = darr(x=sample(1:m, m))
     @show @time @select(d, where[_x .>= 10], where[_x .< 20])
     @show @time @select(d, where[_x .>= Nullable(10)], where[_x .< Nullable(20)])
+  end
+end
+
+println("test sort")
+for n in [10_000_000, 100_000_000][1:1]
+  for m in [100, 10_000, 1_000_000][1:1]
+    d = darr(x=sample(1:m, n, replace=true), y=rand(n))
+    dm = darr(x=sample(1:m, m))
+    @show @time sort(d, 1, :x)
+    @show @time sort(d, 1, :y)
+    #@show @time sort(dm, 1, :x)
+  end
+end
+
+println("test new column")
+for n in [10_000_000, 100_000_000][1:1]
+  for m in [100, 10_000, 1_000_000][1:1]
+    d = darr(x=sample(1:m, n, replace=true), y=rand(n))
+    dm = darr(x=sample(1:m, m))
+    @show @time @update(d, y2=2*_y)
+    #@show @time sort(dm, y2=2*_y)
+  end
+end
+
+println("test aggregation")
+for n in [10_000_000, 100_000_000][1:1]
+  for m in [100, 10_000, 1_000_000][1:1]
+    d = darr(x=sample(1:m, n, replace=true), y=rand(n))
+    dm = darr(x=sample(1:m, m))
+    @show @time @select(d, by[:x], ym=mean(_y))
+    #@show @time @select(dm, by[:x], ym=mean(_y))
+  end
+end
+
+println("test join")
+for n in [10_000_000, 100_000_000][1:1]
+  for m in [100, 10_000, 1_000_000][1:1]
+    d = darr(x=sample(1:m, n, replace=true), y=rand(n))
+    dm = larr(axis1=darr(x=sample(1:m, m, replace=false)), n=1:m)
+    @show @time innerjoin(d, dm, 1)
   end
 end
 #@show(@allocated r1 = @select(lar, by[:a], m=length(_)))

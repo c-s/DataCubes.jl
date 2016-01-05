@@ -136,8 +136,9 @@ FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
 end
 Base.eltype{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Nullable{T}
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::Int) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
+Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::CartesianIndex) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args::Int...) = (r=getindex(arr.data, args...);isnan(r) ? Nullable{T}() : Nullable(r))
-Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = map(r->isnan(r) ? Nullable{T}() : Nullable(r), getindex(arr.data, args...))
+Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = FloatNAArray(getindex(arr.data, args...))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, arg::Int) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, arg))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args::Int...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))

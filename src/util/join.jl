@@ -141,6 +141,10 @@ lift_axis_values0_helper2(arr, srcaxis) = Any[arr]
                src_key_axis_indices::NTuple{K,Int},
                concat_function::Function=default_concat_array_function) = begin
   rest_dims = M - K
+  #getindexvalue_expr = Expr(:call, :getindexvalue, :permutedsrcdata,
+  #                                                 SRC_TYPE,
+  #                                                 ntuple(d->symbol("j_",d), rest_dims)...,
+  #                                                 ntuple(d->Expr(:ref, :src_coords, d), N)...)
   quote
     @assert $L == sum(i->length(src.axes[i].data), src_key_axis_indices)
     rest_src_axis_indices = filter(i->!(i in src_key_axis_indices), 1:$M) #length(src.axes))
@@ -149,7 +153,7 @@ lift_axis_values0_helper2(arr, srcaxis) = Any[arr]
     src_axis_index_offset = length(rest_src_axis_indices)
     bymaps = ntuple($K) do i
       axis = permuted_src.axes[i+src_axis_index_offset] #src_key_axis_indices[i]]
-      [getindexvalue(axis,j) => j for j=1:length(axis)]
+      create_join_bymap(axis, Tuple{[eltype(v) for v in axis.data.values]...})
     end
     offset = 1
     bymaps_tuple_positions = ntuple($K) do i
@@ -158,24 +162,7 @@ lift_axis_values0_helper2(arr, srcaxis) = Any[arr]
       offset += r
       offset0
     end
-    base_to_src_loc_map = map(base_key_arrays...) do base_indices...
-      na_flag = false
-      src_coords = ntuple($K) do i
-        k = base_indices[bymaps_tuple_positions[i]:(i==$K ? $L:bymaps_tuple_positions[i+1]-1)]
-        bymapsi = bymaps[i]
-        if haskey(bymapsi, k)
-          bymapsi[k]
-        else
-          na_flag = true
-          0
-        end
-      end
-      if na_flag
-        @ntuple $K k->0
-      else
-        src_coords
-      end
-    end
+    base_to_src_loc_map = create_base_to_src_loc_map_all(base_key_arrays, bymaps_tuple_positions, bymaps)
     extra_dims = ntuple(d->length(permuted_src.axes[d]), $rest_dims)
     extra_axes = ntuple(d->permuted_src.axes[d], $rest_dims)
     src_mapped_to_base = LabeledArray(similar(src.data, (size(base_to_src_loc_map)...,extra_dims...)), (base.axes...,extra_axes...))
@@ -191,6 +178,7 @@ lift_axis_values0_helper2(arr, srcaxis) = Any[arr]
         @nloops $rest_dims j d->1:extra_dims[d] begin
           #value = (permutedsrcdata[rest_coords..., src_coords...].values...)
           value = getindexvalue(permutedsrcdata, @ntuple($rest_dims,j)..., src_coords...)
+          #value::$SRC_TYPE = $getindexvalue_expr
           setindex!(srctobasedata, value, @ntuple($N,i)...,@ntuple($rest_dims,j)...)
         end
       end
@@ -331,6 +319,9 @@ end
                src_key_axis_indices::NTuple{K,Int},
                concat_function::Function=default_concat_array_function) = begin
   rest_dims = M - K
+  #getindexvalue_expr = Expr(:call, :getindexvalue, :permutedsrcdata,
+  #                                                 ntuple(d->symbol("j_",d), rest_dims)...,
+  #                                                 ntuple(d->Expr(:ref, :src_coords, d), N)...)
   quote
     @assert $L == sum(i->length(src.axes[i].data), src_key_axis_indices)
     rest_src_axis_indices = filter(i->!(i in src_key_axis_indices), 1:$M) #length(src.axes))
@@ -339,7 +330,7 @@ end
     src_axis_index_offset = length(rest_src_axis_indices)
     bymaps = ntuple($K) do i
       axis = permuted_src.axes[i+src_axis_index_offset] #src_key_axis_indices[i]]
-      [getindexvalue(axis,j) => j for j=1:length(axis)]
+      create_join_bymap(axis, Tuple{[eltype(v) for v in axis.data.values]...})
     end
     offset = 1
     bymaps_tuple_positions = ntuple($K) do i
@@ -348,24 +339,7 @@ end
       offset += r
       offset0
     end
-    base_to_src_loc_map_all = map(base_key_arrays...) do base_indices...
-      na_flag = false
-      src_coords = ntuple($K) do i
-        k = base_indices[bymaps_tuple_positions[i]:(i==$K ? $L:bymaps_tuple_positions[i+1]-1)]
-        bymapsi = bymaps[i]
-        if haskey(bymapsi, k)
-          bymapsi[k]
-        else
-          na_flag = true
-          0
-        end
-      end
-      if na_flag
-        @ntuple $K k->0
-      else
-        src_coords
-      end
-    end
+    base_to_src_loc_map_all = create_base_to_src_loc_map_all(base_key_arrays, bymaps_tuple_positions, bymaps)
     base_axes_to_display = ntuple(d->falses(size(base,d)), $N)
     @nloops $N i base_to_src_loc_map_all begin
       if @nref($N,base_to_src_loc_map_all,i)[1] > 0
@@ -379,23 +353,77 @@ end
                                       ([axis[base_axes_to_display[i]] for (i,axis) in enumerate(base.axes)]...,extra_axes...))
     srctobasedata = src_mapped_to_base.data
     permutedsrcdata = permuted_src.data
+    # need
+    # base_to_src_loc_map, srctobasedata, N, M, rest_dims, permutedsrcdata
     @nloops $N i base_to_src_loc_map begin
       src_coords = @nref($N,base_to_src_loc_map,i)
       if src_coords[1] == 0
-        @nloops $rest_dims j d->1:extra_dims[d] begin
-          setna!(srctobasedata, @ntuple($N,i)...,@ntuple($rest_dims,j)...)
-        end
+        setna!(srctobasedata, @ntuple($N,i)..., @ntuple($rest_dims, d->Colon())...)
+        #@nloops $rest_dims j d->1:extra_dims[d] begin
+        #  setna!(srctobasedata, @ntuple($N,i)...,@ntuple($rest_dims,j)...)
+        #end
       else
-        @nloops $rest_dims j d->1:extra_dims[d] begin
-          #value = (permutedsrcdata[@ntuple($rest_dims, j)..., src_coords...].values...)
-          value = getindexvalue(permutedsrcdata, @ntuple($rest_dims, j)..., src_coords...)
-          setindex!(srctobasedata, value, @ntuple($N,i)...,@ntuple($rest_dims,j)...)
-        end
+        setindex_nocheck!(srctobasedata, @nref($M,permutedsrcdata,d->d<=$rest_dims ? Colon() : src_coords[d-$rest_dims]), @ntuple($N,i)...,@ntuple($rest_dims,d->Colon())...)
+        #setindex_nocheck!(srctobasedata, permutedsrcdata[@ntuple($rest_dims, d->Colon())..., src_coords...], @ntuple($N,i)...,@ntuple($rest_dims,d->Colon())...)
+        #@nloops $rest_dims j d->1:extra_dims[d] begin
+        #  #value = (permutedsrcdata[@ntuple($rest_dims, j)..., src_coords...].values...)
+        #  value::$SRC_TYPE = getindexvalue(permutedsrcdata, $SRC_TYPE, @ntuple($rest_dims, j)..., src_coords...)
+        #  #value::$SRC_TYPE = $getindexvalue_expr
+        #  setindex!(srctobasedata, value, @ntuple($N,i)...,@ntuple($rest_dims,j)...)
+        #end
       end
     end
 
     lifted_base = expand_dims(base[base_axes_to_display...], (), extra_axes)
     concat_function(lifted_base, src_mapped_to_base)
+  end
+end
+
+create_join_bymap{T}(axis::DictArray, ::Type{T}) = begin
+  result = Dict{T,Int}()
+  for i in 1:length(axis)
+    result[getindexvalue(axis,i)] = i
+  end
+  result
+end
+
+create_base_to_src_loc_map_all{K,L,V1}(base_key_arrays::NTuple{L}, #::NTuple{L,AbstractArray{TypeVar(:V),N}},
+                                      bymaps_tuple_positions::NTuple{K,Int},
+                                      bymaps::Tuple{Dict{V1,Int}}) = begin
+  zerocoords = (0,) # K=1
+  bymaps1 = bymaps[1]
+  map(base_key_arrays...) do base_indices...
+    na_flag = false
+    k = base_indices
+    if haskey(bymaps1, k)
+      bymaps1[k]
+    else
+      zerocoords
+    end
+  end
+end
+
+create_base_to_src_loc_map_all{L,K}(base_key_arrays::NTuple{L}, #::NTuple{L,AbstractArray{TypeVar(:V),N}},
+                                      bymaps_tuple_positions::NTuple{K,Int},
+                                      bymaps) = begin
+  zerocoords = ntuple(k->0, K)
+  map(base_key_arrays...) do base_indices...
+    na_flag = false
+    src_coords = ntuple(K) do i
+      k = base_indices[bymaps_tuple_positions[i]:(i==K ? L:bymaps_tuple_positions[i+1]-1)]
+      bymapsi = bymaps[i]
+      if haskey(bymapsi, k)
+        bymapsi[k]
+      else
+        na_flag = true
+        0
+      end
+    end
+    if na_flag
+      zerocoords
+    else
+      src_coords
+    end
   end
 end
 

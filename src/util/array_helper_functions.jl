@@ -170,7 +170,6 @@ Base.sum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   Nullable(acc)
 end
 Base.sum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
-  @debug_stmt @show "sum float"
   arrdata = arr.a.data
   acc = zero(T)
   for x in arrdata
@@ -191,7 +190,6 @@ Base.prod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   Nullable(acc)
 end
 Base.prod{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
-  @debug_stmt @show "prod float"
   arrdata = arr.a.data
   acc = one(T)
   for x in arrdata
@@ -204,7 +202,6 @@ end
 
 Base.mean{T}(arr::AbstractArrayWrapper{Nullable{T}}) = (iter=dropnaiter(arr);isempty(iter) ? Nullable{T}() : Nullable(mean(iter)))
 Base.mean{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
-  @debug_stmt @show "mean float"
   acc = zero(T)
   count = 0
   for elem in arr.a.data
@@ -280,13 +277,13 @@ Base.minimum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(minimum(r))
 end
-Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "minimum float";r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.maximum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(maximum(r))
 end
-Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "maximum float";r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.median{T}(arr::AbstractArrayWrapper{Nullable{T}}) = median_helper(typeof(one(T) / 2), arr)
 median_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}) = begin
@@ -296,7 +293,6 @@ end
 
 collect_nonnas{T}(arr::AbstractArrayWrapper{Nullable{T}}) = type_array(collect(dropnaiter(arr)))
 collect_nonnas{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
-  @debug_stmt @show "collect_nonnas float"
   nonnas = similar(arr.a.data, T)
   count = 0
   for elem in arr.a.data
@@ -314,7 +310,7 @@ middle_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{DIVTYPE}() : Nullable(middle(r))
 end
-Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (@debug_stmt @show "middle float";r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.quantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = quantile_helper(typeof(one(T) / 2), arr, q)
 quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = begin
@@ -1309,7 +1305,6 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::FloatNAArray{T},
                              src::AbstractArray{Nullable{U}})
-  @debug_stmt @show "moving update no float -> float"
   ringbuf = Array(Nullable{U}, window)
   projbuf = Array(U, window)
   ringbuf_index = 1
@@ -1581,7 +1576,6 @@ function shift end
 end
 
 @generated shift{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, offsets::NTuple{N,Int};isbound=false) = quote
-  @debug_stmt @show "shift float"
   arradata = arr.a.data
   result = similar(arradata)
   sizearr = size(arradata)
