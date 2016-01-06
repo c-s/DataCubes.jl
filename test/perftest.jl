@@ -1,9 +1,9 @@
 using Distributions
-using MultidimensionalTables
+using DataCubes
 
 module T
 
-using MultidimensionalTables
+using DataCubes
 using DataFrames
 
 println("test 1")

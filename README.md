@@ -1,22 +1,22 @@
-MultidimensionalTables.jl
+DataCubes.jl
 =========================
 
-[![Build Status](https://travis-ci.org/c-s/MultidimensionalTables.jl.svg?branch=master)](https://travis-ci.org/c-s/MultidimensionalTables.jl)
+[![Build Status](https://travis-ci.org/c-s/DataCubes.jl.svg?branch=master)](https://travis-ci.org/c-s/DataCubes.jl)
 
-The **MultidimensionalTables** package provides several data types and tools to handle multidimensional tables.
-Below, we give a brief description of the package. For more detail, please refer to [documentation](http://c-s.github.io/MultidimensionalTables.jl).
+The **DataCubes** package provides several data types and tools to handle multidimensional tables.
+Below, we give a brief description of the package. For more detail, please refer to [documentation](http://c-s.github.io/DataCubes.jl).
 
 
 # Installation
 
-At the Julia REPL, `Pkg.add("MultidimensionalTables")`.
+At the Julia REPL, `Pkg.add("DataCubes")`.
 The package requires [DataFrames](https://github.com/juliastats/dataframes.jl) to convert to and from `DataFrame`,
 and [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) to run some tests.
 The package itself is functionally stand alone.
 
 # Getting Started
 
-There are two important data types in **MultidimensionalTables**.
+There are two important data types in **DataCubes**.
 
 ## DictArray
 
@@ -39,7 +39,7 @@ can be thought of as a one dimensional array whose 3 elements are
 
 where `dict` stands for some type of ordered dictionary.
 With this correspondence, it is straightforward to generalize the table into a multidimensional array.
-In **MultidimensionalTables**, the function to create a `DictArray` is `darr`:
+In **DataCubes**, the function to create a `DictArray` is `darr`:
 
 ```julia
 julia> d = darr(a=[1 2;3 4;5 6], b=[:x :y;:z :w;:u :v])
@@ -50,7 +50,7 @@ a b |a b
 5 u |6 v 
 
 julia> d[1, 2]
-MultidimensionalTables.All.LDict{Symbol,Nullable{T}} with 2 entries:
+DataCubes.All.LDict{Symbol,Nullable{T}} with 2 entries:
   :a => Nullable(2)
   :b => Nullable(:y)
 ```
@@ -100,7 +100,7 @@ a  b |a  b |a  b |a  b |a  b |a  b
 1 11 |4 14 |2 12 |5 15 |3 13 |6 16 
 
 julia> mapslices(x->sum(x[:a]), d, [1])
-3-element MultidimensionalTables.All.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.All.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(5)
  Nullable(7)
  Nullable(9)
@@ -412,5 +412,5 @@ the result `LabeledArray` is 1+2-1=2 dimensional.
 
 # Documentation
 
-More detailed documentation is [available here](http://c-s.github.io/MultidimensionalTables.jl).
+More detailed documentation is [available here](http://c-s.github.io/DataCubes.jl).
 

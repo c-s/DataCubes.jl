@@ -2,29 +2,29 @@
 
 ### Installation
 
-To install ``MultidimensionalTables``, at the Julia REPL:
+To install ``DataCubes``, at the Julia REPL:
 
 ```julia
-Pkg.add("MultidimensionalTables")
+Pkg.add("DataCubes")
 ```
 
 
-### Using the MultidimensionalTables package
+### Using the DataCubes package
 
-To use ``MultidimensionalTables``,
+To use ``DataCubes``,
 
 ```julia
-using MultidimensionalTables
+using DataCubes
 ```
 
 This will introduce the core functions into namespace.
 A few helper functions have the form ``tbltool.*`` and they can be introduced into namespace as well by:
 
 ```julia
-using MultidimensionalTables.Tools
+using DataCubes.Tools
 ```
 
-Below, we assume you already executed ``using MultidimensionalTables``.
+Below, we assume you already executed ``using DataCubes``.
 
 ### Creating a multidimensional table
 
@@ -51,9 +51,9 @@ Note that this is a *one*-dimensional array. There are 3 elements in the array:
 julia> for elem in d
          println(elem)
        end
-MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=>Nullable(1),:c2=>Nullable("x"))
-MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=>Nullable(1),:c2=>Nullable("y"))
-MultidimensionalTables.LDict{Symbol,Nullable{T}}(:c1=>Nullable(2),:c2=>Nullable("z"))
+DataCubes.LDict{Symbol,Nullable{T}}(:c1=>Nullable(1),:c2=>Nullable("x"))
+DataCubes.LDict{Symbol,Nullable{T}}(:c1=>Nullable(1),:c2=>Nullable("y"))
+DataCubes.LDict{Symbol,Nullable{T}}(:c1=>Nullable(2),:c2=>Nullable("z"))
 ```
 
 ``LDict`` is an ordered dictionary. That is, it is similar to ``Dict`` but keeps track of the order of the insertion of elements. Each element has two keys ``:c1`` and ``:c2``. Their values are all ``Nullable``: the macro ``@darr`` wraps values appropriately by ``Nullable`` if they are not wrapped already.
@@ -61,7 +61,7 @@ To choose an element, e.g. ``y`` in the ``DictArray`` ``d``, you can use ``d[2][
 To choose one field, a function ``pick`` is provided:
 ```julia
 julia> pick(d, :c1)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(1)
  Nullable(2)

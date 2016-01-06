@@ -1,7 +1,7 @@
 module TestSelect
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 immutable Wrap{T}
   elem::T

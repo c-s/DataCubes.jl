@@ -1,8 +1,8 @@
 module TestUngroup
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables: simplify_array
+using DataCubes
+using DataCubes: simplify_array
 
 facts("Ungroup tests") do
   jaggedarr0 = simplify_array(nalift(reshape(Any[nalift([1,2,3]),nalift(["a","b","c"]),nalift([4,5,6,7,8]),nalift(["hello","hi","this","one","ten"]),[Nullable(9)],[Nullable("A")]], (2,3))))

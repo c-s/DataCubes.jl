@@ -13,13 +13,13 @@ Take uinon of arrays of type `LabeledArray`/`DictArray`/`AbstractArrayrapper`. F
 
 ```julia
 julia> union(1, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(4)  Nullable(5)  Nullable(6)
  Nullable(5)  Nullable(5)  Nullable(6)
 
 julia> union(2, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-2x4 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x4 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)  Nullable(1)
  Nullable(4)  Nullable(5)  Nullable(6)  Nullable(5)
 

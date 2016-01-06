@@ -1,8 +1,8 @@
 module TestArrayUtil
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables: AbstractArrayWrapper, FloatNAArray, simplify_array,
+using DataCubes
+using DataCubes: AbstractArrayWrapper, FloatNAArray, simplify_array,
                      type_array, wrap_array, gtake, gdrop
 
 facts("ArrayUtil tests") do
@@ -18,29 +18,29 @@ facts("ArrayUtil tests") do
     @fact AbstractArrayWrapper(type_array(FloatNAArray([1.0,2.0,NaN]))) --> AbstractArrayWrapper([Nullable(1.0),Nullable(2.0),Nullable{Float64}()])
   end
   context("Array transformation tools tests") do
-    @fact MultidimensionalTables.expand_dims([1 2 3], (2,), (3,)) --> reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3))
-    @fact MultidimensionalTables.expand_dims(@darr(a=[1 2 3]), (2,), (3,)) --> @darr(a=reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3)))
-    @fact MultidimensionalTables.expand_dims(@larr(a=[1 2 3],axis1[k=[:x]]), (MultidimensionalTables.DefaultAxis(2),), (MultidimensionalTables.DefaultAxis(3),)) --> @larr(a=reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3)), axis2[k=[:x]])
-    @fact MultidimensionalTables.collapse_axes(reshape(collect(1:100), 1,2,5,10), 2, 3) --> reshape(collect(1:100), 1,10,10)
-    @fact MultidimensionalTables.collapse_axes(@darr(a=reshape(collect(1:100), 1,2,5,10)), 2, 3) --> @darr(a=reshape(collect(1:100), 1,10,10))
-    @fact MultidimensionalTables.collapse_axes(@larr(a=reshape(collect(1:100), 1,2,5,10)), 2, 3) --> @larr(a=reshape(collect(1:100), 1,10,10))
-    @fact MultidimensionalTables.collapse_axes(LabeledArray(DictArray(a=nalift(reshape(collect(1:100), 1,2,5,10))),
+    @fact DataCubes.expand_dims([1 2 3], (2,), (3,)) --> reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3))
+    @fact DataCubes.expand_dims(@darr(a=[1 2 3]), (2,), (3,)) --> @darr(a=reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3)))
+    @fact DataCubes.expand_dims(@larr(a=[1 2 3],axis1[k=[:x]]), (DataCubes.DefaultAxis(2),), (DataCubes.DefaultAxis(3),)) --> @larr(a=reshape(repmat([1,1,2,2,3,3],3),(2,1,3,3)), axis2[k=[:x]])
+    @fact DataCubes.collapse_axes(reshape(collect(1:100), 1,2,5,10), 2, 3) --> reshape(collect(1:100), 1,10,10)
+    @fact DataCubes.collapse_axes(@darr(a=reshape(collect(1:100), 1,2,5,10)), 2, 3) --> @darr(a=reshape(collect(1:100), 1,10,10))
+    @fact DataCubes.collapse_axes(@larr(a=reshape(collect(1:100), 1,2,5,10)), 2, 3) --> @larr(a=reshape(collect(1:100), 1,10,10))
+    @fact DataCubes.collapse_axes(LabeledArray(DictArray(a=nalift(reshape(collect(1:100), 1,2,5,10))),
                                           axis1=DictArray(k1=nalift([:sym])),
                                           axis2=DictArray(r1=@nalift(["x","y"])),
                                           axis3=@nalift([100,99,98,97,96])), 1, 3) -->
           @larr(a=reshape(collect(1:100), 10,10),
                 axis1[k1=fill(:sym, 10),r1=repmat(["x","y"],5),x1=[100,100,99,99,98,98,97,97,96,96]])
-    @fact MultidimensionalTables.collapse_axes(LabeledArray(DictArray(a=nalift(reshape(collect(1:100), 1,2,5,10))),
+    @fact DataCubes.collapse_axes(LabeledArray(DictArray(a=nalift(reshape(collect(1:100), 1,2,5,10))),
                                           axis1=DictArray(1=>nalift([:sym])),
                                           axis2=DictArray(:x1=>@nalift(["x","y"])),
                                           axis3=@nalift([100,99,98,97,96]),
                                           axis4=nalift(collect(31:40))), 1, 4) -->
           @larr(a=collect(1:100),
                 axis1[1=>fill(:sym, 100),:x1=>repmat(["x","y"],50),:x2=>repmat([100,100,99,99,98,98,97,97,96,96],10),:x3=>repeat(collect(31:40),inner=[10])])
-    @fact MultidimensionalTables.create_additional_fieldname(@larr(a=[1,2,3])) --> :x1
-    @fact MultidimensionalTables.create_additional_fieldname(@larr(x1=[1,2,3])) --> :x2
-    @fact MultidimensionalTables.create_additional_fieldname(@larr(x1=[1,2,3],x3=[:a,:b,:c])) --> :x2
-    @fact MultidimensionalTables.create_additional_fieldname(@larr(x1=[1,2,3],axis1[x2=[:a,:b,:c]])) --> :x3
+    @fact DataCubes.create_additional_fieldname(@larr(a=[1,2,3])) --> :x1
+    @fact DataCubes.create_additional_fieldname(@larr(x1=[1,2,3])) --> :x2
+    @fact DataCubes.create_additional_fieldname(@larr(x1=[1,2,3],x3=[:a,:b,:c])) --> :x2
+    @fact DataCubes.create_additional_fieldname(@larr(x1=[1,2,3],axis1[x2=[:a,:b,:c]])) --> :x3
     @fact mapvalues(LDict(:a=>1,:b=>3,:c=>5)) do x;x*2 end --> LDict(:a=>2,:b=>6,:c=>10)
     @fact mapvalues(x->x .+ 1, darr(a=[1,2,3], b=[4,5,6])) --> darr(a=[2,3,4], b=[5,6,7])
     @fact mapvalues(x->x .+ 1, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p])) --> larr(a=[2,3,4], b=[5,6,7], axis1=[:m,:n,:p])
@@ -77,18 +77,18 @@ facts("ArrayUtil tests") do
   end
   context("Misc functions tests") do
     rand_array = rand(10,5,30,20)
-    @fact MultidimensionalTables.permutedims_if_necessary(rand_array,(1,2,3,4)) === rand_array --> true
-    @fact MultidimensionalTables.permutedims_if_necessary(rand_array,(2,3,4,1)) == permutedims(rand_array,(2,3,4,1)) --> true
-    @fact MultidimensionalTables.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 NA;13 14 NA],axis1[k=['a','b']],axis2[r=[:x,:y,:z]])) --> @larr(a=[1 2;NA 3],b=[10 11;13 14],axis1[k=['a','b']],axis2[r=[:x,:y]])
-    @fact MultidimensionalTables.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 NA;13 14 NA])) --> @larr(a=[1 2;NA 3],b=[10 11;13 14])
-    @fact MultidimensionalTables.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 15])) --> @larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 15])
-    @fact MultidimensionalTables.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 NA])) --> @larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 NA])
-    @fact MultidimensionalTables.dropna(@larr(a=[1 2 NA;NA 3 NA])) --> @larr(a=[1 2;NA 3])
-    @fact MultidimensionalTables.dropna(@darr(a=[1 2 NA;NA 3 NA])) --> @darr(a=[1 2;NA 3])
-    @fact MultidimensionalTables.dropna(@nalift([1 2 NA;NA 3 NA])) --> @nalift([1 2;NA 3])
-    @fact sum(MultidimensionalTables.igna(MultidimensionalTables.reducedim((x,y)->MultidimensionalTables.naop_plus(x,y[:a]),@darr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0)))) --> roughly(11325.0)
-    @fact (@rap _.value (@rap sum peel _) reducedim((x,y)->MultidimensionalTables.naop_plus(x,y[:a]),@larr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0))) --> roughly(11325.0)
-    #@fact sum(MultidimensionalTables.igna(MultidimensionalTables.reducedim((x,y)->MultidimensionalTables.naop_plus(x,y.second.second.second.second[:a]),@larr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0)))) --> roughly(11325.0)
+    @fact DataCubes.permutedims_if_necessary(rand_array,(1,2,3,4)) === rand_array --> true
+    @fact DataCubes.permutedims_if_necessary(rand_array,(2,3,4,1)) == permutedims(rand_array,(2,3,4,1)) --> true
+    @fact DataCubes.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 NA;13 14 NA],axis1[k=['a','b']],axis2[r=[:x,:y,:z]])) --> @larr(a=[1 2;NA 3],b=[10 11;13 14],axis1[k=['a','b']],axis2[r=[:x,:y]])
+    @fact DataCubes.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 NA;13 14 NA])) --> @larr(a=[1 2;NA 3],b=[10 11;13 14])
+    @fact DataCubes.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 15])) --> @larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 15])
+    @fact DataCubes.dropna(@larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 NA])) --> @larr(a=[1 2 NA;NA 3 NA],b=[10 11 12;13 14 NA])
+    @fact DataCubes.dropna(@larr(a=[1 2 NA;NA 3 NA])) --> @larr(a=[1 2;NA 3])
+    @fact DataCubes.dropna(@darr(a=[1 2 NA;NA 3 NA])) --> @darr(a=[1 2;NA 3])
+    @fact DataCubes.dropna(@nalift([1 2 NA;NA 3 NA])) --> @nalift([1 2;NA 3])
+    @fact sum(DataCubes.igna(DataCubes.reducedim((x,y)->DataCubes.naop_plus(x,y[:a]),@darr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0)))) --> roughly(11325.0)
+    @fact (@rap _.value (@rap sum peel _) reducedim((x,y)->DataCubes.naop_plus(x,y[:a]),@larr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0))) --> roughly(11325.0)
+    #@fact sum(DataCubes.igna(DataCubes.reducedim((x,y)->DataCubes.naop_plus(x,y.second.second.second.second[:a]),@larr(a=reshape(1:5*5*2*3, 5,5,2,3),b=reshape(1:5*5*2*3, 5,5,2,3)),(1,2),Nullable(0.0)))) --> roughly(11325.0)
     @fact (@rap sin cos sin 1) --> sin(cos(sin(1)))
     @fact (@rap sin(_) cos sin 1) --> sin(cos(sin(1)))
     @fact (@rap sin cos(_) sin 1) --> sin(cos(sin(1)))

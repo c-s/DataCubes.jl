@@ -1,7 +1,7 @@
 module TestSetOprations
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("Set Operations tests") do
   context("unique test") do

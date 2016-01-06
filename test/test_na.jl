@@ -1,8 +1,8 @@
 module TestNA
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables: AbstractArrayWrapper, FloatNAArray, simplify_array, wrap_array, naop_plus
+using DataCubes
+using DataCubes: AbstractArrayWrapper, FloatNAArray, simplify_array, wrap_array, naop_plus
 
 facts("NA tests") do
   @fact AbstractArrayWrapper(nalift([1,2,3])) --> AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable(3)])

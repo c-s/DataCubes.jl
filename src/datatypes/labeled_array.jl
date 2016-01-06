@@ -1081,9 +1081,9 @@ y |a |3 4
 
 
 julia> create_dict(t)
-Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
-  Nullable(:y) => Dict(Nullable("B")=>MultidimensionalTables.LDict(:a=>Nullable(4)),Nullable("A")=>MultidimensionalTables.LDict(:a=>Nullable(3)))
-  Nullable(:x) => Dict(Nullable("B")=>MultidimensionalTables.LDict(:a=>Nullable(2)),Nullable("A")=>MultidimensionalTables.LDict(:a=>Nullable(1)))
+Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
+  Nullable(:y) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(4)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(3)))
+  Nullable(:x) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(2)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(1)))
 ```
 
 """

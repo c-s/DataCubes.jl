@@ -1,7 +1,7 @@
 module TestEnumerationArray
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("EnumerationArray tests") do
   @fact EnumerationArray(@nalift(["a" NA "b" "b";NA "b" "a" "c"])).elems --> Int[1 0 2 2;0 2 1 3]

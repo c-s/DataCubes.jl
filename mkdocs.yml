@@ -1,4 +1,4 @@
-site_name: MultidimensionalTables
+site_name: DataCubes
 pages:
 - Home: index.md
 - Introduction: introduction.md

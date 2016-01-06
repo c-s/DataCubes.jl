@@ -130,7 +130,7 @@ Create an `EnumerationArray`.
 
 ```julia
 julia> enumeration([:A,:A,:B,:B,:C])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)
  Nullable(:A)
  Nullable(:B)
@@ -144,7 +144,7 @@ julia> enumeration([:A,:A,:B,:B,:C]).pool
  :C
 
 julia> enumeration([:A,:A,:B,:B,:C]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  1
  2
@@ -152,7 +152,7 @@ julia> enumeration([:A,:A,:B,:B,:C]).elems
  3
 
 julia> enumeration([:A,:A,:B,:B,:C], [:C,:B])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)
  Nullable(:A)
  Nullable(:B)
@@ -166,7 +166,7 @@ julia> enumeration([:A,:A,:B,:B,:C], [:C,:B]).pool
  :A
 
 julia> enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  3
  3
  2
@@ -200,7 +200,7 @@ Create an `EnumerationArray`. Similar to the `enumeration` function, but you can
 
 ```julia
 julia> @enumeration([:A,:A,:B,NA,NA])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)      
  Nullable(:A)      
  Nullable(:B)      
@@ -213,7 +213,7 @@ julia> @enumeration([:A,:A,:B,NA,NA]).pool
  :B
 
 julia> @enumeration([:A,:A,:B,NA,NA]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  1
  2
@@ -221,7 +221,7 @@ julia> @enumeration([:A,:A,:B,NA,NA]).elems
  0
 
 julia> @enumeration([:A,:A,:B,NA,NA], [:B,:A])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)      
  Nullable(:A)      
  Nullable(:B)      
@@ -234,7 +234,7 @@ julia> @enumeration([:A,:A,:B,NA,NA], [:B,:A]).pool
  :A
 
 julia> @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  2
  2
  1

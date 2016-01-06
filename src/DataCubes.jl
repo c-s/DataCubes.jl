@@ -1,6 +1,6 @@
 __precompile__()
 
-module MultidimensionalTables
+module DataCubes
 
 # including files.
 include("common.jl")
@@ -76,7 +76,7 @@ export @select,
 export tbltool
 
 module Tools
-  using MultidimensionalTables
+  using DataCubes
   items = [:AbstractArrayWrapper, :FloatNAArray, :simplify_array, :wrap_array, :type_array,
            :getindexpair,
            :getindexvalue,
@@ -88,12 +88,12 @@ module Tools
            :set_dispalongrow!!, :set_dispheight!!, :set_dispwidth!!, :set_default_dispsize!!]
   for item in items
     @eval begin
-      $item = MultidimensionalTables.$item
+      $item = DataCubes.$item
       export $item
     end
   end
 end
 
-tbltool = MultidimensionalTables.Tools
+tbltool = DataCubes.Tools
 
 end

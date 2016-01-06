@@ -1,6 +1,6 @@
-## Introduction to the MultidimensionalTables package
+## Introduction to the DataCubes package
 
-The MultidimensionalTables package provides several new data types and associated functions/macros, to deal with multidimensional tables. The package has the following notable features:
+The DataCubes package provides several new data types and associated functions/macros, to deal with multidimensional tables. The package has the following notable features:
 
 * It includes data types `DictArray` and `LabeledArray` that can describe multimensional tables.
 * Extensive number of functions/macros are available to process common type of table manipulations and they can cover multidimensional tables as well.
@@ -11,7 +11,7 @@ The MultidimensionalTables package provides several new data types and associate
 Conceptually, `DictArray` is an array of ordered dictionaries with identical keys. For example, a table with two columns `col1=[10, 11]` and `col2=[:sym1, :sym2]` can be considered as a one-dimensional array of length 2, whose elements are `[LDict(:col1=>10, :col2=>:sym1), LDict(:col1=>11, :col2=>:sym2)]` where `LDict` represents a kind of ordered dictionary, which will be described in detail later. This is a conceptual level description, and the methods in the packages utilizes as much as possible the fact that each ordered dictionary is from a set of arrays. One advantage of describing a table in terms of a one-dimensional array of ordered dictionaries is that it is straightforward to generalize this to multidimensional arrays. For example, `@darr` is a macro in the package to create a `DictArray` like this:
 
 ```julia
-julia> using MultidimensionalTables
+julia> using DataCubes
 
 julia> d = @darr(A=[1 2 3;4 5 6], B=['a' 'b' 'a';'a' 'a' 'b'])
 2 x 3 DictArray
@@ -26,7 +26,7 @@ Here, the `DictArray` `d` has two fields `A` and `B` and each is a two-dimension
 
 ```julia
 julia> d[1, 2]
-MultidimensionalTables.LDict{Symbol,Nullable{T}} with 2 entries:
+DataCubes.LDict{Symbol,Nullable{T}} with 2 entries:
   :A => Nullable(2)
   :B => Nullable('b')
 ```
@@ -39,7 +39,7 @@ Note also that we use the term *fields* and not *column* to denote the two dimen
 A `LabeledArray` is a `DictArray` or usual array with labels attached to each axis. The labels for each axis is an array: It can be a normal array, or a `DictArray`. For example, `@larr` is a macro in the package to create a `LabeledArray`:
 
 ```julia
-julia> using MultidimensionalTables
+julia> using DataCubes
 
 julia> l = @larr(A=[1 2 3;4 5 6],
                        B=['a' 'b' 'a';'a' 'a' 'b'],
@@ -63,7 +63,7 @@ The `LabeledArray` along with `DictArray` are the main data types that represent
 The macro `@select` transforms a `LabeledArray` into another `LabeledArray`. This macro is similar to the `select` statement in SQL. As an example:
 
 ```julia
-julia> using MultidimensionalTables
+julia> using DataCubes
 
 julia> l = @larr(A=[1 2 3;4 5 6],
                  B=['a' 'b' 'a';'a' 'a' 'b'],

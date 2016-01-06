@@ -1,7 +1,7 @@
 module TestLabeledArray
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("LabeledArray tests") do
   context("constructor tests") do
@@ -82,11 +82,11 @@ facts("LabeledArray tests") do
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[2]) --> @larr(c=[3,3], axis1[k=[:x,:y]])
     @fact mapslices(x->Nullable(length(x)),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"]),[1]) --> LabeledArray(@nalift([2,2,2]), axes1=@nalift([1,2,3]))
     @fact size(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> (2,3)
-    @fact mapslices(x->LDict(:c1=>MultidimensionalTables.naop_plus(x[:a],x[:b]),:c2=>Nullable(10)), @larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0]), []) --> @larr(c1=[2.0 4.0 6.0;8.0 10.0 12.0], c2=@rap reshape(_,(2,3)) fill (10,6)...)
-    #@fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Array{Pair{Nullable{Int64},Pair{Nullable{Int64},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}},2}
-    @fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> MultidimensionalTables.LabeledArray{MultidimensionalTables.LDict{Symbol,Nullable{Int64}},2,Tuple{MultidimensionalTables.DefaultAxis,MultidimensionalTables.DefaultAxis},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}},Nullable{Int64}}}
-    @fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> MultidimensionalTables.LDict{Symbol,Nullable{Int64}}
-    #@fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Pair{Nullable{Int64},Pair{Nullable{Int64},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}}
+    @fact mapslices(x->LDict(:c1=>DataCubes.naop_plus(x[:a],x[:b]),:c2=>Nullable(10)), @larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0]), []) --> @larr(c1=[2.0 4.0 6.0;8.0 10.0 12.0], c2=@rap reshape(_,(2,3)) fill (10,6)...)
+    #@fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Array{Pair{Nullable{Int64},Pair{Nullable{Int64},DataCubes.LDict{Symbol,Nullable{Int64}}}},2}
+    @fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> DataCubes.LabeledArray{DataCubes.LDict{Symbol,Nullable{Int64}},2,Tuple{DataCubes.DefaultAxis,DataCubes.DefaultAxis},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}},Nullable{Int64}}}
+    @fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> DataCubes.LDict{Symbol,Nullable{Int64}}
+    #@fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Pair{Nullable{Int64},Pair{Nullable{Int64},DataCubes.LDict{Symbol,Nullable{Int64}}}}
     @fact mapslices(x -> x, @larr(a=[1 2 3;4 5 6]), []) --> @larr(a=[1 2 3;4 5 6])
     @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
     @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
