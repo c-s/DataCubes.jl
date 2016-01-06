@@ -40,7 +40,6 @@ for n in [10_000_000, 100_000_000][1:1]
     dm = darr(x=sample(1:m, m))
     @show @time sort(d, 1, :x)
     @show @time sort(d, 1, :y)
-    #@show @time sort(dm, 1, :x)
   end
 end
 
@@ -50,7 +49,6 @@ for n in [10_000_000, 100_000_000][1:1]
     d = darr(x=sample(1:m, n, replace=true), y=rand(n))
     dm = darr(x=sample(1:m, m))
     @show @time @update(d, y2=2*_y)
-    #@show @time sort(dm, y2=2*_y)
   end
 end
 
@@ -60,7 +58,6 @@ for n in [10_000_000, 100_000_000][1:1]
     d = darr(x=sample(1:m, n, replace=true), y=rand(n))
     dm = darr(x=sample(1:m, m))
     @show @time @select(d, by[:x], ym=mean(_y))
-    #@show @time @select(dm, by[:x], ym=mean(_y))
   end
 end
 
