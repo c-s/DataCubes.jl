@@ -70,6 +70,7 @@ for n in [10_000_000, 100_000_000][1:1]
     d = darr(x=sample(1:m, n, replace=true), y=rand(n))
     dm = larr(axis1=darr(x=sample(1:m, m, replace=false)), n=1:m)
     @show @time innerjoin(d, dm, 1)
+    @show @time leftjoin(d, dm, 1)
   end
 end
 #@show(@allocated r1 = @select(lar, by[:a], m=length(_)))
