@@ -142,16 +142,17 @@ Base.getindex(arr::DictArray, arg::Symbol, args::Symbol...) = [selectfield(arr, 
 Base.getindex{N}(arr::DictArray, args::Tuple{N,Symbol}) = map(a->selectfield(arr, a), args)
 Base.getindex(arr::DictArray, args::AbstractVector{Symbol}) = selectfields(arr, args...)
 
-Base.getindex(arr::DictArray, indices::CartesianIndex) = getindex(arr, indices.I...)
+Base.getindex(arr::DictArray, indices::CartesianIndex) = #getindex(arr, indices.I...)
+  create_ldict_nocheck(arr.data.keys, map(x->getindex(x, indices), arr.data.values))
 
 # some standard implementations to make a DictArray an AbstractArray.
 Base.getindex(arr::DictArray, args...) = begin
   res = LDict(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
-  if is_scalar_indexing(args)
-    res
-  else
-    DictArray(res)
-  end
+  #if is_scalar_indexing(args)
+  #  res
+  #else
+  create_dictarray_nocheck(res)
+  #end
 end
 Base.getindex{K,SV}(arr::DictArray{K,TypeVar(:N),TypeVar(:VS),SV}, args::Int...) =
   create_ldict_nocheck(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
@@ -159,11 +160,20 @@ Base.setindex!(arr::DictArray, v::DictArray, args...) = begin
   if arr.data.keys != v.data.keys
     throw(KeysDoNotMatchException(arr.data.keys, v.data.keys))
   end
-  map(arr.data.values, v.data.values) do tgt, src
+  for (tgt,src) in zip(arr.data.values, v.data.values) #map(arr.data.values, v.data.values) do tgt, src
     setindex!(tgt, src, args...)
   end
   arr
 end
+# used internally to skip key check.
+setindex_nocheck!(arr::DictArray, v::DictArray, args...) = begin
+  for (tgt,src) in zip(arr.data.values, v.data.values)
+    setindex!(tgt, src, args...)
+  end
+  arr
+end
+setindex_nocheck!(arr::AbstractArray, v::LDict, args...) = setindex!(arr, v, args...)
+setindex_nocheck!(arr::AbstractArray, v, args...) = setindex!(arr, v, args...)
 
 Base.sub(arr::DictArray, args::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) =
   DictArray(LDict(arr.data.keys, map(x->sub(x, args...), arr.data.values)))
@@ -180,6 +190,7 @@ Return the value tuple of `arr` at index `args`.
 getindexvalue(arr::DictArray, args...) = ntuple(length(arr.data)) do i
   arr.data.values[i][args...]
 end
+getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
 """
 
 `getindexvalue(arr::AbstractArray, args...)`
@@ -188,6 +199,7 @@ Return `arr[args...]`.
 
 """
 getindexvalue(arr::AbstractArray, args...) = getindex(arr, args...)
+getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...)::T
 # for internal use to impose type constraints. Similarly for other getindexvalue methods below.
 # note that these versions are used only to access one element, and not a range.
 getindexvalue{T1}(arr::DictArray, ::Type{Tuple{T1}}, args...) =

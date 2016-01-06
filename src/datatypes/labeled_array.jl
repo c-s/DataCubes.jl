@@ -1471,8 +1471,7 @@ larr(args...; kwargs...) = larr_inner(args..., kwargs...)
 
 Base.convert{K,V,N}(::Type{LabeledArray}, arr::LabeledArray{LDict{K,V},N}) = LabeledArray(convert_to_dictarray_if_possible(peel(arr)), arr.axes)
 Base.convert{K,V,N}(::Type{LabeledArray}, arr::LabeledArray{Nullable{LDict{K,V}},N}) = LabeledArray(convert_to_dictarray_if_possible(peel(arr)), arr.axes)
-#Base.convert{K,V,N}(::Type{LabeledArray}, arr::AbstractArray{Nullable{LDict{K,V}},N}) = (@show "hi";convert(LabeledArray, DictArray(arr)))
-#Base.convert{K,V<:Nullable,N}(::Type{LabeledArray}, arr::AbstractArray{LDict{K,V},N}) = (@show "hi";convert(LabeledArray, DictArray(arr)))
+
 # for some reason, this generic verion is gtakeed up instead of the LDict specialized versions.
 Base.convert(::Type{LabeledArray}, arr::DictArray) = LabeledArray(arr)
 Base.convert(::Type{LabeledArray}, arr::AbstractArray) = if eltype(arr) <: LDict

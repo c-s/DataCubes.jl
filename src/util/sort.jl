@@ -1,7 +1,7 @@
 # an ordering to be used in sorting DictArrays or Labeledarrays.
-immutable AbstractArrayLT{N} <: Base.Ordering
-  ords::NTuple{N,Base.Ordering}
-  fields::NTuple{N,AbstractVector}
+immutable AbstractArrayLT{N,O,F} <: Base.Ordering
+  ords::O #NTuple{N,Base.Ordering}
+  fields::F #NTuple{N,Vector}
 end
 
 AbstractArrayLT(arr::Union{DictArray,LabeledArray}, axis::Integer, field_names...; kwargs...) = begin
@@ -15,9 +15,10 @@ AbstractArrayLT(arr::Union{DictArray,LabeledArray}, axis::Integer, field_names..
   end
   ndimsarr = ndims(arr)
   fields = map(field_names) do name
-    collect(selectfield(arr, name)[get(kv, symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...])
+    #collect(selectfield(arr, name)[get(kv, symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...])
+    selectfield(arr, name)[get(kv, symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...].a
   end
-  AbstractArrayLT{length(field_names)}(ords, fields)
+  AbstractArrayLT{length(field_names),typeof(ords),typeof(fields)}(ords, fields)
 end
 
 Base.Sort.lt{N}(ltobj::AbstractArrayLT{N}, x::Integer, y::Integer) = begin
@@ -36,6 +37,18 @@ Base.Sort.lt{N}(ltobj::AbstractArrayLT{N}, x::Integer, y::Integer) = begin
     end
   end
   false
+end
+
+Base.Sort.lt{O,T,A}(ltobj::AbstractArrayLT{1,O,Tuple{FloatNAArray{T,1,A}}}, x::Integer, y::Integer) = begin
+  atix = ltobj.fields[1].data[x]
+  atiy = ltobj.fields[1].data[y]
+  ord = ltobj.ords[1]
+  if isnan(atix)
+    return !isnan(atiy)
+  elseif isnan(atiy)
+    return false
+  end
+  Base.lt(ord, atix, atiy)
 end
 
 sortpermbase(arr::Union{DictArray, LabeledArray}, axis::Integer, algorithm, order::Base.Ordering) = begin

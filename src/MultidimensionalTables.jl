@@ -3,6 +3,7 @@ __precompile__()
 module MultidimensionalTables
 
 # including files.
+include("common.jl")
 include("datatypes/ldict.jl")
 include("datatypes/dict_array.jl")
 include("datatypes/labeled_array.jl")

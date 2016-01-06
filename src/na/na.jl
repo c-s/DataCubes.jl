@@ -136,8 +136,9 @@ FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
 end
 Base.eltype{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Nullable{T}
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::Int) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
+Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::CartesianIndex) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args::Int...) = (r=getindex(arr.data, args...);isnan(r) ? Nullable{T}() : Nullable(r))
-Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = map(r->isnan(r) ? Nullable{T}() : Nullable(r), getindex(arr.data, args...))
+Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = FloatNAArray(getindex(arr.data, args...))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, arg::Int) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, arg))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args::Int...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
@@ -159,19 +160,24 @@ Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}
 Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(slice(arr.data, args...))
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
 @delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
-                                      Base.similar, Base.sub, Base.slice)
+                                      Base.sub, Base.slice)
+Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
+Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
-  # not ideal, but what can I do for an empty input arrays?
-  returntype = typeof(f(arr0[1], map(x->x[1], arrs)...))
-  result = similar(arr0.data, returntype)
-  floatnaarray_map_inner!(result, f, arr0, arrs)
+  if isempty(arr0)
+    return similar(arr0, Nullable{Any})
+  end
+  firstelem = f(arr0[1], map(x->x[1], arrs)...)
+  returntype = typeof(firstelem)
+  result = similar(arr0, returntype)
+  floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
 
-floatnaarray_map_inner!(result::AbstractArray, f::Function, arr0::FloatNAArray, arrs) = begin
+floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin
   after_first = false
-  result[1] = f(arr0[1], map(x->x[1], arrs)...)
-  for i in eachindex(result)
+  result[1] = firstelem #f(arr0[1], map(x->x[1], arrs)...)
+  for i in eachindex(arr0,arrs...)
     if after_first
       result[i] = f(arr0[i], map(x->x[i], arrs)...)
     end
@@ -189,6 +195,7 @@ Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = Flo
 Base.slice(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
 simplify_floatarray(arr::FloatNAArray) = arr
 simplify_floatarray{T<:AbstractFloat,N,A}(arr::FloatNAArray{T,N,A}) = arr
+simplify_floatarray{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = arr
 simplify_floatarray{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}) =
   AbstractArrayWrapper(simplify_floatarray(arr.a))
 simplify_floatarray{T<:AbstractFloat,N}(arr::AbstractArray{Nullable{T},N}) = begin
@@ -444,16 +451,13 @@ Y |4 u |5 v |6 w
 """
 function setna! end
 
-setna!{T}(arr::AbstractArray{Nullable{T}}) = begin
-  fill!(arr, Nullable{T}())
-  arr
-end
-setna!(arr::AbstractArray{Nullable}) = begin
-  fill!(arr, Nullable{Any}())
-  arr
-end
+setna!{T}(arr::AbstractArray{Nullable{T}}) = fill!(arr, Nullable{T}())
+setna!(arr::AbstractArray{Nullable}) = fill!(arr, Nullable{Any}())
 setna!{T}(arr::AbstractArray{Nullable{T}}, args...) = setindex!(arr, Nullable{T}(), args...)
 setna!(arr::AbstractArray{Nullable}, args...) = setindex!(arr, Nullable{Any}(), args...)
+setna!{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = setindex!(arr.data, convert(T,NaN), args...)
+setna!{T<:AbstractFloat}(arr::FloatNAArray{T}) = fill!(arr.data, convert(T,NaN))
+setna!(arr::AbstractArrayWrapper, args...) = setna!(arr.a, args...)
 setna!(arr::DictArray, args...) = begin
   map(tgt -> setna!(tgt, args...), arr.data.values)
   arr
@@ -598,7 +602,16 @@ julia> ignabool(@nalift([true true NA;false NA true]))
 """
 function ignabool end
 
-ignabool(arr::AbstractArray{Nullable{Bool}}) = map(ignabool, arr)
+ignabool(arr::AbstractArrayWrapper{Nullable{Bool}}) = AbstractArrayWrapper(ignabool(arr.a))
+# this turns to be definitely faster than `map`.
+ignabool(arr::AbstractArray{Nullable{Bool}}) = begin
+  result = similar(arr, Bool)
+  for i in eachindex(arr)
+    @inbounds result[i] = ignabool(arr[i])
+  end
+  result
+end
+#ignabool(arr::AbstractArray{Nullable{Bool}}) = map_typed(ignabool, Bool, arr)
 ignabool(elem::Nullable{Bool}) = !elem.isnull && elem.value
 ignabool(arr::AbstractArray{Bool}) = arr
 ignabool(elem::Bool) = elem
