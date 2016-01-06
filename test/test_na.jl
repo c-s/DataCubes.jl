@@ -14,7 +14,7 @@ facts("NA tests") do
   @fact AbstractArrayWrapper(FloatNAArray(reverse([1.0,2.0,3.0]))) --> AbstractArrayWrapper(FloatNAArray([3.0,2.0,1.0]))
   @fact simplify_array(nalift([1,2,3])) --> AbstractArrayWrapper([Nullable(1),Nullable(2),Nullable(3)])
   @fact simplify_array(Any[Nullable(3.5), Nullable(2.0), Nullable{Float64}()]) --> AbstractArrayWrapper(FloatNAArray([3.5, 2.0, NaN]))
-  @fact (t=@larr(a=[1 2 3;4 5 6], b=[4 5 6;7 8 9]);tbltool.setna!(t.data.data[:a],2,2);tbltool.setna!(t,2,1);t) --> @larr(a=[1 2 3;NA NA 6], b=[4 5 6;NA 8 9])
+  @fact (t=@larr(a=[1 2 3;4 5 6], b=[4 5 6;7 8 9]);dcube.setna!(t.data.data[:a],2,2);dcube.setna!(t,2,1);t) --> @larr(a=[1 2 3;NA NA 6], b=[4 5 6;NA 8 9])
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
   @fact ignabool(nalift([true, false])) --> [true, false]

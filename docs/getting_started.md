@@ -18,7 +18,7 @@ using DataCubes
 ```
 
 This will introduce the core functions into namespace.
-A few helper functions have the form ``tbltool.*`` and they can be introduced into namespace as well by:
+A few helper functions have the form ``dcube.*`` and they can be introduced into namespace as well by:
 
 ```julia
 using DataCubes.Tools

@@ -73,7 +73,7 @@ export @select,
        shift,
        namerge
 
-export tbltool
+export dcube
 
 module Tools
   using DataCubes
@@ -94,6 +94,6 @@ module Tools
   end
 end
 
-tbltool = DataCubes.Tools
+dcube = DataCubes.Tools
 
 end
