@@ -15,22 +15,22 @@ Note that it compares each slice spanned by directions orthogonal to `dims...`.
 
 ```julia
 julia> unique(nalift([1 2 3;3 4 1]))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
 
 julia> unique(nalift([1 2 3;3 4 1]), 1)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(3)  Nullable(4)  Nullable(1)
 
 julia> unique(nalift([1 2 3;3 4 1]), 2)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(3)  Nullable(4)  Nullable(1)
 
 julia> unique(nalift([1 2 3;1 2 3;4 5 6]), 1)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(4)  Nullable(5)  Nullable(6)
 

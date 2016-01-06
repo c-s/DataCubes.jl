@@ -1,4 +1,4 @@
-The MultidimensionalTables.jl package is licensed under the MIT "Expat" License:
+The DataCubes.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2015:
 >  * C. S. Park

@@ -1,30 +1,30 @@
 module TestArrayHelperFunctions
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables: wrap_array, gtake
+using DataCubes
+using DataCubes: wrap_array, gtake
 
 facts("ArrayHelperFunctions tests") do
-  @fact sum(@nalift([1,20,3])) --> x -> MultidimensionalTables.naop_eq(Nullable(24), x).value
-  @fact sum(@nalift([1.0,20.0,3.0])) --> x -> MultidimensionalTables.naop_eq(Nullable(24.0), x).value
-  @fact sum(@nalift([1,20,3,NA])) --> x -> MultidimensionalTables.naop_eq(Nullable(24), x).value
-  @fact sum(@nalift([1.0,20.0,3.0,NA])) --> x -> MultidimensionalTables.naop_eq(Nullable(24.0), x).value
-  @fact sum(@nalift([1,2,3,NA,50])) --> x -> MultidimensionalTables.naop_eq(Nullable(56), x).value
-  @fact sum(@nalift([1.0,2.0,3.0,NA,50.0])) --> x -> MultidimensionalTables.naop_eq(Nullable(56.0), x).value
-  @fact prod(@nalift([1,2,5])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(10)).value
-  @fact prod(@nalift([1.0,2.0,5.0])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(10.0)).value
-  @fact prod(@nalift([1,2,3,NA])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(6)).value
-  @fact prod(@nalift([1.0,2.0,3.0,NA])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(6.0)).value
-  @fact prod(@nalift([1,2,3,NA,15])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(90)).value
-  @fact prod(@nalift([1.0,2.0,3.0,NA,15.0])) --> x -> MultidimensionalTables.naop_eq(x, Nullable(90.0)).value
-  @fact collect(MultidimensionalTables.dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))) --> [1,20,3,50]
-  @fact collect(MultidimensionalTables.dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))) --> [1.0,20.0,3.0,50.0]
-  @fact MultidimensionalTables.simplify_array(map(x->x[1],collect(MultidimensionalTables.enum_dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))))) --> map(x->x[1],MultidimensionalTables.wrap_array(collect(zip([1,2,3,5],@nalift([1,20,3,50])))))
-  @fact MultidimensionalTables.simplify_array(map(x->x[1],collect(MultidimensionalTables.enum_dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))))) --> map(x->x[1],MultidimensionalTables.wrap_array(collect(zip([1.0,2.0,3.0,5.0],@nalift([1.0,20.0,3.0,50.0])))))
-  @fact MultidimensionalTables.simplify_array(map(x->x[2],collect(MultidimensionalTables.enum_dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))))) --> map(x->x[2],MultidimensionalTables.wrap_array(collect(zip([1,2,3,5],[1,20,3,50]))))
-  @fact MultidimensionalTables.simplify_array(map(x->x[2],collect(MultidimensionalTables.enum_dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))))) --> map(x->x[2],MultidimensionalTables.wrap_array(collect(zip([1.0,2.0,3.0,5.0],[1.0,20.0,3.0,50.0]))))
-  @fact collect(MultidimensionalTables.zip_dropnaiter(@nalift([1,2,3,NA,NA,4,5,7,8,9]), @nalift([NA,2,3,NA,10,14,NA,NA,10]))) --> [(2,2),(3,3),(4,14),(8,10)]
-  @fact collect(MultidimensionalTables.zip_dropnaiter(@nalift([1.0,2.0,3.0,NA,NA,4.0,5.0,7.0,8.0,9.0]), @nalift([NA,2,3,NA,10,14,NA,NA,10]))) --> [(2.0,2),(3.0,3),(4.0,14),(8.0,10)]
+  @fact sum(@nalift([1,20,3])) --> x -> DataCubes.naop_eq(Nullable(24), x).value
+  @fact sum(@nalift([1.0,20.0,3.0])) --> x -> DataCubes.naop_eq(Nullable(24.0), x).value
+  @fact sum(@nalift([1,20,3,NA])) --> x -> DataCubes.naop_eq(Nullable(24), x).value
+  @fact sum(@nalift([1.0,20.0,3.0,NA])) --> x -> DataCubes.naop_eq(Nullable(24.0), x).value
+  @fact sum(@nalift([1,2,3,NA,50])) --> x -> DataCubes.naop_eq(Nullable(56), x).value
+  @fact sum(@nalift([1.0,2.0,3.0,NA,50.0])) --> x -> DataCubes.naop_eq(Nullable(56.0), x).value
+  @fact prod(@nalift([1,2,5])) --> x -> DataCubes.naop_eq(x, Nullable(10)).value
+  @fact prod(@nalift([1.0,2.0,5.0])) --> x -> DataCubes.naop_eq(x, Nullable(10.0)).value
+  @fact prod(@nalift([1,2,3,NA])) --> x -> DataCubes.naop_eq(x, Nullable(6)).value
+  @fact prod(@nalift([1.0,2.0,3.0,NA])) --> x -> DataCubes.naop_eq(x, Nullable(6.0)).value
+  @fact prod(@nalift([1,2,3,NA,15])) --> x -> DataCubes.naop_eq(x, Nullable(90)).value
+  @fact prod(@nalift([1.0,2.0,3.0,NA,15.0])) --> x -> DataCubes.naop_eq(x, Nullable(90.0)).value
+  @fact collect(DataCubes.dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))) --> [1,20,3,50]
+  @fact collect(DataCubes.dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))) --> [1.0,20.0,3.0,50.0]
+  @fact DataCubes.simplify_array(map(x->x[1],collect(DataCubes.enum_dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))))) --> map(x->x[1],DataCubes.wrap_array(collect(zip([1,2,3,5],@nalift([1,20,3,50])))))
+  @fact DataCubes.simplify_array(map(x->x[1],collect(DataCubes.enum_dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))))) --> map(x->x[1],DataCubes.wrap_array(collect(zip([1.0,2.0,3.0,5.0],@nalift([1.0,20.0,3.0,50.0])))))
+  @fact DataCubes.simplify_array(map(x->x[2],collect(DataCubes.enum_dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))))) --> map(x->x[2],DataCubes.wrap_array(collect(zip([1,2,3,5],[1,20,3,50]))))
+  @fact DataCubes.simplify_array(map(x->x[2],collect(DataCubes.enum_dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))))) --> map(x->x[2],DataCubes.wrap_array(collect(zip([1.0,2.0,3.0,5.0],[1.0,20.0,3.0,50.0]))))
+  @fact collect(DataCubes.zip_dropnaiter(@nalift([1,2,3,NA,NA,4,5,7,8,9]), @nalift([NA,2,3,NA,10,14,NA,NA,10]))) --> [(2,2),(3,3),(4,14),(8,10)]
+  @fact collect(DataCubes.zip_dropnaiter(@nalift([1.0,2.0,3.0,NA,NA,4.0,5.0,7.0,8.0,9.0]), @nalift([NA,2,3,NA,10,14,NA,NA,10]))) --> [(2.0,2),(3.0,3),(4.0,14),(8.0,10)]
   @fact cov(@nalift([1,2,35,NA,NA]),@nalift([10,NA,12,NA,5])).value --> roughly(cov([1,35],[10,12]))
   @fact cov(@nalift([1.0,2.0,35.0,NA,NA]),@nalift([10.0,NA,12.0,NA,5.0])).value --> roughly(cov([1.0,35.0],[10.0,12.0]))
   @fact cov(@nalift([1.0,2.0,35.0,NA,NA]),@nalift([10,NA,12,NA,5])).value --> roughly(cov([1,35],[10,12]))

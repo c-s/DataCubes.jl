@@ -1,7 +1,7 @@
 module TestLDict
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("LDict tests") do
   context("constructor tests") do

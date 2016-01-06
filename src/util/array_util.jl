@@ -271,7 +271,7 @@ julia> @rap _*2 x->x+1 10
 22
 
 julia> @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)     
  Nullable(8)      
  Nullable{Int64}()
@@ -667,7 +667,7 @@ Apply a function `f` to `x`, which can be of type `LDict`/`DictArray`/`LabeledAr
 
 ```julia
 julia> mapvalues(x->x+1, LDict(:a=>1, :b=>2))
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a => 2
   :b => 3
 
@@ -692,12 +692,12 @@ p |4 7
 
 
 julia> mapvalues(sum, darr(a=[1,2,3], b=[4,5,6]))
-MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
+DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
 
 julia> mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
-MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
+DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
 ```
@@ -745,7 +745,7 @@ Peel off a variable to see its underlying data.
 
 ```julia
 julia> peel(darr(a=[1,2,3], b=[:m,:n,:p]))
-MultidimensionalTables.LDict{Symbol,MultidimensionalTables.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}}} with 2 entries:
+DataCubes.LDict{Symbol,DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}}} with 2 entries:
   :a => [Nullable(1),Nullable(2),Nullable(3)]
   :b => [Nullable(:m),Nullable(:n),Nullable(:p)]
 
@@ -782,22 +782,22 @@ Pick fields from a `DictArray` or a `LabeledArray`.
 
 ```julia
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a,))
-1-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
+1-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]
 
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a, :b)
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a, :b))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
@@ -814,29 +814,29 @@ Z |5 v |6 w
 
 
 julia> pick(t, :a)
-pic3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+pic3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)
 
 julia> pick(t, :a, :k)
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,N,A<:AbstractArray{T,N}},1}:
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,N,A<:AbstractArray{T,N}},1}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},2,MultidimensionalTables.BroadcastAxis{Nullable{ASCIIString},2,MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
  Nullable("Z")  Nullable("Z")
 
 julia> pick(t, (:a, :k))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,N,A<:AbstractArray{T,N}},1}:
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,N,A<:AbstractArray{T,N}},1}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},2,MultidimensionalTables.BroadcastAxis{Nullable{ASCIIString},2,MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
  Nullable("Z")  Nullable("Z")
@@ -914,7 +914,7 @@ Z
 
 
 julia> pickaxis(t, 1, :k)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}}:
  Nullable("X")
  Nullable("Y")
  Nullable("Z")
@@ -938,7 +938,7 @@ Delete keys or fields from `LDict`, `DictArray`, or `LabeledArray`.
 
 ```julia
 julia> delete(LDict(:a=>1, :b=>2, :c=>3), :a, :c)
-MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
+DataCubes.LDict{Symbol,Int64} with 1 entry:
   :b => 2
 
 julia> delete(darr(a=[1,2,3], b=[:m,:n,:p]), :b)
@@ -1096,12 +1096,12 @@ A nullable array after applying `f` to elements of `args` for each index. `f` ma
 
 ```julia
 julia> mapna((x,y)->x+y+1, @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(5)        Nullable(7)      
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 
 julia> mapna((x,y)->Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(5)        Nullable(7)      
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 ```
@@ -1167,7 +1167,7 @@ Calculate the tensor product of `arrs`.
 
 ```julia
 julia> tensorprod(@nalift([1,2,NA]), @nalift([3,NA]))
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Tuple{Int64,Int64}},2,Array{Nullable{Tuple{Int64,Int64}},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Tuple{Int64,Int64}},2,Array{Nullable{Tuple{Int64,Int64}},2}}:
  Nullable((1,3))                 Nullable{Tuple{Int64,Int64}}()
  Nullable((2,3))                 Nullable{Tuple{Int64,Int64}}()
  Nullable{Tuple{Int64,Int64}}()  Nullable{Tuple{Int64,Int64}}()
@@ -2137,22 +2137,22 @@ Combine `Nullable` arrays and `Nullable` elements, having the later arguments ov
 ```julia
 
 julia> namerge(10, @nalift([1 2 NA;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)   Nullable(10)
  Nullable(4)  Nullable(10)  Nullable(10)
 
 julia> namerge(@nalift([1 2 NA;4 NA NA]), 10)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(10)  Nullable(10)  Nullable(10)
  Nullable(10)  Nullable(10)  Nullable(10)
 
 julia> namerge(10, @nalift([1 2 NA;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)   Nullable(10)
  Nullable(4)  Nullable(10)  Nullable(10)
 
 julia> namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(11)  Nullable(2)   Nullable{Int64}()
  Nullable(14)  Nullable(15)  Nullable{Int64}()
 

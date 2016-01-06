@@ -1,7 +1,7 @@
 module TestJoin
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 using DataFrames
 
 facts("Join tests") do

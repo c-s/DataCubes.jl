@@ -1,8 +1,8 @@
 module TestDictArray
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables.setna!
+using DataCubes
+using DataCubes.setna!
 
 facts("DictArray tests") do
   context("constructor tests") do

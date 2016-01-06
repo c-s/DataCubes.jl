@@ -1,8 +1,8 @@
 module TestNAArrayOperators
 
 using FactCheck
-using MultidimensionalTables
-using MultidimensionalTables.AbstractArrayWrapper
+using DataCubes
+using DataCubes.AbstractArrayWrapper
 
 facts("NAArrayOperators tests") do
   context("AbstractArrayWrapper tests") do
@@ -14,7 +14,7 @@ facts("NAArrayOperators tests") do
     @fact (x=AbstractArrayWrapper([5,1,3,2,4]);sort!(x);x) --> AbstractArrayWrapper([1,2,3,4,5])
     @fact sort(AbstractArrayWrapper([5 1 3 2 4]),2) --> AbstractArrayWrapper([1 2 3 4 5])
     @fact sort(AbstractArrayWrapper([5,1,3,2,4])) --> AbstractArrayWrapper([1,2,3,4,5])
-    @fact map((x,y)->MultidimensionalTables.naop_plus(x,y), nalift([1,2,3,4,5]), @nalift([1,2,NA,4,5])) --> @nalift([2,4,NA,8,10])
+    @fact map((x,y)->DataCubes.naop_plus(x,y), nalift([1,2,3,4,5]), @nalift([1,2,NA,4,5])) --> @nalift([2,4,NA,8,10])
     @fact @nalift([1,2,NA]) .> 1 --> @nalift([false, true, NA])
     @fact 1 .< @nalift([1,2,NA]) --> @nalift([false, true, NA])
     @fact @nalift([1,2,3,NA]) .< @nalift([NA,3,1,2]) --> @nalift([NA,true,false,NA])

@@ -87,7 +87,7 @@ The subsequent elements in ds will either update the preceding one, or append th
 
 ```julia
 julia> merge(LDict(:a=>3, :b=>5), Dict(:b=>"X", :c=>"Y"), LDict(:c=>'x', 'd'=>'y'))
-MultidimensionalTables.LDict{Any,Any} with 4 entries:
+DataCubes.LDict{Any,Any} with 4 entries:
   :a  => 3
   :b  => "X"
   :c  => 'x'
@@ -147,7 +147,7 @@ Delete `keys` keys from `dict`. A missing key will be silently ignored.
 
 ```julia
 julia> deletekeys(LDict(:a=>3, :b=>5, :c=>10), :a, :b, :x)
-MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
+DataCubes.LDict{Symbol,Int64} with 1 entry:
   :c => 10
 ```
 
@@ -177,7 +177,7 @@ Select `keys` keys from `dict`. A missing key will raise an error.
 
 ```julia
 julia> selectkeys(LDict(:a=>3, :b=>5, :c=>10), :a, :b)
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a => 3
   :b => 5
 ```
@@ -271,7 +271,7 @@ Reorder the keys so that the first few keys are `ks`.
 
 ```julia
 julia> reorder(LDict(:a=>1, :b=>2, :c=>3), :b, :c)
-MultidimensionalTables.LDict{Symbol,Int64} with 3 entries:
+DataCubes.LDict{Symbol,Int64} with 3 entries:
   :b => 2
   :c => 3
   :a => 1
@@ -290,7 +290,7 @@ Renames the first few keys using `ks`.
 
 ```julia
 julia> rename(LDict(:a=>1, :b=>2, :c=>3), :b, 'x')
-MultidimensionalTables.LDict{Any,Int64} with 3 entries:
+DataCubes.LDict{Any,Int64} with 3 entries:
   :b  => 1
   'x' => 2
   :c  => 3

@@ -50,12 +50,12 @@ julia> ungroup(t, (:,1))
 
 
 julia> m = nalift(reshape(Any[[1,2],[3,4],[5,6,7],[8,9,10]],2,2))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},2,Array{Nullable{Array{Int64,1}},2}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},2,Array{Nullable{Array{Int64,1}},2}}:
  Nullable([1,2])  Nullable([5,6,7]) 
  Nullable([3,4])  Nullable([8,9,10])
 
 julia> ungroup(m, 2)
-2x5 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x5 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(5)  Nullable(6)  Nullable(7) 
  Nullable(3)  Nullable(4)  Nullable(8)  Nullable(9)  Nullable(10)
 ```

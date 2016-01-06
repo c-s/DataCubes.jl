@@ -1,7 +1,7 @@
 module TestSelect
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 immutable Wrap{T}
   elem::T
@@ -25,12 +25,12 @@ facts("Select tests") do
     context("condition tests") do
       @fact @select(lar, where[10 .< _c2 .< 25]) --> begin
         base = @larr(c1=col1[1:10,2:3],c2=col2[1:10,2:3],c3=col3[1:10,2:3],c4=col4[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
-        tbltool.setna!(base, 5:10, 2)
+        dcube.setna!(base, 5:10, 2)
         base
       end
       @fact @select(lar, c1=_c1 .* 2, where[10 .< _c2 .< 25]) --> begin
         base = @larr(c1=2 .* col1[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
-        tbltool.setna!(base, 5:10, 2)
+        dcube.setna!(base, 5:10, 2)
         base
       end
     end
@@ -55,12 +55,12 @@ facts("Select tests") do
     context("condition tests") do
       @fact selct(lar, where=d->10.0 .< d[:c2] .< 25) --> begin
         base = @larr(c1=col1[1:10,2:3],c2=col2[1:10,2:3],c3=col3[1:10,2:3],c4=col4[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
-        tbltool.setna!(base, 5:10, 2)
+        dcube.setna!(base, 5:10, 2)
         base
       end
       @fact selct(lar, c1=d->d[:c1] .* 2, where=Any[d->10 .< d[:c2] .< 25.0]) --> begin
         base = @larr(c1=2 .* col1[1:10,2:3],axis1[k1=collect(101:110),k2=collect(201:210)],axis2[r1=["a_2","a_3"]])
-        tbltool.setna!(base, 5:10, 2)
+        dcube.setna!(base, 5:10, 2)
         base
       end
     end

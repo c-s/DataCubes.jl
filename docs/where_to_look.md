@@ -78,13 +78,14 @@
 
 ### Miscellaneous
 
+* List all field names in a `DictArray`: [`keys`](api/#method__keys.1)
 * Remove all `NA` elements in an array, possibly reducing its size when some elements along some slice are all `NA`: [`dropna`](api/#function__dropna.1)
 * Combining two arrays of the same shape. The second one updates the first one only when the element is not `NA`: [`namerge`](api/#function__namerge.1)
 * Want to avoid excessive numbers of parentheses when applying several functions: [`@rap`](api/#macro___rap.1).
-* Create a labels => base value nested dictionary from [`LabeledArray`](api/#type__labeledarray.1): [`tbltool.create_dict`](api/#function__create_dict.1)
-* Set elements in an array to `NA`: [`tbltool.setna!`](api/#function__setna.1)
+* Create a labels => base value nested dictionary from [`LabeledArray`](api/#type__labeledarray.1): [`dcube.create_dict`](api/#function__create_dict.1)
+* Set elements in an array to `NA`: [`dcube.setna!`](api/#function__setna.1)
 * Choose whether to display fields along row or column: `alongrow=true/false` option in [`show`](api/#method__show.1) for [`DictArray`](api/#type__dictarray.1) and [`show`](api/#method__show.3) for [`LabeledArray`](api/#type__labeledarray.1).
-* Take some number of elements repeatedly along some direction in an array: [`tbltool.gtake`](api/#function__gtake.1).
-* Drop some number of elements along some direction in an array: [`tbltool.gdrop`](api/#function__gdrop.1).
-* Set show size when printing [`DictArray`](api/#type__dictarray.1) and [`LabeledArray`](api/#type__labeledarray.1) to console: `tbltool.set_showalongrow!!`,`tbltool.set_showheight!!`, `tbltool.set_showwidth!!`, `tbltool.set_default_showsize!!`
-* Set display size for html output of [`DictArray`](api/#type__dictarray.1) and [`LabeledArray`](api/#type__labeledarray.1): `tbltool.set_dispalongrow!!`, `tbltool.set_dispheight!!`, `tbltool.set_dispwidth!!`, `tbltool.set_default_dispsize!!`
+* Take some number of elements repeatedly along some direction in an array: [`dcube.gtake`](api/#function__gtake.1).
+* Drop some number of elements along some direction in an array: [`dcube.gdrop`](api/#function__gdrop.1).
+* Set show size when printing [`DictArray`](api/#type__dictarray.1) and [`LabeledArray`](api/#type__labeledarray.1) to console: `dcube.set_showalongrow!!`,`dcube.set_showheight!!`, `dcube.set_showwidth!!`, `dcube.set_default_showsize!!`
+* Set display size for html output of [`DictArray`](api/#type__dictarray.1) and [`LabeledArray`](api/#type__labeledarray.1): `dcube.set_dispalongrow!!`, `dcube.set_dispheight!!`, `dcube.set_dispwidth!!`, `dcube.set_default_dispsize!!`

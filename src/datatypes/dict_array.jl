@@ -715,7 +715,7 @@ However, in this case, the `LDict` should be of the type `LDict{K,Nullable{V}}`.
 
 ```julia
 julia> map(x->x[:a].value + x[:b].value, darr(a=[1 2;3 4], b=[1.0 2.0;3.0 4.0]))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},2,MultidimensionalTables.FloatNAArray{Float64,2,Array{Float64,2}}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}:
  Nullable(2.0)  Nullable(4.0)
  Nullable(6.0)  Nullable(8.0)
 
@@ -741,13 +741,13 @@ Reduce a two argument function `f` along dimensions of `arr`. `dims` is a vector
 
 ```julia
 julia> reducedim((acc,d)->acc+d[:a].value, darr(a=[1 2 3;4 5 6]), [1], 0)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(5)
  Nullable(7)
  Nullable(9)
 
 julia> reducedim((acc,d)->acc+d[:a].value, darr(a=[1 2 3;4 5 6]), [2], 0)
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(6) 
  Nullable(15)
 
@@ -786,13 +786,13 @@ Otherwise, the return value is an `Array`.
 
 ```julia
 julia> mapslices(d->d[:a] .* 2, darr(a=[1 2 3;4 5 6], b=[10 11 12;13 14 15]), [1])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
  Nullable([Nullable(2),Nullable(8)]) 
  Nullable([Nullable(4),Nullable(10)])
  Nullable([Nullable(6),Nullable(12)])
 
 julia> mapslices(d->d[:a] .* 2, darr(a=[1 2 3;4 5 6], b=[10 11 12;13 14 15]), [2])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
  Nullable([Nullable(2),Nullable(4),Nullable(6)])  
  Nullable([Nullable(8),Nullable(10),Nullable(12)])
 
@@ -1022,7 +1022,7 @@ Return the vector of field arrays of the input `DictArray`, which are the values
 
 ```julia
 julia> values(darr(a=[1,2,3], b=[:x,:y,:z]))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:x),Nullable(:y),Nullable(:z)]
 ```

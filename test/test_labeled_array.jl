@@ -1,7 +1,7 @@
 module TestLabeledArray
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("LabeledArray tests") do
   context("constructor tests") do
@@ -31,7 +31,7 @@ facts("LabeledArray tests") do
           axis1=DictArray(k1=nalift(["a","a","b","b","b"]), k2=nalift(collect(101:105))),
           axis2=DictArray(r1=nalift([:alpha,:beta,:gamma,:delta])))
     @fact larr[3,2] --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
-    @fact tbltool.getindexpair(larr,3,2).second.second --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact dcube.getindexpair(larr,3,2).second.second --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
     @fact larr[1:3,2] --> LabeledArray(
                             DictArray(:a=>nalift([6,7,8]),
                                       2=>nalift([:sym,:sym,:sym]),
@@ -82,17 +82,17 @@ facts("LabeledArray tests") do
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[2]) --> @larr(c=[3,3], axis1[k=[:x,:y]])
     @fact mapslices(x->Nullable(length(x)),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"]),[1]) --> LabeledArray(@nalift([2,2,2]), axes1=@nalift([1,2,3]))
     @fact size(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> (2,3)
-    @fact mapslices(x->LDict(:c1=>MultidimensionalTables.naop_plus(x[:a],x[:b]),:c2=>Nullable(10)), @larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0]), []) --> @larr(c1=[2.0 4.0 6.0;8.0 10.0 12.0], c2=@rap reshape(_,(2,3)) fill (10,6)...)
-    #@fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Array{Pair{Nullable{Int64},Pair{Nullable{Int64},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}},2}
-    @fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> MultidimensionalTables.LabeledArray{MultidimensionalTables.LDict{Symbol,Nullable{Int64}},2,Tuple{MultidimensionalTables.DefaultAxis,MultidimensionalTables.DefaultAxis},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}},Nullable{Int64}}}
-    @fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> MultidimensionalTables.LDict{Symbol,Nullable{Int64}}
-    #@fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Pair{Nullable{Int64},Pair{Nullable{Int64},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}}
+    @fact mapslices(x->LDict(:c1=>DataCubes.naop_plus(x[:a],x[:b]),:c2=>Nullable(10)), @larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0]), []) --> @larr(c1=[2.0 4.0 6.0;8.0 10.0 12.0], c2=@rap reshape(_,(2,3)) fill (10,6)...)
+    #@fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Array{Pair{Nullable{Int64},Pair{Nullable{Int64},DataCubes.LDict{Symbol,Nullable{Int64}}}},2}
+    @fact typeof(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> DataCubes.LabeledArray{DataCubes.LDict{Symbol,Nullable{Int64}},2,Tuple{DataCubes.DefaultAxis,DataCubes.DefaultAxis},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}},Nullable{Int64}}}
+    @fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> DataCubes.LDict{Symbol,Nullable{Int64}}
+    #@fact eltype(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> Pair{Nullable{Int64},Pair{Nullable{Int64},DataCubes.LDict{Symbol,Nullable{Int64}}}}
     @fact mapslices(x -> x, @larr(a=[1 2 3;4 5 6]), []) --> @larr(a=[1 2 3;4 5 6])
     @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
     @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
-    @fact tbltool.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6
-    @fact collect(keys(tbltool.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> [LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))]
-    @fact tbltool.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)][LDict(:r=>Nullable(:x))] --> LDict(:a=>Nullable(1), :b=>Nullable{Int}())
+    @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6
+    @fact collect(keys(dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> [LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))]
+    @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)][LDict(:r=>Nullable(:x))] --> LDict(:a=>Nullable(1), :b=>Nullable{Int}())
     @fact reverse(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[1]) --> @larr(a=[4 5 6;1 2 3],axis2[r=[:x,:y,:z]])
     @fact reverse(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2]) --> @larr(a=[3 2 1;6 5 4],axis2[r=[:z,:y,:x]])
     @fact reverse(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1:2) --> @larr(a=[6 5 4;3 2 1],axis2[r=[:z,:y,:x]])

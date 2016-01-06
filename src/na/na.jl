@@ -11,7 +11,7 @@ For example,
 
 ```julia
 julia> AbstractArrayWrapper([Nullable(1), Nullable(2)]) .+ AbstractArrayWrapper([Nullable{Int}(), Nullable(3)])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable{Int64}()
  Nullable(5)      
 ```
@@ -232,18 +232,18 @@ It returns `arr` itself when applied to a `DictArray`/`LabeledArray`.
 
 ```julia
 julia> nalift(Any[[1,2,3],[4,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
  Nullable([1,2,3])
  Nullable([4,5])  
 
 julia> nalift([1,2,3])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia> nalift(Any[[1,2,3],[4,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
  Nullable([1,2,3])
  Nullable([4,5])  
 
@@ -340,19 +340,19 @@ It returns `arr` itself when applied to a `DictArray`/`LabeledArray`.
 
 ```julia
 julia> @nalift([1,2,3])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia> @nalift([1,2,NA])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)      
  Nullable(2)      
  Nullable{Int64}()
 
 julia> @nalift(Any[[1,2,3],[NA,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1}}:
  Nullable([Nullable(1),Nullable(2),Nullable(3)])
  Nullable([Nullable{Int64}(),Nullable(5)])      
 
@@ -413,7 +413,7 @@ If `args...` is omitted, all elements are set to `NA`.
 
 ```julia
 julia> setna!(@nalift([1,2,NA,4,5]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable{Int64}()
  Nullable{Int64}()
  Nullable{Int64}()
@@ -486,14 +486,14 @@ But for other types, it may be better to raise an error.
 
 ```julia
 julia> igna(@nalift([1,2,NA,4,5]))
-ERROR: MultidimensionalTables.NAElementException()
- in anonymous at /Users/changsoonpark/.julia/v0.4/MultidimensionalTables/src/na/na.jl:315
+ERROR: DataCubes.NAElementException()
+ in anonymous at /Users/changsoonpark/.julia/v0.4/DataCubes/src/na/na.jl:315
  in map_to! at abstractarray.jl:1289
  in map at abstractarray.jl:1311
- in igna at /Users/changsoonpark/.julia/v0.4/MultidimensionalTables/src/na/na.jl:313
+ in igna at /Users/changsoonpark/.julia/v0.4/DataCubes/src/na/na.jl:313
 
 julia> igna(@nalift([1.0,2.0,NA,4.0,5.0]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Float64,1,Array{Float64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}:
    1.0
    2.0
  NaN  
@@ -501,7 +501,7 @@ julia> igna(@nalift([1.0,2.0,NA,4.0,5.0]))
    5.0
 
 julia> igna(@nalift([1,2,NA,4,5]), 3)
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  2
  3
@@ -509,7 +509,7 @@ julia> igna(@nalift([1,2,NA,4,5]), 3)
  5
 
 julia> igna(LDict(:a=>Nullable(3), :b=>Nullable{Int}()), 1)
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a => 3
   :b => 1
 ```
@@ -594,7 +594,7 @@ julia> ignabool(Nullable(false))
 false
 
 julia> ignabool(@nalift([true true NA;false NA true]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
   true   true  false
  false  false   true
 ```
@@ -640,21 +640,21 @@ a b |a b |a b
 
 
 julia> isna(t)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false   true  false
  false  false  false
 
 julia> isna(t, 2, 2:3)
-1x2 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+1x2 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false  false
 
 julia> isna(@larr(t, axis1[NA,:Y], axis2[NA,NA,"W"]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false   true  false
  false  false  false
 
 julia> isna(@nalift([1 2 NA;NA 5 6]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false  false   true
   true  false  false
 ```

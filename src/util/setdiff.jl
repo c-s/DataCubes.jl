@@ -15,11 +15,11 @@ The order is preserved in the sense that the first array order is kept except th
 
 ```julia
 julia> setdiff(1, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-1x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+1x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(4)  Nullable(5)  Nullable(6)
 
 julia> setdiff(2, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-2x1 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x1 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)
  Nullable(4)
 

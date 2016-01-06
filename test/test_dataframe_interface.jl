@@ -1,7 +1,7 @@
 module TestDataFrameInterface
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 import DataFrames: DataFrame
 import RDatasets: dataset
 
@@ -25,7 +25,7 @@ facts("DataFrameInterface tests") do
     DataFrame(Any[repmat([:a,:b],5),repmat(10:11,5),repeat(['A',3,"5",:x,1.0],inner=[2]),collect(1:10), repmat(["x","y"], 5), fill(:sym,10)], [:k1,:k2,:r,:A,:B,:C])
 
 
-  #using MultidimensionalTables;using DataFrames;using RDatasets
+  #using DataCubes;using DataFrames;using RDatasets
   context("RDatasets readability tests") do
     #for pd in zip(collect(values(peel(@select(@darr(RDatasets.datasets()), :Package, :Dataset))))...)
     #  d = @darr(dataset(map(x->x.value, pd)...))

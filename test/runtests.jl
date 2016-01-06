@@ -1,11 +1,11 @@
 ###################################################
-# MultidimensionalTables.jl
+# DataCubes.jl
 # A general array library for Julia.
-# https://github.com/c-s/MultidimensionalTables.jl.git
+# https://github.com/c-s/DataCubes.jl.git
 # MIT Licensed
 ###################################################
 
-module TestMultidimensionalTables
+module TestDataCubes
 
 using FactCheck
 

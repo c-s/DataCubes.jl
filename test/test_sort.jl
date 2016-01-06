@@ -1,7 +1,7 @@
 module TestSort
 
 using FactCheck
-using MultidimensionalTables
+using DataCubes
 
 facts("Sort tests") do
   @fact sort(@darr(a=[5 5 3;3 3 1],b=[1 3 4;9 8 7]), 1, :a) --> @darr(a=[3 3 1;5 5 3],b=[9 8 7;1 3 4])

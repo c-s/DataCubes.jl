@@ -502,37 +502,37 @@ Fill forward (backward if `rev=true`) `arr` using non-null values from the last 
 
 ```julia
 julia> t = @nalift([1 NA;NA 4;NA NA])
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable{Int64}()
  Nullable(1)  Nullable(4)      
  Nullable(1)  Nullable(4)      
 
 julia> nafill(t,2)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable(1)      
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t,2,1)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(1)
  Nullable(1)  Nullable(4)
  Nullable(1)  Nullable(4)
 
 julia> nafill(t, rev=true)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable(4)      
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t, window=2)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
  Nullable(1)        Nullable(4)      
  Nullable{Int64}()  Nullable(4)      
@@ -585,7 +585,7 @@ Note that `diff` applied to `AbstractArrayWrapper` (or to `LabeledArray` or `Dic
 
 ```julia
 julia> diff(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)     
  Nullable{Int64}()
  Nullable{Int64}()
@@ -654,7 +654,7 @@ Calculate moving sum of `arr` using the last `window` elements, or cumulative su
 
 ```julia
 julia> msum(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)
  Nullable(21)
  Nullable(33)
@@ -662,7 +662,7 @@ julia> msum(@nalift([10,11,12,14,17]))
  Nullable(64)
 
 julia> msum(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)
  Nullable(10)
  Nullable(22)
@@ -739,7 +739,7 @@ Calculate moving product of `arr` using the last `window` elements, or cumulativ
 
 ```julia
 julia> mprod(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)    
  Nullable(110)   
  Nullable(1320)  
@@ -747,7 +747,7 @@ julia> mprod(@nalift([10,11,12,14,17]))
  Nullable(314160)
 
 julia> mprod(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)   
  Nullable(10)   
  Nullable(120)  
@@ -823,7 +823,7 @@ Calculate moving mean of `arr` using the last `window` elements, or cumulative m
 
 ```julia
 julia> mmean(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(10.0) 
  Nullable(10.5) 
  Nullable(11.0) 
@@ -831,7 +831,7 @@ julia> mmean(@nalift([10,11,12,14,17]))
  Nullable(12.8) 
 
 julia> mmean(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(10.0) 
  Nullable(10.0) 
  Nullable(11.0) 
@@ -927,7 +927,7 @@ Calculate moving minimum of `arr` using the last `window` elements, or cumulativ
 
 ```julia
 julia> mminimum(@nalift([15,10,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(15)
  Nullable(10)
  Nullable(10)
@@ -935,7 +935,7 @@ julia> mminimum(@nalift([15,10,12,11,17]))
  Nullable(10)
 
 julia> mminimum(@nalift([15,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(15)
  Nullable(15)
  Nullable(12)
@@ -991,7 +991,7 @@ Calculate moving maximum of `arr` using the last `window` elements, or cumulativ
 
 ```julia
 julia> mmaximum(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(11)
  Nullable(14)
  Nullable(14)
@@ -999,7 +999,7 @@ julia> mmaximum(@nalift([11,14,12,11,17]))
  Nullable(17)
 
 julia> mmaximum(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(11)
  Nullable(11)
  Nullable(12)
@@ -1055,7 +1055,7 @@ Calculate moving median of `arr` using the last `window` elements, or cumulative
 
 ```julia
 julia> mmedian(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(12.5)
  Nullable(12.5)
@@ -1063,7 +1063,7 @@ julia> mmedian(@nalift([11,14,12,11,17]))
  Nullable(14.0)
 
 julia> mmedian(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(11.0)
  Nullable(11.5)
@@ -1120,7 +1120,7 @@ Calculate moving middle of `arr` using the last `window` elements, or cumulative
 
 ```julia
 julia> mmiddle(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(12.5)
  Nullable(12.5)
@@ -1128,7 +1128,7 @@ julia> mmiddle(@nalift([11,14,12,11,17]))
  Nullable(14.0)
 
 julia> mmiddle(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(11.0)
  Nullable(11.5)
@@ -1186,7 +1186,7 @@ Calculate moving quantile of `arr` using the last `window` elements, or cumulati
 
 ```julia
 julia> mquantile(@nalift([11,14,12,11,17]), 0.25)
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0) 
  Nullable(11.75)
  Nullable(11.75)
@@ -1194,7 +1194,7 @@ julia> mquantile(@nalift([11,14,12,11,17]), 0.25)
  Nullable(12.5) 
 
 julia> mquantile(@nalift([11,NA,12,11,17]), 0.25)
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0) 
  Nullable(11.0) 
  Nullable(11.25)
@@ -1427,7 +1427,7 @@ If the input is a `LabeledArray`, `describe` returns the summary of its base.
 
 ```julia
 julia> describe(@nalift([1,2,3,4,NA]))
-MultidimensionalTables.LDict{Symbol,Any} with 10 entries:
+DataCubes.LDict{Symbol,Any} with 10 entries:
   :min     => [Nullable(1)]
   :q1      => Nullable(1.75)
   :med     => Nullable(2.5)
@@ -1508,25 +1508,25 @@ Parallel shift the input array `arr` so that the element at `[1,...,1]` in `arr`
 
 ```julia
 julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 01)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, -1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(4)        Nullable(5)      
  Nullable{Int64}()  Nullable(7)        Nullable(8)      
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
