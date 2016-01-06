@@ -78,6 +78,7 @@
 
 ### Miscellaneous
 
+* List all field names in a `DictArray`: [`keys`](api/#method__keys.1)
 * Remove all `NA` elements in an array, possibly reducing its size when some elements along some slice are all `NA`: [`dropna`](api/#function__dropna.1)
 * Combining two arrays of the same shape. The second one updates the first one only when the element is not `NA`: [`namerge`](api/#function__namerge.1)
 * Want to avoid excessive numbers of parentheses when applying several functions: [`@rap`](api/#macro___rap.1).
