@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>API - MultidimensionalTables</title>
+	<title>API - DataCubes</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -43,7 +43,7 @@
             
 
             <!-- Main title -->
-            <a class="navbar-brand" href="..">MultidimensionalTables</a>
+            <a class="navbar-brand" href="..">DataCubes</a>
         </div>
 
         <!-- Expanded navigation -->
@@ -114,7 +114,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#multidimensionaltables">MultidimensionalTables</a></li>
+        <li class="main active"><a href="#datacubes">DataCubes</a></li>
         
             <li><a href="#exported">Exported</a></li>
         
@@ -125,11 +125,11 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="multidimensionaltables">MultidimensionalTables</h1>
+<h1 id="datacubes">DataCubes</h1>
 <h2 id="exported">Exported</h2>
 <hr />
 <p><a id="function__axis2flds.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesaxis2flds">MultidimensionalTables.axis2flds <a href="#function__axis2flds.1">¶</a></h4>
+<h4 id="datacubesaxis2flds">DataCubes.axis2flds <a href="#function__axis2flds.1">¶</a></h4>
 <p><code>axis2flds(arr::LabeledArray (; name_collapse_function=..., default_axis_value=nothing)</code></p>
 <p>Collapse a dimension of a <a href="#type__labeledarray.1"><code>LabeledArray</code></a>, making the axis along that direction as field names.</p>
 <h5 id="arguments">Arguments</h5>
@@ -205,10 +205,10 @@ e |5 10
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L614">MultidimensionalTables/src/util/array_util.jl:614</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L614">DataCubes/src/util/array_util.jl:614</a></p>
 <hr />
 <p><a id="function__collapse_axes.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablescollapse_axes">MultidimensionalTables.collapse_axes <a href="#function__collapse_axes.1">¶</a></h4>
+<h4 id="datacubescollapse_axes">DataCubes.collapse_axes <a href="#function__collapse_axes.1">¶</a></h4>
 <p><code>collapse_axes(arr::AbstractArray, front_dim::Integer, back_end::Integer)</code></p>
 <p>Collapse front_dim to back_dim dimensions into one.</p>
 <h5 id="arguments_1">Arguments</h5>
@@ -236,10 +236,10 @@ a b  |a  b  |a  b  |a  b  |a  b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L203">MultidimensionalTables/src/util/array_util.jl:203</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L203">DataCubes/src/util/array_util.jl:203</a></p>
 <hr />
 <p><a id="function__darr.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdarr">MultidimensionalTables.darr <a href="#function__darr.1">¶</a></h4>
+<h4 id="datacubesdarr">DataCubes.darr <a href="#function__darr.1">¶</a></h4>
 <p><code>darr(...)</code></p>
 <p>Create a <code>DictArray</code>. The arguments <code>...</code> can be one of the following:</p>
 <h5 id="arguments_2">Arguments</h5>
@@ -279,10 +279,10 @@ a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1288">MultidimensionalTables/src/datatypes/dict_array.jl:1288</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1288">DataCubes/src/datatypes/dict_array.jl:1288</a></p>
 <hr />
 <p><a id="function__delete.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdelete">MultidimensionalTables.delete <a href="#function__delete.1">¶</a></h4>
+<h4 id="datacubesdelete">DataCubes.delete <a href="#function__delete.1">¶</a></h4>
 <p>Delete keys or fields from <code>LDict</code>, <code>DictArray</code>, or <code>LabeledArray</code>.</p>
 <ul>
 <li><code>delete(dict::LDict, keys...)</code> deletes the keys <code>keys</code> from <code>dict</code> and returns a new <code>LDict</code>.</li>
@@ -291,7 +291,7 @@ a b
 </ul>
 <h5 id="examples_3">Examples</h5>
 <pre><code class="julia">julia&gt; delete(LDict(:a=&gt;1, :b=&gt;2, :c=&gt;3), :a, :c)
-MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
+DataCubes.LDict{Symbol,Int64} with 1 entry:
   :b =&gt; 2
 
 julia&gt; delete(darr(a=[1,2,3], b=[:m,:n,:p]), :b)
@@ -329,10 +329,10 @@ julia&gt; delete(t, :k, :b)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L979">MultidimensionalTables/src/util/array_util.jl:979</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L979">DataCubes/src/util/array_util.jl:979</a></p>
 <hr />
 <p><a id="function__describe.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdescribe">MultidimensionalTables.describe <a href="#function__describe.1">¶</a></h4>
+<h4 id="datacubesdescribe">DataCubes.describe <a href="#function__describe.1">¶</a></h4>
 <p><code>describe(arr)</code></p>
 <p>Generate a <code>LabeledArray</code> showing the overall statistics of the input.
 If the input is a <code>Nullable</code> array, its summary statistics is calculated and the return value is of type <code>LDict</code>.
@@ -340,7 +340,7 @@ If the input is a <code>DictArray</code>, the summary is calculated for each fie
 If the input is a <code>LabeledArray</code>, <code>describe</code> returns the summary of its base.</p>
 <h5 id="examples_4">Examples</h5>
 <pre><code class="julia">julia&gt; describe(@nalift([1,2,3,4,NA]))
-MultidimensionalTables.LDict{Symbol,Any} with 10 entries:
+DataCubes.LDict{Symbol,Any} with 10 entries:
   :min     =&gt; [Nullable(1)]
   :q1      =&gt; Nullable(1.75)
   :med     =&gt; Nullable(2.5)
@@ -371,10 +371,10 @@ b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1312">MultidimensionalTables/src/util/array_helper_functions.jl:1312</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1312">DataCubes/src/util/array_helper_functions.jl:1312</a></p>
 <hr />
 <p><a id="function__discard.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdiscard">MultidimensionalTables.discard <a href="#function__discard.1">¶</a></h4>
+<h4 id="datacubesdiscard">DataCubes.discard <a href="#function__discard.1">¶</a></h4>
 <p><code>discard(arr, ns...)</code></p>
 <p>Discard a block of array discarding all elements specified by <code>ns</code>..., using labels for <code>LabeledArray</code>s, indices for other types of arrays or <code>LDict</code>s.</p>
 <h5 id="arguments_3">Arguments</h5>
@@ -446,10 +446,10 @@ V  |o 15
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1611">MultidimensionalTables/src/util/array_util.jl:1611</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1611">DataCubes/src/util/array_util.jl:1611</a></p>
 <hr />
 <p><a id="function__dropna.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdropna">MultidimensionalTables.dropna <a href="#function__dropna.1">¶</a></h4>
+<h4 id="datacubesdropna">DataCubes.dropna <a href="#function__dropna.1">¶</a></h4>
 <p>Remove any <code>NA</code> entries. If all elements are <code>NA</code> along some slice, that slice will be removed and the array size will shrink.</p>
 <h5 id="examples_6">Examples</h5>
 <pre><code class="julia">julia&gt; t = @darr(a=[1 2 NA;NA 5 NA], b=[NA :n NA;:x NA NA])
@@ -493,10 +493,10 @@ N |  x |5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1067">MultidimensionalTables/src/util/array_util.jl:1067</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1067">DataCubes/src/util/array_util.jl:1067</a></p>
 <hr />
 <p><a id="function__enumeration.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesenumeration">MultidimensionalTables.enumeration <a href="#function__enumeration.1">¶</a></h4>
+<h4 id="datacubesenumeration">DataCubes.enumeration <a href="#function__enumeration.1">¶</a></h4>
 <p><code>enumeration(arr [, poolorder])</code></p>
 <p>Create an <code>EnumerationArray</code>.</p>
 <h5 id="arguments_4">Arguments</h5>
@@ -506,7 +506,7 @@ N |  x |5
 </ul>
 <h5 id="examples_7">Examples</h5>
 <pre><code class="julia">julia&gt; enumeration([:A,:A,:B,:B,:C])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)
  Nullable(:A)
  Nullable(:B)
@@ -520,7 +520,7 @@ julia&gt; enumeration([:A,:A,:B,:B,:C]).pool
  :C
 
 julia&gt; enumeration([:A,:A,:B,:B,:C]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  1
  2
@@ -528,7 +528,7 @@ julia&gt; enumeration([:A,:A,:B,:B,:C]).elems
  3
 
 julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)
  Nullable(:A)
  Nullable(:B)
@@ -542,7 +542,7 @@ julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B]).pool
  :A
 
 julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  3
  3
  2
@@ -551,10 +551,10 @@ julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L178">MultidimensionalTables/src/datatypes/enumeration_array.jl:178</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L178">DataCubes/src/datatypes/enumeration_array.jl:178</a></p>
 <hr />
 <p><a id="function__extract.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesextract">MultidimensionalTables.extract <a href="#function__extract.1">¶</a></h4>
+<h4 id="datacubesextract">DataCubes.extract <a href="#function__extract.1">¶</a></h4>
 <p><code>extract(arr, ns...)</code></p>
 <p>Extract a block of array using labels for <code>LabeledArray</code>s, indices for other types of arrays or <code>LDict</code>s.</p>
 <h5 id="arguments_5">Arguments</h5>
@@ -624,10 +624,10 @@ V  |e 5 |j 10
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1399">MultidimensionalTables/src/util/array_util.jl:1399</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1399">DataCubes/src/util/array_util.jl:1399</a></p>
 <hr />
 <p><a id="function__flds2axis.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesflds2axis">MultidimensionalTables.flds2axis <a href="#function__flds2axis.1">¶</a></h4>
+<h4 id="datacubesflds2axis">DataCubes.flds2axis <a href="#function__flds2axis.1">¶</a></h4>
 <p><code>flds2axis(arr::LabeledArray [; axisname=nothing, fieldname=nothing])</code></p>
 <p>Create another dimension using the field values of the data of a LabeledArray.</p>
 <h5 id="arguments_6">Arguments</h5>
@@ -667,10 +667,10 @@ newaxis |a        |b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L509">MultidimensionalTables/src/util/array_util.jl:509</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L509">DataCubes/src/util/array_util.jl:509</a></p>
 <hr />
 <p><a id="function__igna.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesigna">MultidimensionalTables.igna <a href="#function__igna.1">¶</a></h4>
+<h4 id="datacubesigna">DataCubes.igna <a href="#function__igna.1">¶</a></h4>
 <p><code>igna(arr [, nareplace])</code></p>
 <p>Ignore null elements from <code>arr</code>.
 Null elements will be replaced by <code>nareplace</code>, if provided.
@@ -687,14 +687,14 @@ But for other types, it may be better to raise an error.</p>
 </ul>
 <h5 id="examples_10">Examples</h5>
 <pre><code class="julia">julia&gt; igna(@nalift([1,2,NA,4,5]))
-ERROR: MultidimensionalTables.NAElementException()
- in anonymous at /Users/changsoonpark/.julia/v0.4/MultidimensionalTables/src/na/na.jl:315
+ERROR: DataCubes.NAElementException()
+ in anonymous at /Users/changsoonpark/.julia/v0.4/DataCubes/src/na/na.jl:315
  in map_to! at abstractarray.jl:1289
  in map at abstractarray.jl:1311
- in igna at /Users/changsoonpark/.julia/v0.4/MultidimensionalTables/src/na/na.jl:313
+ in igna at /Users/changsoonpark/.julia/v0.4/DataCubes/src/na/na.jl:313
 
 julia&gt; igna(@nalift([1.0,2.0,NA,4.0,5.0]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Float64,1,Array{Float64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}:
    1.0
    2.0
  NaN  
@@ -702,7 +702,7 @@ julia&gt; igna(@nalift([1.0,2.0,NA,4.0,5.0]))
    5.0
 
 julia&gt; igna(@nalift([1,2,NA,4,5]), 3)
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  2
  3
@@ -710,16 +710,16 @@ julia&gt; igna(@nalift([1,2,NA,4,5]), 3)
  5
 
 julia&gt; igna(LDict(:a=&gt;Nullable(3), :b=&gt;Nullable{Int}()), 1)
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a =&gt; 3
   :b =&gt; 1
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L483">MultidimensionalTables/src/na/na.jl:483</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L483">DataCubes/src/na/na.jl:483</a></p>
 <hr />
 <p><a id="function__ignabool.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesignabool">MultidimensionalTables.ignabool <a href="#function__ignabool.1">¶</a></h4>
+<h4 id="datacubesignabool">DataCubes.ignabool <a href="#function__ignabool.1">¶</a></h4>
 <p><code>ignabool(arr)</code></p>
 <p>Ignore the <code>Nullable</code> part of of either a <code>Nullable</code> array or a <code>Nullable</code> variable.
 It is mainly used in the condition statement for @select or @update, where it assumes that only Nullable(true) chooses the element.  Nullable(false) or Nullable{T}() will be regarded as false.</p>
@@ -738,16 +738,16 @@ julia&gt; ignabool(Nullable(false))
 false
 
 julia&gt; ignabool(@nalift([true true NA;false NA true]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
   true   true  false
  false  false   true
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L568">MultidimensionalTables/src/na/na.jl:568</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L568">DataCubes/src/na/na.jl:568</a></p>
 <hr />
 <p><a id="function__innerjoin.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesinnerjoin">MultidimensionalTables.innerjoin <a href="#function__innerjoin.1">¶</a></h4>
+<h4 id="datacubesinnerjoin">DataCubes.innerjoin <a href="#function__innerjoin.1">¶</a></h4>
 <p><code>innerjoin(base, src, join_axis...)</code></p>
 <p>Inner join an LabeledArray into another LabeledArray. <code>innerjoin</code> is different from <code>leftjoin</code> in that only elements in the left array that have the corresponding elements in the right array will be kept. Otherwise, the elements will be set to null. If the entire elements along some direction are null, they will be all removed in the output.
 Note that the left array (base) can be multidimensional. The function creates a dictionary from the right array (<code>src</code>).</p>
@@ -824,10 +824,10 @@ u |u   |v 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L288">MultidimensionalTables/src/util/join.jl:288</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L288">DataCubes/src/util/join.jl:288</a></p>
 <hr />
 <p><a id="function__isna.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesisna">MultidimensionalTables.isna <a href="#function__isna.1">¶</a></h4>
+<h4 id="datacubesisna">DataCubes.isna <a href="#function__isna.1">¶</a></h4>
 <p><code>isna(arr [, coords...])</code></p>
 <p>Checks <code>NA</code> for each element and produces an AbstractArray{Bool} of the same shape as <code>arr</code>.
 If <code>coords...</code> are provided, <code>isna</code> checks <code>NA</code> at that position.</p>
@@ -847,30 +847,30 @@ a b |a b |a b
 
 
 julia&gt; isna(t)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false   true  false
  false  false  false
 
 julia&gt; isna(t, 2, 2:3)
-1x2 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+1x2 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false  false
 
 julia&gt; isna(@larr(t, axis1[NA,:Y], axis2[NA,NA,&quot;W&quot;]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false   true  false
  false  false  false
 
 julia&gt; isna(@nalift([1 2 NA;NA 5 6]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
+2x3 DataCubes.AbstractArrayWrapper{Bool,2,Array{Bool,2}}:
  false  false   true
   true  false  false
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L619">MultidimensionalTables/src/na/na.jl:619</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L619">DataCubes/src/na/na.jl:619</a></p>
 <hr />
 <p><a id="function__larr.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltableslarr">MultidimensionalTables.larr <a href="#function__larr.1">¶</a></h4>
+<h4 id="datacubeslarr">DataCubes.larr <a href="#function__larr.1">¶</a></h4>
 <p><code>larr(...)</code></p>
 <p>Create a <code>LabeledArray</code>. The arguments <code>...</code> can be one of the following:</p>
 <h5 id="arguments_8">Arguments</h5>
@@ -907,10 +907,10 @@ i |X   5 5 X |Y   6 6 X
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1409">MultidimensionalTables/src/datatypes/labeled_array.jl:1409</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1409">DataCubes/src/datatypes/labeled_array.jl:1409</a></p>
 <hr />
 <p><a id="function__leftjoin.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesleftjoin">MultidimensionalTables.leftjoin <a href="#function__leftjoin.1">¶</a></h4>
+<h4 id="datacubesleftjoin">DataCubes.leftjoin <a href="#function__leftjoin.1">¶</a></h4>
 <p><code>leftjoin(base, src, join_axis...)</code></p>
 <p>Left join a <code>LabeledArray</code> into another <code>LabeledArray</code>.
 Note that the left array (base) can be multidimensional. The function creates a dictionary from the right array (<code>src</code>).</p>
@@ -988,10 +988,10 @@ y |z 2 |u 4 |v 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L85">MultidimensionalTables/src/util/join.jl:85</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/join.jl#L85">DataCubes/src/util/join.jl:85</a></p>
 <hr />
 <p><a id="function__mapna.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmapna">MultidimensionalTables.mapna <a href="#function__mapna.1">¶</a></h4>
+<h4 id="datacubesmapna">DataCubes.mapna <a href="#function__mapna.1">¶</a></h4>
 <p><code>mapna(f::Function, args...)</code></p>
 <p>Apply <code>f</code> to the nullable arrays <code>args</code>. It works similarly as <code>map(f, args...)</code> but unwraps Nullable from <code>args</code>. If any of elements are Nullable, <code>f</code> is Nullable, too.</p>
 <h5 id="arguments_10">Arguments</h5>
@@ -1003,21 +1003,21 @@ y |z 2 |u 4 |v 6
 <p>A nullable array after applying <code>f</code> to elements of <code>args</code> for each index. <code>f</code> maps non-nullable value to either non-nullable or nullable one. If mapped to a non-nullable value, it will be wrapped by <code>Nullable</code> implicitly. If any element of <code>args</code> is <code>NA</code>, then the return value at that position will be <code>NA</code>, too.</p>
 <h5 id="examples_16">Examples</h5>
 <pre><code class="julia">julia&gt; mapna((x,y)-&gt;x+y+1, @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(5)        Nullable(7)      
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; mapna((x,y)-&gt;Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(5)        Nullable(7)      
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1110">MultidimensionalTables/src/util/array_util.jl:1110</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1110">DataCubes/src/util/array_util.jl:1110</a></p>
 <hr />
 <p><a id="function__mapvalues.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmapvalues">MultidimensionalTables.mapvalues <a href="#function__mapvalues.1">¶</a></h4>
+<h4 id="datacubesmapvalues">DataCubes.mapvalues <a href="#function__mapvalues.1">¶</a></h4>
 <p><code>mapvalues(f::Function, x)</code></p>
 <p>Apply a function <code>f</code> to <code>x</code>, which can be of type <code>LDict</code>/<code>DictArray</code>/<code>LabeledArray</code>.</p>
 <h5 id="returns_2">Returns</h5>
@@ -1028,7 +1028,7 @@ julia&gt; mapna((x,y)-&gt;Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 
 </ul>
 <h5 id="examples_17">Examples</h5>
 <pre><code class="julia">julia&gt; mapvalues(x-&gt;x+1, LDict(:a=&gt;1, :b=&gt;2))
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a =&gt; 2
   :b =&gt; 3
 
@@ -1053,21 +1053,21 @@ p |4 7
 
 
 julia&gt; mapvalues(sum, darr(a=[1,2,3], b=[4,5,6]))
-MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
+DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a =&gt; Nullable(6)
   :b =&gt; Nullable(15)
 
 julia&gt; mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
-MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
+DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a =&gt; Nullable(6)
   :b =&gt; Nullable(15)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L706">MultidimensionalTables/src/util/array_util.jl:706</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L706">DataCubes/src/util/array_util.jl:706</a></p>
 <hr />
 <p><a id="function__mmaximum.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmmaximum">MultidimensionalTables.mmaximum <a href="#function__mmaximum.1">¶</a></h4>
+<h4 id="datacubesmmaximum">DataCubes.mmaximum <a href="#function__mmaximum.1">¶</a></h4>
 <p><code>mmaximum(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving maximum of <code>arr</code> using the last <code>window</code> elements, or cumulative maximum if <code>window=0</code>.</p>
 <h5 id="arguments_11">Arguments</h5>
@@ -1079,7 +1079,7 @@ MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
 </ul>
 <h5 id="examples_18">Examples</h5>
 <pre><code class="julia">julia&gt; mmaximum(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(11)
  Nullable(14)
  Nullable(14)
@@ -1087,7 +1087,7 @@ MultidimensionalTables.LDict{Symbol,Nullable{Int64}} with 2 entries:
  Nullable(17)
 
 julia&gt; mmaximum(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(11)
  Nullable(11)
  Nullable(12)
@@ -1115,10 +1115,10 @@ julia&gt; mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L979">MultidimensionalTables/src/util/array_helper_functions.jl:979</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L979">DataCubes/src/util/array_helper_functions.jl:979</a></p>
 <hr />
 <p><a id="function__mmean.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmmean">MultidimensionalTables.mmean <a href="#function__mmean.1">¶</a></h4>
+<h4 id="datacubesmmean">DataCubes.mmean <a href="#function__mmean.1">¶</a></h4>
 <p><code>mmean(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving mean of <code>arr</code> using the last <code>window</code> elements, or cumulative mean if <code>window=0</code>.</p>
 <h5 id="arguments_12">Arguments</h5>
@@ -1130,7 +1130,7 @@ julia&gt; mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 </ul>
 <h5 id="examples_19">Examples</h5>
 <pre><code class="julia">julia&gt; mmean(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(10.0) 
  Nullable(10.5) 
  Nullable(11.0) 
@@ -1138,7 +1138,7 @@ julia&gt; mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
  Nullable(12.8) 
 
 julia&gt; mmean(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(10.0) 
  Nullable(10.0) 
  Nullable(11.0) 
@@ -1166,10 +1166,10 @@ julia&gt; mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L811">MultidimensionalTables/src/util/array_helper_functions.jl:811</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L811">DataCubes/src/util/array_helper_functions.jl:811</a></p>
 <hr />
 <p><a id="function__mmedian.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmmedian">MultidimensionalTables.mmedian <a href="#function__mmedian.1">¶</a></h4>
+<h4 id="datacubesmmedian">DataCubes.mmedian <a href="#function__mmedian.1">¶</a></h4>
 <p><code>mmedian(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving median of <code>arr</code> using the last <code>window</code> elements, or cumulative median if <code>window=0</code>.</p>
 <h5 id="arguments_13">Arguments</h5>
@@ -1181,7 +1181,7 @@ julia&gt; mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </ul>
 <h5 id="examples_20">Examples</h5>
 <pre><code class="julia">julia&gt; mmedian(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(12.5)
  Nullable(12.5)
@@ -1189,7 +1189,7 @@ julia&gt; mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
  Nullable(14.0)
 
 julia&gt; mmedian(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(11.0)
  Nullable(11.5)
@@ -1217,10 +1217,10 @@ julia&gt; mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1043">MultidimensionalTables/src/util/array_helper_functions.jl:1043</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1043">DataCubes/src/util/array_helper_functions.jl:1043</a></p>
 <hr />
 <p><a id="function__mmiddle.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmmiddle">MultidimensionalTables.mmiddle <a href="#function__mmiddle.1">¶</a></h4>
+<h4 id="datacubesmmiddle">DataCubes.mmiddle <a href="#function__mmiddle.1">¶</a></h4>
 <p><code>mmiddle(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving middle of <code>arr</code> using the last <code>window</code> elements, or cumulative middle if <code>window=0</code>.</p>
 <h5 id="arguments_14">Arguments</h5>
@@ -1232,7 +1232,7 @@ julia&gt; mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </ul>
 <h5 id="examples_21">Examples</h5>
 <pre><code class="julia">julia&gt; mmiddle(@nalift([11,14,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(12.5)
  Nullable(12.5)
@@ -1240,7 +1240,7 @@ julia&gt; mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
  Nullable(14.0)
 
 julia&gt; mmiddle(@nalift([11,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0)
  Nullable(11.0)
  Nullable(11.5)
@@ -1268,10 +1268,10 @@ julia&gt; mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1108">MultidimensionalTables/src/util/array_helper_functions.jl:1108</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1108">DataCubes/src/util/array_helper_functions.jl:1108</a></p>
 <hr />
 <p><a id="function__mminimum.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmminimum">MultidimensionalTables.mminimum <a href="#function__mminimum.1">¶</a></h4>
+<h4 id="datacubesmminimum">DataCubes.mminimum <a href="#function__mminimum.1">¶</a></h4>
 <p><code>mminimum(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving minimum of <code>arr</code> using the last <code>window</code> elements, or cumulative minimum if <code>window=0</code>.</p>
 <h5 id="arguments_15">Arguments</h5>
@@ -1283,7 +1283,7 @@ julia&gt; mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </ul>
 <h5 id="examples_22">Examples</h5>
 <pre><code class="julia">julia&gt; mminimum(@nalift([15,10,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(15)
  Nullable(10)
  Nullable(10)
@@ -1291,7 +1291,7 @@ julia&gt; mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
  Nullable(10)
 
 julia&gt; mminimum(@nalift([15,NA,12,11,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(15)
  Nullable(15)
  Nullable(12)
@@ -1319,10 +1319,10 @@ julia&gt; mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L915">MultidimensionalTables/src/util/array_helper_functions.jl:915</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L915">DataCubes/src/util/array_helper_functions.jl:915</a></p>
 <hr />
 <p><a id="function__mprod.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmprod">MultidimensionalTables.mprod <a href="#function__mprod.1">¶</a></h4>
+<h4 id="datacubesmprod">DataCubes.mprod <a href="#function__mprod.1">¶</a></h4>
 <p><code>mprod(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving product of <code>arr</code> using the last <code>window</code> elements, or cumulative product if <code>window=0</code>.</p>
 <h5 id="arguments_16">Arguments</h5>
@@ -1334,7 +1334,7 @@ julia&gt; mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 </ul>
 <h5 id="examples_23">Examples</h5>
 <pre><code class="julia">julia&gt; mprod(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)    
  Nullable(110)   
  Nullable(1320)  
@@ -1342,7 +1342,7 @@ julia&gt; mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
  Nullable(314160)
 
 julia&gt; mprod(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)   
  Nullable(10)   
  Nullable(120)  
@@ -1370,10 +1370,10 @@ julia&gt; mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L727">MultidimensionalTables/src/util/array_helper_functions.jl:727</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L727">DataCubes/src/util/array_helper_functions.jl:727</a></p>
 <hr />
 <p><a id="function__mquantile.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmquantile">MultidimensionalTables.mquantile <a href="#function__mquantile.1">¶</a></h4>
+<h4 id="datacubesmquantile">DataCubes.mquantile <a href="#function__mquantile.1">¶</a></h4>
 <p><code>mquantile(arr, quantile, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving quantile of <code>arr</code> using the last <code>window</code> elements, or cumulative quantile if <code>window=0</code>.</p>
 <h5 id="arguments_17">Arguments</h5>
@@ -1386,7 +1386,7 @@ julia&gt; mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </ul>
 <h5 id="examples_24">Examples</h5>
 <pre><code class="julia">julia&gt; mquantile(@nalift([11,14,12,11,17]), 0.25)
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0) 
  Nullable(11.75)
  Nullable(11.75)
@@ -1394,7 +1394,7 @@ julia&gt; mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
  Nullable(12.5) 
 
 julia&gt; mquantile(@nalift([11,NA,12,11,17]), 0.25)
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
  Nullable(11.0) 
  Nullable(11.0) 
  Nullable(11.25)
@@ -1422,10 +1422,10 @@ julia&gt; mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, r
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1174">MultidimensionalTables/src/util/array_helper_functions.jl:1174</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1174">DataCubes/src/util/array_helper_functions.jl:1174</a></p>
 <hr />
 <p><a id="function__msum.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesmsum">MultidimensionalTables.msum <a href="#function__msum.1">¶</a></h4>
+<h4 id="datacubesmsum">DataCubes.msum <a href="#function__msum.1">¶</a></h4>
 <p><code>msum(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Calculate moving sum of <code>arr</code> using the last <code>window</code> elements, or cumulative sum if <code>window=0</code>.</p>
 <h5 id="arguments_18">Arguments</h5>
@@ -1437,7 +1437,7 @@ julia&gt; mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, r
 </ul>
 <h5 id="examples_25">Examples</h5>
 <pre><code class="julia">julia&gt; msum(@nalift([10,11,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)
  Nullable(21)
  Nullable(33)
@@ -1445,7 +1445,7 @@ julia&gt; mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, r
  Nullable(64)
 
 julia&gt; msum(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)
  Nullable(10)
  Nullable(22)
@@ -1473,10 +1473,10 @@ julia&gt; msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L642">MultidimensionalTables/src/util/array_helper_functions.jl:642</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L642">DataCubes/src/util/array_helper_functions.jl:642</a></p>
 <hr />
 <p><a id="function__nafill.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesnafill">MultidimensionalTables.nafill <a href="#function__nafill.1">¶</a></h4>
+<h4 id="datacubesnafill">DataCubes.nafill <a href="#function__nafill.1">¶</a></h4>
 <p><code>nafill(arr, dims... [; rev=false, window=0])</code> for <code>arr</code> of type <code>AbstractArrayWrapper</code>/<code>LabeledArray</code>/<code>DictArray</code>.</p>
 <p>Fill forward (backward if <code>rev=true</code>) <code>arr</code> using non-null values from the last <code>window</code> elements, or latest non-null value from the beginning if <code>window=0</code>.</p>
 <h5 id="arguments_19">Arguments</h5>
@@ -1488,65 +1488,65 @@ julia&gt; msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 </ul>
 <h5 id="examples_26">Examples</h5>
 <pre><code class="julia">julia&gt; t = @nalift([1 NA;NA 4;NA NA])
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable{Int64}()
  Nullable(1)  Nullable(4)      
  Nullable(1)  Nullable(4)      
 
 julia&gt; nafill(t,2)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable(1)      
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t,2,1)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(1)
  Nullable(1)  Nullable(4)
  Nullable(1)  Nullable(4)
 
 julia&gt; nafill(t, rev=true)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable(4)      
  Nullable{Int64}()  Nullable(4)      
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t, window=2)
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
  Nullable(1)        Nullable(4)      
  Nullable{Int64}()  Nullable(4)      
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L491">MultidimensionalTables/src/util/array_helper_functions.jl:491</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L491">DataCubes/src/util/array_helper_functions.jl:491</a></p>
 <hr />
 <p><a id="function__nalift.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesnalift">MultidimensionalTables.nalift <a href="#function__nalift.1">¶</a></h4>
+<h4 id="datacubesnalift">DataCubes.nalift <a href="#function__nalift.1">¶</a></h4>
 <p><code>nalift(arr)</code></p>
 <p>Lift each element in an array <code>arr</code> to <code>Nullable</code> if it is not already so.
 Unlike <code>@nalift</code>, it does not perform lifting recursively.
 It returns <code>arr</code> itself when applied to a <code>DictArray</code>/<code>LabeledArray</code>.</p>
 <h5 id="examples_27">Examples</h5>
 <pre><code class="julia">julia&gt; nalift(Any[[1,2,3],[4,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
  Nullable([1,2,3])
  Nullable([4,5])  
 
 julia&gt; nalift([1,2,3])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia&gt; nalift(Any[[1,2,3],[4,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},1,Array{Nullable{Array{Int64,1}},1}}:
  Nullable([1,2,3])
  Nullable([4,5])  
 
@@ -1561,10 +1561,10 @@ a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L224">MultidimensionalTables/src/na/na.jl:224</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L224">DataCubes/src/na/na.jl:224</a></p>
 <hr />
 <p><a id="function__namerge.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesnamerge">MultidimensionalTables.namerge <a href="#function__namerge.1">¶</a></h4>
+<h4 id="datacubesnamerge">DataCubes.namerge <a href="#function__namerge.1">¶</a></h4>
 <p><code>namerge(xs...)</code></p>
 <p>Combine <code>Nullable</code> arrays and <code>Nullable</code> elements, having the later arguments override the preceding ones if the new element is not null.</p>
 <h5 id="arguments_20">Arguments</h5>
@@ -1579,32 +1579,32 @@ a b |a b
 <h5 id="examples_28">Examples</h5>
 <pre><code class="julia">
 julia&gt; namerge(10, @nalift([1 2 NA;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)   Nullable(10)
  Nullable(4)  Nullable(10)  Nullable(10)
 
 julia&gt; namerge(@nalift([1 2 NA;4 NA NA]), 10)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(10)  Nullable(10)  Nullable(10)
  Nullable(10)  Nullable(10)  Nullable(10)
 
 julia&gt; namerge(10, @nalift([1 2 NA;4 NA NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)   Nullable(10)
  Nullable(4)  Nullable(10)  Nullable(10)
 
 julia&gt; namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(11)  Nullable(2)   Nullable{Int64}()
  Nullable(14)  Nullable(15)  Nullable{Int64}()
 
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2162">MultidimensionalTables/src/util/array_util.jl:2162</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2162">DataCubes/src/util/array_util.jl:2162</a></p>
 <hr />
 <p><a id="function__peel.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablespeel">MultidimensionalTables.peel <a href="#function__peel.1">¶</a></h4>
+<h4 id="datacubespeel">DataCubes.peel <a href="#function__peel.1">¶</a></h4>
 <p>Peel off a variable to see its underlying data.</p>
 <ul>
 <li>
@@ -1616,7 +1616,7 @@ julia&gt; namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
 </ul>
 <h5 id="examples_29">Examples</h5>
 <pre><code class="julia">julia&gt; peel(darr(a=[1,2,3], b=[:m,:n,:p]))
-MultidimensionalTables.LDict{Symbol,MultidimensionalTables.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}}} with 2 entries:
+DataCubes.LDict{Symbol,DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}}} with 2 entries:
   :a =&gt; [Nullable(1),Nullable(2),Nullable(3)]
   :b =&gt; [Nullable(:m),Nullable(:n),Nullable(:p)]
 
@@ -1631,10 +1631,10 @@ a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L763">MultidimensionalTables/src/util/array_util.jl:763</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L763">DataCubes/src/util/array_util.jl:763</a></p>
 <hr />
 <p><a id="function__pick.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablespick">MultidimensionalTables.pick <a href="#function__pick.1">¶</a></h4>
+<h4 id="datacubespick">DataCubes.pick <a href="#function__pick.1">¶</a></h4>
 <p>Pick fields from a <code>DictArray</code> or a <code>LabeledArray</code>.</p>
 <ul>
 <li><code>pick(arr::DictArray, fieldname)</code>: returns the field value array corresponding to <code>fieldname</code>.</li>
@@ -1648,22 +1648,22 @@ a b
 </ul>
 <h5 id="examples_30">Examples</h5>
 <pre><code class="julia">julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a,))
-1-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
+1-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]
 
 julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a, :b)
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a, :b))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
@@ -1680,29 +1680,29 @@ Z |5 v |6 w
 
 
 julia&gt; pick(t, :a)
-pic3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+pic3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)
 
 julia&gt; pick(t, :a, :k)
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,N,A&lt;:AbstractArray{T,N}},1}:
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,N,A&lt;:AbstractArray{T,N}},1}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},2,MultidimensionalTables.BroadcastAxis{Nullable{ASCIIString},2,MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable(&quot;X&quot;)  Nullable(&quot;X&quot;)
  Nullable(&quot;Y&quot;)  Nullable(&quot;Y&quot;)
  Nullable(&quot;Z&quot;)  Nullable(&quot;Z&quot;)
 
 julia&gt; pick(t, (:a, :k))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,N,A&lt;:AbstractArray{T,N}},1}:
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,N,A&lt;:AbstractArray{T,N}},1}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
- 3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},2,MultidimensionalTables.BroadcastAxis{Nullable{ASCIIString},2,MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},MultidimensionalTables.DictArray{Symbol,2,MultidimensionalTables.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable(&quot;X&quot;)  Nullable(&quot;X&quot;)
  Nullable(&quot;Y&quot;)  Nullable(&quot;Y&quot;)
  Nullable(&quot;Z&quot;)  Nullable(&quot;Z&quot;)
@@ -1718,10 +1718,10 @@ a k |a k
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L855">MultidimensionalTables/src/util/array_util.jl:855</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L855">DataCubes/src/util/array_util.jl:855</a></p>
 <hr />
 <p><a id="function__pickaxis.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablespickaxis">MultidimensionalTables.pickaxis <a href="#function__pickaxis.1">¶</a></h4>
+<h4 id="datacubespickaxis">DataCubes.pickaxis <a href="#function__pickaxis.1">¶</a></h4>
 <p>Pick axes from a <code>LabeledArray</code>.</p>
 <ul>
 <li><code>pickaxis(arr::LabeledArray)</code> picks a tuple of axes of <code>arr</code>.</li>
@@ -1762,17 +1762,17 @@ Z
 
 
 julia&gt; pickaxis(t, 1, :k)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}}:
  Nullable(&quot;X&quot;)
  Nullable(&quot;Y&quot;)
  Nullable(&quot;Z&quot;)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L923">MultidimensionalTables/src/util/array_util.jl:923</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L923">DataCubes/src/util/array_util.jl:923</a></p>
 <hr />
 <p><a id="function__providenames.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesprovidenames">MultidimensionalTables.providenames <a href="#function__providenames.1">¶</a></h4>
+<h4 id="datacubesprovidenames">DataCubes.providenames <a href="#function__providenames.1">¶</a></h4>
 <p><code>providenames(arr::LabeledArray, create_fieldname::Funcion)</code></p>
 <p>Add generic field names for fields without field names in a <code>LabeledArray</code>.
 This makes the data and all the axes components <code>DictArray</code>s.
@@ -1804,26 +1804,26 @@ Y  |4  |5  |6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1996">MultidimensionalTables/src/util/array_util.jl:1996</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1996">DataCubes/src/util/array_util.jl:1996</a></p>
 <hr />
 <p><a id="function__rename.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesrename">MultidimensionalTables.rename <a href="#function__rename.1">¶</a></h4>
+<h4 id="datacubesrename">DataCubes.rename <a href="#function__rename.1">¶</a></h4>
 <h5 id="description">Description</h5>
 <p>renames the fields such that the first field names are <code>names</code>.
 The rest field names remain the same.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1230">MultidimensionalTables/src/datatypes/labeled_array.jl:1230</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1230">DataCubes/src/datatypes/labeled_array.jl:1230</a></p>
 <hr />
 <p><a id="function__reorder.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesreorder">MultidimensionalTables.reorder <a href="#function__reorder.1">¶</a></h4>
+<h4 id="datacubesreorder">DataCubes.reorder <a href="#function__reorder.1">¶</a></h4>
 <h5 id="description_1">Description</h5>
 <p>reorders the fields such that the first field names are <code>names</code>.
 The rest field names are placed sequentially after that.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1220">MultidimensionalTables/src/datatypes/labeled_array.jl:1220</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1220">DataCubes/src/datatypes/labeled_array.jl:1220</a></p>
 <hr />
 <p><a id="function__replace_axes.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesreplace_axes">MultidimensionalTables.replace_axes <a href="#function__replace_axes.1">¶</a></h4>
+<h4 id="datacubesreplace_axes">DataCubes.replace_axes <a href="#function__replace_axes.1">¶</a></h4>
 <h5 id="description_2">Description</h5>
 <p>Replace axes with another fields.
 The args are a list of pairs of the form (integer for the axis index) =&gt; new axes fields for this axis.
@@ -1831,10 +1831,10 @@ Only the first elements (<code>arr[:,...,:,1,:,...,:]</code>) will be taken. Tha
 you want to use the field <code>column1</code> as a new key for the 1st axis, <code>column1[:,1]</code> will be used as the new axis.
 e.g. <code>replace_axes(labeled_array, 1=&gt;[:c1,:c2], 3=&gt;[:c3])</code></p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L353">MultidimensionalTables/src/util/array_util.jl:353</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L353">DataCubes/src/util/array_util.jl:353</a></p>
 <hr />
 <p><a id="function__selct.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesselct">MultidimensionalTables.selct <a href="#function__selct.1">¶</a></h4>
+<h4 id="datacubesselct">DataCubes.selct <a href="#function__selct.1">¶</a></h4>
 <p><code>selct(t, agg... [; by=[...]..., where=[...]...])</code></p>
 <p>Select a <code>LabeledArray</code> or <code>DictArray</code> into another by choosing / grouping / aggregating.</p>
 <h5 id="arguments_21">Arguments</h5>
@@ -1910,10 +1910,10 @@ d |a   b |a   b |a    b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L823">MultidimensionalTables/src/util/select.jl:823</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L823">DataCubes/src/util/select.jl:823</a></p>
 <hr />
 <p><a id="function__shift.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesshift">MultidimensionalTables.shift <a href="#function__shift.1">¶</a></h4>
+<h4 id="datacubesshift">DataCubes.shift <a href="#function__shift.1">¶</a></h4>
 <p><code>shift(arr, offsets... [; isbound=false])</code></p>
 <p>Parallel shift the input array <code>arr</code> so that the element at <code>[1,...,1]</code> in <code>arr</code> shows up at <code>[1,...,1]+offsets</code> in the return array.</p>
 <h5 id="arguments_22">Arguments</h5>
@@ -1924,25 +1924,25 @@ d |a   b |a   b |a    b
 </ul>
 <h5 id="examples_34">Examples</h5>
 <pre><code class="julia">julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 01)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(5)        Nullable(6)        Nullable{Int64}()
  Nullable(8)        Nullable(9)        Nullable{Int64}()
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, -1)
-3x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable{Int64}()  Nullable(4)        Nullable(5)      
  Nullable{Int64}()  Nullable(7)        Nullable(8)      
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
@@ -1970,10 +1970,10 @@ julia&gt; shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1408">MultidimensionalTables/src/util/array_helper_functions.jl:1408</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L1408">DataCubes/src/util/array_helper_functions.jl:1408</a></p>
 <hr />
 <p><a id="function__tensorprod.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablestensorprod">MultidimensionalTables.tensorprod <a href="#function__tensorprod.1">¶</a></h4>
+<h4 id="datacubestensorprod">DataCubes.tensorprod <a href="#function__tensorprod.1">¶</a></h4>
 <p><code>tensorprod(arrs...)</code></p>
 <p>Calculate the tensor product of <code>arrs</code>.</p>
 <ul>
@@ -1983,7 +1983,7 @@ julia&gt; shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 </ul>
 <h5 id="examples_35">Examples</h5>
 <pre><code class="julia">julia&gt; tensorprod(@nalift([1,2,NA]), @nalift([3,NA]))
-3x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Tuple{Int64,Int64}},2,Array{Nullable{Tuple{Int64,Int64}},2}}:
+3x2 DataCubes.AbstractArrayWrapper{Nullable{Tuple{Int64,Int64}},2,Array{Nullable{Tuple{Int64,Int64}},2}}:
  Nullable((1,3))                 Nullable{Tuple{Int64,Int64}}()
  Nullable((2,3))                 Nullable{Tuple{Int64,Int64}}()
  Nullable{Tuple{Int64,Int64}}()  Nullable{Tuple{Int64,Int64}}()
@@ -2011,10 +2011,10 @@ p |  3 |
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1198">MultidimensionalTables/src/util/array_util.jl:1198</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1198">DataCubes/src/util/array_util.jl:1198</a></p>
 <hr />
 <p><a id="function__ungroup.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesungroup">MultidimensionalTables.ungroup <a href="#function__ungroup.1">¶</a></h4>
+<h4 id="datacubesungroup">DataCubes.ungroup <a href="#function__ungroup.1">¶</a></h4>
 <p><code>ungroup(arr, ...)</code></p>
 <p>Ungroup array elements in an array into scalar elements along some direction.</p>
 <h5 id="arguments_23">Arguments</h5>
@@ -2059,21 +2059,21 @@ julia&gt; ungroup(t, (:,1))
 
 
 julia&gt; m = nalift(reshape(Any[[1,2],[3,4],[5,6,7],[8,9,10]],2,2))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Array{Int64,1}},2,Array{Nullable{Array{Int64,1}},2}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Array{Int64,1}},2,Array{Nullable{Array{Int64,1}},2}}:
  Nullable([1,2])  Nullable([5,6,7]) 
  Nullable([3,4])  Nullable([8,9,10])
 
 julia&gt; ungroup(m, 2)
-2x5 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x5 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(5)  Nullable(6)  Nullable(7) 
  Nullable(3)  Nullable(4)  Nullable(8)  Nullable(9)  Nullable(10)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/ungroup.jl#L64">MultidimensionalTables/src/util/ungroup.jl:64</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/ungroup.jl#L64">DataCubes/src/util/ungroup.jl:64</a></p>
 <hr />
 <p><a id="function__update.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesupdate">MultidimensionalTables.update <a href="#function__update.1">¶</a></h4>
+<h4 id="datacubesupdate">DataCubes.update <a href="#function__update.1">¶</a></h4>
 <p><code>update(t, agg... [; by=[...]..., where=[...]...])</code></p>
 <p>Similar to <code>selct</code>, but is used to update and create a new <code>LabeledArray</code> or <code>DictArray</code> from the original one.
 The main difference from the <code>selct</code> function is that it keeps the original fields intact, unless
@@ -2159,10 +2159,10 @@ julia&gt; update(t, a=d-&gt;sum(d[:a]), d=d-&gt;reverse(d[:a] .* d[:b]), where=[
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1042">MultidimensionalTables/src/util/select.jl:1042</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1042">DataCubes/src/util/select.jl:1042</a></p>
 <hr />
 <p><a id="function__withdrawnames.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltableswithdrawnames">MultidimensionalTables.withdrawnames <a href="#function__withdrawnames.1">¶</a></h4>
+<h4 id="datacubeswithdrawnames">DataCubes.withdrawnames <a href="#function__withdrawnames.1">¶</a></h4>
 <p><code>withdrawnames(arr::LabeledArray, check_fieldname::Function)</code></p>
 <p>Remove generic field names from a <code>LabeledArray</code> if possible.</p>
 <h5 id="arguments_25">Arguments</h5>
@@ -2207,59 +2207,59 @@ Y |4 |5 |6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2068">MultidimensionalTables/src/util/array_util.jl:2068</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L2068">DataCubes/src/util/array_util.jl:2068</a></p>
 <hr />
 <p><a id="method__rename.1" class="lexicon_definition"></a></p>
-<h4 id="renamearrmultidimensionaltableslabeledarrayt-n-axestuple-tn-ks">rename(arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__rename.1">¶</a></h4>
+<h4 id="renamearrdatacubeslabeledarrayt-n-axestuple-tn-ks">rename(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__rename.1">¶</a></h4>
 <p><code>rename(arr::LabeledArray, ks...)</code></p>
 <p>Rename the field names of the base of <code>arr</code> so that the first few field names are <code>ks</code>.</p>
 <h5 id="return_9">Return</h5>
 <p>A new <code>LabeledArray</code> whose first few field names of the base of <code>arr</code> are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1256">MultidimensionalTables/src/datatypes/labeled_array.jl:1256</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1256">DataCubes/src/datatypes/labeled_array.jl:1256</a></p>
 <hr />
 <p><a id="method__rename.2" class="lexicon_definition"></a></p>
-<h4 id="renameldictmultidimensionaltablesldictk-v-ks">rename(ldict::MultidimensionalTables.LDict{K, V},  ks...) <a href="#method__rename.2">¶</a></h4>
+<h4 id="renameldictdatacubesldictk-v-ks">rename(ldict::DataCubes.LDict{K, V},  ks...) <a href="#method__rename.2">¶</a></h4>
 <p><code>rename(ldict::LDict, ks...)</code></p>
 <p>Renames the first few keys using <code>ks</code>.</p>
 <h5 id="examples_39">Examples</h5>
 <pre><code class="julia">julia&gt; rename(LDict(:a=&gt;1, :b=&gt;2, :c=&gt;3), :b, 'x')
-MultidimensionalTables.LDict{Any,Int64} with 3 entries:
+DataCubes.LDict{Any,Int64} with 3 entries:
   :b  =&gt; 1
   'x' =&gt; 2
   :c  =&gt; 3
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L300">MultidimensionalTables/src/datatypes/ldict.jl:300</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L300">DataCubes/src/datatypes/ldict.jl:300</a></p>
 <hr />
 <p><a id="method__reorder.1" class="lexicon_definition"></a></p>
-<h4 id="reorderarrmultidimensionaltableslabeledarrayt-n-axestuple-tn-ks">reorder(arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__reorder.1">¶</a></h4>
+<h4 id="reorderarrdatacubeslabeledarrayt-n-axestuple-tn-ks">reorder(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__reorder.1">¶</a></h4>
 <p><code>reorder(arr::LabeledArray, ks...)</code></p>
 <p>Reorder the field names of the base of <code>arr</code> so that the first few field names are <code>ks</code>.
 The base of <code>arr</code> is expected to be a <code>DictArray</code>.</p>
 <h5 id="return_10">Return</h5>
 <p>A new <code>LabeledArray</code> whose base fields are shuffled from <code>arr</code> so that the first few field names are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1244">MultidimensionalTables/src/datatypes/labeled_array.jl:1244</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1244">DataCubes/src/datatypes/labeled_array.jl:1244</a></p>
 <hr />
 <p><a id="method__reorder.2" class="lexicon_definition"></a></p>
-<h4 id="reorderldictmultidimensionaltablesldictk-v-ks">reorder(ldict::MultidimensionalTables.LDict{K, V},  ks...) <a href="#method__reorder.2">¶</a></h4>
+<h4 id="reorderldictdatacubesldictk-v-ks">reorder(ldict::DataCubes.LDict{K, V},  ks...) <a href="#method__reorder.2">¶</a></h4>
 <p><code>reorder(ldict::LDict, ks...)</code></p>
 <p>Reorder the keys so that the first few keys are <code>ks</code>.</p>
 <h5 id="examples_40">Examples</h5>
 <pre><code class="julia">julia&gt; reorder(LDict(:a=&gt;1, :b=&gt;2, :c=&gt;3), :b, :c)
-MultidimensionalTables.LDict{Symbol,Int64} with 3 entries:
+DataCubes.LDict{Symbol,Int64} with 3 entries:
   :b =&gt; 2
   :c =&gt; 3
   :a =&gt; 1
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L281">MultidimensionalTables/src/datatypes/ldict.jl:281</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L281">DataCubes/src/datatypes/ldict.jl:281</a></p>
 <hr />
 <p><a id="method__replace_axes.1" class="lexicon_definition"></a></p>
-<h4 id="replace_axesarrmultidimensionaltableslabeledarrayt-n-axestuple-tn-args">replace_axes(arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args...) <a href="#method__replace_axes.1">¶</a></h4>
+<h4 id="replace_axesarrdatacubeslabeledarrayt-n-axestuple-tn-args">replace_axes(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args...) <a href="#method__replace_axes.1">¶</a></h4>
 <h4 id="replace_axesarrlabeledarray-args"><code>replace_axes(arr::LabeledArray, args...)</code></h4>
 <h5 id="arguments_26">Arguments</h5>
 <ul>
@@ -2306,10 +2306,10 @@ a b |k |k |k
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L407">MultidimensionalTables/src/util/array_util.jl:407</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L407">DataCubes/src/util/array_util.jl:407</a></p>
 <hr />
 <p><a id="type__dictarray.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdictarrayk-n-vs-sv">MultidimensionalTables.DictArray{K, N, VS, SV} <a href="#type__dictarray.1">¶</a></h4>
+<h4 id="datacubesdictarrayk-n-vs-sv">DataCubes.DictArray{K, N, VS, SV} <a href="#type__dictarray.1">¶</a></h4>
 <p>A multidimensional array whose elements are ordered dictionaries with common keys.
 Internally, it is represented as an ordered dictionary from keys to multidimensional arrays.
 Note that most functions return a new <code>DictArray</code> rather than modify the existing one.
@@ -2331,18 +2331,18 @@ DictArray(;kwargs...)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L31">MultidimensionalTables/src/datatypes/dict_array.jl:31</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L31">DataCubes/src/datatypes/dict_array.jl:31</a></p>
 <hr />
 <p><a id="type__enumerationarray.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesenumerationarrayt-n-v-rinteger">MultidimensionalTables.EnumerationArray{T, N, V, R&lt;:Integer} <a href="#type__enumerationarray.1">¶</a></h4>
+<h4 id="datacubesenumerationarrayt-n-v-rinteger">DataCubes.EnumerationArray{T, N, V, R&lt;:Integer} <a href="#type__enumerationarray.1">¶</a></h4>
 <p>An array type to store elements that have only a few choices.
 That is, it is a pooled array.
 Use <code>enumeration</code> to create an <code>EnumerationArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L8">MultidimensionalTables/src/datatypes/enumeration_array.jl:8</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L8">DataCubes/src/datatypes/enumeration_array.jl:8</a></p>
 <hr />
 <p><a id="type__ldict.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesldictk-v">MultidimensionalTables.LDict{K, V} <a href="#type__ldict.1">¶</a></h4>
+<h4 id="datacubesldictk-v">DataCubes.LDict{K, V} <a href="#type__ldict.1">¶</a></h4>
 <p>LDict is an ordered dictionary. It is assumed to be used in the field name =&gt; field mapping. In practice, the number of columns is not that long, and it is more efficient to implement LDict as 2 vectors, one for keys and one for values.</p>
 <h3 id="constructors_1">Constructors</h3>
 <pre><code class="julia">LDict{K,V}(dict::Associative{K, V}) # LDict from a dictionary dict. The result order is undetermined.
@@ -2353,10 +2353,10 @@ LDict(ps::Tuple...)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L18">MultidimensionalTables/src/datatypes/ldict.jl:18</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L18">DataCubes/src/datatypes/ldict.jl:18</a></p>
 <hr />
 <p><a id="type__labeledarray.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltableslabeledarrayt-n-axestuple-tn">MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN} <a href="#type__labeledarray.1">¶</a></h4>
+<h4 id="datacubeslabeledarrayt-n-axestuple-tn">DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN} <a href="#type__labeledarray.1">¶</a></h4>
 <p>A multidimensional array together with additional axes attached to it.
 Each axis is a one dimensional array, possibly a <code>DictArray</code>.
 Use the function <code>larr</code> or a macro version <code>@larr</code> to create <code>LabeledArray</code>s, rather than call the constructor directly.</p>
@@ -2367,7 +2367,7 @@ Use the function <code>larr</code> or a macro version <code>@larr</code> to crea
 <li><code>LabeledArray(arr; kwargs...)</code> creates a <code>LabeledArray</code> from a <em>base</em> array <code>arr</code> and a keyword argument of the form <code>axisN=V</code> for some integer <code>N</code> for the axis direction and a one dimensional array <code>V</code>.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L16">MultidimensionalTables/src/datatypes/labeled_array.jl:16</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L16">DataCubes/src/datatypes/labeled_array.jl:16</a></p>
 <hr />
 <p><a id="macro___darr.1" class="lexicon_definition"></a></p>
 <h4 id="darrargs">@darr(args...) <a href="#macro___darr.1">¶</a></h4>
@@ -2401,7 +2401,7 @@ a b   c d |a b   c d
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1209">MultidimensionalTables/src/datatypes/dict_array.jl:1209</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1209">DataCubes/src/datatypes/dict_array.jl:1209</a></p>
 <hr />
 <p><a id="macro___enumeration.1" class="lexicon_definition"></a></p>
 <h4 id="enumerationargs">@enumeration(args...) <a href="#macro___enumeration.1">¶</a></h4>
@@ -2414,7 +2414,7 @@ a b   c d |a b   c d
 </ul>
 <h5 id="examples_43">Examples</h5>
 <pre><code class="julia">julia&gt; @enumeration([:A,:A,:B,NA,NA])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)      
  Nullable(:A)      
  Nullable(:B)      
@@ -2427,7 +2427,7 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA]).pool
  :B
 
 julia&gt; @enumeration([:A,:A,:B,NA,NA]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  1
  1
  2
@@ -2435,7 +2435,7 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA]).elems
  0
 
 julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A])
-5-element MultidimensionalTables.EnumerationArray{Symbol,1,MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
+5-element DataCubes.EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}:
  Nullable(:A)      
  Nullable(:A)      
  Nullable(:B)      
@@ -2448,7 +2448,7 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A]).pool
  :A
 
 julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
-5-element MultidimensionalTables.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
+5-element DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}}:
  2
  2
  1
@@ -2457,7 +2457,7 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L247">MultidimensionalTables/src/datatypes/enumeration_array.jl:247</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/enumeration_array.jl#L247">DataCubes/src/datatypes/enumeration_array.jl:247</a></p>
 <hr />
 <p><a id="macro___larr.1" class="lexicon_definition"></a></p>
 <h4 id="larrargs">@larr(args...) <a href="#macro___larr.1">¶</a></h4>
@@ -2496,7 +2496,7 @@ i |  X   5 X |  Y   6 X
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1299">MultidimensionalTables/src/datatypes/labeled_array.jl:1299</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1299">DataCubes/src/datatypes/labeled_array.jl:1299</a></p>
 <hr />
 <p><a id="macro___nalift.1" class="lexicon_definition"></a></p>
 <h4 id="naliftexpr">@nalift(expr) <a href="#macro___nalift.1">¶</a></h4>
@@ -2507,19 +2507,19 @@ Unlike <code>nalift</code>, it performs lifting recursively.
 It returns <code>arr</code> itself when applied to a <code>DictArray</code>/<code>LabeledArray</code>.</p>
 <h5 id="examples_45">Examples</h5>
 <pre><code class="julia">julia&gt; @nalift([1,2,3])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)
  Nullable(2)
  Nullable(3)
 
 julia&gt; @nalift([1,2,NA])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(1)      
  Nullable(2)      
  Nullable{Int64}()
 
 julia&gt; @nalift(Any[[1,2,3],[NA,5]])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}},1}}:
  Nullable([Nullable(1),Nullable(2),Nullable(3)])
  Nullable([Nullable{Int64}(),Nullable(5)])      
 
@@ -2536,7 +2536,7 @@ julia&gt; @nalift(larr(a=[1 2;3 4;5 6], b=[:x :y;:z :w;:u :v]))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L335">MultidimensionalTables/src/na/na.jl:335</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L335">DataCubes/src/na/na.jl:335</a></p>
 <hr />
 <p><a id="macro___rap.1" class="lexicon_definition"></a></p>
 <h4 id="rapargs">@rap(args...) <a href="#macro___rap.1">¶</a></h4>
@@ -2551,7 +2551,7 @@ julia&gt; @rap _*2 x-&gt;x+1 10
 22
 
 julia&gt; @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)     
  Nullable(8)      
  Nullable{Int64}()
@@ -2560,7 +2560,7 @@ julia&gt; @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L282">MultidimensionalTables/src/util/array_util.jl:282</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L282">DataCubes/src/util/array_util.jl:282</a></p>
 <hr />
 <p><a id="macro___select.1" class="lexicon_definition"></a></p>
 <h4 id="selectt-args">@select(t, args...) <a href="#macro___select.1">¶</a></h4>
@@ -2644,7 +2644,7 @@ d |a   b |a   b |a    b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L734">MultidimensionalTables/src/util/select.jl:734</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L734">DataCubes/src/util/select.jl:734</a></p>
 <hr />
 <p><a id="macro___update.1" class="lexicon_definition"></a></p>
 <h4 id="updatet-args">@update(t, args...) <a href="#macro___update.1">¶</a></h4>
@@ -2739,11 +2739,11 @@ julia&gt; @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L943">MultidimensionalTables/src/util/select.jl:943</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L943">DataCubes/src/util/select.jl:943</a></p>
 <h2 id="internal">Internal</h2>
 <hr />
 <p><a id="function__create_dict.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablescreate_dict">MultidimensionalTables.create_dict <a href="#function__create_dict.1">¶</a></h4>
+<h4 id="datacubescreate_dict">DataCubes.create_dict <a href="#function__create_dict.1">¶</a></h4>
 <p><code>create_dict(::LabeledArray)</code></p>
 <p>Create a nested <code>Dict</code> from a <code>LabeledArray</code>.</p>
 <h5 id="examples_49">Examples</h5>
@@ -2758,16 +2758,16 @@ y |a |3 4
 
 
 julia&gt; create_dict(t)
-Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},MultidimensionalTables.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
-  Nullable(:y) =&gt; Dict(Nullable(&quot;B&quot;)=&gt;MultidimensionalTables.LDict(:a=&gt;Nullable(4)),Nullable(&quot;A&quot;)=&gt;MultidimensionalTables.LDict(:a=&gt;Nullable(3)))
-  Nullable(:x) =&gt; Dict(Nullable(&quot;B&quot;)=&gt;MultidimensionalTables.LDict(:a=&gt;Nullable(2)),Nullable(&quot;A&quot;)=&gt;MultidimensionalTables.LDict(:a=&gt;Nullable(1)))
+Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
+  Nullable(:y) =&gt; Dict(Nullable(&quot;B&quot;)=&gt;DataCubes.LDict(:a=&gt;Nullable(4)),Nullable(&quot;A&quot;)=&gt;DataCubes.LDict(:a=&gt;Nullable(3)))
+  Nullable(:x) =&gt; Dict(Nullable(&quot;B&quot;)=&gt;DataCubes.LDict(:a=&gt;Nullable(2)),Nullable(&quot;A&quot;)=&gt;DataCubes.LDict(:a=&gt;Nullable(1)))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1063">MultidimensionalTables/src/datatypes/labeled_array.jl:1063</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1063">DataCubes/src/datatypes/labeled_array.jl:1063</a></p>
 <hr />
 <p><a id="function__gdrop.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesgdrop">MultidimensionalTables.gdrop <a href="#function__gdrop.1">¶</a></h4>
+<h4 id="datacubesgdrop">DataCubes.gdrop <a href="#function__gdrop.1">¶</a></h4>
 <p><code>gdrop(arr, N1, N2, ...)</code></p>
 <p>Drop a block of an array. similar to <code>drop</code> in one dimensional case, but is slightly different and more general.
 It can also be applied to an <code>LDict</code>.
@@ -2818,10 +2818,10 @@ Y |0.8424940964507834  2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1516">MultidimensionalTables/src/util/array_util.jl:1516</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1516">DataCubes/src/util/array_util.jl:1516</a></p>
 <hr />
 <p><a id="function__gtake.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesgtake">MultidimensionalTables.gtake <a href="#function__gtake.1">¶</a></h4>
+<h4 id="datacubesgtake">DataCubes.gtake <a href="#function__gtake.1">¶</a></h4>
 <p><code>gtake(arr, N1, N2, ...)</code></p>
 <p>Take a block of an array. similar to <code>take</code> in one dimensional case, but is slightly different and more general.
 It can also be applied to an <code>LDict</code>.
@@ -2877,17 +2877,17 @@ V |0.9315379228053462 15
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1303">MultidimensionalTables/src/util/array_util.jl:1303</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L1303">DataCubes/src/util/array_util.jl:1303</a></p>
 <hr />
 <p><a id="function__selectfield.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesselectfield">MultidimensionalTables.selectfield <a href="#function__selectfield.1">¶</a></h4>
+<h4 id="datacubesselectfield">DataCubes.selectfield <a href="#function__selectfield.1">¶</a></h4>
 <p><code>selectfield(t, fld, inds)</code> : select a field whose name is <code>fld</code> at cartesian coordinates <code>inds</code> in a LabeledArray <code>t</code>.
 If <code>inds</code> is <code>nothing</code>, it chooses an entire <code>fld</code> from <code>t</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L502">MultidimensionalTables/src/util/select.jl:502</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L502">DataCubes/src/util/select.jl:502</a></p>
 <hr />
 <p><a id="function__setna.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablessetna">MultidimensionalTables.setna! <a href="#function__setna.1">¶</a></h4>
+<h4 id="datacubessetna">DataCubes.setna! <a href="#function__setna.1">¶</a></h4>
 <p><code>setna!(arr, args...)</code></p>
 <p>Set the element of an array <code>arr</code> at <code>args</code> to <code>NA</code>.
 If <code>args...</code> is omitted, all elements are set to <code>NA</code>.</p>
@@ -2898,7 +2898,7 @@ If <code>args...</code> is omitted, all elements are set to <code>NA</code>.</p>
 </ul>
 <h5 id="examples_52">Examples</h5>
 <pre><code class="julia">julia&gt; setna!(@nalift([1,2,NA,4,5]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable{Int64}()
  Nullable{Int64}()
  Nullable{Int64}()
@@ -2934,10 +2934,10 @@ Y |4 u |5 v |6 w
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L414">MultidimensionalTables/src/na/na.jl:414</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L414">DataCubes/src/na/na.jl:414</a></p>
 <hr />
 <p><a id="function__type_array.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablestype_array">MultidimensionalTables.type_array <a href="#function__type_array.1">¶</a></h4>
+<h4 id="datacubestype_array">DataCubes.type_array <a href="#function__type_array.1">¶</a></h4>
 <p><code>type_array(arr)</code></p>
 <p><code>type_array</code> finds the most constraining type of the elements of an array <code>arr</code>, and converts the array element type.
 Sometimes, an array is given type <code>Array{Any}</code>, even though the components are all Float64, for example.
@@ -2963,7 +2963,7 @@ julia&gt; type_array(Any[1, 3.0, 'x'])
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L34">MultidimensionalTables/src/util/array_util.jl:34</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_util.jl#L34">DataCubes/src/util/array_util.jl:34</a></p>
 <hr />
 <p><a id="function__diff.1" class="lexicon_definition"></a></p>
 <h4 id="diff">diff <a href="#function__diff.1">¶</a></h4>
@@ -2978,7 +2978,7 @@ Note that <code>diff</code> applied to <code>AbstractArrayWrapper</code> (or to 
 </ul>
 <h5 id="examples_54">Examples</h5>
 <pre><code class="julia">julia&gt; diff(@nalift([10,NA,12,14,17]))
-5-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(10)     
  Nullable{Int64}()
  Nullable{Int64}()
@@ -3015,10 +3015,10 @@ julia&gt; diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L574">MultidimensionalTables/src/util/array_helper_functions.jl:574</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L574">DataCubes/src/util/array_helper_functions.jl:574</a></p>
 <hr />
 <p><a id="method__allfieldnames.1" class="lexicon_definition"></a></p>
-<h4 id="allfieldnamesarrmultidimensionaltablesdictarrayk-n-vs-sv">allfieldnames(arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__allfieldnames.1">¶</a></h4>
+<h4 id="allfieldnamesarrdatacubesdictarrayk-n-vs-sv">allfieldnames(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__allfieldnames.1">¶</a></h4>
 <p><code>allfieldnames(::DictArray)</code></p>
 <p>Return all field names in the input <code>DictArray</code>, which are just the keys in the underlying <code>LDict</code>.</p>
 <h5 id="examples_55">Examples</h5>
@@ -3029,16 +3029,16 @@ julia&gt; diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L535">MultidimensionalTables/src/datatypes/dict_array.jl:535</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L535">DataCubes/src/datatypes/dict_array.jl:535</a></p>
 <hr />
 <p><a id="method__allfieldnames.2" class="lexicon_definition"></a></p>
-<h4 id="allfieldnamestablemultidimensionaltableslabeledarrayt-n-axestuple-tn">allfieldnames(table::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__allfieldnames.2">¶</a></h4>
+<h4 id="allfieldnamestabledatacubeslabeledarrayt-n-axestuple-tn">allfieldnames(table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__allfieldnames.2">¶</a></h4>
 <p>returns all field names for LabeledArray or DictArray. Returns an empty array for other types of arrays.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L754">MultidimensionalTables/src/datatypes/labeled_array.jl:754</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L754">DataCubes/src/datatypes/labeled_array.jl:754</a></p>
 <hr />
 <p><a id="method__cat.1" class="lexicon_definition"></a></p>
-<h4 id="catcatdiminteger-arr1multidimensionaltableslabeledarrayt-n-axestuple-tn-arrsmultidimensionaltableslabeledarrayt-n-axestuple-tn">cat(catdim::Integer,  arr1::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arrs::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__cat.1">¶</a></h4>
+<h4 id="catcatdiminteger-arr1datacubeslabeledarrayt-n-axestuple-tn-arrsdatacubeslabeledarrayt-n-axestuple-tn">cat(catdim::Integer,  arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arrs::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__cat.1">¶</a></h4>
 <p><code>cat(catdim::Integer, arrs::LabeledArray...)</code></p>
 <p>Concatenate <code>LabeledArray</code>s <code>arrs</code> along the <code>catdim</code> direction.
 The base of each element of <code>arrs</code> are concatenated and become the new base of the return <code>LabeledArray</code>.
@@ -3075,10 +3075,10 @@ y |a |4 5 6 14 15 16
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L804">MultidimensionalTables/src/datatypes/labeled_array.jl:804</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L804">DataCubes/src/datatypes/labeled_array.jl:804</a></p>
 <hr />
 <p><a id="method__cat.2" class="lexicon_definition"></a></p>
-<h4 id="catcatdiminteger-arrsmultidimensionaltablesdictarrayk-n-vs-sv">cat(catdim::Integer,  arrs::MultidimensionalTables.DictArray{K, N, VS, SV}...) <a href="#method__cat.2">¶</a></h4>
+<h4 id="catcatdiminteger-arrsdatacubesdictarrayk-n-vs-sv">cat(catdim::Integer,  arrs::DataCubes.DictArray{K, N, VS, SV}...) <a href="#method__cat.2">¶</a></h4>
 <p><code>cat(catdim::Integer, arrs::DictArray...)</code></p>
 <p>Concatenate the <code>DictArray</code>s <code>arrs</code> along the <code>catdim</code> direction.
 The common fields are concatenated field by field.
@@ -3103,49 +3103,49 @@ a b c |a b c |a b c |a b c |a b c |a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L613">MultidimensionalTables/src/datatypes/dict_array.jl:613</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L613">DataCubes/src/datatypes/dict_array.jl:613</a></p>
 <hr />
 <p><a id="method__convert.1" class="lexicon_definition"></a></p>
-<h4 id="converttypedataframesdataframe-arrmultidimensionaltablesdictarrayk-n-vs-sv">convert(::Type{DataFrames.DataFrame},  arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__convert.1">¶</a></h4>
+<h4 id="converttypedataframesdataframe-arrdatacubesdictarrayk-n-vs-sv">convert(::Type{DataFrames.DataFrame},  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__convert.1">¶</a></h4>
 <p><code>convert(::Type{DataFrame}, arr::DictArray)</code> converts a <code>DictArray</code> into a <code>DataFrame</code>. If the dimensions of <code>arr</code> are greater than 1, <code>arr</code> is first flattend into 1 dimension using <code>collapse_axes</code>, and then converted into a <code>DataFrame</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L96">MultidimensionalTables/src/util/dataframe_interface.jl:96</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L96">DataCubes/src/util/dataframe_interface.jl:96</a></p>
 <hr />
 <p><a id="method__convert.2" class="lexicon_definition"></a></p>
-<h4 id="converttypedataframesdataframe-arrmultidimensionaltableslabeledarrayt-n-axestuple-tn">convert(::Type{DataFrames.DataFrame},  arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__convert.2">¶</a></h4>
+<h4 id="converttypedataframesdataframe-arrdatacubeslabeledarrayt-n-axestuple-tn">convert(::Type{DataFrames.DataFrame},  arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__convert.2">¶</a></h4>
 <p><code>convert(::Type{DataFrame}, arr::LabeledArray)</code> converts a <code>LabeledArray</code> into a <code>DataFrame</code> by first creating a <code>DictArray</code> by broadcasting all axes, and then convert that <code>DictArray</code> into a <code>DataFrame</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L102">MultidimensionalTables/src/util/dataframe_interface.jl:102</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L102">DataCubes/src/util/dataframe_interface.jl:102</a></p>
 <hr />
 <p><a id="method__convert.3" class="lexicon_definition"></a></p>
-<h4 id="converttypemultidimensionaltablesdictarrayk-n-vs-sv-dfdataframesdataframe">convert(::Type{MultidimensionalTables.DictArray{K, N, VS, SV}},  df::DataFrames.DataFrame) <a href="#method__convert.3">¶</a></h4>
+<h4 id="converttypedatacubesdictarrayk-n-vs-sv-dfdataframesdataframe">convert(::Type{DataCubes.DictArray{K, N, VS, SV}},  df::DataFrames.DataFrame) <a href="#method__convert.3">¶</a></h4>
 <p><code>convert(::Type{DictArray}, df::DataFrame)</code> converts a <code>DataFrame</code> into <code>DictArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L84">MultidimensionalTables/src/util/dataframe_interface.jl:84</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L84">DataCubes/src/util/dataframe_interface.jl:84</a></p>
 <hr />
 <p><a id="method__convert.4" class="lexicon_definition"></a></p>
-<h4 id="converttypemultidimensionaltablesenumerationarrayt-n-v-rinteger-arrdataarrayspooleddataarrayt-rinteger-n">convert(::Type{MultidimensionalTables.EnumerationArray{T, N, V, R&lt;:Integer}},  arr::DataArrays.PooledDataArray{T, R&lt;:Integer, N}) <a href="#method__convert.4">¶</a></h4>
+<h4 id="converttypedatacubesenumerationarrayt-n-v-rinteger-arrdataarrayspooleddataarrayt-rinteger-n">convert(::Type{DataCubes.EnumerationArray{T, N, V, R&lt;:Integer}},  arr::DataArrays.PooledDataArray{T, R&lt;:Integer, N}) <a href="#method__convert.4">¶</a></h4>
 <p><code>convert(::Type{EnumerationArray}, arr::PooledDataArray)</code> converts a <code>PooledDataArray</code> into an <code>EnumerationArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L108">MultidimensionalTables/src/util/dataframe_interface.jl:108</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L108">DataCubes/src/util/dataframe_interface.jl:108</a></p>
 <hr />
 <p><a id="method__convert.5" class="lexicon_definition"></a></p>
-<h4 id="converttypemultidimensionaltableslabeledarrayt-n-axestuple-tn-dfdataframesdataframe">convert(::Type{MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}},  df::DataFrames.DataFrame) <a href="#method__convert.5">¶</a></h4>
+<h4 id="converttypedatacubeslabeledarrayt-n-axestuple-tn-dfdataframesdataframe">convert(::Type{DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}},  df::DataFrames.DataFrame) <a href="#method__convert.5">¶</a></h4>
 <p><code>convert(::Type{LabeledArray}, df::DataFrame)</code> converts a <code>DataFrame</code> into <code>LabeledArray</code> simply by wrapping <code>convert(DictArray, df)</code> by <code>LabeledArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L90">MultidimensionalTables/src/util/dataframe_interface.jl:90</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/dataframe_interface.jl#L90">DataCubes/src/util/dataframe_interface.jl:90</a></p>
 <hr />
 <p><a id="method__deletekeys.1" class="lexicon_definition"></a></p>
-<h4 id="deletekeysk-vdictmultidimensionaltablesldictk-v-keys">deletekeys{K, V}(dict::MultidimensionalTables.LDict{K, V},  keys...) <a href="#method__deletekeys.1">¶</a></h4>
+<h4 id="deletekeysk-vdictdatacubesldictk-v-keys">deletekeys{K, V}(dict::DataCubes.LDict{K, V},  keys...) <a href="#method__deletekeys.1">¶</a></h4>
 <p><code>deletekeys(dict::LDict, keys...)</code></p>
 <p>Delete <code>keys</code> keys from <code>dict</code>. A missing key will be silently ignored.</p>
 <pre><code class="julia">julia&gt; deletekeys(LDict(:a=&gt;3, :b=&gt;5, :c=&gt;10), :a, :b, :x)
-MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
+DataCubes.LDict{Symbol,Int64} with 1 entry:
   :c =&gt; 10
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L155">MultidimensionalTables/src/datatypes/ldict.jl:155</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L155">DataCubes/src/datatypes/ldict.jl:155</a></p>
 <hr />
 <p><a id="method__dropnaiter.1" class="lexicon_definition"></a></p>
 <h4 id="dropnaitert-narrabstractarraynullablet-n">dropnaiter{T, N}(arr::AbstractArray{Nullable{T}, N}) <a href="#method__dropnaiter.1">¶</a></h4>
@@ -3162,7 +3162,7 @@ MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L24">MultidimensionalTables/src/util/array_helper_functions.jl:24</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L24">DataCubes/src/util/array_helper_functions.jl:24</a></p>
 <hr />
 <p><a id="method__enum_dropnaiter.1" class="lexicon_definition"></a></p>
 <h4 id="enum_dropnaitert-narrabstractarraynullablet-n">enum_dropnaiter{T, N}(arr::AbstractArray{Nullable{T}, N}) <a href="#method__enum_dropnaiter.1">¶</a></h4>
@@ -3178,19 +3178,19 @@ MultidimensionalTables.LDict{Symbol,Int64} with 1 entry:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L44">MultidimensionalTables/src/util/array_helper_functions.jl:44</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L44">DataCubes/src/util/array_helper_functions.jl:44</a></p>
 <hr />
 <p><a id="method__fill.1" class="lexicon_definition"></a></p>
-<h4 id="fillldictmultidimensionaltablesldictk-v-dimsinteger">fill(ldict::MultidimensionalTables.LDict{K, V},  dims::Integer...) <a href="#method__fill.1">¶</a></h4>
+<h4 id="fillldictdatacubesldictk-v-dimsinteger">fill(ldict::DataCubes.LDict{K, V},  dims::Integer...) <a href="#method__fill.1">¶</a></h4>
 <p><code>fill(ldict::LDict, dims...)</code></p>
 <p>Fill a <code>DictArray</code> with <code>ldict</code>.</p>
 <h5 id="return_13">Return</h5>
 <p>A new <code>DictArray</code> whose elements are <code>ldict</code> and whose dimensions are <code>dims...</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1141">MultidimensionalTables/src/datatypes/dict_array.jl:1141</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1141">DataCubes/src/datatypes/dict_array.jl:1141</a></p>
 <hr />
 <p><a id="method__flipdim.1" class="lexicon_definition"></a></p>
-<h4 id="flipdimarrmultidimensionaltablesdictarrayk-n-vs-sv-dimsinteger">flipdim(arr::MultidimensionalTables.DictArray{K, N, VS, SV},  dims::Integer...) <a href="#method__flipdim.1">¶</a></h4>
+<h4 id="flipdimarrdatacubesdictarrayk-n-vs-sv-dimsinteger">flipdim(arr::DataCubes.DictArray{K, N, VS, SV},  dims::Integer...) <a href="#method__flipdim.1">¶</a></h4>
 <p><code>flipdim(arr::DictArray, dims...)</code></p>
 <p>Flip a <code>DictArray</code> <code>arr</code> using an iterable variable <code>dims</code>. The same method as <code>reverse(arr::DictArray, dims)</code>.</p>
 <h5 id="arguments_34">Arguments</h5>
@@ -3229,24 +3229,24 @@ a b |a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1129">MultidimensionalTables/src/datatypes/dict_array.jl:1129</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1129">DataCubes/src/datatypes/dict_array.jl:1129</a></p>
 <hr />
 <p><a id="method__getindexvalue.1" class="lexicon_definition"></a></p>
 <h4 id="getindexvaluearrabstractarrayt-n-args">getindexvalue(arr::AbstractArray{T, N},  args...) <a href="#method__getindexvalue.1">¶</a></h4>
 <p><code>getindexvalue(arr::AbstractArray, args...)</code></p>
 <p>Return <code>arr[args...]</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L190">MultidimensionalTables/src/datatypes/dict_array.jl:190</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L190">DataCubes/src/datatypes/dict_array.jl:190</a></p>
 <hr />
 <p><a id="method__getindexvalue.2" class="lexicon_definition"></a></p>
-<h4 id="getindexvaluearrmultidimensionaltablesdictarrayk-n-vs-sv-args">getindexvalue(arr::MultidimensionalTables.DictArray{K, N, VS, SV},  args...) <a href="#method__getindexvalue.2">¶</a></h4>
+<h4 id="getindexvaluearrdatacubesdictarrayk-n-vs-sv-args">getindexvalue(arr::DataCubes.DictArray{K, N, VS, SV},  args...) <a href="#method__getindexvalue.2">¶</a></h4>
 <p><code>getindexvalue(arr::DictArray, args...)</code></p>
 <p>Return the value tuple of <code>arr</code> at index <code>args</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L180">MultidimensionalTables/src/datatypes/dict_array.jl:180</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L180">DataCubes/src/datatypes/dict_array.jl:180</a></p>
 <hr />
 <p><a id="method__intersect.1" class="lexicon_definition"></a></p>
-<h4 id="intersectdiminteger-arr0multidimensionaltableslabeledarrayt-n-axestuple-tn-arr_restmultidimensionaltableslabeledarrayt-n-axestuple-tn">intersect(dim::Integer,  arr0::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr_rest::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__intersect.1">¶</a></h4>
+<h4 id="intersectdiminteger-arr0datacubeslabeledarrayt-n-axestuple-tn-arr_restdatacubeslabeledarrayt-n-axestuple-tn">intersect(dim::Integer,  arr0::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr_rest::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__intersect.1">¶</a></h4>
 <p><code>intersect(dim, arrs...)</code></p>
 <p>Take intersection of arrays of type <code>LabeledArray</code>/<code>DictArray</code>/<code>AbstractArrayWrapper</code>. The order is preserved.</p>
 <h5 id="arguments_35">Arguments</h5>
@@ -3256,11 +3256,11 @@ a b |a b |a b
 </ul>
 <h5 id="examples_60">Examples</h5>
 <pre><code class="julia">julia&gt; intersect(1, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-1x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+1x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
 
 julia&gt; intersect(2, nalift([1 2 3;4 5 6]), nalift([1 2 3;5 5 6]))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(2)  Nullable(3)
  Nullable(5)  Nullable(6)
 
@@ -3291,10 +3291,10 @@ julia&gt; intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/intersect.jl#L53">MultidimensionalTables/src/util/intersect.jl:53</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/intersect.jl#L53">DataCubes/src/util/intersect.jl:53</a></p>
 <hr />
 <p><a id="method__keys.1" class="lexicon_definition"></a></p>
-<h4 id="keysarrmultidimensionaltablesdictarrayk-n-vs-sv">keys(arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__keys.1">¶</a></h4>
+<h4 id="keysarrdatacubesdictarrayk-n-vs-sv">keys(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__keys.1">¶</a></h4>
 <p><code>keys(::DictArray)</code></p>
 <p>Return the field name vector of the input <code>DictArray</code>, which are the keys of the underlying <code>LDict</code>.</p>
 <h5 id="examples_61">Examples</h5>
@@ -3305,10 +3305,10 @@ julia&gt; intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1001">MultidimensionalTables/src/datatypes/dict_array.jl:1001</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1001">DataCubes/src/datatypes/dict_array.jl:1001</a></p>
 <hr />
 <p><a id="method__map.1" class="lexicon_definition"></a></p>
-<h4 id="mapffunction-arrmultidimensionaltablesdictarrayk-n-vs-sv">map(f::Function,  arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__map.1">¶</a></h4>
+<h4 id="mapffunction-arrdatacubesdictarrayk-n-vs-sv">map(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__map.1">¶</a></h4>
 <p><code>map(f::Function, arr::DictArray)</code></p>
 <p>Apply the function <code>f</code> to each element of <code>arr</code>.
 <code>f</code> will take an <code>LDict</code> and produces a value of type, say <code>T</code>.
@@ -3318,7 +3318,7 @@ If the return element type <code>T</code> is <code>LDict</code>, the result will
 However, in this case, the <code>LDict</code> should be of the type <code>LDict{K,Nullable{V}}</code>.</p>
 <h5 id="examples_62">Examples</h5>
 <pre><code class="julia">julia&gt; map(x-&gt;x[:a].value + x[:b].value, darr(a=[1 2;3 4], b=[1.0 2.0;3.0 4.0]))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Float64},2,MultidimensionalTables.FloatNAArray{Float64,2,Array{Float64,2}}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}:
  Nullable(2.0)  Nullable(4.0)
  Nullable(6.0)  Nullable(8.0)
 
@@ -3332,10 +3332,10 @@ c   |c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L719">MultidimensionalTables/src/datatypes/dict_array.jl:719</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L719">DataCubes/src/datatypes/dict_array.jl:719</a></p>
 <hr />
 <p><a id="method__mapslices.1" class="lexicon_definition"></a></p>
-<h4 id="mapslicesffunction-arrmultidimensionaltablesdictarrayk-n-vs-sv-dimsabstractarrayt-1">mapslices(f::Function,  arr::MultidimensionalTables.DictArray{K, N, VS, SV},  dims::AbstractArray{T, 1}) <a href="#method__mapslices.1">¶</a></h4>
+<h4 id="mapslicesffunction-arrdatacubesdictarrayk-n-vs-sv-dimsabstractarrayt-1">mapslices(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV},  dims::AbstractArray{T, 1}) <a href="#method__mapslices.1">¶</a></h4>
 <p><code>mapslices(f::Function, arr::DictArray, dims)</code></p>
 <p>Apply the function <code>f</code> to each slice of <code>arr</code> specified by <code>dims</code>. <code>dims</code> is a vector of integers along which direction to reduce.</p>
 <ul>
@@ -3348,13 +3348,13 @@ c   |c
 If the return value of <code>f</code> is an <code>LDict</code>, the return value of the corresponding <code>mapslices</code> is a <code>DictArray</code>.
 Otherwise, the return value is an <code>Array</code>.</p>
 <pre><code class="julia">julia&gt; mapslices(d-&gt;d[:a] .* 2, darr(a=[1 2 3;4 5 6], b=[10 11 12;13 14 15]), [1])
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
  Nullable([Nullable(2),Nullable(8)]) 
  Nullable([Nullable(4),Nullable(10)])
  Nullable([Nullable(6),Nullable(12)])
 
 julia&gt; mapslices(d-&gt;d[:a] .* 2, darr(a=[1 2 3;4 5 6], b=[10 11 12;13 14 15]), [2])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1,Array{Nullable{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}}},1}}:
  Nullable([Nullable(2),Nullable(4),Nullable(6)])  
  Nullable([Nullable(8),Nullable(10),Nullable(12)])
 
@@ -3368,10 +3368,10 @@ c  d
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L797">MultidimensionalTables/src/datatypes/dict_array.jl:797</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L797">DataCubes/src/datatypes/dict_array.jl:797</a></p>
 <hr />
 <p><a id="method__merge.1" class="lexicon_definition"></a></p>
-<h4 id="mergearr1multidimensionaltablesdictarrayk-n-vs-sv-args">merge(arr1::MultidimensionalTables.DictArray{K, N, VS, SV},  args...) <a href="#method__merge.1">¶</a></h4>
+<h4 id="mergearr1datacubesdictarrayk-n-vs-sv-args">merge(arr1::DataCubes.DictArray{K, N, VS, SV},  args...) <a href="#method__merge.1">¶</a></h4>
 <p><code>merge(::DictArray, args...)</code></p>
 <p>Construct a <code>DictArray</code> using <code>args...</code>, and merges the two <code>DictArray</code>s together.</p>
 <h5 id="example">Example</h5>
@@ -3386,10 +3386,10 @@ a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L338">MultidimensionalTables/src/datatypes/dict_array.jl:338</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L338">DataCubes/src/datatypes/dict_array.jl:338</a></p>
 <hr />
 <p><a id="method__merge.2" class="lexicon_definition"></a></p>
-<h4 id="mergearr1multidimensionaltablesdictarrayk-n-vs-sv-arr2multidimensionaltablesdictarrayk-n-vs-sv">merge(arr1::MultidimensionalTables.DictArray{K, N, VS, SV},  arr2::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__merge.2">¶</a></h4>
+<h4 id="mergearr1datacubesdictarrayk-n-vs-sv-arr2datacubesdictarrayk-n-vs-sv">merge(arr1::DataCubes.DictArray{K, N, VS, SV},  arr2::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__merge.2">¶</a></h4>
 <p><code>merge(::DictArray, ::DictArray)</code></p>
 <p>Merge the two <code>DictArray</code>s. A duplicate field in the second <code>DictArray</code> will override that in the first one. Otherwise, the new field in the second <code>DictArray</code> will be appened after the first <code>DictArray</code> fields.
 If the first is <code>DictArray</code> and the remaining arguments are used to construct a <code>DictArray</code> and then the two are merged.</p>
@@ -3405,10 +3405,10 @@ a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L317">MultidimensionalTables/src/datatypes/dict_array.jl:317</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L317">DataCubes/src/datatypes/dict_array.jl:317</a></p>
 <hr />
 <p><a id="method__merge.3" class="lexicon_definition"></a></p>
-<h4 id="mergearr1multidimensionaltableslabeledarrayt-n-axestuple-tn-argsmultidimensionaltablesdictarrayk-n-vs-sv">merge(arr1::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args::MultidimensionalTables.DictArray{K, N, VS, SV}...) <a href="#method__merge.3">¶</a></h4>
+<h4 id="mergearr1datacubeslabeledarrayt-n-axestuple-tn-argsdatacubesdictarrayk-n-vs-sv">merge(arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args::DataCubes.DictArray{K, N, VS, SV}...) <a href="#method__merge.3">¶</a></h4>
 <p><code>merge(::LabeledArray, ::DictArray...)</code></p>
 <p>Merge the base of the <code>LabeledArray</code> and the rest <code>DictArray</code>s.
 Together with the axes set of the input <code>LabeledArray</code>, return a new <code>LabeledArray</code>.</p>
@@ -3424,10 +3424,10 @@ c |Z p 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1530">MultidimensionalTables/src/datatypes/labeled_array.jl:1530</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1530">DataCubes/src/datatypes/labeled_array.jl:1530</a></p>
 <hr />
 <p><a id="method__merge.4" class="lexicon_definition"></a></p>
-<h4 id="mergearr1multidimensionaltableslabeledarrayt-n-axestuple-tn-arr2multidimensionaltableslabeledarrayt-n-axestuple-tn">merge(arr1::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr2::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__merge.4">¶</a></h4>
+<h4 id="mergearr1datacubeslabeledarrayt-n-axestuple-tn-arr2datacubeslabeledarrayt-n-axestuple-tn">merge(arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr2::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__merge.4">¶</a></h4>
 <p><code>merge(::LabeledArray, ::LabeledArray)</code></p>
 <p>Merge two <code>LabeledArrays</code>. The axes set of the two should be identical.
 The bases are merged together and the common axes set is used.</p>
@@ -3443,16 +3443,16 @@ c |3 p 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1504">MultidimensionalTables/src/datatypes/labeled_array.jl:1504</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1504">DataCubes/src/datatypes/labeled_array.jl:1504</a></p>
 <hr />
 <p><a id="method__merge.5" class="lexicon_definition"></a></p>
-<h4 id="mergedictmultidimensionaltablesldictk-v-dsassociativek-v">merge(dict::MultidimensionalTables.LDict{K, V},  ds::Associative{K, V}...) <a href="#method__merge.5">¶</a></h4>
+<h4 id="mergedictdatacubesldictk-v-dsassociativek-v">merge(dict::DataCubes.LDict{K, V},  ds::Associative{K, V}...) <a href="#method__merge.5">¶</a></h4>
 <p><code>merge(dict::LDict, ds...)</code></p>
 <p>Combine an <code>LDict</code> <code>dict</code> with <code>Associative</code> <code>ds</code>'s.
 The subsequent elements in ds will either update the preceding one, or append the key-value pair.</p>
 <h5 id="examples_65">Examples</h5>
 <pre><code class="julia">julia&gt; merge(LDict(:a=&gt;3, :b=&gt;5), Dict(:b=&gt;&quot;X&quot;, :c=&gt;&quot;Y&quot;), LDict(:c=&gt;'x', 'd'=&gt;'y'))
-MultidimensionalTables.LDict{Any,Any} with 4 entries:
+DataCubes.LDict{Any,Any} with 4 entries:
   :a  =&gt; 3
   :b  =&gt; &quot;X&quot;
   :c  =&gt; 'x'
@@ -3460,22 +3460,22 @@ MultidimensionalTables.LDict{Any,Any} with 4 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L98">MultidimensionalTables/src/datatypes/ldict.jl:98</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L98">DataCubes/src/datatypes/ldict.jl:98</a></p>
 <hr />
 <p><a id="method__reducedim.1" class="lexicon_definition"></a></p>
-<h4 id="reducedimffunction-arrmultidimensionaltablesdictarrayk-n-vs-sv-dims-initial">reducedim(f::Function,  arr::MultidimensionalTables.DictArray{K, N, VS, SV},  dims,  initial) <a href="#method__reducedim.1">¶</a></h4>
+<h4 id="reducedimffunction-arrdatacubesdictarrayk-n-vs-sv-dims-initial">reducedim(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV},  dims,  initial) <a href="#method__reducedim.1">¶</a></h4>
 <p><code>reducedim(f::Function, arr::DictArray, dims [, initial])</code></p>
 <p>Reduce a two argument function <code>f</code> along dimensions of <code>arr</code>. <code>dims</code> is a vector specifying the dimensions to reduce, and <code>initial</code> is the initial value to use in the reduction.
 * If <code>dims</code> includes all dimensions, <code>reduce</code> will be applied to the whole <code>arr</code> with initial value <code>initial.
 * Otherwise,</code>reduce<code>is applied with the function</code>f<code>to each slice spanned by the directions with initial value</code>initial<code>.</code>initial<code>can be omitted if the underlying</code>reduce` does not require it.</p>
 <pre><code class="julia">julia&gt; reducedim((acc,d)-&gt;acc+d[:a].value, darr(a=[1 2 3;4 5 6]), [1], 0)
-3-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(5)
  Nullable(7)
  Nullable(9)
 
 julia&gt; reducedim((acc,d)-&gt;acc+d[:a].value, darr(a=[1 2 3;4 5 6]), [2], 0)
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable(6) 
  Nullable(15)
 
@@ -3484,14 +3484,14 @@ Nullable(21)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L747">MultidimensionalTables/src/datatypes/dict_array.jl:747</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L747">DataCubes/src/datatypes/dict_array.jl:747</a></p>
 <hr />
 <p><a id="method__repeat.1" class="lexicon_definition"></a></p>
-<h4 id="repeatarrmultidimensionaltablesdictarrayk-n-vs-sv">repeat(arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__repeat.1">¶</a></h4>
+<h4 id="repeatarrdatacubesdictarrayk-n-vs-sv">repeat(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__repeat.1">¶</a></h4>
 <p><code>repeat(arr::DictArray [; inner=..., outer=...])</code></p>
 <p>Apply <code>repeat</code> field by field to the <code>DictArray</code> <code>arr</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L640">MultidimensionalTables/src/datatypes/dict_array.jl:640</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L640">DataCubes/src/datatypes/dict_array.jl:640</a></p>
 <hr />
 <p><a id="method__replace_expr.1" class="lexicon_definition"></a></p>
 <h4 id="replace_exprexpr">replace_expr(expr) <a href="#method__replace_expr.1">¶</a></h4>
@@ -3507,10 +3507,10 @@ for the field k in the table t at the coordinates selected so far.</p>
 <li><code>_</code> : translates to <code>t'</code> if none of the above is applicable. It is useful when the field name is not a symbol.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1118">MultidimensionalTables/src/util/select.jl:1118</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L1118">DataCubes/src/util/select.jl:1118</a></p>
 <hr />
 <p><a id="method__reshape.1" class="lexicon_definition"></a></p>
-<h4 id="reshapearrmultidimensionaltableslabeledarrayt-n-axestuple-tn-dimsint64">reshape(arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  dims::Int64...) <a href="#method__reshape.1">¶</a></h4>
+<h4 id="reshapearrdatacubeslabeledarrayt-n-axestuple-tn-dimsint64">reshape(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  dims::Int64...) <a href="#method__reshape.1">¶</a></h4>
 <p><code>reshape(arr::LabeledArray, dims...)</code></p>
 <p>Reshape <code>arr</code> into different sizes, if there is no ambiguity.
 This means you can collapse several contiguous directions into one direction,
@@ -3573,10 +3573,10 @@ ERROR: ArgumentError: dims (3,2) are inconsistent.
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1177">MultidimensionalTables/src/datatypes/labeled_array.jl:1177</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L1177">DataCubes/src/datatypes/labeled_array.jl:1177</a></p>
 <hr />
 <p><a id="method__reverse.1" class="lexicon_definition"></a></p>
-<h4 id="reversearrmultidimensionaltablesdictarrayk-n-vs-sv-dims">reverse(arr::MultidimensionalTables.DictArray{K, N, VS, SV},  dims) <a href="#method__reverse.1">¶</a></h4>
+<h4 id="reversearrdatacubesdictarrayk-n-vs-sv-dims">reverse(arr::DataCubes.DictArray{K, N, VS, SV},  dims) <a href="#method__reverse.1">¶</a></h4>
 <p><code>reverse(arr::DictArray, dims)</code></p>
 <p>Reverse a <code>DictArray</code> <code>arr</code> using an iterable variable <code>dims</code>.</p>
 <h5 id="arguments_36">Arguments</h5>
@@ -3615,7 +3615,7 @@ a b |a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1072">MultidimensionalTables/src/datatypes/dict_array.jl:1072</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1072">DataCubes/src/datatypes/dict_array.jl:1072</a></p>
 <hr />
 <p><a id="method__sel.1" class="lexicon_definition"></a></p>
 <h4 id="selfunc-t">sel(func,  t) <a href="#method__sel.1">¶</a></h4>
@@ -3630,10 +3630,10 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 </em> <code>b</code> : an array of arrays of pairs from field names to by functions specified as <code>t'</code> -&gt; a nullable array.
 * <code>a</code> : an array of pairs from field names to aggregate functions specified as <code>t'</code> -&gt; a nullable array.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L597">MultidimensionalTables/src/util/select.jl:597</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L597">DataCubes/src/util/select.jl:597</a></p>
 <hr />
 <p><a id="method__selectfunc.1" class="lexicon_definition"></a></p>
-<h4 id="selectfuncntmultidimensionaltableslabeledarrayt-n-axestuple-tn-c-b-a">selectfunc{N}(t::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__selectfunc.1">¶</a></h4>
+<h4 id="selectfuncntdatacubeslabeledarrayt-n-axestuple-tn-c-b-a">selectfunc{N}(t::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__selectfunc.1">¶</a></h4>
 <p><code>selectfunc(t::LabeledArray, c, b, a)</code></p>
 <p>main select function. This function is internal and is meant to be used via <code>selct</code>.
 <code>selectfunc</code> takes a table <code>t</code>, condition <code>c</code>, aggreagtion by rule <code>b</code>, aggregate function <code>a</code>.</p>
@@ -3644,24 +3644,24 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 <li>c : an array of pairs of field name =&gt; function <code>(t, inds)</code> -&gt; array. <code>t</code> is a LabeledArray and inds is either <code>nothing</code> to choose the entire <code>t</code> or an array of Cartesian indices.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L34">MultidimensionalTables/src/util/select.jl:34</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L34">DataCubes/src/util/select.jl:34</a></p>
 <hr />
 <p><a id="method__selectkeys.1" class="lexicon_definition"></a></p>
-<h4 id="selectkeysk-vdictmultidimensionaltablesldictk-v-keys">selectkeys{K, V}(dict::MultidimensionalTables.LDict{K, V},  keys...) <a href="#method__selectkeys.1">¶</a></h4>
+<h4 id="selectkeysk-vdictdatacubesldictk-v-keys">selectkeys{K, V}(dict::DataCubes.LDict{K, V},  keys...) <a href="#method__selectkeys.1">¶</a></h4>
 <p><code>selectkeys(dict::LDict, keys...)</code></p>
 <p>Select <code>keys</code> keys from <code>dict</code>. A missing key will raise an error.</p>
 <h5 id="examples_68">Examples</h5>
 <pre><code class="julia">julia&gt; selectkeys(LDict(:a=&gt;3, :b=&gt;5, :c=&gt;10), :a, :b)
-MultidimensionalTables.LDict{Symbol,Int64} with 2 entries:
+DataCubes.LDict{Symbol,Int64} with 2 entries:
   :a =&gt; 3
   :b =&gt; 5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L186">MultidimensionalTables/src/datatypes/ldict.jl:186</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/ldict.jl#L186">DataCubes/src/datatypes/ldict.jl:186</a></p>
 <hr />
 <p><a id="method__show.1" class="lexicon_definition"></a></p>
-<h4 id="shownioio-arrmultidimensionaltablesdictarrayk-n-vs-sv">show{N}(io::IO,  arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__show.1">¶</a></h4>
+<h4 id="shownioio-arrdatacubesdictarrayk-n-vs-sv">show{N}(io::IO,  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__show.1">¶</a></h4>
 <p><code>show(io::IO, arr::DictArray [; height::Int=..., width::Int=..., alongorow::Bool=true])</code></p>
 <p>Show a <code>DictArray</code> in <code>io</code> in a square box of given <code>height</code> and <code>width</code>. If not provided, the current terminal's size is used to get the default <code>height</code> and <code>weight</code>. <code>alongrow</code> determines whether to display field names along row or columns.</p>
 <h5 id="examples_69">Examples</h5>
@@ -3688,10 +3688,10 @@ b |z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376">MultidimensionalTables/src/datatypes/dict_array.jl:376</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376">DataCubes/src/datatypes/dict_array.jl:376</a></p>
 <hr />
 <p><a id="method__show.2" class="lexicon_definition"></a></p>
-<h4 id="shownioio-arrmultidimensionaltablesdictarrayk-n-vs-sv-indent">show{N}(io::IO,  arr::MultidimensionalTables.DictArray{K, N, VS, SV},  indent) <a href="#method__show.2">¶</a></h4>
+<h4 id="shownioio-arrdatacubesdictarrayk-n-vs-sv-indent">show{N}(io::IO,  arr::DataCubes.DictArray{K, N, VS, SV},  indent) <a href="#method__show.2">¶</a></h4>
 <p><code>show(io::IO, arr::DictArray [; height::Int=..., width::Int=..., alongorow::Bool=true])</code></p>
 <p>Show a <code>DictArray</code> in <code>io</code> in a square box of given <code>height</code> and <code>width</code>. If not provided, the current terminal's size is used to get the default <code>height</code> and <code>weight</code>. <code>alongrow</code> determines whether to display field names along row or columns.</p>
 <h5 id="examples_70">Examples</h5>
@@ -3718,10 +3718,10 @@ b |z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376">MultidimensionalTables/src/datatypes/dict_array.jl:376</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L376">DataCubes/src/datatypes/dict_array.jl:376</a></p>
 <hr />
 <p><a id="method__show.3" class="lexicon_definition"></a></p>
-<h4 id="shownioio-tablemultidimensionaltableslabeledarrayt-n-axestuple-tn">show{N}(io::IO,  table::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__show.3">¶</a></h4>
+<h4 id="shownioio-tabledatacubeslabeledarrayt-n-axestuple-tn">show{N}(io::IO,  table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__show.3">¶</a></h4>
 <p><code>show(io::IO, table::LabeledArray [, indent=0; height=..., width=...])</code></p>
 <p>Show a LabeledArray.</p>
 <h5 id="arguments_38">Arguments</h5>
@@ -3730,10 +3730,10 @@ b |z
 <li><code>alongrow</code>(optional, default set by <code>set_dispalongrow!!</code>. <code>tru</code> by default): if <code>true</code>, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244">MultidimensionalTables/src/datatypes/labeled_array.jl:244</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244">DataCubes/src/datatypes/labeled_array.jl:244</a></p>
 <hr />
 <p><a id="method__show.4" class="lexicon_definition"></a></p>
-<h4 id="shownioio-tablemultidimensionaltableslabeledarrayt-n-axestuple-tn-indent">show{N}(io::IO,  table::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  indent) <a href="#method__show.4">¶</a></h4>
+<h4 id="shownioio-tabledatacubeslabeledarrayt-n-axestuple-tn-indent">show{N}(io::IO,  table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  indent) <a href="#method__show.4">¶</a></h4>
 <p><code>show(io::IO, table::LabeledArray [, indent=0; height=..., width=...])</code></p>
 <p>Show a LabeledArray.</p>
 <h5 id="arguments_39">Arguments</h5>
@@ -3742,10 +3742,10 @@ b |z
 <li><code>alongrow</code>(optional, default set by <code>set_dispalongrow!!</code>. <code>tru</code> by default): if <code>true</code>, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244">MultidimensionalTables/src/datatypes/labeled_array.jl:244</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L244">DataCubes/src/datatypes/labeled_array.jl:244</a></p>
 <hr />
 <p><a id="method__sort.1" class="lexicon_definition"></a></p>
-<h4 id="sortarrmultidimensionaltableslabeledarrayt-n-axestuple-tn-axisinteger-fields">sort(arr::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  axis::Integer,  fields...) <a href="#method__sort.1">¶</a></h4>
+<h4 id="sortarrdatacubeslabeledarrayt-n-axestuple-tn-axisinteger-fields">sort(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  axis::Integer,  fields...) <a href="#method__sort.1">¶</a></h4>
 <p><code>sort(arr, axis fields... [; alg=..., ...])</code></p>
 <p>Sort a <code>DictArray</code> or <code>LabeledArray</code> along some axis.</p>
 <h5 id="arguments_40">Arguments</h5>
@@ -3812,10 +3812,10 @@ Y |5 e |7 d |3 f
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/sort.jl#L132">MultidimensionalTables/src/util/sort.jl:132</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/sort.jl#L132">DataCubes/src/util/sort.jl:132</a></p>
 <hr />
 <p><a id="method__unique.1" class="lexicon_definition"></a></p>
-<h4 id="uniquetarrmultidimensionaltablesabstractarraywrappernullablet-n-aabstractarrayt-n">unique{T}(arr::MultidimensionalTables.AbstractArrayWrapper{Nullable{T}, N, A&lt;:AbstractArray{T, N}}) <a href="#method__unique.1">¶</a></h4>
+<h4 id="uniquetarrdatacubesabstractarraywrappernullablet-n-aabstractarrayt-n">unique{T}(arr::DataCubes.AbstractArrayWrapper{Nullable{T}, N, A&lt;:AbstractArray{T, N}}) <a href="#method__unique.1">¶</a></h4>
 <p><code>unique(arr, dims...)</code></p>
 <p>Return unique elements of an array <code>arr</code> of type <code>LabeledArray</code>/<code>DictArray</code>/<code>Nullable AbstractArrayWrapper</code>.</p>
 <h5 id="arguments_41">Arguments</h5>
@@ -3827,22 +3827,22 @@ Note that it compares each slice spanned by directions orthogonal to <code>dims.
 </ul>
 <h5 id="examples_72">Examples</h5>
 <pre><code class="julia">julia&gt; unique(nalift([1 2 3;3 4 1]))
-2x2 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
 
 julia&gt; unique(nalift([1 2 3;3 4 1]), 1)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(3)  Nullable(4)  Nullable(1)
 
 julia&gt; unique(nalift([1 2 3;3 4 1]), 2)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(3)  Nullable(4)  Nullable(1)
 
 julia&gt; unique(nalift([1 2 3;1 2 3;4 5 6]), 1)
-2x3 MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
+2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)  Nullable(3)
  Nullable(4)  Nullable(5)  Nullable(6)
 
@@ -3911,10 +3911,10 @@ Z |1 a |2 b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/unique.jl#L102">MultidimensionalTables/src/util/unique.jl:102</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/unique.jl#L102">DataCubes/src/util/unique.jl:102</a></p>
 <hr />
 <p><a id="method__updatefunc.1" class="lexicon_definition"></a></p>
-<h4 id="updatefuncntmultidimensionaltableslabeledarrayt-n-axestuple-tn-c-b-a">updatefunc{N}(t::MultidimensionalTables.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__updatefunc.1">¶</a></h4>
+<h4 id="updatefuncntdatacubeslabeledarrayt-n-axestuple-tn-c-b-a">updatefunc{N}(t::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__updatefunc.1">¶</a></h4>
 <p><code>updatefunc(t::LabeledArray, c, b, a)</code></p>
 <p>main update function. This function is internal and is meant to be used via <code>update</code>.
 <code>updatefunc</code> takes a table <code>t</code>, condition <code>c</code>, aggreagtion by rule <code>b</code>, aggregate function <code>a</code>.</p>
@@ -3925,31 +3925,31 @@ Z |1 a |2 b
 <li><code>c</code> : an array of pairs of field name =&gt; function <code>(t, inds)</code> -&gt; array. <code>t</code> is a LabeledArray and inds is either <code>nothing</code> to choose the entire <code>t</code> or an array of Cartesian indices.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L111">MultidimensionalTables/src/util/select.jl:111</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/select.jl#L111">DataCubes/src/util/select.jl:111</a></p>
 <hr />
 <p><a id="method__values.1" class="lexicon_definition"></a></p>
-<h4 id="valuesarrmultidimensionaltablesdictarrayk-n-vs-sv">values(arr::MultidimensionalTables.DictArray{K, N, VS, SV}) <a href="#method__values.1">¶</a></h4>
+<h4 id="valuesarrdatacubesdictarrayk-n-vs-sv">values(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__values.1">¶</a></h4>
 <p><code>values(::DictArray)</code></p>
 <p>Return the vector of field arrays of the input <code>DictArray</code>, which are the values of the underlying <code>LDict</code>.</p>
 <h5 id="examples_73">Examples</h5>
 <pre><code class="julia">julia&gt; values(darr(a=[1,2,3], b=[:x,:y,:z]))
-2-element Array{MultidimensionalTables.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
+2-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
  [Nullable(1),Nullable(2),Nullable(3)]   
  [Nullable(:x),Nullable(:y),Nullable(:z)]
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1019">MultidimensionalTables/src/datatypes/dict_array.jl:1019</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/dict_array.jl#L1019">DataCubes/src/datatypes/dict_array.jl:1019</a></p>
 <hr />
 <p><a id="method__wrap_array.1" class="lexicon_definition"></a></p>
-<h4 id="wrap_arrayarrmultidimensionaltablesabstractarraywrappert-n-aabstractarrayt-n">wrap_array(arr::MultidimensionalTables.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}) <a href="#method__wrap_array.1">¶</a></h4>
+<h4 id="wrap_arrayarrdatacubesabstractarraywrappert-n-aabstractarrayt-n">wrap_array(arr::DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}) <a href="#method__wrap_array.1">¶</a></h4>
 <p><code>wrap_array(arr)</code></p>
 <p>Wrap an array by <code>AbstractArrayWrapper</code> if it is not <code>DictArray</code> or <code>labeledArray</code>, and not already <code>AbstractArrayWrapper</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/naarray_operators.jl#L11">MultidimensionalTables/src/na/naarray_operators.jl:11</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/naarray_operators.jl#L11">DataCubes/src/na/naarray_operators.jl:11</a></p>
 <hr />
 <p><a id="method__zip_dropnaiter.1" class="lexicon_definition"></a></p>
-<h4 id="zip_dropnaiternarrsmultidimensionaltablesabstractarraywrappert-n-aabstractarrayt-n">zip_dropnaiter{N}(arrs::MultidimensionalTables.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}...) <a href="#method__zip_dropnaiter.1">¶</a></h4>
+<h4 id="zip_dropnaiternarrsdatacubesabstractarraywrappert-n-aabstractarrayt-n">zip_dropnaiter{N}(arrs::DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}...) <a href="#method__zip_dropnaiter.1">¶</a></h4>
 <p><code>zip_dropnaiter(arrs...)</code></p>
 <p>Generate a zipped iterator from nullable arrays <code>arrs...</code>. If any element in <code>arrs...</code> is null, the iterator will skip it and move to the next element tuple.</p>
 <h5 id="examples_74">Examples</h5>
@@ -3963,16 +3963,16 @@ Z |1 a |2 b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L132">MultidimensionalTables/src/util/array_helper_functions.jl:132</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/util/array_helper_functions.jl#L132">DataCubes/src/util/array_helper_functions.jl:132</a></p>
 <hr />
 <p><a id="type__abstractarraywrapper.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesabstractarraywrappert-n-aabstractarrayt-n">MultidimensionalTables.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}} <a href="#type__abstractarraywrapper.1">¶</a></h4>
+<h4 id="datacubesabstractarraywrappert-n-aabstractarrayt-n">DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}} <a href="#type__abstractarraywrapper.1">¶</a></h4>
 <p>A thin wrapper around AbstractArray. The reason to introduce this wrapper is to redefine
 the dotted operators such as .+, .-. Those operators will be mapped to arrays, elementwise just as before,
 but, if each element is null, those operators will be applied to the one inside the Nullable.
 For example,</p>
 <pre><code class="julia">julia&gt; AbstractArrayWrapper([Nullable(1), Nullable(2)]) .+ AbstractArrayWrapper([Nullable{Int}(), Nullable(3)])
-2-element MultidimensionalTables.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
+2-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
  Nullable{Int64}()
  Nullable(5)      
 </code></pre>
@@ -3981,16 +3981,16 @@ For example,</p>
 <p>It is possible to redefine those operators for AbstractArray, but concerning about compatibility, it may be
 best to introduce a new wrapper class for that.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L25">MultidimensionalTables/src/na/na.jl:25</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/na/na.jl#L25">DataCubes/src/na/na.jl:25</a></p>
 <hr />
 <p><a id="type__defaultaxis.1" class="lexicon_definition"></a></p>
-<h4 id="multidimensionaltablesdefaultaxis">MultidimensionalTables.DefaultAxis <a href="#type__defaultaxis.1">¶</a></h4>
+<h4 id="datacubesdefaultaxis">DataCubes.DefaultAxis <a href="#type__defaultaxis.1">¶</a></h4>
 <p>Default axis used when no axis is specified for a <code>LabeledArray</code>.
 It behaves mostly as an array <code>[Nullable(1), Nullable(2), ...]</code>.
 However, one notable exception is when using <code>@select</code>/<code>selct</code>/<code>extract</code>/<code>discard</code>/<code>getindex</code>/etc to choose, set or drop specific elements of a <code>LabeledArray</code>.
 In this case, the result array of reduced size will again have a <code>DefaultAxis</code> of an appropriate size.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/MultidimensionalTables.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L47">MultidimensionalTables/src/datatypes/labeled_array.jl:47</a></p></div>
+<a href="https://github.com/c-s/DataCubes.jl/tree/dd5467139cc1cbf5258d8a0a9b0857773e12afd7/src/datatypes/labeled_array.jl#L47">DataCubes/src/datatypes/labeled_array.jl:47</a></p></div>
             
         </div>
 
