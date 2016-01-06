@@ -2,6 +2,7 @@ DataCubes.jl
 =========================
 
 [![Build Status](https://travis-ci.org/c-s/DataCubes.jl.svg?branch=master)](https://travis-ci.org/c-s/DataCubes.jl)
+[![Coverage Status](https://coveralls.io/repos/c-s/DataCubes.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/c-s/DataCubes.jl?branch=master)
 
 The **DataCubes** package provides several data types and tools to handle multidimensional tables.
 Below, we give a brief description of the package. For more detail, please refer to [documentation](http://c-s.github.io/DataCubes.jl).
