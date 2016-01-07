@@ -199,7 +199,7 @@ z |5 z |6 x
 
 ## Select from a LabeledArray
 
-`@select` and `selct` selects and/or aggregates a `LabeledArray` and transforms it into another.
+`@select` and `selct` select and/or aggregate a `LabeledArray` and transform it into another.
 The function name is `selct` because what it does is not the same as what `Base.select` function does.
 
 Here is an example usage of `@select`:
