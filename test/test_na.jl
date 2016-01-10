@@ -17,6 +17,18 @@ facts("NA tests") do
   @fact (t=@larr(a=[1 2 3;4 5 6], b=[4 5 6;7 8 9]);dcube.setna!(t.data.data[:a],2,2);dcube.setna!(t,2,1);t) --> @larr(a=[1 2 3;NA NA 6], b=[4 5 6;NA 8 9])
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
+  @fact igna(Nullable(1.0), 3.0) --> 1.0
+  @fact igna(@nalift([1 3 NA]), 1) --> [1 3 1]
+  @fact igna(@nalift([1 3 5]), 1) --> [1 3 5]
+  @fact igna(@nalift([1.0 3.0 NA]), 1.0) --> [1.0 3.0 1.0]
+  @fact igna(@nalift([1.0 3.0 5.0]), 1.0) --> [1.0 3.0 5.0]
+  @fact isna(Nullable{Int}()) --> true
+  @fact isna(Nullable(1)) --> false
+  @fact isna(Nullable(1.0)) --> false
+  @fact isna(@nalift([1 3 NA])) --> [false false true]
+  @fact isna(@nalift([1 3 5])) --> [false false false]
+  @fact isna(@nalift([1.0 3.0 NA])) --> [false false true]
+  @fact isna(@nalift([1.0 3.0 5.0])) --> [false false false]
   @fact ignabool(nalift([true, false])) --> [true, false]
   @fact ignabool(Nullable{Bool}()) --> false
   @fact ignabool(Nullable(true)) --> true
@@ -24,6 +36,8 @@ facts("NA tests") do
   @fact ignabool([Nullable(true), Nullable{Bool}()]) --> [true, false]
   @fact ignabool([Nullable(true)]) --> [true]
   @fact ignabool([Nullable(false)]) --> [false]
+  @fact ignabool(true) --> true
+  @fact ignabool(false) --> false
   @fact @nalift([NA NA]) --> wrap_array([Nullable{Any}() Nullable{Any}()])
   @fact @nalift([NA,NA]) --> wrap_array([Nullable{Any}(),Nullable{Any}()])
   @fact @nalift([NA NA;NA NA]) --> wrap_array(reshape(fill(Nullable{Any}(),4),2,2))
@@ -32,6 +46,18 @@ facts("NA tests") do
   @fact @nalift([1 NA;NA NA]) --> wrap_array([Nullable(1)  Nullable{Int}();Nullable{Int}() Nullable{Int}()])
   @fact map(x->x, nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
   @fact map((x,y)->naop_plus(x, y), nalift([1.0,2.0,3.0]), nalift([2.0,3.0,4.0])) --> nalift([3.0,5.0,7.0])
+
+  context("FloatNAArray tests") do
+    @fact map(identity, FloatNAArray(Array(Float64,0))) --> Array(Nullable{Any},0)
+    @fact nalift([1.0,2.0]) --> DataCubes.wrap_array(FloatNAArray([1.0,2.0]))
+    @fact FloatNAArray([1.0,2.0,3.0])[1].value --> 1.0
+    @fact FloatNAArray([1.0,2.0,3.0])[1:2].data --> [1.0,2.0]
+    @fact wrap_array(DataCubes.simplify_floatarray(FloatNAArray([1.0 2.0]))) --> wrap_array(FloatNAArray([1.0 2.0]))
+    @fact typeof(DataCubes.simplify_floatarray(FloatNAArray(Array(Float64,0)))) --> FloatNAArray{Float64,1,Array{Float64,1}}
+    @fact nalift(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
+    @fact typeof(igna(nalift(Array(Float64,0)))) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
+    @fact typeof(igna(nalift(Array(Float64,0)),3.0)) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
+  end
 end
 
 end

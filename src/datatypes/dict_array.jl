@@ -735,7 +735,8 @@ Base.map(f::Function, arr::DictArray) = mapslices(f, arr, [])
 `reducedim(f::Function, arr::DictArray, dims [, initial])`
 
 Reduce a two argument function `f` along dimensions of `arr`. `dims` is a vector specifying the dimensions to reduce, and `initial` is the initial value to use in the reduction.
-* If `dims` includes all dimensions, `reduce` will be applied to the whole `arr` with initial value `initial.
+
+* If `dims` includes all dimensions, `reduce` will be applied to the whole `arr` with initial value `initial`.
 * Otherwise, `reduce` is applied with the function `f` to each slice spanned by the directions with initial value `initial`.
 `initial` can be omitted if the underlying `reduce` does not require it.
 

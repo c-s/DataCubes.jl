@@ -26,19 +26,22 @@ facts("LabeledArray tests") do
   context("array related method tests") do
     larr = LabeledArray(
       DictArray(:a=>nalift(reshape(1:20, 5, 4)),
+                :b=>2.0*nalift(reshape(1:20,5,4)),
                 2=>nalift(fill(:sym, 5, 4)),
                 :third=>nalift(reshape(map(i->string("str_",i), 1:20), 5, 4))),
           axis1=DictArray(k1=nalift(["a","a","b","b","b"]), k2=nalift(collect(101:105))),
           axis2=DictArray(r1=nalift([:alpha,:beta,:gamma,:delta])))
-    @fact larr[3,2] --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
-    @fact dcube.getindexpair(larr,3,2).second.second --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact larr[3,2] --> LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact dcube.getindexpair(larr,3,2).second.second --> LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))
     @fact larr[1:3,2] --> LabeledArray(
                             DictArray(:a=>nalift([6,7,8]),
+                                      :b=>nalift([12.0,14.0,16.0]),
                                       2=>nalift([:sym,:sym,:sym]),
                                       :third=>nalift(["str_6","str_7","str_8"])),
                             axis1=DictArray(k1=nalift(["a","a","b"]), k2=nalift(collect(101:103))))
     @fact larr[2:2,2:4] --> LabeledArray(
                             DictArray(:a=>nalift([7 12 17]),
+                                      :b=>nalift([14.0 24.0 34.0]),
                                       2=>nalift([:sym :sym :sym]),
                                       :third=>nalift(["str_7" "str_12" "str_17"])),
                             axis1=DictArray(k1=nalift(["a"]), k2=nalift([102])),
@@ -46,7 +49,9 @@ facts("LabeledArray tests") do
     @fact size(larr) --> (5,4)
     #@fact eltype(larr) --> LDict{Any}
     @fact pick(larr,:a)[1,1].value --> 1
+    @fact pick(larr,:b)[1,1].value --> 2.0
     @fact pick(larr,(:a,))[1][1,1].value --> 1
+    @fact pick(larr,(:b,))[1][1,1].value --> 2.0
     @fact endof(larr) --> length(larr)
     @fact transpose(larr) --> LabeledArray(DictArray(mapvalues(transpose, larr.data.data)),
                                            axis1=larr.axes[2],
@@ -131,6 +136,29 @@ facts("LabeledArray tests") do
     @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
     @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
+    @fact_throws larr(a=[1,2,3], axis1=[4,5,6], axis2=[:a,:b,:c])
+    @fact_throws larr(a=[1,2,3], axis1=[4,5])
+    @fact_throws larr(axis1=[4,5])
+    context("show tests") do
+      @fact show(larr(a=rand(2))) --> nothing
+      @fact show(larr(a=rand(2,3), axis1=[:a,:b], axis2=["X","Y","Z"])) --> nothing
+      @fact show(larr(a=rand(2,3,2), axis3=[:x,:y])) --> nothing
+      @fact show(larr(a=rand(2,3,2,2))) --> nothing
+      @fact show(larr(a=rand(2,3,2,2))) --> nothing
+      @fact (dcube.set_showsize!!(5,5);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showheight!!(3);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showwidth!!(3);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_default_showsize!!();nothing) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+
+      @fact (dcube.set_dispsize!!(5,5);nothing) --> nothing
+      @fact (dcube.set_dispheight!!(3);nothing) --> nothing
+      @fact (dcube.set_dispwidth!!(3);nothing) --> nothing
+      @fact (dcube.set_default_dispsize!!();nothing) --> nothing
+      @fact (dcube.set_dispalongrow!!(false);nothing) --> nothing
+      @fact (dcube.set_dispalongrow!!(true);nothing) --> nothing
+    end
   end
 end
 

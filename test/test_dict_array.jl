@@ -44,41 +44,46 @@ facts("DictArray tests") do
   end
   context("array related method tests") do
     d = DictArray(:a=>nalift(reshape(1:20, 5, 4)),
+                  :b=>2.0*nalift(reshape(1:20, 5, 4)),
                   2=>nalift(fill(:sym, 5, 4)),
                   :third=>nalift(reshape(map(i->string("str_",i), 1:20), 5, 4)))
-    @fact d[3,2] --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
-    @fact d[1:3,2] --> DictArray(:a=>nalift([6,7,8]),2=>nalift([:sym,:sym,:sym]),:third=>nalift(["str_6","str_7","str_8"]))
-    @fact d[2:2,2:4] --> DictArray(:a=>nalift([7 12 17]),2=>nalift([:sym :sym :sym]),:third=>nalift(["str_7" "str_12" "str_17"]))
-    @fact findfirst(d, LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))) --> 8
-    @fact (setindex!(d,LDict(:a=>Nullable(108),2=>Nullable(:newsym),:third=>Nullable("newstr_8")), 3, 2);d[3,2]) -->
-      LDict(:a=>Nullable(108),2=>Nullable(:newsym),:third=>Nullable("newstr_8"))
-    @fact (setindex!(d,Dict(:a=>Nullable(105),2=>Nullable(:newsym2),:third=>Nullable("newstr_8")), 3, 2);d[3,2]) -->
-      LDict(:a=>Nullable(105),2=>Nullable(:newsym2),:third=>Nullable("newstr_8"))
-    @fact (setindex!(d,(Nullable(1008),Nullable(:newsym3),Nullable("newstr_80")), 3, 2);d[3,2]) -->
-      LDict(:a=>Nullable(1008),2=>Nullable(:newsym3),:third=>Nullable("newstr_80"))
+    @fact d[3,2] --> LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact d[1:3,2] --> DictArray(:a=>nalift([6,7,8]),:b=>nalift([12.0,14.0,16.0]),2=>nalift([:sym,:sym,:sym]),:third=>nalift(["str_6","str_7","str_8"]))
+    @fact d[2:2,2:4] --> DictArray(:a=>nalift([7 12 17]),:b=>nalift([14.0 24.0 34.0]),2=>nalift([:sym :sym :sym]),:third=>nalift(["str_7" "str_12" "str_17"]))
+    @fact findfirst(d, LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))) --> 8
+    @fact (setindex!(d,LDict(:a=>Nullable(108),:b=>Nullable(216.0),2=>Nullable(:newsym),:third=>Nullable("newstr_8")), 3, 2);d[3,2]) -->
+      LDict(:a=>Nullable(108),:b=>Nullable(216.0),2=>Nullable(:newsym),:third=>Nullable("newstr_8"))
+    @fact (setindex!(d,Dict(:a=>Nullable(105),:b=>Nullable(210.0),2=>Nullable(:newsym2),:third=>Nullable("newstr_8")), 3, 2);d[3,2]) -->
+      LDict(:a=>Nullable(105),:b=>Nullable(210.0),2=>Nullable(:newsym2),:third=>Nullable("newstr_8"))
+    @fact (setindex!(d,(Nullable(1008),Nullable(2016.0),Nullable(:newsym3),Nullable("newstr_80")), 3, 2);d[3,2]) -->
+      LDict(:a=>Nullable(1008),:b=>Nullable(2016.0),2=>Nullable(:newsym3),:third=>Nullable("newstr_80"))
     @fact (setindex!(d,
                      DictArray(:a=>nalift(reshape(collect(100:108),3,3)),
+                     :b=>nalift(2.0*reshape(collect(100:108),3,3)),
                      2=>nalift(fill(:newval,3,3)),
                      :third=>nalift(fill("newstr",3,3))),
                      2:4, 1:3);d[2,1]) -->
-      LDict(:a=>Nullable(100),2=>Nullable(:newval),:third=>Nullable("newstr"))
+      LDict(:a=>Nullable(100),:b=>Nullable(200.0),2=>Nullable(:newval),:third=>Nullable("newstr"))
     @fact size(d) --> (5,4)
     #@fact eltype(d) --> LDict{Any}
     #@fact eltype(pick(d,[:a,:third])) --> LDict{Symbol}
     @fact pick(d,:a)[1,1].value --> 1
+    @fact pick(d,:b)[1,1].value --> 2.0
     @fact pick(d,(:a,))[1][1,1].value --> 1
+    @fact pick(d,(:b,))[1][1,1].value --> 2.0
     @fact peel(d)[:a][2,2].value --> 103
+    @fact peel(d)[:b][2,2].value --> 206.0
     @fact pick(d, 2) --> peel(d)[2]
     @fact endof(d) --> length(d)
     @fact transpose(d) --> DictArray(mapvalues(transpose, d.data))
     @fact permutedims(d, (1,2)) --> DictArray(mapvalues(v->permutedims(v,(1,2)), d.data))
-    @fact DictArray(a=nalift([1,2,3])) == DictArray(a=nalift([1,2,3])) --> true
+    @fact DictArray(a=nalift([1,2,3]),b=nalift([1.0,2.0,3.0])) == DictArray(a=nalift([1,2,3]),b=nalift([1.0,2.0,3.0])) --> true
     @fact copy(d) !== d --> true
     @fact size(cat(1, d, d)) --> ntuple(n->n==1 ? size(d,1)*2 : size(d,n), ndims(d))
     @fact size(cat(2, d, d)) --> ntuple(n->n==2 ? size(d,2)*2 : size(d,n), ndims(d))
     @fact size(repeat(d, inner=[5,2], outer=[3,4])) --> (size(d,1)*5*3, size(d,2)*2*4)
     @fact @darr(a=[1 2 3;4 5 6], 'x'=[:a :b :c;:x :y :z])[:a] --> nalift([1 2 3;4 5 6])
-    @fact @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[:a,:b] --> Any[nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z])]
+    @fact @darr(a=1.0*[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[:a,:b] --> Any[1.0*nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z])]
     @fact @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[[:a,:b]] --> @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])
     @fact @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[(:a,:b)] --> (nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z]))
   end
@@ -130,6 +135,10 @@ facts("DictArray tests") do
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=['x','y'], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact show(darr(a=rand(2))) --> nothing
+    @fact show(darr(a=rand(2,3))) --> nothing
+    @fact show(darr(a=rand(2,3,2))) --> nothing
+    @fact show(darr(a=rand(2,3,2,2))) --> nothing
   end
 end
 

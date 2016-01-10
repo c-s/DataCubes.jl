@@ -669,6 +669,7 @@ isna{T,N,A}(arr::AbstractArrayWrapper{T,N,A}) = AbstractArrayWrapper(isna(arr.a)
 isna{T<:AbstractFloat}(arr::AbstractArray{Nullable{T}}) = map(elem->elem.isnull || isnan(elem.value), arr)
 isna(x::Nullable) = x.isnull
 isna(arr::AbstractArray, coords...) = isna(arr[coords...])
+isna(arr::Nullable) = arr.isnull
 
 # this is a little bit out of place...
 (==)(::AbstractArrayWrapper, ::DefaultAxis) = false
