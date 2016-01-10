@@ -27,8 +27,8 @@ Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractV
 Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args...))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find)
-@delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims, Base.repeat,
-                                   Base.repeat, Base.transpose, Base.permutedims,
+@delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
+                                   Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
                                    Base.sub, Base.slice)
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))

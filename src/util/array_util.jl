@@ -81,6 +81,7 @@ end
 type_array(arr::DictArray) = arr
 type_array(arr::LabeledArray) = arr
 type_array(arr::DataFrame) = arr
+type_array(arr::EnumerationArray) = arr
 
 
 # used in join functions. broadcast an array of dimensions N1x...xNn into

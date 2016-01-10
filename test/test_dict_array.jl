@@ -139,6 +139,26 @@ facts("DictArray tests") do
     @fact show(darr(a=rand(2,3))) --> nothing
     @fact show(darr(a=rand(2,3,2))) --> nothing
     @fact show(darr(a=rand(2,3,2,2))) --> nothing
+
+    context("show tests") do
+      @fact show(darr(a=rand(2))) --> nothing
+      @fact show(darr(a=rand(2,3))) --> nothing
+      @fact show(darr(a=rand(2,3,2))) --> nothing
+      @fact show(darr(a=rand(2,3,2,2))) --> nothing
+      @fact show(darr(a=rand(2,3,2,2))) --> nothing
+      @fact (dcube.set_showsize!!(5,5);show(darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showheight!!(3);show(darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showwidth!!(3);show(darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_default_showsize!!();nothing) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showsize!!(5,5);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showheight!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_default_showsize!!();nothing) --> nothing
+      @fact (dcube.set_showalongrow!!(false);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+    end
   end
 end
 
