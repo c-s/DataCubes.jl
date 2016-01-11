@@ -24,40 +24,47 @@ facts("LabeledArray tests") do
     @fact @larr(@larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1[:U,NA,:W],axis2[r=['m','n']]), c=[NA NA;3 4;5 6], :d=>:X, axis1[k=["g","h","i"]]) --> @larr(a=[1 NA;3 4;NA NA],b=[1.0 1.5;:sym 'a';"X" "Y"],c=[NA NA;3 4;5 6],d=reshape(fill(:X,6),3,2),axis2[r=['m','n']],axis1[k=["g","h","i"]])
   end
   context("array related method tests") do
-    larr = LabeledArray(
+    arr = LabeledArray(
       DictArray(:a=>nalift(reshape(1:20, 5, 4)),
+                :b=>nalift(reshape(2.0*(1:20),5,4)),
                 2=>nalift(fill(:sym, 5, 4)),
                 :third=>nalift(reshape(map(i->string("str_",i), 1:20), 5, 4))),
           axis1=DictArray(k1=nalift(["a","a","b","b","b"]), k2=nalift(collect(101:105))),
           axis2=DictArray(r1=nalift([:alpha,:beta,:gamma,:delta])))
-    @fact larr[3,2] --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
-    @fact dcube.getindexpair(larr,3,2).second.second --> LDict(:a=>Nullable(8), 2=>Nullable(:sym), :third=>Nullable("str_8"))
-    @fact larr[1:3,2] --> LabeledArray(
+    @fact arr[3,2] --> LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact dcube.getindexpair(arr,3,2).second.second --> LDict(:a=>Nullable(8), :b=>Nullable(16.0), 2=>Nullable(:sym), :third=>Nullable("str_8"))
+    @fact arr[1:3,2] --> LabeledArray(
                             DictArray(:a=>nalift([6,7,8]),
+                                      :b=>nalift([12.0,14.0,16.0]),
                                       2=>nalift([:sym,:sym,:sym]),
                                       :third=>nalift(["str_6","str_7","str_8"])),
                             axis1=DictArray(k1=nalift(["a","a","b"]), k2=nalift(collect(101:103))))
-    @fact larr[2:2,2:4] --> LabeledArray(
+    @fact arr[2:2,2:4] --> LabeledArray(
                             DictArray(:a=>nalift([7 12 17]),
+                                      :b=>nalift([14.0 24.0 34.0]),
                                       2=>nalift([:sym :sym :sym]),
                                       :third=>nalift(["str_7" "str_12" "str_17"])),
                             axis1=DictArray(k1=nalift(["a"]), k2=nalift([102])),
                             axis2=DictArray(r1=nalift([:beta,:gamma,:delta])))
-    @fact size(larr) --> (5,4)
-    #@fact eltype(larr) --> LDict{Any}
-    @fact pick(larr,:a)[1,1].value --> 1
-    @fact pick(larr,(:a,))[1][1,1].value --> 1
-    @fact endof(larr) --> length(larr)
-    @fact transpose(larr) --> LabeledArray(DictArray(mapvalues(transpose, larr.data.data)),
-                                           axis1=larr.axes[2],
-                                           axis2=larr.axes[1])
-    @fact permutedims(larr, (2,1)) --> transpose(larr)
+    @fact size(arr) --> (5,4)
+    #@fact eltype(arr) --> LDict{Any}
+    @fact pick(arr,:a)[1,1].value --> 1
+    @fact_throws pick(arr,:nonexistcol)
+    @fact pick(larr(a=[1 2 3;4 5 6],axis1=darr(k=[:X,:Y])),:k) --> pick(larr(a=rand(2,3),axis1=darr(k=[:X,:Y])),:k)
+    @fact pick(arr,:b)[1,1].value --> 2.0
+    @fact pick(arr,(:a,))[1][1,1].value --> 1
+    @fact pick(arr,(:b,))[1][1,1].value --> 2.0
+    @fact endof(arr) --> length(arr)
+    @fact transpose(arr) --> LabeledArray(DictArray(mapvalues(transpose, arr.data.data)),
+                                           axis1=arr.axes[2],
+                                           axis2=arr.axes[1])
+    @fact permutedims(arr, (2,1)) --> transpose(arr)
     @fact LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) ==
           LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) --> true
-    @fact copy(larr) !== larr --> true
-    @fact size(cat(1, larr, larr)) --> ntuple(n->n==1 ? size(larr,1)*2 : size(larr,n), ndims(larr))
-    @fact size(cat(2, larr, larr)) --> ntuple(n->n==2 ? size(larr,2)*2 : size(larr,n), ndims(larr))
-    @fact size(repeat(larr, inner=[5,2], outer=[3,4])) --> (size(larr,1)*5*3, size(larr,2)*2*4)
+    @fact copy(arr) !== arr --> true
+    @fact size(cat(1, arr, arr)) --> ntuple(n->n==1 ? size(arr,1)*2 : size(arr,n), ndims(arr))
+    @fact size(cat(2, arr, arr)) --> ntuple(n->n==2 ? size(arr,2)*2 : size(arr,n), ndims(arr))
+    @fact size(repeat(arr, inner=[5,2], outer=[3,4])) --> (size(arr,1)*5*3, size(arr,2)*2*4)
     @fact @larr(a=[1 2 3;4 5 6], 'x'=[:a :b :c;:x :y :z])[:a] --> nalift([1 2 3;4 5 6])
     @fact @larr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[:a,:b] --> Any[nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z])]
     @fact @larr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[[:a,:b]] --> @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])
@@ -115,22 +122,65 @@ facts("LabeledArray tests") do
     @fact rename(larr('x'=>1:10, 3=>11:20, axis1=101:110), 1) --> larr(1=>1:10, 3=>11:20, axis1=101:110)
     @fact rename(larr(c1=1:10,c2=11:20),:a,:b) --> larr(a=1:10,b=11:20)
     @fact cat(1, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x' 'y' 'z'], d=[:m :n :p], axis1=[3])) --> larr(reshape(@larr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3), axis1=[:u,:v,3])
+    @fact cat(1, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x' 'y' 'z'], d=[:m :n :p], axis1=[3])) --> larr(reshape(@larr(a=[1.0,4.0,NA,2.0,5.0,NA,3.0,6.0,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3), axis1=[:u,:v,3])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x','y'], d=[:m,:n], axis1=[:u,:v])) --> larr(reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[:u,:v])
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x','y'], d=[:m,:n], axis1=[:u,:v])) --> larr(reshape(@larr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[:u,:v])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), larr(b=[10,11], d=[:m,:n])) --> reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), larr(b=[10,11], d=[:m,:n])) --> reshape(@larr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=darr(r=[:x,:y,:z])), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=@darr(r=[:x,:y,:z,NA]))
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=darr(r=[:x,:y,:z])), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=@darr(r=[:x,:y,:z,NA]))
     # this will cause a NullException().
     #@fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=[10 11]', d=[:m :n]',axis1=[100,200],axis2=darr(r=[:k]))) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,LDict(:r=>Nullable(:k))])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=[10 11]', d=[:m :n]',axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=[10 11]', d=[:m :n]',axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=[:x,:y,:z]), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=[Nullable(:x),Nullable(:y),Nullable(:z),Nullable{Symbol}()])
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=[:x,:y,:z]), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=[Nullable(:x),Nullable(:y),Nullable(:z),Nullable{Symbol}()])
     @fact merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),darr(c=[4,5,6],b=[:m,:n,:p]),darr(a=["X","Y","Z"])) --> larr(a=["X","Y","Z"],b=[:m,:n,:p],c=[4,5,6],axis1=[:a,:b,:c])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[2:-1:1,2] --> larr(a=[5,2])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2] --> larr(a=[5,2])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2:3] --> larr(a=[5 6;2 3],axis2=darr(r=[:y,:z]))
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
+    @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
+    @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
     @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
+    @fact slice(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=1.0*[5,2])
     @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
+    @fact slice(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2,3], axis1=darr(r=[:y,:z]))
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
+    @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2 3], axis2=darr(r=[:y,:z]))
+    @fact_throws larr(a=[1,2,3], axis1=[4,5,6], axis2=[:a,:b,:c])
+    @fact_throws larr(a=[1,2,3], axis1=[4,5])
+    @fact_throws larr(axis1=[4,5])
+    @fact_throws LabeledArray(a=[1,2,3], ([4,5,6],[7,8,9]))
+    @fact_throws larr(a=rand(4,5), axis1=rand(4,2))
+    @fact typeof(similar(larr(a=rand(3,5), axis1=darr(k=[1,2,3])))) --> LabeledArray{DataCubes.LDict{Symbol,Nullable{Float64}},2,Tuple{DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Nullable{Int64}},Array{Nullable{Int64},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}}
+    @fact typeof(similar(larr(rand(3,5), axis1=darr(k=[1,2,3])))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Nullable{Int64}},Array{Nullable{Int64},1}},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
+    @fact typeof(similar(larr(rand(3,5), axis1=[1,2,3]))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Array{Nullable{Int64},1}},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
+
+    context("show tests") do
+      @fact show(larr(a=[])) --> nothing
+      @fact show(larr(a=rand(2))) --> nothing
+      @fact show(larr(a=rand(2,3), axis1=[:a,:b], axis2=["X","Y","Z"])) --> nothing
+      @fact show(larr(a=rand(2,3,2), axis3=[:x,:y])) --> nothing
+      @fact show(larr(a=rand(2,3,2,2))) --> nothing
+      @fact show(larr(a=rand(2,3,2,2))) --> nothing
+      @fact (dcube.set_showsize!!(5,5);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showheight!!(3);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_showwidth!!(3);show(larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_default_showsize!!();nothing) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+
+      @fact (dcube.set_dispsize!!(5,5);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispheight!!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_default_dispsize!!();nothing) --> nothing
+      @fact (dcube.set_dispalongrow!!(false);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_dispalongrow!!(true);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+    end
   end
 end
 

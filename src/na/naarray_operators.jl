@@ -1,6 +1,7 @@
 # it seems that currently, map operation over Nullable array is not optimzed in julia 0.4.1.
 
 import Base: .+, .-, .*, *, ./, .\, .//, .==, .<, .!=, .<=, .%, .<<, .>>, .^, +, -, ~, &, |, $, ==, !=
+import Base.return_types
 import DataFrames: DataFrame
 
 """
@@ -27,8 +28,8 @@ Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractV
 Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args...))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find)
-@delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims, Base.repeat,
-                                   Base.repeat, Base.transpose, Base.permutedims,
+@delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
+                                   Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
                                    Base.sub, Base.slice)
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))
@@ -105,6 +106,11 @@ promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{U}) = Nullable{promote_ty
 promote_nullable_types{T,U}(::Type{T},::Type{U}) = promote_type(T,U)
 #promote_nullable_types(::DataType,::DataType) = Nullable{Any}
 
+promote_nullable_optypes{T,U}(op,::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
+promote_nullable_optypes{T,U}(op,::Type{T},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
+promote_nullable_optypes{T,U}(op,::Type{Nullable{T}},::Type{U}) = Nullable{return_types(op,(T,U))[1]}
+promote_nullable_optypes{T,U}(op,::Type{T},::Type{U}) = return_types(op,(T,U))[1]
+
 preset_nullable_type{T,U}(::Type{Nullable{T}},::Type{Nullable{U}}, tpe) = Nullable{tpe}
 preset_nullable_type{T,U}(::Type{T},::Type{Nullable{U}}, tpe) = Nullable{tpe}
 preset_nullable_type{T,U}(::Type{Nullable{T}},::Type{U}, tpe) = Nullable{tpe}
@@ -121,7 +127,7 @@ macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     nullelem = if length(op.args) == 2
       #Expr(:curly, :Nullable, Expr(:call, :promote_type, :T, :U))
-      :(promote_nullable_types(T,U))
+      :(promote_nullable_optypes($(op.args[1]),T,U))
     elseif length(op.args) == 3
       #Expr(:curly, :Nullable, op.args[3])
       :(preset_nullable_type(T,U,$(op.args[3])))
@@ -412,6 +418,14 @@ end
 *{T<:Real}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
 *{T<:Complex}(x::Nullable{T}, y::AbstractArrayWrapper) = x .* y
 *{T<:Complex}(x::AbstractArrayWrapper, y::Nullable{T}) = x .* y
+/(x::Real, y::AbstractArrayWrapper) = x ./ y
+/(x::AbstractArrayWrapper, y::Real) = x ./ y
+/(x::Complex, y::AbstractArrayWrapper) = x ./ y
+/(x::AbstractArrayWrapper, y::Complex) = x ./ y
+/{T<:Real}(x::Nullable{T}, y::AbstractArrayWrapper) = x ./ y
+/{T<:Real}(x::AbstractArrayWrapper, y::Nullable{T}) = x ./ y
+/{T<:Complex}(x::Nullable{T}, y::AbstractArrayWrapper) = x ./ y
+/{T<:Complex}(x::AbstractArrayWrapper, y::Nullable{T}) = x ./ y
 
 macro nullable_unary_wrapper(ops...)
   targetexpr = map(ops) do op
@@ -431,7 +445,8 @@ end
 macro nullable_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     nullelem = if length(op.args) == 2
-      Expr(:curly, :Nullable, Expr(:call, :promote_type, :T, :V))
+      Expr(:curly, :Nullable, Expr(:ref, Expr(:call, :return_types, esc(op.args[1]), Expr(:tuple, :T, :V)), 1))
+      #Expr(:curly, :Nullable, Expr(:call, :promote_type, :T, :V))
     elseif length(op.args) == 3
       Expr(:curly, :Nullable, op.args[3])
     end

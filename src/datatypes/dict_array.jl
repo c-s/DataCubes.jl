@@ -188,7 +188,8 @@ Return the value tuple of `arr` at index `args`.
 
 """
 getindexvalue(arr::DictArray, args...) = ntuple(length(arr.data)) do i
-  arr.data.values[i][args...]
+  #arr.data.values[i][args...]
+  getindexvalue(arr.data.values[i], args...)
 end
 getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
 """
@@ -203,25 +204,26 @@ getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...
 # for internal use to impose type constraints. Similarly for other getindexvalue methods below.
 # note that these versions are used only to access one element, and not a range.
 getindexvalue{T1}(arr::DictArray, ::Type{Tuple{T1}}, args...) =
-  (arr.data.values[1][args...]::T1,)
+  (getindexvalue(arr.data.values[1],args...)::T1,)
+  #(arr.data.values[1][args...]::T1,)
 getindexvalue{T1,T2}(arr::DictArray, ::Type{Tuple{T1,T2}}, args...) =
-  (arr.data.values[1][args...]::T1,
-    arr.data.values[2][args...]::T2)
+  (getindexvalue(arr.data.values[1],args...)::T1,
+    getindexvalue(arr.data.values[2],args...)::T2)
 getindexvalue{T1,T2,T3}(arr::DictArray, ::Type{Tuple{T1,T2,T3}}, args...) =
-  (arr.data.values[1][args...]::T1,
-    arr.data.values[2][args...]::T2,
-    arr.data.values[3][args...]::T3)
+  (getindexvalue(arr.data.values[1],args...)::T1,
+    getindexvalue(arr.data.values[2],args...)::T2,
+    getindexvalue(arr.data.values[3],args...)::T3)
 getindexvalue{T1,T2,T3,T4}(arr::DictArray, ::Type{Tuple{T1,T2,T3,T4}}, args...) =
-  (arr.data.values[1][args...]::T1,
-    arr.data.values[2][args...]::T2,
-    arr.data.values[3][args...]::T3,
-    arr.data.values[4][args...]::T4)
+  (getindexvalue(arr.data.values[1]margs...)::T1,
+    getindexvalue(arr.data.values[2],args...)::T2,
+    getindexvalue(arr.data.values[3],args...)::T3,
+    getindexvalue(arr.data.values[4],args...)::T4)
 getindexvalue{T1,T2,T3,T4,T5}(arr::DictArray, ::Type{Tuple{T1,T2,T3,T4,T5}}, args...) =
-  (arr.data.values[1][args...]::T1,
-    arr.data.values[2][args...]::T2,
-    arr.data.values[3][args...]::T3,
-    arr.data.values[4][args...]::T4,
-    arr.data.values[5][args...]::T5)
+  (getindexvalue(arr.data.values[1],args...)::T1,
+    getindexvalue(arr.data.values[2],args...)::T2,
+    getindexvalue(arr.data.values[3],args...)::T3,
+    getindexvalue(arr.data.values[4],args...)::T4,
+    getindexvalue(arr.data.values[5],args...)::T5)
 getindexvalue(arr::DictArray, ::Type, args...) = getindexvalue(arr, args...)
 
 Base.setindex!(arr::DictArray, v::Tuple, args::Int...) = begin
@@ -552,6 +554,8 @@ Base.similar{K,N,VS,SV}(arr::DictArray{K,N,VS,SV}, ::Type{LDict{K,SV}}, dims::NT
   end
   create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, newvals))
 end
+# use the first column as a representative.
+Base.similar{T}(arr::DictArray, ::Type{T}, dims::NTuple{TypeVar(:M),Int}) = similar(arr.data.values[1], T, dims)
 
 
 isna(arr::DictArray) = isna(arr.data)
@@ -735,7 +739,8 @@ Base.map(f::Function, arr::DictArray) = mapslices(f, arr, [])
 `reducedim(f::Function, arr::DictArray, dims [, initial])`
 
 Reduce a two argument function `f` along dimensions of `arr`. `dims` is a vector specifying the dimensions to reduce, and `initial` is the initial value to use in the reduction.
-* If `dims` includes all dimensions, `reduce` will be applied to the whole `arr` with initial value `initial.
+
+* If `dims` includes all dimensions, `reduce` will be applied to the whole `arr` with initial value `initial`.
 * Otherwise, `reduce` is applied with the function `f` to each slice spanned by the directions with initial value `initial`.
 `initial` can be omitted if the underlying `reduce` does not require it.
 

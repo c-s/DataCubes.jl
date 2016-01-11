@@ -53,7 +53,7 @@ Base.getindex(axis::DefaultAxis, i::Int) = Nullable(i)
 Base.getindex(axis::DefaultAxis, i...) = begin
   labeledarray_mapnullable_inner((1:axis.counts)[i...])
 end
-labeledarray_mapnullable_inner(i::Int) = Nullable(i)
+#labeledarray_mapnullable_inner(i::Int) = Nullable(i)
 labeledarray_mapnullable_inner(i::AbstractArray) = map(Nullable, i)
 
 Base.start(::DefaultAxis) = 1
@@ -103,13 +103,13 @@ show_size = default_showsize
 
 @doc """
 
-`setshowsize!!(height::Integer, width::Integer)`
+`set_showsize!!(height::Integer, width::Integer)`
 
 Set the show height and width limits to be the constant `height` and `width`, respectively.
 To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!!()`.
 
 """
-setshowsize!!(height::Integer, width::Integer) = (global show_size;show_size = () -> (height, width))
+set_showsize!!(height::Integer, width::Integer) = (global show_size;show_size = () -> (height, width))
 
 @doc """
 
@@ -187,13 +187,13 @@ dispsize = default_dispsize
 
 @doc """
 
-`setdispsize!!(height::Integer, width::Integer)`
+`set_dispsize!!(height::Integer, width::Integer)`
 
 Set the display height and width limits to be the constant `height` and `width`, respectively.
 To get to the default behavior, use `set_default_dispsize!!()`.
 
 """
-setdispsize!!(height::Integer, width::Integer) = (global dispsize;dispsize = () -> (height, width))
+set_dispsize!!(height::Integer, width::Integer) = (global dispsize;dispsize = () -> (height, width))
 
 @doc """
 
@@ -619,31 +619,7 @@ Base.getindex{N}(arr::LabeledArray, args::Tuple{N,Symbol}) = map(a->selectfield(
 Base.getindex(arr::LabeledArray, args::AbstractVector{Symbol}) = selectfields(arr, args...)
 Base.getindex(arr::LabeledArray, indices::CartesianIndex) = getindex(arr, indices.I...)
 Base.getindex(table::LabeledArray, indices...) = begin
-  if is_scalar_indexing(indices)
-    getindex_labeledarray_scalar_indexing(table, indices)
-  else
-    getindex_labeledarray_nonscalar_indexing(table, indices)
-  end
-end
-
-getindex_labeledarray_scalar_indexing(table::LabeledArray, indices) = begin
-  int_indices = Array(Int, ndims(table))
-  loc_ind = 1
-  # this is a hackish way to deal a CartesianIndex, but I don't know a better way yet...
-  for index in indices
-    if isa(index, Real)
-      int_indices[loc_ind] = index
-      loc_ind += 1
-    elseif isa(index, CartesianIndex)
-      for j = 1:length(index)
-        int_indices[loc_ind+j-1] = index[j]
-      end
-      loc_ind += length(index)
-    else
-      error("this cannot happen. the index is ", index, " and we don't know how to handle it.")
-    end
-  end
-  getindex(table, int_indices...)
+  getindex_labeledarray_nonscalar_indexing(table, indices)
 end
 
 getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
@@ -1554,3 +1530,13 @@ c |Z p 6
 
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
+
+Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
+  newdata = similar(arr.data, U, dims)
+  arraxes = arr.axes
+  newaxes = ntuple(length(arraxes)) do d
+    axis = arraxes[d]
+    similar(axis, dims[d])
+  end
+  LabeledArray(newdata, newaxes)
+end

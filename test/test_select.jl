@@ -43,7 +43,7 @@ facts("Select tests") do
       f2 = d -> sum(igna(d[:c1]))
       @fact @select(lar, by[k1=_k2 - _k1], by[m1=_k2 .> 205], c1=f2(_)) --> @larr(c1=[63250 62000],axis1[k1=[100]],axis2[m1=[false,true]])
       @fact size(@select(lar, by[k1=_k2 - _c1,:r1], by[m1=_k2 .> 205], c1= _c1 .* _c2, :c2)) --> (500,2)
-      @fact @select(@larr(a=collect(1:100),b=repmat(collect(1:10),10)), by[:b], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact @select(@larr(a=collect(1:100),b=enumeration(repmat(collect(1:10),10))), by[:b], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
     end
   end
   context("selct tests") do
@@ -74,6 +74,7 @@ facts("Select tests") do
       @fact selct(lar, by=Any[:k1=>d->d[:k2]-d[:k1]], by=:m1=>d->d[:k2] .> 205, c1=d->f2(d)) --> @larr(c1=[63250 62000],axis1[k1=[100]],axis2[m1=[false,true]])
       @fact size(selct(lar, by=Any[:k1=>d->d[:k2]-d[:c1],:r1], by=:m1=>d->d[:k2] .> 205, :c1=>d->d[:c1] .* d[:c2], :c2)) --> (500,2)
       @fact selct(@larr(a=collect(1:100),b=repmat(collect(1:10),10)), by=[:b], :a=>d->sum(d[:a]), where=d->d[:a].>56) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact selct(@darr(a=collect(1:100),b=repmat(collect(1:10),10)), by=[:b], :a=>d->sum(d[:a]), where=d->d[:a].>56) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
     end
   end
 
@@ -156,11 +157,16 @@ facts("Select tests") do
     @fact @update(larr(a=collect(1.0*(1:10)), b=[1,1,1,2,2,3,3,3,3,3], c=[11,12,13,14,11,12,13,14,11,12]),ma=reverse(_a), by[:b,:c]) --> larr(a=collect(1.0*(1:10)), b=[1,1,1,2,2,3,3,3,3,3], c=[11,12,13,14,11,12,13,14,11,12], ma=1.0*[1,2,3,4,5,10,7,8,9,6])
     @fact @update(larr(a=collect(1.0*(1:10)), b=[1,1,1,2,2,3,3,3,3,3],c=[11,12,13,14,11,12,13,14,11,12]),a=mean(_a), by[:b,:c], where[_c .<= 12]) --> larr(a=1.0*[1,2,3,4,5,8,7,8,9,8],b=[1,1,1,2,2,3,3,3,3,3],c=[11,12,13,14,11,12,13,14,11,12])
     @fact @update(larr(a=collect(1.0*(1:10)),c=[11,12,13,14,11,12,13,14,11,12]),a=reverse(_a), by[:c], where[_c .<= 12]) --> larr(a=1.0*[9,10,3,4,5,6,7,8,1,2], c=[11,12,13,14,11,12,13,14,11,12])
-    @fact @update(larr(a=1:10,c=[11,12,13,14,11,12,13,14,11,12]),a=1.0*reverse(_a), by[:c], where[_c .<= 12]) --> larr(a=1.0*[9,10,3,4,5,6,7,8,1,2], c=[11,12,13,14,11,12,13,14,11,12])
-    @fact @update(larr(a=collect(1.0*(1:10)),c=[11,12,13,14,11,12,13,14,11,12]),ma=mean(_a), a=reverse(_a), by[:c], where[_c .<= 12]) --> @larr(a=1.0*[9,10,3,4,5,6,7,8,1,2], c=[11,12,13,14,11,12,13,14,11,12], ma=[5.0,6.0,NA,NA,5.0,6.0,NA,NA,5.0,6.0])
+    @fact @update(larr(a=1:10,c=enumeration([11,12,13,14,11,12,13,14,11,12])),a=1.0*reverse(_a), by[:c], where[_c .<= 12]) --> larr(a=1.0*[9,10,3,4,5,6,7,8,1,2], c=[11,12,13,14,11,12,13,14,11,12])
+    @fact @update(larr(a=collect(1.0*(1:10)),c=enumeration([11,12,13,14,11,12,13,14,11,12])),ma=mean(_a), a=reverse(_a), by[:c], where[_c .<= 12]) --> @larr(a=1.0*[9,10,3,4,5,6,7,8,1,2], c=[11,12,13,14,11,12,13,14,11,12], ma=[5.0,6.0,NA,NA,5.0,6.0,NA,NA,5.0,6.0])
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),by[b=_b.*2],a=reverse(_a),where[_a.<5]) --> darr(a=[2,1,4,3,5],b=[1,1,2,2,2])
-    @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),by[b=_b.*2],a=mean(_a),where[_a.<5]) --> darr(a=[1.5,1.5,3.5,3.5,5.0],b=[1,1,2,2,2])
+    @fact @update(darr(a=[1,2,3,4,5],b=enumeration([1,1,2,2,2])),by[b=_b.*2],a=mean(_a),where[_a.<5]) --> darr(a=[1.5,1.5,3.5,3.5,5.0],b=[1,1,2,2,2])
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),by[b=_b.*2],c=mean(_a),where[_a.<5]) --> reorder(@darr(c=[1.5,1.5,3.5,3.5,NA],b=[1,1,2,2,2],a=[1,2,3,4,5]), :a,:b,:c)
+    @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=_a*2.0,where[_a.<5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2],c=@nalift([2.0,4.0,6.0,8.0,NA]))
+    @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=mean(_a),where[_a.<5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2],c=@nalift([2.5,2.5,2.5,2.5,NA]))
+    # Let's think about this is okay, where we just return the original labeled array when there is nothing to update.
+    @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=mean(_a),where[_a.<5],where[_a.>5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
+    @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2])) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact update(@larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z]), a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna(d[:b])], by=[:b]) --> @larr(a=[16,11,13,4,5,6,16,16,11,13],b=[1,2,3,NA,NA,NA,1,1,2,3],c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z],d=[8,18,30,NA,NA,NA,7,1,4,9])
   end
 

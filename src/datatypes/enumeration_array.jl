@@ -75,6 +75,12 @@ map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = #map(elem) do 
 #end
 map_nullable{T,R}(elem::R, pool::Vector{T}) =
   elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
+getindexvalue{T,N,V,R,RR}(arr::EnumerationArray{T,N,V,R}, ::Type{RR}, indices...) = begin
+  arr.elems[indices...]::RR
+end
+getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
+  arr.elems[indices...]
+end
 
 Base.eltype{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Nullable{T}
 Base.length(arr::EnumerationArray) = length(arr.elems)
@@ -90,13 +96,19 @@ Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::Nullable{T}, indices.
     arr
   end
 end
+Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::R, indices...) = begin
+  setindex!(arr.elems, R, indices...)
+  arr
+end
+Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, ::Type{Nullable{T}}, dims::NTuple{M,Int}) = EnumerationArray((similar(arr.elems, dims),arr.pool))
+Base.similar{T,N,V,R,U,M}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.elems, U, dims)
 Base.linearindexing{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.linearindexing(V)
 Base.reshape(arr::EnumerationArray, args::Tuple{Vararg{Int}}) = EnumerationArray((reshape(arr.elems, args), arr.pool))
 Base.reshape(arr::EnumerationArray, args::Int...) = EnumerationArray((reshape(arr.elems, args...), arr.pool))
 Base.reshape(arr::EnumerationArray, args...) = EnumerationArray((reshape(arr.elems, args...), arr.pool))
 Base.transpose(arr::EnumerationArray, args...) = EnumerationArray((transpose(arr.elems, args...), arr.pool))
 Base.permutedims(arr::EnumerationArray, args...) = EnumerationArray((permutedims(arr.elems, args...), arr.pool))
-Base.repeat(arr::EnumerationArray, args...) = EnumerationArray((repeat(arr.elems, args...), arr.pool))
+Base.repeat(arr::EnumerationArray, args...;kwargs...) = EnumerationArray((repeat(arr.elems, args...;kwargs...), arr.pool))
 Base.sort(arr::EnumerationArray, args...) = EnumerationArray((sort(arr.elems, args...), arr.pool))
 Base.sort!(arr::EnumerationArray, args...) = (sort!(arr.elems, args...); arr)
 Base.cat(dim::Int, arr1::EnumerationArray, arrs::EnumerationArray...) = begin
@@ -114,6 +126,7 @@ Base.sub(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) =
 Base.slice(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((slice(arr.elems, args...), arr.pool))
 Base.reverse(arr::EnumerationArray, args...) = EnumerationArray((reverse(arr.elems, args...), arr.pool))
 
+elvaluetype(::EnumerationArray) = Int
 
 """
 
