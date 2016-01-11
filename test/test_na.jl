@@ -57,6 +57,15 @@ facts("NA tests") do
     @fact nalift(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
     @fact typeof(igna(nalift(Array(Float64,0)))) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
     @fact typeof(igna(nalift(Array(Float64,0)),3.0)) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
+    @fact (arr=nalift([1.0,2.0,3.0]);arr[1]=0.0;arr) --> nalift([0.0,2.0,3.0])
+    @fact (arr=nalift([1.0,2.0,3.0]);arr[1]=Nullable{Float64}();arr) --> @nalift([NA,2.0,3.0])
+    @fact (arr=nalift([1.0,2.0,3.0]);arr[1:2]=nalift([0.0,-1.0]) ;arr) --> nalift([0.0,-1.0,3.0])
+    @fact (arr=nalift([1.0,2.0,3.0]);arr[1:2]=Nullable(1.0) ;arr) --> nalift([1.0,1.0,3.0])
+    @fact typeof(1.0*nalift([1 2])) --> AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}
+    @fact sub(1.0*nalift([1 2 3;4 5 6]),1:2,1:1) --> nalift([1.0 4.0]')
+    @fact slice(1.0*nalift([1 2 3;4 5 6]),1:2,1) --> nalift([1.0,4.0])
+    @fact sub(1.0*nalift([1 2 3;4 5 6]),(1:2,1:1)) --> nalift([1.0 4.0]')
+    @fact slice(1.0*nalift([1 2 3;4 5 6]),(1:2,1)) --> nalift([1.0,4.0])
   end
 end
 

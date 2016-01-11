@@ -1761,7 +1761,7 @@ end
 create_extract_indices(axis::DictArray, region::LDict) = create_extract_indices(axis, DictArray(mapvalues(v->wrap_array([v]), region)))
 create_extract_indices(axis::DictArray, region::Tuple) = create_extract_indices(axis, DictArray(keys(axis), [wrap_array([v]) for v in region]))
 create_extract_indices(axis::DictArray, region::DictArray) =
-  create_extract_indices_typed(Tuple{[eltype(v) for v in axis.data]...}, axis, region)
+  create_extract_indices_typed(Tuple{[elvaluetype(v) for v in values(axis)]...}, axis, region)
 create_extract_indices_typed{T}(::Type{T}, axis::DictArray, region::DictArray) = begin
   @assert(keys(axis) == keys(region))
   lenaxis = length(axis)
@@ -1786,7 +1786,7 @@ create_extract_indices{T}(axis::AbstractVector{Nullable{T}}, region::T) = create
 create_extract_indices{T<:Indices}(axis::AbstractVector{Nullable{T}}, region::T) = error("this should not happen.")
 #create_extract_indices(axis::DefaultAxis, region::Function) = create_extract_indices(axis, convert_boolarray_if_necessary(region(axis)))
 create_extract_indices(axis::DefaultAxis, region::Indices) = create_extract_indices(axis, region.inds)
-create_extract_indices(axis::DictArray, region::Indices) = create_extract_indices_typed(axis, region, Tuple{[eltype(v) for v in values(axis)]...})
+create_extract_indices(axis::DictArray, region::Indices) = create_extract_indices_typed(axis, region, Tuple{[elvaluetype(v) for v in values(axis)]...})
 create_extract_indices_typed{T}(axis::DictArray, region::Indices, ::Type{T}) = begin
   converted_indices = collect(region.inds)
   converted_region = similar(axis, length(converted_indices))
@@ -2169,3 +2169,5 @@ namerge(xs...) = begin
   end
   result
 end
+
+elvaluetype(arr::AbstractArray) = eltype(arr)

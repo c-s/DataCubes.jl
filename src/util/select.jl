@@ -180,12 +180,24 @@ updatefunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
             i += 1
           end
         else
-          resultk = similar(aggvec, size(t.data))
+          isaggvecarray = isa(aggvec, AbstractArray)
+          resultk = if isaggvecarray
+            similar(aggvec, size(t.data))
+          else
+            similar(t.data, typeof(aggvec), size(t.data))
+          end
           setna!(resultk, :)
           i = 1
-          for coords in selected_cartesian_indices
-            resultk[coords...] = aggvec[i]
-            i += 1
+          if isaggvecarray
+            for coords in selected_cartesian_indices
+              resultk[coords...] = aggvec[i]
+              i += 1
+            end
+          else
+            for coords in selected_cartesian_indices
+              resultk[coords...] = aggvec
+              i += 1
+            end
           end
         end
         k => resultk
@@ -293,7 +305,7 @@ bymap_coords_calculate_helper{T}(bymap::Dict{T,Int}, byvec, bytype::Type{T}, i::
   bymap[v]::Int
 end
 
-create_bymap(byvec::DictArray, skip_ordering::Bool=false) = create_bymap_inner(byvec, Tuple{[eltype(v) for v in byvec.data.values]...}, skip_ordering)
+create_bymap(byvec::DictArray, skip_ordering::Bool=false) = create_bymap_inner(byvec, Tuple{[elvaluetype(v) for v in byvec.data.values]...}, skip_ordering)
 
 create_bymap_inner{T}(byvec::DictArray, ::Type{T}, skip_ordering::Bool) = if isa(byvec, DictArray)
   # resmap: (d dim tuple) for the key tuple => the coordiante in the result byarray.

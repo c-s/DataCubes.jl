@@ -90,7 +90,7 @@ facts("EnumerationArray tests") do
     # runnability test when the result is empty.
     @fact size(@rap transpose @select((@rap transpose larr(r=enumeration(rand(8,20)), axis1=darr(a=rand(8),b=101:108))), :r=_r.*100, where[_r.>1])) --> (0,0)
     @fact cat(1, larr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x' 'y' 'z'], d=[:m :n :p], axis1=[3])) --> larr(reshape(@larr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3), axis1=[:u,:v,3])
-    @fact cat(2, larr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f']), axis1=[:u,:v]), larr(b=['x','y'], d=[:m,:n], axis1=[:u,:v])) --> larr(reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[:u,:v])
+    @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x','y'], d=[:m,:n], axis1=[:u,:v])) --> larr(reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[:u,:v])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f'])), larr(b=[10,11], d=[:m,:n])) --> reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, larr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f'], axis2=darr(r=[:x,:y,:z])), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=@darr(r=[:x,:y,:z,NA]))
     @fact sub(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)

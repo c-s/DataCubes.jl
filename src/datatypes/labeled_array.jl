@@ -1530,3 +1530,13 @@ c |Z p 6
 
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
+
+Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
+  newdata = similar(arr.data, U, dims)
+  arraxes = arr.axes
+  newaxes = ntuple(length(arraxes)) do d
+    axis = arraxes[d]
+    similar(axis, dims[d])
+  end
+  LabeledArray(newdata, newaxes)
+end

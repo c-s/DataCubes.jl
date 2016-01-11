@@ -34,7 +34,7 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([3,2,1]) .< nalift([1,2,3]) --> nalift([false,false,true])
     @fact @nalift([3,NA,1]) .< AbstractArrayWrapper([1.0,2.0,3.0]) --> @nalift([false,NA,true])
     @fact nalift([3,2,1]) .< nalift([1.0,2.0,3.0]) --> nalift([false,false,true])
-    @fact nalift([3,2,1]) + nalift([1.0,2.0,3.0]) --> nalift([4.0,4.0,4.0])
+    @fact @nalift([NA,2,1]) + @nalift([1.0,NA,3.0]) --> @nalift([NA,NA,4.0])
     @fact nalift([3,2,1]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> nalift([4.0,4.0,4.0])
     @fact AbstractArrayWrapper([3,2,1]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> AbstractArrayWrapper([4.0,4.0,4.0])
     @fact AbstractArrayWrapper([3,2,1]) + 5.0 --> AbstractArrayWrapper([8.0,7.0,6.0])
@@ -69,10 +69,21 @@ facts("NAArrayOperators tests") do
     @fact nalift([1,2,3]) * 1.0 --> nalift([2.0,3.0,4.0]) - 1
     @fact nalift([1.0,2.0,3.0]) * Nullable(1.0) --> nalift([2.0,3.0,4.0]) - 1
     @fact Nullable(1.0) * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
-    @fact nalift([1.0,2.0,3.0]) * Nullable(1) --> nalift([2.0,3.0,4.0]) - 1
+    @fact @nalift([1.0,2.0,NA]) * Nullable(1) --> @nalift([2.0,3.0,NA]) - 1
     @fact Nullable(1) * nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0]) - 1
-    @fact Nullable(1.0) * nalift([1,2,3]) --> nalift([2.0,3.0,4.0]) - 1
+    @fact Nullable(1.0) * @nalift([NA,2,3]) --> @nalift([NA,3.0,4.0]) - 1
     @fact nalift([1,2,3]) * Nullable(1.0) --> nalift([2.0,3.0,4.0]) - 1
+    @fact nalift([1,2,3]) * Nullable{Int}() --> nalift([Nullable{Int}(), Nullable{Int}(), Nullable{Int}()])
+    @fact @nalift([1,2,3,NA,NA,5]) ./ @nalift([2,1,2,3,NA,NA]) --> @nalift([0.5,2.0,1.5,NA,NA,NA])
+    @fact @nalift([1,2,3,NA,NA,5]) ./ @nalift([2,1,2,3,NA,NA]) --> @nalift([0.5,2.0,1.5,NA,NA,NA])
+    @fact @nalift([1,2,3,NA,NA,5]) ./ 2 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
+    @fact @nalift([1,2,3,NA,NA,5]) ./ 2.0 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
+    @fact @nalift([1,2,3,NA,NA,5]) / 2 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
+    @fact @nalift([1,2,3,NA,NA,5]) / 2.0 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
+    @fact 1/@nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
+    @fact 1.0/@nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
+    @fact 1 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
+    @fact 1.0 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
   end
 end
 
