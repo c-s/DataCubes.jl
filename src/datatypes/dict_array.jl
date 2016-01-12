@@ -548,7 +548,9 @@ julia> allfieldnames(darr(a=reshape(1:6,3,2),b=rand(3,2)))
 """
 allfieldnames(arr::DictArray) = arr.data.keys
 Base.Multimedia.writemime(io::IO, ::MIME"text/plain", arr::DictArray) = show(io, arr)
-Base.similar{K,N,VS,SV}(arr::DictArray{K,N,VS,SV}, ::Type{LDict{K,SV}}, dims::NTuple{TypeVar(:M),Int}) = begin
+Base.similar(arr::DictArray) = similar(arr, size(arr))
+Base.similar{K,N,VS,SV}(arr::DictArray{K,N,VS,SV}, dims::Int...) = similar(arr, dims)
+Base.similar{K,N,VS,SV}(arr::DictArray{K,N,VS,SV}, dims::NTuple{TypeVar(:M),Int}) = begin
   newvals = map(arr.data.values) do elemarr
     similar(elemarr, dims)
   end
@@ -849,7 +851,7 @@ end
     # testres is the first component.
     testres = f(testslice)
     reseltype = typeof(testres)
-    result = Array(reseltype, sizearr[$slice_indices]...)
+    result = similar(arr, reseltype, sizearr[$slice_indices])
     mapslices_inner_typed!(result, f, arr, dims, testres)
   end
 end

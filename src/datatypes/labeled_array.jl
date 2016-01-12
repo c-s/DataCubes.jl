@@ -947,6 +947,45 @@ Base.reducedim(f::Function, arr::LabeledArray, dims, initial) = begin
     reduce(f, initial, slice)
   end
 end
+
+
+"""
+
+`mapslices(f::Function, arr::LabeledArray, dims)`
+
+Apply the function `f` to each slice of `arr` specified by `dims`. `dims` is a vector of integers along which direction to reduce.
+
+* If `dims` includes all dimensions, `f` will be applied to the whole `arr`.
+* If `dims` is empty, `mapslices` is the same as `map`.
+* Otherwise, `f` is applied to each slice spanned by the directions.
+
+##### Return
+
+Return a dimensionally reduced array along the directions in `dims`.
+If the return value of `f` is an `LDict`, the return value of the corresponding `mapslices` is a `DictArray`.
+Otherwise, the return value is an `Array`.
+
+```julia
+julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[1])
+3 LabeledArray
+
+  |                           
+  --+---------------------------
+  A |[Nullable(2),Nullable(8)]  
+  B |[Nullable(4),Nullable(10)] 
+  C |[Nullable(6),Nullable(12)] 
+
+
+  julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
+  2 LabeledArray
+
+  k |                                        
+  --+----------------------------------------
+  X |[Nullable(2),Nullable(4),Nullable(6)]   
+  Y |[Nullable(8),Nullable(10),Nullable(12)] 
+```
+
+"""
 Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
   if length(dims) != length(unique(dims))
     throw(ArgumentError("the dims argument should be an array of distinct elements."))
@@ -990,7 +1029,7 @@ end
     testslice = $slice_exp
     testres = f(testslice)
     reseltype = typeof(testres)
-    result = Array(reseltype, sizearr[$slice_indices]...)
+    result = similar(arr.data, reseltype, sizearr[$slice_indices])
 
     if reseltype <: LDict
       ldict_keys_sofar = testres.keys
@@ -1531,12 +1570,15 @@ c |Z p 6
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
 
-Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
-  newdata = similar(arr.data, U, dims)
-  arraxes = arr.axes
-  newaxes = ntuple(length(arraxes)) do d
-    axis = arraxes[d]
-    similar(axis, dims[d])
-  end
-  LabeledArray(newdata, newaxes)
-end
+#Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
+#  newdata = similar(arr.data, U, dims)
+#  arraxes = arr.axes
+#  newaxes = ntuple(length(arraxes)) do d
+#    axis = arraxes[d]
+#    similar(axis, dims[d])
+#  end
+#  LabeledArray(newdata, newaxes)
+#end
+Base.similar(arr::LabeledArray) = similar(arr, size(arr))
+Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = similar(arr.data, U, dims)
+Base.similar{T,U}(arr::LabeledArray{T}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims)
