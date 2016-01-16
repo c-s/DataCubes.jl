@@ -100,7 +100,13 @@ Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::R, indices...) = begi
   setindex!(arr.elems, R, indices...)
   arr
 end
-Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, ::Type{Nullable{T}}, dims::NTuple{M,Int}) = EnumerationArray((similar(arr.elems, dims),arr.pool))
+Base.copy!(tgt::EnumerationArray, src::EnumerationArray) = begin
+  copy!(tgt.elems, src.elems)
+  copy!(tgt.pool, src.pool)
+end
+Base.copy(arr::EnumerationArray) = EnumerationArray((copy(arr.elems), copy(arr.pool)))
+
+Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, dims::NTuple{M,Int}) = EnumerationArray((similar(arr.elems, dims),arr.pool))
 Base.similar{T,N,V,R,U,M}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.elems, U, dims)
 Base.linearindexing{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.linearindexing(V)
 Base.reshape(arr::EnumerationArray, args::Tuple{Vararg{Int}}) = EnumerationArray((reshape(arr.elems, args), arr.pool))

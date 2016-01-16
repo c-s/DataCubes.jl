@@ -163,6 +163,8 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
                                       Base.sub, Base.slice)
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
+Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
+Base.copy(arr::FloatNAArray) = FloatNAArray(copy(arr.data))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   if isempty(arr0)
     return similar(arr0, Nullable{Any})
@@ -284,6 +286,8 @@ nalift(x::DataFrame) = x
 nalift{T,N,AXES,TN}(x::AbstractArray{LabeledArray{T,N,AXES,TN}}) = x
 nalift{K,N,VS,SV}(x::AbstractArray{DictArray{K,N,VS,SV}}) = x
 nalift(x) = Nullable(x)
+nalift{K,V<:Nullable}(x::LDict{K,V}) = x
+nalift(x::LDict) = mapvalues(nalift, x)
 
 # nalift nonmacro version. Read the input array and put Nullable wrappers appropriately.
 nalift_nested(x::Nullable) = begin

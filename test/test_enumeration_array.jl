@@ -84,8 +84,8 @@ facts("EnumerationArray tests") do
     @fact reshape(larr(a=enumeration([1 2 3;4 5 6]),b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),6) --> larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
     @fact reshape(larr(a=[1 2 3;4 5 6],b=enumeration([10 11 12;13 14 15]),axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,6) --> @rap transpose reshape(_,6,1) larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat(enumeration([:a,:b]),3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
     @fact reshape(larr([1 2 3;4 5 6],axis1=[10,11]),1,6) --> larr([1 4 2 5 3 6], axis2=repmat([10,11],3))
-    @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(1:24,2,3,4))),[1],0) --> larr([3 15 27 39;7 19 31 43;11 23 35 47])
-    @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(1:24,2,3,4))),[1,2,3],0).value --> 300
+    @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(1:24,2,3,4))),[1],0) --> @larr([3 15 27 39;7 19 31 43;11 23 35 47])
+    @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(24:-1:1,2,3,4))),[1,2,3],0).value --> 300
     @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(1:24,2,3,4)),axis1=darr(k1=[:a,:b]),axis3=[:x,:y,:z,:w]),[1,2,3],0).value --> 300
     # runnability test when the result is empty.
     @fact size(@rap transpose @select((@rap transpose larr(r=enumeration(rand(8,20)), axis1=darr(a=rand(8),b=101:108))), :r=_r.*100, where[_r.>1])) --> (0,0)

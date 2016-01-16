@@ -626,7 +626,7 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
   dataelem = getindex(table.data, indices...)
   zippedindices = zip(table.axes, indices)
   filtered_zippedindices = [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]
-  axeselem = [axis_index(axis,index) for (axis, index) in zippedindices]
+  axeselem = [wrap_scalar_inner(index, axis_index(axis,index)) for (axis, index) in zippedindices]
   ndimstable = ndims(table)
   v04ndims = ndimstable
   for i in ndimstable:-1:1
@@ -643,6 +643,9 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
     LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
   end
 end
+
+wrap_scalar_inner(index, elem) = elem
+wrap_scalar_inner(index::Real, elem) = [elem]
 
 axis_index(axis, index) = axis[index]
 axis_sub(axis, index) = sub(axis, index)
@@ -986,92 +989,299 @@ julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=
 ```
 
 """
-Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
-  if length(dims) != length(unique(dims))
-    throw(ArgumentError("the dims argument should be an array of distinct elements."))
-  end
-  dimtypes = ntuple(ndims(arr)) do d
-    if d in dims
-      Colon()
-    else
-      0
-    end
-  end
-  result = mapslices_inner(f, arr, dimtypes)
-  newdata = if ndims(result) == 0
-    isa(result, DictArray) ? mapvalues(x->x[1], result) : result[1]
-  else
-    result
-  end
-  newaxes = arr.axes[filter(i->!(i in dims),1:ndims(arr))]
-  if length(dims) == ndims(arr)
-    newdata
-  else
-    LabeledArray(newdata, newaxes)
-  end
-end
+Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = mapslices_darr_larr(f, arr, dims)
 
-@generated mapslices_inner{T,N,AXES,TN,D}(f::Function, arr::LabeledArray{T,N,AXES,TN}, dims::D) = begin
-  dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
-  slice_exp = if slice_ndims == N
-    :(arr.data[coords...])
-  else
-    :(slice(arr, coords...))
-  end
-  quote
-    sizearr = size(arr)
-    coords = Array(Any, $N)
-    # assume that the types are all the same.
-    fill!(coords, Colon())
-    coords[$slice_indices] = 1
-    testslice = $slice_exp
-    testres = f(testslice)
-    reseltype = typeof(testres)
-    result = similar(arr.data, reseltype, sizearr[$slice_indices])
+#Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
+#  if length(dims) != length(unique(dims))
+#    throw(ArgumentError("the dims argument should be an array of distinct elements."))
+#  end
+#  dimtypes = ntuple(ndims(arr)) do d
+#    if d in dims
+#      Colon()
+#    else
+#      0
+#    end
+#  end
+#  result = mapslices_inner(f, arr, dimtypes)
+#  if ndims(result) == 0
+#    (isa(result, DictArray) || isa(result, LabeledArray)) ? mapvalues(x->x[1], result) : result[1]
+#  else
+#    result
+#  end
+#  #newdata = if ndims(result) == 0
+#  #  (isa(result, DictArray) || isa(result, LabeledArray)) ? mapvalues(x->x[1], result) : result[1]
+#  #else
+#  #newaxes = arr.axes[filter(i->!(i in dims),1:ndims(arr))]
+#  #if length(dims) == ndims(arr)
+#  #  newdata
+#  #else
+#  #  LabeledArray(newdata, newaxes)
+#  #end
+#end
+#
+#@generated mapslices_inner{V,N,AXES,VN,T}(f::Function, arr::LabeledArray{V,N,AXES,VN}, dims::T) = begin
+#  dimtypes = dims.types
+#  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
+#  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+#  slice_exp = if slice_ndims == N
+#    :(arr[coords...])
+#  else
+#    :(slice(arr, coords...))
+#  end
+#  quote
+#    sizearr = size(arr)
+#    coords = Array(Any, $N)
+#    # assume that the types are all the same.
+#    fill!(coords, Colon())
+#    coords[$slice_indices] = 1
+#    testslice = $slice_exp
+#    # testres is the first component.
+#    testres = nalift(f(testslice))
+#    reseltype = typeof(testres)
+#
+#    ressize = sizearr[$slice_indices]
+#    @show reseltype
+#    result = if reseltype<:LabeledArray
+#      large_result = similar(peel(testres), (size(testres)...,ressize...))
+#      colons = ntuple(d->Colon(), ndims(testres))
+#      ST = typeof(slice(large_result, colons..., ntuple(d->1, length(ressize))...))
+#      temp_result = similar(arr, ST, ressize)
+#      @nloops $slice_ndims i temp_result begin
+#        @nref($slice_ndims,temp_result,i) = slice(large_result, colons..., @ntuple($slice_ndims,i)...)
+#      end
+#      mapslices_inner_typed!(temp_result, f, arr, dims, testres)
+#      ndimstestres = ndims(testres)
+#      LabeledArray(large_result, ntuple(ndims(large_result)) do d
+#        if d <= ndimstestres
+#          pickaxis(testres, d)
+#        else
+#          DefaultAxis(size(large_result, d))
+#        end
+#      end)
+#    elseif reseltype<:AbstractArray
+#      large_result = similar(testres, (size(testres)...,ressize...))
+#      colons = ntuple(d->Colon(), ndims(testres))
+#      ST = typeof(slice(large_result, colons..., ntuple(d->1, length(ressize))...))
+#      temp_result = similar(arr, ST, ressize)
+#      @nloops $slice_ndims i temp_result begin
+#        @nref($slice_ndims,temp_result,i) = slice(large_result, colons..., @ntuple($slice_ndims,i)...)
+#      end
+#      mapslices_inner_typed!(temp_result, f, arr, dims, testres)
+#      large_result
+#    else
+#      res = similar(arr, reseltype, ressize)
+#      mapslices_inner_typed!(res, f, arr, dims, testres)
+#      res
+#    end
+#    result
+#  end
+#end
+#
+#@generated mapslices_inner_typed!{M,K,N,VS,SV,T,U<:AbstractArray,V}(result::AbstractArray{U,M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T, testres::V) = begin
+#  dimtypes = dims.types
+#  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
+#  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+#  slice_exp = if slice_ndims == N
+#    :(arr[coords...])
+#  else
+#    :(slice(arr, coords...))
+#  end
+#  quote
+#    sizearr = size(arr)
+#    coords = Array(Any, $N)
+#    # assume that the types are all the same.
+#    #ldict_keys_sofar = Nullable{Vector{KK}}() #testres.keys
+#    size_sofar = size(testres)
+#    is_the_first = true
+#    same_size::Bool = true
+#    @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
+#      fill!(coords, Colon())
+#      @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
+#      oneslice = $slice_exp
+#      oneres = if is_the_first
+#        is_the_first = false
+#        testres
+#      else
+#        nalift(f(oneslice))
+#      end
+#      same_size &= size_sofar == size(oneres)
+#      #Haven't implemented the case when same_size==false yet.
+#      copy_mapslice_helper!(@nref($slice_ndims, result, i), oneres)
+#    end
+#    result
+#  end
+#end
+#
+#@generated mapslices_inner_typed!{KK,VV,M,K,N,VS,SV,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T, testres::LDict{KK,VV}) = begin
+#  dimtypes = dims.types
+#  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
+#  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+#  slice_exp = if slice_ndims == N
+#    :(arr[coords...])
+#  else
+#    :(slice(arr, coords...))
+#  end
+#  quote
+#    sizearr = size(arr)
+#    coords = Array(Any, $N)
+#    # assume that the types are all the same.
+#    ldict_keys_sofar = Nullable{Vector{KK}}() #testres.keys
+#    same_ldict::Bool = true
+#    is_the_first = true
+#    @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
+#      fill!(coords, Colon())
+#      @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
+#      oneslice = $slice_exp
+#      oneres = if is_the_first
+#        is_the_first = false
+#        testres
+#      else
+#        nalift(f(oneslice))
+#      end
+#      if same_ldict
+#        same_ldict &= (ldict_keys_sofar.isnull || ldict_keys_sofar.value == oneres.keys)
+#        if ldict_keys_sofar.isnull
+#          ldict_keys_sofar = Nullable(oneres.keys)
+#        end
+#      end
+#      @nref($slice_ndims, result, i) = oneres
+#    end
+#    if same_ldict
+#      valuetypes = [typeof(v) for v in result[1].values]
+#      valuevects = map(valuetypes) do vtype
+#        similar(result, vtype)
+#      end
+#      valuevectslen = length(valuevects)
+#      for j in 1:valuevectslen
+#        map!(r->r.values[j], valuevects[j], result)
+#      end
+#      DictArray(ldict_keys_sofar.value, map(wrap_array, valuevects))
+#    else
+#      result
+#    end
+#  end
+#end
+#
+#@generated mapslices_inner_typed!{U,M,K,N,VS,SV,T}(result::AbstractArray{U,M}, f::Function, arr::DictArray{K,N,VS,SV}, dims::T, testres::U) = begin
+#  dimtypes = dims.types
+#  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
+#  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+#  slice_exp = if slice_ndims == N
+#    :(arr[coords...])
+#  else
+#    :(slice(arr, coords...))
+#  end
+#  quote
+#    sizearr = size(arr)
+#    coords = Array(Any, $N)
+#    is_the_first = true
+#    # assume that the types are all the same.
+#    @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
+#      fill!(coords, Colon())
+#      @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
+#      oneslice = $slice_exp #slice(arr, coords...)
+#      oneres = if is_the_first
+#        is_the_first = false
+#        testres
+#      else
+#        nalift(f(oneslice))
+#      end
+#      @nref($slice_ndims, result, i) = oneres
+#    end
+#    @rap wrap_array nalift result
+#  end
+#end
 
-    if reseltype <: LDict
-      ldict_keys_sofar = testres.keys
-      same_ldict::Bool = true
-      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
-        fill!(coords, Colon())
-        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-        oneslice = $slice_exp
-        oneres = f(oneslice)
-        if same_ldict
-          same_ldict &= (ldict_keys_sofar == oneres.keys)
-        end
-        @nref($slice_ndims, result, i) = oneres
-      end
-      if same_ldict
-        valuetypes = [typeof(v) for v in testres.values]
-        valuevects = map(valuetypes) do vtype
-          similar(result, vtype)
-        end
-        valuevectslen = length(valuevects)
-        @nloops $slice_ndims i result begin
-          for j in 1:valuevectslen
-            valuevectsj = valuevects[j]
-            @nref($slice_ndims,valuevectsj,i) = @nref($slice_ndims,result,i).values[j]
-          end
-        end
-        DictArray(testres.keys, map(wrap_array, valuevects))
-      else
-        result
-      end
-    else
-      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
-        fill!(coords, Colon())
-        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-        oneslice = $slice_exp #slice(arr, coords...)
-        oneres = f(oneslice)
-        @nref($slice_ndims, result, i) = oneres
-      end
-      wrap_array(nalift(result))
-    end
-  end
-end
+
+#Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
+##Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
+##  data = mapslices(f, peel(arr), dims)
+##
+#  if length(dims) != length(unique(dims))
+#    throw(ArgumentError("the dims argument should be an array of distinct elements."))
+#  end
+#  dimtypes = ntuple(ndims(arr)) do d
+#    if d in dims
+#      Colon()
+#    else
+#      0
+#    end
+#  end
+#  result = mapslices_inner(f, arr, dimtypes)
+#  newdata = if ndims(result) == 0
+#    isa(result, DictArray) ? mapvalues(x->x[1], result) : result[1]
+#  else
+#    result
+#  end
+#  newaxes = arr.axes[filter(i->!(i in dims),1:ndims(arr))]
+#  if length(dims) == ndims(arr)
+#    newdata
+#  else
+#    LabeledArray(newdata, newaxes)
+#  end
+#end
+#
+#@generated mapslices_inner{T,N,AXES,TN,D}(f::Function, arr::LabeledArray{T,N,AXES,TN}, dims::D) = begin
+#  dimtypes = dims.types
+#  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
+#  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+#  slice_exp = if slice_ndims == N
+#    :(arr.data[coords...])
+#  else
+#    :(slice(arr, coords...))
+#  end
+#  quote
+#    sizearr = size(arr)
+#    coords = Array(Any, $N)
+#    # assume that the types are all the same.
+#    fill!(coords, Colon())
+#    coords[$slice_indices] = 1
+#    testslice = $slice_exp
+#    testres = nalift(f(testslice))
+#    reseltype = typeof(testres)
+#    result = similar(arr.data, reseltype, sizearr[$slice_indices])
+#
+#    if reseltype <: LDict
+#      ldict_keys_sofar = testres.keys
+#      same_ldict::Bool = true
+#      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
+#        fill!(coords, Colon())
+#        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
+#        oneslice = $slice_exp
+#        oneres = nalift(f(oneslice))
+#        if same_ldict
+#          same_ldict &= (ldict_keys_sofar == oneres.keys)
+#        end
+#        @nref($slice_ndims, result, i) = oneres
+#      end
+#      if same_ldict
+#        valuetypes = [typeof(v) for v in testres.values]
+#        valuevects = map(valuetypes) do vtype
+#          similar(result, vtype)
+#        end
+#        valuevectslen = length(valuevects)
+#        @nloops $slice_ndims i result begin
+#          for j in 1:valuevectslen
+#            valuevectsj = valuevects[j]
+#            @nref($slice_ndims,valuevectsj,i) = @nref($slice_ndims,result,i).values[j]
+#          end
+#        end
+#        DictArray(testres.keys, map(wrap_array, valuevects))
+#      else
+#        result
+#      end
+#    else
+#      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
+#        fill!(coords, Colon())
+#        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
+#        oneslice = $slice_exp #slice(arr, coords...)
+#        oneres = nalift(f(oneslice))
+#        @nref($slice_ndims, result, i) = oneres
+#      end
+#      wrap_array(nalift(result))
+#    end
+#  end
+#end
 
 recursive_pair_types{K1,K2,V}(::Type{Pair{K1,Pair{K2,V}}}) = DataType[K1, recursive_pair_types(Pair{K2,V})...]
 recursive_pair_types{K,V}(::Type{Pair{K,V}}) = DataType[K, V]

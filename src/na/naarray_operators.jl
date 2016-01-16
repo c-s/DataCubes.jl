@@ -1,6 +1,6 @@
 # it seems that currently, map operation over Nullable array is not optimzed in julia 0.4.1.
 
-import Base: .+, .-, .*, *, ./, .\, .//, .==, .<, .!=, .<=, .%, .<<, .>>, .^, +, -, ~, &, |, $, ==, !=
+import Base: .+, .-, .*, *, ./, /, .\, .//, .==, .<, .!=, .<=, .%, .<<, .>>, .^, +, -, ~, &, |, $, ==, !=
 import Base.return_types
 import DataFrames: DataFrame
 
@@ -32,6 +32,8 @@ Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,Abstrac
                                    Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
                                    Base.sub, Base.slice)
+Base.reshape(arr::AbstractArrayWrapper, args::Tuple{Vararg{Int}}) = AbstractArrayWrapper(reshape(arr.a, args))
+Base.reshape(arr::AbstractArrayWrapper, args::Int...) = AbstractArrayWrapper(reshape(arr.a, args...))
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))
 Base.similar{T<:AbstractFloat,U<:AbstractFloat,N,A,M}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                     ::Type{Nullable{U}},
@@ -44,6 +46,9 @@ Base.similar{U<:AbstractFloat,M}(arr::AbstractArrayWrapper,
 Base.repeat(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(repeat(arr.a; kwargs...))
 Base.sort(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort(arr.a; kwargs...))
 Base.sort!(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort!(arr.a; kwargs...))
+Base.copy(arr::AbstractArrayWrapper) = AbstractArrayWrapper(copy(arr.a))
+Base.copy!(tgt::AbstractArrayWrapper, src::AbstractArrayWrapper) = copy!(tgt.a, src.a)
+Base.copy!(tgt::AbstractArrayWrapper, src::AbstractArray) = copy!(tgt.a, src)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, arg::Int) = getindex(arr.a, arg)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, args::Int...) = getindex(arr.a, args...)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, indices::CartesianIndex) = getindex(arr.a, indices)
