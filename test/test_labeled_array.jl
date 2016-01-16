@@ -114,6 +114,9 @@ facts("LabeledArray tests") do
     @fact mapslices(x->larr(:l=>[1,2,3,4],:p=>[:U,:V,:W,:O], axis1=[:m,:n,:p,:q]), larr(a=rand(3,5,2),axis1=[:a,:b,:c],axis3=["X","Y"]), [2]) --> larr(l=reshape(repeat(collect(1:4),outer=[6]),4,3,2),p=reshape(repeat([:U,:V,:W,:O],outer=[6]),4,3,2),axis1=[:m,:n,:p,:q],axis2=[:a,:b,:c],axis3=["X","Y"])
     @fact mapslices(x->[11,21,31,41], larr(a=rand(3,5,2),axis1=[:a,:b,:c],axis3=["X","Y"]), [2]) --> larr(reshape(repeat([11,21,31,41],outer=[6]),4,3,2),axis2=[:a,:b,:c],axis3=["X","Y"])
 
+    @fact mapslices(x->x[:a][1,1].value==1 ? LDict(:a=>Nullable(1)) : LDict(:a=>nalift([1 2 3])), larr(a=[1 2 3;4 5 6]),[1]) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:a=>[1 2 3]), LDict(:a=>[1 2 3])]))
+    @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:b=>-1), larr(a=[1 2 3;4 5 6],axis1=[:X,:Y]),[1])) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:a=>2), LDict(:b=>-1)]))
+    @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:a=>-1), larr(a=[1 2 3;4 5 6],axis1=[:X,:Y]),[1])) --> darr(a=[1,2,-1])
     @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
     @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
     @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6

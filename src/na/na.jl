@@ -263,16 +263,15 @@ a b |a b
 function nalift end
 
 nalift(x::Nullable) = x
-nalift{T}(x::AbstractArray{Nullable{T}}) = wrap_array(x)
+nalift{T<:Nullable}(x::AbstractArray{T}) = wrap_array(x)
 nalift{F<:AbstractFloat}(x::FloatNAArray{F}) = wrap_array(x)
 nalift{F<:AbstractFloat}(x::AbstractArray{F}) = wrap_array(FloatNAArray(x))
+nalift{T<:LDict}(x::AbstractArray{T}) = wrap_array(map(nalift, x))
 nalift(x::AbstractArray) = begin
   if isempty(x)
     wrap_array(similar(x, Nullable{eltype(x)}))
   elseif isa(x[1], Nullable) && all(elem->isa(elem, Nullable), x)
     # something is fishy... Even though x does not claim it is Nullable, its elements
-    #@show "something is fishy... Even though x does not claim it is Nullable, its elements"
-    #Nullable[x...]
     result = similar(x, Nullable)
     copy!(result, x)
     wrap_array(result)
