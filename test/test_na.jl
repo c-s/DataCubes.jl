@@ -46,6 +46,10 @@ facts("NA tests") do
   @fact @nalift([1 NA;NA NA]) --> wrap_array([Nullable(1)  Nullable{Int}();Nullable{Int}() Nullable{Int}()])
   @fact map(x->x, nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
   @fact map((x,y)->naop_plus(x, y), nalift([1.0,2.0,3.0]), nalift([2.0,3.0,4.0])) --> nalift([3.0,5.0,7.0])
+  #@fact nalift(DataCubes.simplify_array(Any[larr(a=[1,2,3]), darr(b=[:a,:b,:c])])) --> DataCubes.simplify_array(Any[larr(a=[1,2,3]), darr(b=[:a,:b,:c])])
+  #@fact nalift(DataCubes.simplify_array(Any[darr(a=[1,2,3]), darr(b=[:a,:b,:c])])) --> DataCubes.simplify_array(Any[darr(a=[1,2,3]), darr(b=[:a,:b,:c])])
+  #@fact nalift(DataCubes.simplify_array(Any[larr(a=[1,2,3]), larr(b=[:a,:b,:c])])) --> DataCubes.simplify_array(Any[larr(a=[1,2,3]), larr(b=[:a,:b,:c])])
+  @fact nalift(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
 
   context("FloatNAArray tests") do
     @fact map(identity, FloatNAArray(Array(Float64,0))) --> Array(Nullable{Any},0)

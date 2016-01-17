@@ -5,6 +5,9 @@ using DataCubes
 
 facts("Set Operations tests") do
   context("unique test") do
+    @fact unique(nalift([1,2,3,3,2,5]),1) --> nalift([1,2,3,5])
+    @fact unique(darr(a=[1,2,3,3,2,5]),1) --> darr(a=[1,2,3,5])
+    @fact unique(larr(a=[1,2,3,3,2,5]),1) --> larr(a=[1,2,3,5])
     @fact unique(nalift([1 1 2 1;1 2 4 1;1 1 2 1]),1,2) --> @nalift [1 NA NA;NA 2 4]
     @fact unique(nalift([1 1 2 1;1 2 4 1;1 1 2 1]),2,1) --> @nalift [1 2;NA 4]
     @fact unique(nalift([1 1 2 1;1 2 4 1;1 1 2 1]),1) --> @nalift [1 1 2 1;1 2 4 1]
@@ -23,6 +26,9 @@ facts("Set Operations tests") do
     @fact unique(@larr(a=[1 1 2 1;1 2 4 1;1 1 2 1],axis1[k=[:a,:b,:c]]),2) --> @larr(a=[1 1 2;1 2 4;1 1 2],axis1[k=[:a,:b,:c]])
   end
   context("union test") do
+    @fact union(1, nalift([1,2,3]), nalift([3,4,5])) --> nalift([1,2,3,4,5])
+    @fact union(1, darr(a=[1,2,3]), darr(a=[3,4,5])) --> darr(a=[1,2,3,4,5])
+    @fact union(1, larr(a=[1,2,3]), larr(a=[3,4,5])) --> larr(a=[1,2,3,4,5])
     @fact union(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[:sym1 :sym2 :sym3])) --> @larr(a=[1 2 3;4 5 6;:sym1 :sym2 :sym3])
     @fact union(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2 3])) --> @larr(a=[1 2 3;4 5 6])
     @fact union(2, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2;4 7])) --> @larr(a=[1 2 3 2;4 5 6 7])
@@ -42,6 +48,7 @@ facts("Set Operations tests") do
     @fact union(2, @nalift([1 2 3;4 5 6]), @nalift([1 2;4 5])) --> @nalift([1 2 3;4 5 6])
   end
   context("intersect test") do
+    @fact intersect(1, larr(a=[1,2,3]), larr(a=[3,4,5])) --> larr(a=[3])
     @fact intersect(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[:sym1 :sym2 :sym3])) --> isempty
     @fact intersect(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2 3])) --> @larr(a=[1 2 3])
     @fact intersect(2, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2;4 7])) --> @larr(a=[1 4]')
@@ -61,6 +68,9 @@ facts("Set Operations tests") do
     @fact intersect(2, @nalift([1 2 3;4 5 6]), @nalift([1 2;4 5])) --> @nalift([1 2;4 5])
   end
   context("setdiff test") do
+    @fact setdiff(1, nalift([1,2,3]), nalift([3,4,5])) --> nalift([1,2])
+    @fact setdiff(1, darr(a=[1,2,3]), darr(a=[3,4,5])) --> darr(a=[1,2])
+    @fact setdiff(1, larr(a=[1,2,3]), larr(a=[3,4,5])) --> larr(a=[1,2])
     @fact setdiff(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[:sym1 :sym2 :sym3])) --> setdiff(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[:sym1 :sym2 :sym3]))
     @fact setdiff(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2 3;4 5 6])) --> isempty
     @fact setdiff(1, @larr(a=[1 2 3;4 5 6]), @larr(a=[1 2 3])) --> @larr(a=[4 5 6])

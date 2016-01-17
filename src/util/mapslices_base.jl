@@ -13,7 +13,11 @@ mapslices_darr_larr(f::Function, arr::AbstractArray, dims::AbstractVector) = beg
     end
   end
   result = mapslices_darr_larr_inner(f, arr, dimtypes)
-  peeloff_zero_array_if_necessary(result)
+  if !isa(result,AbstractArray) || isempty(result)
+    result
+  else
+    peeloff_zero_array_if_necessary(result)
+  end
 end
 
 peeloff_zero_array_if_necessary(x) = x
@@ -31,6 +35,15 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
     :(slice(arr, coords...))
   end
   quote
+    if isempty(arr)
+      @debug_stmt @show "zero size array"
+      @debug_stmt @show arr
+      if $slice_ndims == 0
+        return Nullable{Any}()
+      else
+        return similar(arr, Nullable{Any}, size(arr)[$slice_indices])
+      end
+    end
     sizearr = size(arr)
     coords = Array(Any, $N)
     # assume that the types are all the same.

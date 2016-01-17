@@ -98,6 +98,8 @@ facts("EnumerationArray tests") do
     @fact slice(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
     @fact slice(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
     @fact sub(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=enumeration([:x,:y,:z])]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
+    @fact endof(@enumeration([1,2,3,NA,5])) --> 5
+    @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
   end
 end
 

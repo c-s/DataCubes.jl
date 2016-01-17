@@ -751,6 +751,23 @@ Base.getindex(axis::BroadcastAxis, index::Int...) = getindex(axis.axis, index[ax
 Base.getindex(axis::BroadcastAxis, index::Int) = begin
   getindex(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
+getindexvalue{T}(axis::BroadcastAxis, ::Type{T}, args...) = getindexvalue(axis, args...)::T
+getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
+getindexvalue(axis::BroadcastAxis, args...) = begin
+  newaxis = getindexvalue(axis.axis, args[axis.index])
+  if isa(newaxis, AbstractArray)
+    newbase = sub(axis.base, args...)
+    BroadcastAxis(newaxis, newbase, axis.index)
+  else
+    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
+    # I cannot think of an alternative. Let's do a copy.
+    fill(newaxis, size(sub(axis.base, args...)))
+  end
+end
+getindexvalue(axis::BroadcastAxis, index::Int...) = getindexvalue(axis.axis, index[axis.index])
+getindexvalue(axis::BroadcastAxis, index::Int) = begin
+  getindexvalue(axis.axis, ind2sub(axis.base, index)[axis.index])
+end
 
 """
 
@@ -966,6 +983,7 @@ Apply the function `f` to each slice of `arr` specified by `dims`. `dims` is a v
 
 Return a dimensionally reduced array along the directions in `dims`.
 If the return value of `f` is an `LDict`, the return value of the corresponding `mapslices` is a `DictArray`.
+If the return valud of `f` is an AbstractArray, the return value of the corresponding `mapslices` will be an array of the same type, but the dimensions have been extended. If the original dimensions are `N1 x N2 x ... x Nn` and `f` returns an array of dimensions `M1 x ... x Mm`, the return array will be of dimensions `M1 x ... x Mm x N1 x ... x Nn` with those `Ni`s omitted that belong to `dims`. You can think of this as the usual mapslices, followed by `cat`. See the last two examples below.
 Otherwise, the return value is an `Array`.
 
 ```julia

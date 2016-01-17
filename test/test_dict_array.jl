@@ -131,6 +131,8 @@ facts("DictArray tests") do
     @fact mapslices(x->x[:a][1,1].value==1 ? LDict(:a=>Nullable(1)) : LDict(:b=>nalift([1 2 3])), darr(a=[1 2 3;4 5 6]),[1]) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:b=>[1 2 3]), LDict(:b=>[1 2 3])]))
     @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:b=>-1), darr(a=[1 2 3;4 5 6]),[1])) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:a=>2), LDict(:b=>-1)]))
     @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:a=>-1), darr(a=[1 2 3;4 5 6]),[1])) --> darr(a=[1,2,-1])
+    @fact mapslices(x->[1], darr(a=Int[]), [1])  --> isnull
+    @fact size(mapslices(x->[1], darr(a=rand(0,5,3)), [2])) --> (0,3)
 
     @fact map(x->LDict(:c=>x[:a]), @darr(a=[1,2,3],b=[4,5,6])) --> @darr(c=[1,2,3])
     @fact map(x->x[:a], @darr(a=[1,2,3],b=[4,5,6])) --> nalift([1,2,3])

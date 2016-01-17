@@ -175,6 +175,8 @@ Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
+getindexvalue{T}(arr::FloatNAArray, ::Type{T}, args...) = convert(T, getindexvalue(arr.data, args...))
+getindexvalue(arr::FloatNAArray, args...) = getindexvalue(arr.data, args...)
 
 floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin
   after_first = false
@@ -282,8 +284,7 @@ end
 nalift(x::DictArray) = x
 nalift(x::LabeledArray) = x
 nalift(x::DataFrame) = x
-nalift{T,N,AXES,TN}(x::AbstractArray{LabeledArray{T,N,AXES,TN}}) = x
-nalift{K,N,VS,SV}(x::AbstractArray{DictArray{K,N,VS,SV}}) = x
+#nalift{T<:Union{LabeledArray,DictArray}}(x::AbstractArray{T}) = x
 nalift(x) = Nullable(x)
 nalift{K,V<:Nullable}(x::LDict{K,V}) = x
 nalift(x::LDict) = mapvalues(nalift, x)

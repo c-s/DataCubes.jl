@@ -60,6 +60,9 @@ Base.getindex(arr::AbstractArrayWrapper, args...) = begin
   AbstractArrayWrapper(res)
   #end
 end
+getindexvalue{T}(arr::AbstractArrayWrapper, ::Type{T}, args...) = getindexvalue(arr.a, T, args...)
+getindexvalue(arr::AbstractArrayWrapper, args...) = getindexvalue(arr.a, args...)
+
 Base.map(f, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
 Base.map(f, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
 
