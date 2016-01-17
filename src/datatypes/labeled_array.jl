@@ -626,7 +626,7 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
   dataelem = getindex(table.data, indices...)
   zippedindices = zip(table.axes, indices)
   filtered_zippedindices = [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]
-  axeselem = [axis_index(axis,index) for (axis, index) in zippedindices]
+  axeselem = [wrap_scalar_inner(index, axis_index(axis,index)) for (axis, index) in zippedindices]
   ndimstable = ndims(table)
   v04ndims = ndimstable
   for i in ndimstable:-1:1
@@ -643,6 +643,9 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
     LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
   end
 end
+
+wrap_scalar_inner(index, elem) = elem
+wrap_scalar_inner(index::Real, elem) = [elem]
 
 axis_index(axis, index) = axis[index]
 axis_sub(axis, index) = sub(axis, index)
@@ -747,6 +750,23 @@ end
 Base.getindex(axis::BroadcastAxis, index::Int...) = getindex(axis.axis, index[axis.index])
 Base.getindex(axis::BroadcastAxis, index::Int) = begin
   getindex(axis.axis, ind2sub(axis.base, index)[axis.index])
+end
+getindexvalue{T}(axis::BroadcastAxis, ::Type{T}, args...) = getindexvalue(axis, args...)::T
+getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
+getindexvalue(axis::BroadcastAxis, args...) = begin
+  newaxis = getindexvalue(axis.axis, args[axis.index])
+  if isa(newaxis, AbstractArray)
+    newbase = sub(axis.base, args...)
+    BroadcastAxis(newaxis, newbase, axis.index)
+  else
+    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
+    # I cannot think of an alternative. Let's do a copy.
+    fill(newaxis, size(sub(axis.base, args...)))
+  end
+end
+getindexvalue(axis::BroadcastAxis, index::Int...) = getindexvalue(axis.axis, index[axis.index])
+getindexvalue(axis::BroadcastAxis, index::Int) = begin
+  getindexvalue(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
 
 """
@@ -947,92 +967,47 @@ Base.reducedim(f::Function, arr::LabeledArray, dims, initial) = begin
     reduce(f, initial, slice)
   end
 end
-Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = begin
-  if length(dims) != length(unique(dims))
-    throw(ArgumentError("the dims argument should be an array of distinct elements."))
-  end
-  dimtypes = ntuple(ndims(arr)) do d
-    if d in dims
-      Colon()
-    else
-      0
-    end
-  end
-  result = mapslices_inner(f, arr, dimtypes)
-  newdata = if ndims(result) == 0
-    isa(result, DictArray) ? mapvalues(x->x[1], result) : result[1]
-  else
-    result
-  end
-  newaxes = arr.axes[filter(i->!(i in dims),1:ndims(arr))]
-  if length(dims) == ndims(arr)
-    newdata
-  else
-    LabeledArray(newdata, newaxes)
-  end
-end
 
-@generated mapslices_inner{T,N,AXES,TN,D}(f::Function, arr::LabeledArray{T,N,AXES,TN}, dims::D) = begin
-  dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
-  slice_exp = if slice_ndims == N
-    :(arr.data[coords...])
-  else
-    :(slice(arr, coords...))
-  end
-  quote
-    sizearr = size(arr)
-    coords = Array(Any, $N)
-    # assume that the types are all the same.
-    fill!(coords, Colon())
-    coords[$slice_indices] = 1
-    testslice = $slice_exp
-    testres = f(testslice)
-    reseltype = typeof(testres)
-    result = Array(reseltype, sizearr[$slice_indices]...)
 
-    if reseltype <: LDict
-      ldict_keys_sofar = testres.keys
-      same_ldict::Bool = true
-      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
-        fill!(coords, Colon())
-        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-        oneslice = $slice_exp
-        oneres = f(oneslice)
-        if same_ldict
-          same_ldict &= (ldict_keys_sofar == oneres.keys)
-        end
-        @nref($slice_ndims, result, i) = oneres
-      end
-      if same_ldict
-        valuetypes = [typeof(v) for v in testres.values]
-        valuevects = map(valuetypes) do vtype
-          similar(result, vtype)
-        end
-        valuevectslen = length(valuevects)
-        @nloops $slice_ndims i result begin
-          for j in 1:valuevectslen
-            valuevectsj = valuevects[j]
-            @nref($slice_ndims,valuevectsj,i) = @nref($slice_ndims,result,i).values[j]
-          end
-        end
-        DictArray(testres.keys, map(wrap_array, valuevects))
-      else
-        result
-      end
-    else
-      @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
-        fill!(coords, Colon())
-        @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-        oneslice = $slice_exp #slice(arr, coords...)
-        oneres = f(oneslice)
-        @nref($slice_ndims, result, i) = oneres
-      end
-      wrap_array(nalift(result))
-    end
-  end
-end
+"""
+
+`mapslices(f::Function, arr::LabeledArray, dims)`
+
+Apply the function `f` to each slice of `arr` specified by `dims`. `dims` is a vector of integers along which direction to reduce.
+
+* If `dims` includes all dimensions, `f` will be applied to the whole `arr`.
+* If `dims` is empty, `mapslices` is the same as `map`.
+* Otherwise, `f` is applied to each slice spanned by the directions.
+
+##### Return
+
+Return a dimensionally reduced array along the directions in `dims`.
+If the return value of `f` is an `LDict`, the return value of the corresponding `mapslices` is a `DictArray`.
+If the return valud of `f` is an AbstractArray, the return value of the corresponding `mapslices` will be an array of the same type, but the dimensions have been extended. If the original dimensions are `N1 x N2 x ... x Nn` and `f` returns an array of dimensions `M1 x ... x Mm`, the return array will be of dimensions `M1 x ... x Mm x N1 x ... x Nn` with those `Ni`s omitted that belong to `dims`. You can think of this as the usual mapslices, followed by `cat`. See the last two examples below.
+Otherwise, the return value is an `Array`.
+
+```julia
+julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[1])
+3 LabeledArray
+
+  |                           
+  --+---------------------------
+  A |[Nullable(2),Nullable(8)]  
+  B |[Nullable(4),Nullable(10)] 
+  C |[Nullable(6),Nullable(12)] 
+
+
+  julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
+  2 LabeledArray
+
+  k |                                        
+  --+----------------------------------------
+  X |[Nullable(2),Nullable(4),Nullable(6)]   
+  Y |[Nullable(8),Nullable(10),Nullable(12)] 
+```
+
+"""
+Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = mapslices_darr_larr(f, arr, dims)
 
 recursive_pair_types{K1,K2,V}(::Type{Pair{K1,Pair{K2,V}}}) = DataType[K1, recursive_pair_types(Pair{K2,V})...]
 recursive_pair_types{K,V}(::Type{Pair{K,V}}) = DataType[K, V]
@@ -1531,12 +1506,15 @@ c |Z p 6
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
 
-Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
-  newdata = similar(arr.data, U, dims)
-  arraxes = arr.axes
-  newaxes = ntuple(length(arraxes)) do d
-    axis = arraxes[d]
-    similar(axis, dims[d])
-  end
-  LabeledArray(newdata, newaxes)
-end
+#Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
+#  newdata = similar(arr.data, U, dims)
+#  arraxes = arr.axes
+#  newaxes = ntuple(length(arraxes)) do d
+#    axis = arraxes[d]
+#    similar(axis, dims[d])
+#  end
+#  LabeledArray(newdata, newaxes)
+#end
+Base.similar(arr::LabeledArray) = similar(arr, size(arr))
+Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = similar(arr.data, U, dims)
+Base.similar{T,U}(arr::LabeledArray{T}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims)

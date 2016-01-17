@@ -60,7 +60,7 @@ Base.intersect(dim::Integer, arr0::LabeledArray, arr_rest::LabeledArray...) = be
   remainingcoords = ntuple(d->Colon(), length(remainingdirs))
   newdirs = (remainingdirs...,dim)
   permuted_arrs = map(arr->permutedims_if_necessary(arr, newdirs), arrs)
-  elems = LDict{Any,Int}()
+  elems = Dict{Any,Int}()
   isdefaxis = isa(permuted_arrs[1].axes[ndimsarr], DefaultAxis)
   permuted_arrs1 = permuted_arrs[1]
   lastsize = size(permuted_arrs[1], ndimsarr)
@@ -69,15 +69,24 @@ Base.intersect(dim::Integer, arr0::LabeledArray, arr_rest::LabeledArray...) = be
   if isdefaxis
     for i in 1:lastsize
       full_coords = (remainingcoords..., i)
-      oneslice = getindexvalue(permuted_arrs1.data, full_coords...)
-      push!(elems, oneslice => i)
+      # using getindexvalue would have caused the NullException() in the intersect call below.
+      # TODO: need to make this intersect method type stable.
+      oneslice = getindex(permuted_arrs1.data, full_coords...)
+      #push!(elems, oneslice => i)
+      if !haskey(elems, oneslice)
+        elems[oneslice] = i
+      end
     end
   else
     for i in 1:lastsize
       full_coords = (remainingcoords..., i)
-      oneslice = getindexvalue(permuted_arrs1.data, full_coords...)
+      oneslice = getindex(permuted_arrs1.data, full_coords...)
       labels = permuted_arrs1.axes[ndimsarr][i]
-      push!(elems, (oneslice,dummy_nullable_wrap_if_necessary(labels)) => i)
+      #push!(elems, (oneslice,dummy_nullable_wrap_if_necessary(labels)) => i)
+      k = (oneslice,dummy_nullable_wrap_if_necessary(labels))
+      if !haskey(elems, k)
+        elems[k] = i
+      end
     end
   end
 
@@ -85,14 +94,14 @@ Base.intersect(dim::Integer, arr0::LabeledArray, arr_rest::LabeledArray...) = be
     map(permuted_arrs) do arr
       map(1:size(arr, ndimsarr)) do i
         full_coords = (remainingcoords..., i)
-        getindexvalue(arr.data, full_coords...)
+        getindex(arr.data, full_coords...)
       end
     end
   else
     map(permuted_arrs) do arr
       map(1:size(arr, ndimsarr)) do i
         full_coords = (remainingcoords..., i)
-        oneslice = getindexvalue(arr.data, full_coords...)
+        oneslice = getindex(arr.data, full_coords...)
         labels = arr.axes[ndimsarr][i]
         (oneslice, dummy_nullable_wrap_if_necessary(labels))
       end

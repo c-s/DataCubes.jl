@@ -2170,4 +2170,25 @@ namerge(xs...) = begin
   result
 end
 
-elvaluetype(arr::AbstractArray) = eltype(arr)
+elvaluetype(arr::AbstractArray) = elvaluetype(typeof(arr))
+elvaluetype{T<:AbstractArray}(::Type{T}) = eltype(T)
+elvaluetype{T<:EnumerationArray}(::Type{T}) = Int
+elvaluetype{T,N,A}(::Type{FloatNAArray{T,N,A}}) = T
+elvaluetype{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = elvaluetype(A)
+elvaluetype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = elvaluetype(A)
+elvaluetype{T,N,V,W}(::Type{BroadcastAxis{T,N,V,W}}) = elvaluetype(V)
+
+Base.push!{T,V,R}(arr::EnumerationArray{T,1,V,R}, elem::Nullable{T}) = begin
+  if elem.isnull
+    push!(arr.elems, zero(R))
+  else
+    # note a T value that is not one of the pool values will be assigned to 0.
+    # that is, it is treated as null.
+    push!(arr.elems, convert(R, findfirst(arr.pool, elem.value)))
+  end
+end
+Base.push!{T,V,R}(arr::EnumerationArray{T,1,V,R}, elem::R) = push!(arr.elems, elem)
+Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::Nullable{T}) = push!(arr.data, elem.isnull ? convert(T,NaN) : elem.value)
+Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::T) = push!(arr.data, elem)
+
+# TODO byarray_isless

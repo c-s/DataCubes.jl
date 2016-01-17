@@ -134,7 +134,7 @@ end
   permuted_arr = permutedims_if_necessary(arr, newdirs)
   elems_sofar = Set()
   axiselems_toshow = [falses(sizearr[dims[i]]) for i in 1:$N]
-  result = similar(permuted_arr, eltype(permuted_arr))
+  result = similar(permuted_arr)
   @nloops $N i d->1:sizearr[dims[d]] begin
     coords = @ntuple($N,i)
     full_coords = (remainingcoords...,coords...)
@@ -164,7 +164,7 @@ end
   permuted_arr = permutedims_if_necessary(arr, newdirs)
   elems_sofar = Set()
   axiselems_toshow = [falses(sizearr[dims[i]]) for i in 1:$N]
-  result = similar(permuted_arr, eltype(permuted_arr))
+  result = similar(permuted_arr)
   @nloops $N i d->1:sizearr[dims[d]] begin
     coords = @ntuple($N,i)
     full_coords = (remainingcoords...,coords...)

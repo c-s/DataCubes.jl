@@ -44,6 +44,10 @@ facts("Select tests") do
       @fact @select(lar, by[k1=_k2 - _k1], by[m1=_k2 .> 205], c1=f2(_)) --> @larr(c1=[63250 62000],axis1[k1=[100]],axis2[m1=[false,true]])
       @fact size(@select(lar, by[k1=_k2 - _c1,:r1], by[m1=_k2 .> 205], c1= _c1 .* _c2, :c2)) --> (500,2)
       @fact @select(@larr(a=collect(1:100),b=enumeration(repmat(collect(1:10),10))), by[:b], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact @select(@larr(a=collect(1:100),b=repmat(collect(1:10),10), c=repmat(collect(1:10),10)), by[:b,:c], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6],c=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact @select(@larr(a=collect(1:100),b=enumeration(repmat(collect(1:10),10)), c=repmat(collect(1:10),10)), by[:b,:c], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6],c=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact @select(@larr(a=collect(1:100),b=repmat(collect(1:10),10), c=enumeration(repmat(collect(1:10),10))), by[:b,:c], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6],c=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
+      @fact @select(@larr(a=collect(1:100),b=enumeration(repmat(collect(1:10),10)), c=enumeration(repmat(collect(1:10),10))), by[:b,:c], :a=>sum(_a), where[_a.>56]) --> sort(@larr(a=[385,390,395,400,304,308,312,316,320,324],axis1[b=[7,8,9,10,1,2,3,4,5,6],c=[7,8,9,10,1,2,3,4,5,6]]), 1, :b)
     end
   end
   context("selct tests") do
@@ -168,6 +172,18 @@ facts("Select tests") do
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=mean(_a),where[_a.<5],where[_a.>5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2])) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact update(@larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z]), a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna(d[:b])], by=[:b]) --> @larr(a=[16,11,13,4,5,6,16,16,11,13],b=[1,2,3,NA,NA,NA,1,1,2,3],c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z],d=[8,18,30,NA,NA,NA,7,1,4,9])
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]) --> larr(axis1=darr(b=[:a,:b]), ct=[2,3])
+    @fact typeof(pickaxis(@select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b]) --> @larr(axis1[b=[1.0,2.0]], ct=[3,2])
+    @fact (@rap typeof pickaxis(_,1) @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b])) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)) --> @larr(axis1[r=[:a,:b]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)) --> @larr(axis1[r=["a","b"]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},Nullable{ASCIIString}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)) --> @larr(axis1[r=[1.0,2.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r .* 2], s=sum(_a)) --> @larr(axis1[r=[2.0,4.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r.*2], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
   end
 
 end

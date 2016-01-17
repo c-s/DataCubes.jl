@@ -163,6 +163,8 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
                                       Base.sub, Base.slice)
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
+Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
+Base.copy(arr::FloatNAArray) = FloatNAArray(copy(arr.data))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   if isempty(arr0)
     return similar(arr0, Nullable{Any})
@@ -173,6 +175,8 @@ Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
+getindexvalue{T}(arr::FloatNAArray, ::Type{T}, args...) = convert(T, getindexvalue(arr.data, args...))
+getindexvalue(arr::FloatNAArray, args...) = getindexvalue(arr.data, args...)
 
 floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin
   after_first = false
@@ -261,16 +265,15 @@ a b |a b
 function nalift end
 
 nalift(x::Nullable) = x
-nalift{T}(x::AbstractArray{Nullable{T}}) = wrap_array(x)
+nalift{T<:Nullable}(x::AbstractArray{T}) = wrap_array(x)
 nalift{F<:AbstractFloat}(x::FloatNAArray{F}) = wrap_array(x)
 nalift{F<:AbstractFloat}(x::AbstractArray{F}) = wrap_array(FloatNAArray(x))
+nalift{T<:LDict}(x::AbstractArray{T}) = wrap_array(map(nalift, x))
 nalift(x::AbstractArray) = begin
   if isempty(x)
     wrap_array(similar(x, Nullable{eltype(x)}))
   elseif isa(x[1], Nullable) && all(elem->isa(elem, Nullable), x)
     # something is fishy... Even though x does not claim it is Nullable, its elements
-    #@show "something is fishy... Even though x does not claim it is Nullable, its elements"
-    #Nullable[x...]
     result = similar(x, Nullable)
     copy!(result, x)
     wrap_array(result)
@@ -281,9 +284,10 @@ end
 nalift(x::DictArray) = x
 nalift(x::LabeledArray) = x
 nalift(x::DataFrame) = x
-nalift{T,N,AXES,TN}(x::AbstractArray{LabeledArray{T,N,AXES,TN}}) = x
-nalift{K,N,VS,SV}(x::AbstractArray{DictArray{K,N,VS,SV}}) = x
+#nalift{T<:Union{LabeledArray,DictArray}}(x::AbstractArray{T}) = x
 nalift(x) = Nullable(x)
+nalift{K,V<:Nullable}(x::LDict{K,V}) = x
+nalift(x::LDict) = mapvalues(nalift, x)
 
 # nalift nonmacro version. Read the input array and put Nullable wrappers appropriately.
 nalift_nested(x::Nullable) = begin

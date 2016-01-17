@@ -300,21 +300,24 @@ end
   end
 end
 
-bymap_coords_calculate_helper{T}(bymap::Dict{T,Int}, byvec, bytype::Type{T}, i::Int) = begin
-  v::T = getindexvalue(byvec,bytype,i)
-  bymap[v]::Int
+#bymap_coords_calculate_helper{T}(bymap::Dict{T,Int}, byvec, bytype::Type{T}, i::Int) = begin
+#  v::T = getindexvalue(byvec,bytype,i)
+#  bymap[v]::Int
+#end
+
+create_bymap(byvec::DictArray, skip_ordering::Bool=false) = begin
+  # N 1 dimensional vectors to store the result axis labels.
+  labelvecs = ntuple(length(byvec.data)) do d
+    #elvaluetype(byvec.data.values[d])[]
+    create_zero_byvec(byvec.data.values[d])
+  end
+  create_bymap_inner(byvec, labelvecs, Tuple{[elvaluetype(v) for v in byvec.data.values]...}, skip_ordering)
 end
 
-create_bymap(byvec::DictArray, skip_ordering::Bool=false) = create_bymap_inner(byvec, Tuple{[elvaluetype(v) for v in byvec.data.values]...}, skip_ordering)
-
-create_bymap_inner{T}(byvec::DictArray, ::Type{T}, skip_ordering::Bool) = if isa(byvec, DictArray)
+create_bymap_inner{T,L}(byvec::DictArray, labelvecs::L, ::Type{T}, skip_ordering::Bool) = if isa(byvec, DictArray)
   # resmap: (d dim tuple) for the key tuple => the coordiante in the result byarray.
   lenbyvec::Int = length(byvec)
   resmap = Dict{T,Int}()
-  # N 1 dimensional vectors to store the result axis labels.
-  labelvecs = ntuple(length(byvec.data)) do d
-    eltype(byvec.data.values[d])[]
-  end
   # well, this type annotation is necessary to enhance performance!
   # don't know why the type is not inferred stably.
   indexvec::Vector{Int} = Array(Int, lenbyvec)
@@ -395,8 +398,10 @@ push_labelvecs_inner!(labelvecs::Tuple, value::Tuple) = begin
 end
 
 peel_nullabletype{T}(::Type{Nullable{T}}) = T
+peel_nullabletype{T}(::Type{T}) = T
 peel_nullabletype(::Type{Nullable}) = Any
 
+byarray_isless(x, y) = isless(x, y)
 byarray_isless{T}(x::Nullable{T}, y::Nullable{T}) =
   (x.isnull && !y.isnull) || (!x.isnull && !y.isnull && isless(x.value, y.value))
 byarray_isless{T1,T2}(x::Tuple{Nullable{T1},
@@ -547,6 +552,10 @@ Base.size(arr::SubArrayView) = (length(arr.indices),)
 Base.eltype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = T
 Base.endof(arr::SubArrayView) = length(arr.indices)
 Base.linearindexing{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.LinearFast()
+Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.data, U, dims)
+getindexvalue{T}(arr::SubArrayView, ::Type{T}, arg::Int) = getindexvalue(arr.data, T, arr.indices[arg]...)
+getindexvalue(arr::SubArrayView, arg::Int) = getindexvalue(arr.data, arr.indices[arg]...)
+
 
 """
 
@@ -1237,7 +1246,6 @@ get_function_arguments_exprs(expr) = begin
   end
 end
 
-
 # N is the original array dimensions.
 update_by_array{N}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,Int}}, byvec, bymap) = begin
   label = bymap[1]
@@ -1338,3 +1346,9 @@ update_agg!{N,V}(result::LDict, k, aggnum::Nullable{V}, indices::AbstractVector{
   end
 end
 
+create_zero_byvec{T}(arr::AbstractArray{T}) = T[]
+create_zero_byvec(arr::AbstractArrayWrapper) = create_zero_byvec(arr.a)
+create_zero_byvec{T,N,V,R}(arr::EnumerationArray{T,N,V,R}) = EnumerationArray((R[], arr.pool))
+create_zero_byvec{T}(arr::FloatNAArray{T}) = FloatNAArray(T[])
+create_zero_byvec(arr::SubArrayView) = create_zero_byvec(arr.data)
+create_zero_byvec(arr::BroadcastAxis) = create_zero_byvec(arr.axis)
