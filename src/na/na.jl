@@ -162,6 +162,8 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
 @delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
                                       Base.sub, Base.slice)
+Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, n::Int) = FloatNAArray(repmat(arr.data, n))
+Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, m::Int, n::Int) = FloatNAArray(repmat(arr.data, m, n))
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
@@ -521,6 +523,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 """
 function igna end
 
+igna(arr::AbstractArrayWrapper) = AbstractArrayWrapper(igna(arr.a))
 igna{T}(arr::AbstractArray{Nullable{T}}) = if isempty(arr)
   similar(arr, T)
 else
@@ -671,9 +674,9 @@ isna(arr::AbstractArray{Nullable}) = map(elem->elem.isnull, arr)
 isna{T<:AbstractFloat}(arr::FloatNAArray{T}) = map(isnan, arr.data)
 isna{T,N,A}(arr::AbstractArrayWrapper{T,N,A}) = AbstractArrayWrapper(isna(arr.a))
 isna{T<:AbstractFloat}(arr::AbstractArray{Nullable{T}}) = map(elem->elem.isnull || isnan(elem.value), arr)
-isna(x::Nullable) = x.isnull
 isna(arr::AbstractArray, coords...) = isna(arr[coords...])
 isna(arr::Nullable) = arr.isnull
+isna{T,N,V,R}(arr::EnumerationArray{T,N,V,R}) = (zeroR=zero(R); map(x->x==zeroR, arr.elems))
 
 # this is a little bit out of place...
 (==)(::AbstractArrayWrapper, ::DefaultAxis) = false

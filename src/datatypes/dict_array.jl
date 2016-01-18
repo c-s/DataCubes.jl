@@ -673,6 +673,9 @@ Base.repeat(arr::DictArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Array
 # move this to LabeledArray.jl
 #Base.convert(::Type{DictArray}, larr::LabeledArray) = selectfields(larr, allfieldnames(larr)...)
 
+Base.repmat(arr::Union{DictArray{TypeVar(:T),1},DictArray{TypeVar(:T),2}}, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,n), arr.data))
+Base.repmat(arr::Union{DictArray{TypeVar(:T),1},DictArray{TypeVar(:T),2}}, m::Int, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,m,n), arr.data))
+
 Base.Multimedia.writemime{N}(io::IO,
                              ::MIME"text/html",
                              arr::DictArray{TypeVar(:T),N};

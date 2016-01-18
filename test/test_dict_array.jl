@@ -134,6 +134,20 @@ facts("DictArray tests") do
     @fact mapslices(x->[1], darr(a=Int[]), [1])  --> isnull
     @fact size(mapslices(x->[1], darr(a=rand(0,5,3)), [2])) --> (0,3)
 
+    @fact sub(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    @fact slice(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    @fact typeof(repeat(darr(a=1.0*[1 2 3;4 5 6]), inner=[2,1], outer=[1,3])) --> DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
+    @fact reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6) --> darr(a=1.0*[1 2 3 4 5 6])
+    @fact typeof(reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6)) --> DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
+    @fact (1.0*nalift([1 2 3]))[CartesianIndex((1,2))].value --> 2.0
+    @fact (a=1.0*nalift([1 2 3]);a[1,2]=5.0;a) --> 1.0*nalift([1 5 3])
+    @fact (a=1.0*nalift([1 2 3]);a[2]=5.0;a) --> 1.0*nalift([1 5 3])
+    @fact (a=1.0*nalift([1 2 3]);a[1:2]=[5.0 1.0];a) --> 1.0*nalift([5 1 3])
+    @fact repeat(darr(a=1.0*[1 2;3 4]), inner=[2,1], outer=[1,3]) --> darr(a=1.0*[1 2 1 2 1 2;1 2 1 2 1 2;3 4 3 4 3 4;3 4 3 4 3 4])
+    @fact repeat(darr(a=enumeration([1 2;3 4])), inner=[2,1], outer=[1,3]) --> darr(a=enumeration([1 2 1 2 1 2;1 2 1 2 1 2;3 4 3 4 3 4;3 4 3 4 3 4]))
+    @fact repmat(darr(a=enumeration([1 2 3;4 5 6])), 2) --> darr(a=[1 2 3;4 5 6;1 2 3;4 5 6])
+    @fact typeof(repmat(darr(a=enumeration([1 2;3 4])), 2, 2).data[:a]) --> DataCubes.AbstractArrayWrapper{Nullable{Int64},2,DataCubes.EnumerationArray{Int64,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}}
+    @fact repmat(darr(a=enumeration([1 2;3 4])), 2, 2) --> darr(a=[1 2 1 2;3 4 3 4;1 2 1 2;3 4 3 4])
     @fact map(x->LDict(:c=>x[:a]), @darr(a=[1,2,3],b=[4,5,6])) --> @darr(c=[1,2,3])
     @fact map(x->x[:a], @darr(a=[1,2,3],b=[4,5,6])) --> nalift([1,2,3])
     @fact reverse(@darr(a=[1 2 3;4 5 6])) --> @darr(a=[4 5 6;1 2 3])
@@ -160,9 +174,14 @@ facts("DictArray tests") do
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=['x','y'], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact vcat(darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact hcat(darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0 4.0 5.0 6.0])
     @fact cat(1, darr(a=enumeration([1 2 3;4 5 6]), b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['x','y','z','a','b','c','d','e','f'])), darr(b=enumeration(['x' 'y' 'z'],['x','y','z','a','b','c','d','e','f']), d=[:m :n :p])) --> reshape(@darr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3)
+    @fact vcat(darr(a=enumeration([1 2 3;4 5 6]), b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['x','y','z','a','b','c','d','e','f'])), darr(b=enumeration(['x' 'y' 'z'],['x','y','z','a','b','c','d','e','f']), d=[:m :n :p])) --> reshape(@darr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['a','b','c','d','e','f'])), darr(b=enumeration(['a','b'],['a','b','c','d','e','f']), d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','a','b'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
+    @fact hcat(darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact show(darr(a=rand(2))) --> nothing

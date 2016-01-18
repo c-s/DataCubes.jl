@@ -15,20 +15,35 @@ facts("NA tests") do
   @fact simplify_array(nalift([1,2,3])) --> AbstractArrayWrapper([Nullable(1),Nullable(2),Nullable(3)])
   @fact simplify_array(Any[Nullable(3.5), Nullable(2.0), Nullable{Float64}()]) --> AbstractArrayWrapper(FloatNAArray([3.5, 2.0, NaN]))
   @fact (t=@larr(a=[1 2 3;4 5 6], b=[4 5 6;7 8 9]);dcube.setna!(t.data.data[:a],2,2);dcube.setna!(t,2,1);t) --> @larr(a=[1 2 3;NA NA 6], b=[4 5 6;NA 8 9])
+  @fact simplify_array(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
+  @fact sort(nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
+  @fact sort!(@nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
   @fact igna(Nullable(1.0), 3.0) --> 1.0
+  @fact igna(Array(Nullable{Int},0)) --> Array(Int,0)
+  @fact igna(Array(Nullable{Int},0),1) --> Array(Int,0)
+  @fact_throws igna(@nalift([1,2,NA]))
+  @fact_throws igna(@nalift([1,2.0,NA]))
   @fact igna(@nalift([1 3 NA]), 1) --> [1 3 1]
+  @fact igna(@nalift([1 3.0 NA]), 1) --> [1 3.0 1]
+  @fact igna(Array(Nullable,0), 1) --> Array(Nullable,0)
   @fact igna(@nalift([1 3 5]), 1) --> [1 3 5]
   @fact igna(@nalift([1.0 3.0 NA]), 1.0) --> [1.0 3.0 1.0]
+  @fact igna(@nalift([1.0 3.0 NA]))[3] --> isnan
   @fact igna(@nalift([1.0 3.0 5.0]), 1.0) --> [1.0 3.0 5.0]
   @fact isna(Nullable{Int}()) --> true
   @fact isna(Nullable(1)) --> false
   @fact isna(Nullable(1.0)) --> false
   @fact isna(@nalift([1 3 NA])) --> [false false true]
+  @fact isna(@nalift([1 3 NA]), 2:3) --> [false false true][2:3]
   @fact isna(@nalift([1 3 5])) --> [false false false]
   @fact isna(@nalift([1.0 3.0 NA])) --> [false false true]
   @fact isna(@nalift([1.0 3.0 5.0])) --> [false false false]
+  @fact isna(@nalift([1.0 3.0 5 NA])) --> [false false false true]
+  @fact isna(@enumeration([:a :b NA;:d NA :f])) --> [false false true;false true false]
+  @fact isna(@enumeration([:a :b NA;:d NA :f]), 1:2, 3) --> [false false true;false true false][1:2, 3]
+  @fact isna([Nullable{Float64}() Nullable(1.0)]) --> [true false]
   @fact ignabool(nalift([true, false])) --> [true, false]
   @fact ignabool(Nullable{Bool}()) --> false
   @fact ignabool(Nullable(true)) --> true
@@ -50,6 +65,8 @@ facts("NA tests") do
   #@fact nalift(DataCubes.simplify_array(Any[darr(a=[1,2,3]), darr(b=[:a,:b,:c])])) --> DataCubes.simplify_array(Any[darr(a=[1,2,3]), darr(b=[:a,:b,:c])])
   #@fact nalift(DataCubes.simplify_array(Any[larr(a=[1,2,3]), larr(b=[:a,:b,:c])])) --> DataCubes.simplify_array(Any[larr(a=[1,2,3]), larr(b=[:a,:b,:c])])
   @fact nalift(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
+  @fact pickaxis(larr(a=[1,2,3]),1) == nalift([1,2,3]) --> false
+  @fact nalift([1,2,3]) == pickaxis(larr(a=[1,2,3]),1) --> false
 
   context("FloatNAArray tests") do
     @fact map(identity, FloatNAArray(Array(Float64,0))) --> Array(Nullable{Any},0)
