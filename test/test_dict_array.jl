@@ -160,6 +160,11 @@ facts("DictArray tests") do
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=['x','y'], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact cat(1, darr(a=enumeration([1 2 3;4 5 6]), b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['x','y','z','a','b','c','d','e','f'])), darr(b=enumeration(['x' 'y' 'z'],['x','y','z','a','b','c','d','e','f']), d=[:m :n :p])) --> reshape(@darr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3)
+    @fact cat(2, darr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['a','b','c','d','e','f'])), darr(b=enumeration(['a','b'],['a','b','c','d','e','f']), d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','a','b'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
+    @fact cat(2, darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
+    @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact show(darr(a=rand(2))) --> nothing
     @fact show(darr(a=rand(2,3))) --> nothing
     @fact show(darr(a=rand(2,3,2))) --> nothing

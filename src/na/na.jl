@@ -192,7 +192,7 @@ end
 Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs...))
 Base.sort(arr::FloatNAArray; kwargs...) = FloatNAArray(sort(arr.data; kwargs...))
 Base.sort!(arr::FloatNAArray; kwargs...) = FloatNAArray(sort!(arr.data; kwargs...))
-Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)))
+Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)...))
 Base.vcat(arrs::FloatNAArray...) = cat(1, arrs...)
 Base.hcat(arrs::FloatNAArray...) = cat(2, arrs...)
 Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
