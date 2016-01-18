@@ -67,17 +67,11 @@ EnumerationArray{T,N}(arr::AbstractArray{Nullable{T},N}, poolorder::AbstractVect
 Base.size(arr::EnumerationArray) = size(arr.elems)
 Base.getindex{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
   elem = arr.elems[indices...]
-  map_nullable(elem, arr.pool) #elem == zero(R) ? Nullable{T}() : Nullable(arr.pool[elem])
+  map_nullable(elem, arr.pool)
 end
-map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = #map(elem) do x
-  #x == zero(R) ? Nullable{T}() : Nullable(pool[x])
-  EnumerationArray((elems, pool))
-#end
+map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = EnumerationArray((elems, pool))
 map_nullable{T,R}(elem::R, pool::Vector{T}) =
   elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
-getindexvalue{T,N,V,R,RR}(arr::EnumerationArray{T,N,V,R}, ::Type{RR}, indices...) = begin
-  arr.elems[indices...]::RR
-end
 getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
   arr.elems[indices...]
 end

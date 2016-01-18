@@ -29,6 +29,15 @@ facts("Sort tests") do
   @fact sort(@larr(a=[5 5 3;3 3 1],b=1.0*[3 1 4;8 9 7],axis1[k=[:a,:b]],axis2[r=[:X,:Y,:Z]]), 2, :a,:b, a_rev=true, b_rev=true) --> @larr(a=[5 5 3;3 3 1],b=1.0*[3 1 4;8 9 7],axis1[k=[:a,:b]],axis2[r=[:X,:Y,:Z]])
   @fact sort(@larr(a=1.0*[5 5 3;3 3 1],b=1.0*[3 1 4;8 9 7],axis1[k=[:a,:b]],axis2[r=[:X,:Y,:Z]]), 2, :b, b_coords=(1,:)) --> larr(a=1.0*[5 5 3;3 3 1],b=1.0*[1 3 4;9 8 7],axis1=darr(k=[:a,:b]),axis2=darr(r=[:Y,:X,:Z]))
   @fact sort(@larr(a=1.0*[5 5 3;3 3 1],b=[3 1 4;8 9 7],axis1[k=[:a,:b]],axis2[r=[:X,:Y,:Z]]), 2, :b, b_coords=(2,:)) --> larr(a=1.0*[3 5 5;1 3 3],b=[4 3 1;7 8 9],axis1=darr(k=[:a,:b]),axis2=darr(r=[:Z,:X,:Y]))
+  @fact sort(@larr(a=[5 NA 3;3 3 1],b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b, a_rev=true) --> @larr(a=[5 3 NA;3 1 3],b=[3 4 1;8 7 9],axis1[k = [:a,:b]],axis2[r = [:X,:Z,:Y]])
+  @fact sort(@larr(a=[5 NA 3;3 3 1],b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b, a_rev=true,b_rev=true) --> @larr(a=[5 3 NA;3 1 3],b=[3 4 1;8 7 9],axis1[k = [:a,:b]],axis2[r = [:X,:Z,:Y]])
+  @fact sort(@larr(a=[5 NA 3;3 3 1],b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b) --> @larr(a=[NA 3 5;3 1 3],b=[1 4 3;9 7 8],axis1[k = [:a,:b]],axis2[r = [:Y,:Z,:X]])
+  @fact sort(@larr(a=[5 NA 3;3 3 1],b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b, a_rev=true,b_rev=true) --> @larr(a=[5 3 NA;3 1 3],b=[3 4 1;8 7 9],axis1[k = [:a,:b]],axis2[r = [:X,:Z,:Y]])
+  @fact sort(@larr(a=[5 NA 3;3 3 1],b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b) --> @larr(a=[NA 3 5;3 1 3],b=[1 4 3;9 7 8],axis1[k = [:a,:b]],axis2[r = [:Y,:Z,:X]])
+  @fact sort(@larr(a=@enumeration([5 NA 3;3 3 1],[1,2,3,4,5]),b=[3 1 4;8 9 7],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b) --> @larr(a=[NA 3 5;3 1 3],b=[1 4 3;9 7 8],axis1[k = [:a,:b]],axis2[r = [:Y,:Z,:X]])
+  @fact sort(@larr(a=@enumeration([5 NA 3;3 3 1],[1,2,3,4,5]),b=enumeration([3 1 4;8 9 7],[10,9,8,7,6,5,4,3,2,1]),axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b,b_rev=true) --> @larr(a=[NA 3 5;3 1 3],b=[1 4 3;9 7 8],axis1[k = [:a,:b]],axis2[r = [:Y,:Z,:X]])
+  @fact sort(@larr(a=[5.0 NA 3.0;3.0 3.0 1.0],b=[3.0 1.0 4.0;8.0 9.0 7.0],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b, a_rev=true,b_rev=true) --> @larr(a=[5.0 3.0 NA;3.0 1.0 3.0],b=[3.0 4.0 1.0;8.0 7.0 9.0],axis1[k = [:a,:b]],axis2[r = [:X,:Z,:Y]])
+  @fact sort(@larr(a=[5.0 NA 3.0;3.0 3.0 1.0],b=[3.0 1.0 4.0;8.0 9.0 7.0],axis1[k = [:a,:b]],axis2[r = [:X,:Y,:Z]]),2,:a,:b) --> @larr(a=[NA 3.0 5.0;3.0 1.0 3.0],b=[1.0 4.0 3.0;9.0 7.0 8.0],axis1[k = [:a,:b]],axis2[r = [:Y,:Z,:X]])
 end
 
 end

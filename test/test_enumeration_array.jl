@@ -100,6 +100,7 @@ facts("EnumerationArray tests") do
     @fact sub(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=enumeration([:x,:y,:z])]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
     @fact endof(@enumeration([1,2,3,NA,5])) --> 5
     @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
+    @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, nalift([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1],[1,2,3]))
   end
 end
 

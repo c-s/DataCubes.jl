@@ -129,11 +129,12 @@ immutable FloatNAArray{T<:AbstractFloat,N,A} <: AbstractArray{Nullable{T},N}
 end
 
 FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{T,N}) = FloatNAArray{T,N,typeof(data)}(data)
-FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
-  nulldata = convert(T, NaN)
-  projdata = map(x->x.isnull ? nulldata : x.value, data)
-  FloatNAArray(projdata)
-end
+#it'll be better to live without it.
+#FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
+#  nulldata = convert(T, NaN)
+#  projdata = map(x->x.isnull ? nulldata : x.value, data)
+#  FloatNAArray(projdata)
+#end
 Base.eltype{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Nullable{T}
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::Int) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::CartesianIndex) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
@@ -175,7 +176,6 @@ Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
-getindexvalue{T}(arr::FloatNAArray, ::Type{T}, args...) = convert(T, getindexvalue(arr.data, args...))
 getindexvalue(arr::FloatNAArray, args...) = getindexvalue(arr.data, args...)
 
 floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin

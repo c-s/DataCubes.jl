@@ -195,7 +195,7 @@ getindexvalue(arr::DictArray, args...) = ntuple(length(arr.data)) do i
   #arr.data.values[i][args...]
   getindexvalue(arr.data.values[i], args...)
 end
-getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
+#getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
 """
 
 `getindexvalue(arr::AbstractArray, args...)`
@@ -204,7 +204,7 @@ Return `arr[args...]`.
 
 """
 getindexvalue(arr::AbstractArray, args...) = getindex(arr, args...)
-getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...)::T
+#getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...)::T
 # for internal use to impose type constraints. Similarly for other getindexvalue methods below.
 # note that these versions are used only to access one element, and not a range.
 getindexvalue{T1}(arr::DictArray, ::Type{Tuple{T1}}, args...) =
@@ -218,7 +218,7 @@ getindexvalue{T1,T2,T3}(arr::DictArray, ::Type{Tuple{T1,T2,T3}}, args...) =
     getindexvalue(arr.data.values[2],args...)::T2,
     getindexvalue(arr.data.values[3],args...)::T3)
 getindexvalue{T1,T2,T3,T4}(arr::DictArray, ::Type{Tuple{T1,T2,T3,T4}}, args...) =
-  (getindexvalue(arr.data.values[1]margs...)::T1,
+  (getindexvalue(arr.data.values[1],args...)::T1,
     getindexvalue(arr.data.values[2],args...)::T2,
     getindexvalue(arr.data.values[3],args...)::T3,
     getindexvalue(arr.data.values[4],args...)::T4)
@@ -913,9 +913,6 @@ reverse_if_required(rev::Bool, arr::AbstractArray) = if rev
 else
   arr
 end
-
-check_ldict(::LDict) = true
-check_ldict(_) = false
 
 """
 

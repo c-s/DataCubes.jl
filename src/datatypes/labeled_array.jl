@@ -751,7 +751,7 @@ Base.getindex(axis::BroadcastAxis, index::Int...) = getindex(axis.axis, index[ax
 Base.getindex(axis::BroadcastAxis, index::Int) = begin
   getindex(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
-getindexvalue{T}(axis::BroadcastAxis, ::Type{T}, args...) = getindexvalue(axis, args...)::T
+#getindexvalue{T}(axis::BroadcastAxis, ::Type{T}, args...) = getindexvalue(axis, args...)::T
 getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
 getindexvalue(axis::BroadcastAxis, args...) = begin
   newaxis = getindexvalue(axis.axis, args[axis.index])
@@ -768,6 +768,11 @@ getindexvalue(axis::BroadcastAxis, index::Int...) = getindexvalue(axis.axis, ind
 getindexvalue(axis::BroadcastAxis, index::Int) = begin
   getindexvalue(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
+# TODO let's make sub/slice for one dimensional indexing.
+Base.sub(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], sub(arr.base, args...), arr.index)
+Base.slice(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], slice(arr.base, args...), arr.index)
+Base.sub(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= sub(arr, args...)
+Base.slice(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = slice(arr, args...)
 
 """
 

@@ -21,35 +21,31 @@ AbstractArrayLT(arr::Union{DictArray,LabeledArray}, axis::Integer, field_names..
   AbstractArrayLT{length(field_names),typeof(ords),typeof(fields)}(ords, fields)
 end
 
-Base.Sort.lt{N}(ltobj::AbstractArrayLT{N}, x::Integer, y::Integer) = begin
-  for i in 1:N
-    atix = ltobj.fields[i][x]
-    atiy = ltobj.fields[i][y]
-    ord = ltobj.ords[i]
-    if atix.isnull
-      return !atiy.isnull
-    elseif atiy.isnull
-      return false
-    elseif Base.lt(ord, atix.value, atiy.value)
+@generated Base.Sort.lt{N}(ltobj::AbstractArrayLT{N}, x::Integer, y::Integer) = begin
+  comparison(i) = quote
+    atix = getindexvalue(ltobj.fields[$i], x)
+    atiy = getindexvalue(ltobj.fields[$i], y)
+    ord = ltobj.ords[$i]
+    if base_lt_helper(ord, atix, atiy)
       return true
-    elseif Base.lt(ord, atiy.value, atix.value)
+    elseif base_lt_helper(ord, atiy, atix)
       return false
     end
   end
-  false
+  exprs = map(n->comparison(n), 1:N)
+  Expr(:block, exprs..., :(return false))
 end
 
-Base.Sort.lt{O,T,A}(ltobj::AbstractArrayLT{1,O,Tuple{FloatNAArray{T,1,A}}}, x::Integer, y::Integer) = begin
-  atix = ltobj.fields[1].data[x]
-  atiy = ltobj.fields[1].data[y]
-  ord = ltobj.ords[1]
-  if isnan(atix)
-    return !isnan(atiy)
-  elseif isnan(atiy)
-    return false
-  end
-  Base.lt(ord, atix, atiy)
-end
+# @inline macro actually enhanced the performance.
+@inline base_lt_helper{O,X,Y}(ord::O, x::X, y::Y) = Base.lt(ord, x, y)
+@inline base_lt_helper{O,F<:AbstractFloat}(ord::O, x::F, y::F) =
+  (isnan(x) && !isnan(y)) || (!isnan(x) && !isnan(y) && Base.lt(ord, x, y))
+@inline base_lt_helper{F<:AbstractFloat}(ord::Base.Order.ReverseOrdering, x::F, y::F) =
+  (!isnan(x) && isnan(y)) || (!isnan(x) && !isnan(y) && Base.lt(ord, x, y))
+@inline base_lt_helper{O,X,Y}(ord::O, x::Nullable{X}, y::Nullable{Y}) =
+  (x.isnull && !y.isnull) || (!x.isnull && !y.isnull && Base.lt(ord, x.value, y.value))
+@inline base_lt_helper{X,Y}(ord::Base.Order.ReverseOrdering, x::Nullable{X}, y::Nullable{Y}) =
+  (!x.isnull && y.isnull) || (!x.isnull && !y.isnull && Base.lt(ord, x.value, y.value))
 
 sortpermbase(arr::Union{DictArray, LabeledArray}, axis::Integer, algorithm, order::Base.Ordering) = begin
   sorted_indices = collect(1:size(arr, axis))

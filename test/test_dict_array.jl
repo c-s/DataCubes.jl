@@ -183,6 +183,7 @@ facts("DictArray tests") do
       @fact (dcube.set_dispsize!!(5,5);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_dispheight!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(2,3,4)))) --> nothing
       @fact (dcube.set_default_dispsize!!();nothing) --> nothing
       @fact (dcube.set_dispalongrow!!(false);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_dispalongrow!!(true);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing

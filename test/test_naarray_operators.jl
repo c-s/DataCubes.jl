@@ -47,8 +47,23 @@ facts("NAArrayOperators tests") do
     @fact nalift([1.0,2.0,3.0]) + nalift([1,2,3]) --> nalift([2.0,4.0,6.0])
     @fact nalift([1.0,2.0,3.0]) + nalift([1.0,2.0,3.0]) --> nalift([2.0,4.0,6.0])
     @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + nalift([1.0,2.0,3.0]) --> nalift([2.0,4.0,6.0])
+    @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + @nalift([1.0,2.0,NA]) --> @nalift([2.0,4.0,NA])
+    @fact @nalift([1.0,2.0,NA]) + AbstractArrayWrapper([Nullable(1.0),Nullable{Float64}(), Nullable(3.0)]) --> @nalift([2.0,NA,NA])
     @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + nalift([1,2,3]) --> nalift([2.0,4.0,6.0])
-    @fact AbstractArrayWrapper(map(Nullable, [1.0,2.0,3.0])) + AbstractArrayWrapper([1,2,3]) --> nalift([2.0,4.0,6.0])
+    @fact AbstractArrayWrapper([Nullable(1.0),Nullable(2.0),Nullable{Float64}()]) + AbstractArrayWrapper([1,2,3]) --> @nalift([2.0,4.0,NA])
+    @fact AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> @nalift([2.0,4.0,NA])
+    @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) --> @nalift([2.0,4.0,NA])
+    @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([1,2,3]) --> [2.0,4.0,6.0]
+    @fact (2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
+    @fact @nalift([1,2,NA]) * (2+3im)--> @nalift([2+3im,4+6im,NA])
+    @fact Nullable(2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
+    @fact @nalift([1,2,NA]) * Nullable(2+3im)--> @nalift([2+3im,4+6im,NA])
+    @fact Nullable(im) / @nalift([1,2,NA]) --> @nalift([im,0.5im,NA])
+    @fact @nalift([1,2,NA]) / Nullable(im)--> @nalift([-im,-2im,NA])
+    @fact Nullable(e) / @nalift([1,2,NA]) --> @nalift([convert(Float64,e),convert(Float64,e/2),NA])
+    @fact @nalift([1,2,NA]) / Nullable(e)--> @nalift([convert(Float64,1/e),convert(Float64,2/e),NA])
+    @fact e / @nalift([1,2,NA]) --> @nalift([convert(Float64,e),convert(Float64,e/2),NA])
+    @fact @nalift([1,2,NA]) / e--> @nalift([convert(Float64,1/e),convert(Float64,2/e),NA])
     @fact nalift([1.0,2.0,3.0]) + 1.0 --> nalift([2.0,3.0,4.0])
     @fact 1.0 + nalift([1.0,2.0,3.0]) --> nalift([2.0,3.0,4.0])
     @fact nalift([1.0,2.0,3.0]) + 1 --> nalift([2.0,3.0,4.0])
@@ -76,6 +91,8 @@ facts("NAArrayOperators tests") do
     @fact nalift([1,2,3]) * Nullable{Int}() --> nalift([Nullable{Int}(), Nullable{Int}(), Nullable{Int}()])
     @fact @nalift([1,2,3,NA,NA,5]) ./ @nalift([2,1,2,3,NA,NA]) --> @nalift([0.5,2.0,1.5,NA,NA,NA])
     @fact @nalift([1,2,3,NA,NA,5]) ./ @nalift([2,1,2,3,NA,NA]) --> @nalift([0.5,2.0,1.5,NA,NA,NA])
+    @fact @nalift([1,2,3,NA,NA,5]) ./ DataCubes.wrap_array([2,1,2,3,2,5]) --> @nalift([0.5,2.0,1.5,NA,NA,1.0])
+    @fact DataCubes.wrap_array([1,2,3,4,5,6]) ./ @nalift([2,1,2,2,NA,NA]) --> @nalift([0.5,2.0,1.5,2.0,NA,NA])
     @fact @nalift([1,2,3,NA,NA,5]) ./ 2 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
     @fact @nalift([1,2,3,NA,NA,5]) ./ 2.0 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
     @fact @nalift([1,2,3,NA,NA,5]) / 2 --> @nalift([0.5,1.0,1.5,NA,NA,2.5])
@@ -84,6 +101,18 @@ facts("NAArrayOperators tests") do
     @fact 1.0/@nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
     @fact 1 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
     @fact 1.0 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
+    @fact e .^ @nalift([1,2,NA]) --> map(x->x.isnull ? Nullable{Float64}() : Nullable(e^x.value), @nalift([1,2,NA]))
+    @fact e .^ DataCubes.wrap_array([1.0,2.0]) --> DataCubes.wrap_array(map(x->e^x, [1.0,2.0]))
+    @fact e .^ DataCubes.wrap_array(Real[1.0,2]) --> DataCubes.wrap_array(map(x->e^x, Real[1.0,2]))
+    @fact @nalift([1,3,NA]) == @nalift([1,NA,3]) --> false
+    @fact @nalift([1,NA,3]) == @nalift([1,3,NA]) --> false
+    @fact @nalift([1,NA,3]) == @nalift([1,NA,3]) --> true
+    @fact @nalift([1,NA,3]) == @nalift([1,NA,2]) --> false
+    @fact @nalift([1.0,3.0,NA]) == @nalift([1.0,NA,3.0]) --> false
+    @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,3.0,NA]) --> false
+    @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,NA,3.0]) --> true
+    @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,NA,2.0]) --> false
+
   end
 end
 

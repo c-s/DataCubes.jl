@@ -23,7 +23,7 @@ facts("DataFrameInterface tests") do
     DataFrame(Any[repmat([:a,:b],5),repmat(10:11,5),collect(1:10), repmat(["x","y"], 5), fill(:sym,10)], [:k1,:k2,:A,:B,:C])
   @fact DataFrame(@larr(A=reshape(collect(1:10),2,5), B=reshape(repmat(["x","y"],5),2,5), C=reshape(fill(:sym,10),2,5), axis1[k1=[:a,:b],k2=[10,11]], axis2[r=['A',3,"5",:x,1.0]])) -->
     DataFrame(Any[repmat([:a,:b],5),repmat(10:11,5),repeat(['A',3,"5",:x,1.0],inner=[2]),collect(1:10), repmat(["x","y"], 5), fill(:sym,10)], [:k1,:k2,:r,:A,:B,:C])
-
+    @fact DataCubes.wrap_array(DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))) --> DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))
 
   #using DataCubes;using DataFrames;using RDatasets
   context("RDatasets readability tests") do
