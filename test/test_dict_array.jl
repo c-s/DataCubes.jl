@@ -145,9 +145,13 @@ facts("DictArray tests") do
     @fact (a=1.0*nalift([1 2 3]);a[1:2]=[5.0 1.0];a) --> 1.0*nalift([5 1 3])
     @fact repeat(darr(a=1.0*[1 2;3 4]), inner=[2,1], outer=[1,3]) --> darr(a=1.0*[1 2 1 2 1 2;1 2 1 2 1 2;3 4 3 4 3 4;3 4 3 4 3 4])
     @fact repeat(darr(a=enumeration([1 2;3 4])), inner=[2,1], outer=[1,3]) --> darr(a=enumeration([1 2 1 2 1 2;1 2 1 2 1 2;3 4 3 4 3 4;3 4 3 4 3 4]))
+    @fact repeat(darr(a=1.0*nalift([1 2;3 4])), inner=[2,1], outer=[1,3]) --> darr(a=1.0*[1 2 1 2 1 2;1 2 1 2 1 2;3 4 3 4 3 4;3 4 3 4 3 4])
     @fact repmat(darr(a=enumeration([1 2 3;4 5 6])), 2) --> darr(a=[1 2 3;4 5 6;1 2 3;4 5 6])
+    @fact repmat(darr(a=1.0*nalift([1 2 3;4 5 6])), 2) --> darr(a=1.0*[1 2 3;4 5 6;1 2 3;4 5 6])
+    @fact repmat(darr(a=1.0*nalift([1 2 3;4 5 6])), 2) --> darr(a=1.0*[1 2 3;4 5 6;1 2 3;4 5 6])
     @fact typeof(repmat(darr(a=enumeration([1 2;3 4])), 2, 2).data[:a]) --> DataCubes.AbstractArrayWrapper{Nullable{Int64},2,DataCubes.EnumerationArray{Int64,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}}
     @fact repmat(darr(a=enumeration([1 2;3 4])), 2, 2) --> darr(a=[1 2 1 2;3 4 3 4;1 2 1 2;3 4 3 4])
+    @fact repmat(darr(a=1.0*nalift([1 2;3 4])), 2, 2) --> darr(a=1.0*[1 2 1 2;3 4 3 4;1 2 1 2;3 4 3 4])
     @fact map(x->LDict(:c=>x[:a]), @darr(a=[1,2,3],b=[4,5,6])) --> @darr(c=[1,2,3])
     @fact map(x->x[:a], @darr(a=[1,2,3],b=[4,5,6])) --> nalift([1,2,3])
     @fact reverse(@darr(a=[1 2 3;4 5 6])) --> @darr(a=[4 5 6;1 2 3])
@@ -184,12 +188,15 @@ facts("DictArray tests") do
     @fact hcat(darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    @fact reshape(darr(a=enumeration(11:16)),2,3) --> darr(a=[11 13 15;12 14 16])
+    @fact reshape(darr(a=enumeration(11:16)),(2,3)) --> darr(a=[11 13 15;12 14 16])
     @fact show(darr(a=rand(2))) --> nothing
     @fact show(darr(a=rand(2,3))) --> nothing
     @fact show(darr(a=rand(2,3,2))) --> nothing
     @fact show(darr(a=rand(2,3,2,2))) --> nothing
 
     context("show tests") do
+      @fact show(darr(a=slice([1,2],1))) --> nothing
       @fact show(darr(a=[])) --> nothing
       @fact show(darr(a=rand(2))) --> nothing
       @fact show(darr(a=rand(2,3))) --> nothing
@@ -208,6 +215,7 @@ facts("DictArray tests") do
       @fact (dcube.set_dispheight!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(2,3,4)))) --> nothing
+      @fact (dcube.set_dispwidth!!(3);writemime(STDOUT,MIME("text/html"),darr(a=slice([1,2],1)))) --> nothing
       @fact (dcube.set_default_dispsize!!();nothing) --> nothing
       @fact (dcube.set_dispalongrow!!(false);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_dispalongrow!!(true);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing

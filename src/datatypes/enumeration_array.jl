@@ -70,11 +70,9 @@ Base.getindex{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
   map_nullable(elem, arr.pool)
 end
 map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = EnumerationArray((elems, pool))
-map_nullable{T,R}(elem::R, pool::Vector{T}) =
-  elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
-getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
-  arr.elems[indices...]
-end
+map_nullable{T,R}(elem::R, pool::Vector{T}) = elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
+
+getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = arr.elems[indices...]::R
 
 Base.eltype{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Nullable{T}
 Base.length(arr::EnumerationArray) = length(arr.elems)

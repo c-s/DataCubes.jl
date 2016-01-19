@@ -183,6 +183,8 @@ Base.sub(arr::DictArray, args::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}
   create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, map(x->sub(x, args...), arr.data.values)))
 Base.slice(arr::DictArray, args::Union{Colon, Int64, AbstractArray{TypeVar(:T), 1}}...) =
   create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, map(x->slice(x, args...), arr.data.values)))
+Base.sub(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}}}) = sub(arr, args...)
+Base.slice(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}}}) = slice(arr, args...)
 
 """
 
