@@ -19,8 +19,8 @@ facts("EnumerationArray tests") do
   @fact dcube.wrap_array((a=enumeration([:x,:y]);copy!(a, enumeration([:m,:n]));a)) --> dcube.wrap_array(enumeration([:m,:n]))
   @fact_throws enumeration([1 2.0 NA])
   @fact_throws enumeration([1 2.0 NA],[2.0,1])
-  @fact sort(enumeration([6,5,3,1,2,1])) --> nalift([6,5,3,1,1,2])
-  @fact sort!(enumeration([6,5,3,1,2,1])) --> nalift([6,5,3,1,1,2])
+  @fact dcube.wrap_array(sort(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
+  @fact dcube.wrap_array(sort!(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
 
   context("enumerations in labeled array tests") do
     arr = larr(
