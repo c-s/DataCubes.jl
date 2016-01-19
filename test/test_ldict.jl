@@ -12,6 +12,14 @@ facts("LDict tests") do
     @fact d1 --> d2
     @fact d2 --> d3
     @fact d3 --> d4
+    @fact_throws LDict([:a,:b,:c], [1,2])
+    @fact DataCubes.create_ldict_nocheck() --> isempty
+    @fact DataCubes.create_ldict_nocheck((:a,3),(:b,2)) --> LDict(:a=>3,:b=>2)
+    @fact DataCubes.create_ldict_nocheck(Dict(:a=>3,:b=>2)) --> Dict(:a=>3,:b=>2)
+    @fact LDict(Dict(:a=>3,:b=>2)) --> Dict(:a=>3,:b=>2)
+    @fact eltype(LDict(:a=>3,:b=>2)) --> Pair{Symbol,Int}
+    @fact keys(LDict(:a=>3,:b=>2)) --> [:a,:b]
+    @fact values(LDict(:a=>3,:b=>2)) --> [3,2]
   end
   context("method tests") do
     @fact merge(LDict(:a=>1, :b=>2, :c=>3), LDict(:a=>10, :d=>15)) -->

@@ -184,6 +184,15 @@ facts("Select tests") do
     @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
     @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r .* 2], s=sum(_a)) --> @larr(axis1[r=[2.0,4.0]], s=[12,9])
     @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r.*2], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r]) -->  typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r,r7=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z'],r7=['X','Y','Z']), s=[5,7,9])
   end
 
 end

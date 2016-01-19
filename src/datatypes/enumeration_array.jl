@@ -67,20 +67,12 @@ EnumerationArray{T,N}(arr::AbstractArray{Nullable{T},N}, poolorder::AbstractVect
 Base.size(arr::EnumerationArray) = size(arr.elems)
 Base.getindex{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
   elem = arr.elems[indices...]
-  map_nullable(elem, arr.pool) #elem == zero(R) ? Nullable{T}() : Nullable(arr.pool[elem])
+  map_nullable(elem, arr.pool)
 end
-map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = #map(elem) do x
-  #x == zero(R) ? Nullable{T}() : Nullable(pool[x])
-  EnumerationArray((elems, pool))
-#end
-map_nullable{T,R}(elem::R, pool::Vector{T}) =
-  elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
-getindexvalue{T,N,V,R,RR}(arr::EnumerationArray{T,N,V,R}, ::Type{RR}, indices...) = begin
-  arr.elems[indices...]::RR
-end
-getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = begin
-  arr.elems[indices...]
-end
+map_nullable{T,N,R}(elems::AbstractArray{R,N}, pool::Vector{T}) = EnumerationArray((elems, pool))
+map_nullable{T,R}(elem::R, pool::Vector{T}) = elem == zero(R) ? Nullable{T}() : Nullable(pool[elem])
+
+getindexvalue{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, indices...) = arr.elems[indices...]::R
 
 Base.eltype{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Nullable{T}
 Base.length(arr::EnumerationArray) = length(arr.elems)
@@ -115,7 +107,8 @@ Base.reshape(arr::EnumerationArray, args...) = EnumerationArray((reshape(arr.ele
 Base.transpose(arr::EnumerationArray, args...) = EnumerationArray((transpose(arr.elems, args...), arr.pool))
 Base.permutedims(arr::EnumerationArray, args...) = EnumerationArray((permutedims(arr.elems, args...), arr.pool))
 Base.repeat(arr::EnumerationArray, args...;kwargs...) = EnumerationArray((repeat(arr.elems, args...;kwargs...), arr.pool))
-Base.repmat(arr::EnumerationArray, args...) = EnumerationArray((repeat(arr.elems, args...), arr.pool))
+Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
+Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
 Base.sort(arr::EnumerationArray, args...) = EnumerationArray((sort(arr.elems, args...), arr.pool))
 Base.sort!(arr::EnumerationArray, args...) = (sort!(arr.elems, args...); arr)
 Base.cat(dim::Int, arr1::EnumerationArray, arrs::EnumerationArray...) = begin
@@ -197,10 +190,10 @@ julia> enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 function enumeration end
 
 enumeration{T}(arr::AbstractArray{Nullable{T}}) = EnumerationArray(arr)
-enumeration(arr::AbstractArray{Nullable}) = EnumerationArray(arr)
+enumeration(arr::AbstractArray{Nullable}) = throw(ArgumentError("the input array needs to be typed."))
 enumeration{T}(arr::AbstractArray{T}) = EnumerationArray(nalift(arr))
 enumeration{T}(arr::AbstractArray{Nullable{T}}, poolorder::Vector{T}) = EnumerationArray(arr, poolorder)
-enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = EnumerationArray(arr, poolorder)
+enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = throw(ArgumentError("the input array needs to be typed."))
 enumeration(arr::AbstractArray, poolorder::Vector) = EnumerationArray(nalift(arr), poolorder)
 enumeration(arr::AbstractArray, poolorder) = EnumerationArray(nalift(arr), collect(poolorder))
 

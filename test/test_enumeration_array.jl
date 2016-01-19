@@ -15,6 +15,12 @@ facts("EnumerationArray tests") do
   @fact dcube.wrap_array(transpose(EnumerationArray(@nalift(["a" NA "b" "b";NA "b" "a" "c"]), ["c","a","b"]))) --> dcube.wrap_array(EnumerationArray(@nalift(["a" NA;NA "b";"b" "a";"b" "c"])))
   @fact dcube.wrap_array(transpose(EnumerationArray(@nalift(["a" NA "b" "b";NA "b" "a" "c"]), ["c","a","b"]))) --> dcube.wrap_array(permutedims(EnumerationArray(@nalift(["a" NA "b" "b";NA "b" "a" "c"]), ["c","a","b"]), (2,1)))
   @fact dcube.wrap_array(reverse(enumeration(["hello", "hello", "hi"]))) --> dcube.wrap_array(enumeration(["hi", "hello", "hello"]))
+  @fact dcube.wrap_array((a=enumeration([:a,:b,:c]);a[2]=Nullable{Symbol}();a)) --> dcube.wrap_array(@enumeration([:a,NA,:c],[:a,:b,:c]))
+  @fact dcube.wrap_array((a=enumeration([:x,:y]);copy!(a, enumeration([:m,:n]));a)) --> dcube.wrap_array(enumeration([:m,:n]))
+  @fact_throws enumeration([1 2.0 NA])
+  @fact_throws enumeration([1 2.0 NA],[2.0,1])
+  @fact dcube.wrap_array(sort(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
+  @fact dcube.wrap_array(sort!(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
 
   context("enumerations in labeled array tests") do
     arr = larr(
@@ -100,6 +106,8 @@ facts("EnumerationArray tests") do
     @fact sub(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=enumeration([:x,:y,:z])]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
     @fact endof(@enumeration([1,2,3,NA,5])) --> 5
     @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
+    @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, nalift([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1],[1,2,3]))
+    @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, enumeration([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1]))
   end
 end
 

@@ -26,6 +26,8 @@ Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = 
 Base.slice(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(slice(arr.a, args...))
 Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args...))
 Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args...))
+Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, n::Int) = AbstractArrayWrapper(repmat(arr.a, n))
+Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, m::Int, n::Int) = AbstractArrayWrapper(repmat(arr.a, m, n))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find)
 @delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
@@ -49,6 +51,9 @@ Base.sort!(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort!(ar
 Base.copy(arr::AbstractArrayWrapper) = AbstractArrayWrapper(copy(arr.a))
 Base.copy!(tgt::AbstractArrayWrapper, src::AbstractArrayWrapper) = copy!(tgt.a, src.a)
 Base.copy!(tgt::AbstractArrayWrapper, src::AbstractArray) = copy!(tgt.a, src)
+Base.cat(dim::Int, arr::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(cat(dim, arr.a, map(x->x.a, arrs)...))
+Base.vcat(arrs::AbstractArrayWrapper...) = cat(1, arrs...)
+Base.hcat(arrs::AbstractArrayWrapper...) = cat(2, arrs...)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, arg::Int) = getindex(arr.a, arg)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, args::Int...) = getindex(arr.a, args...)
 Base.getindex{T,N}(arr::AbstractArrayWrapper{T,N}, indices::CartesianIndex) = getindex(arr.a, indices)
@@ -60,7 +65,6 @@ Base.getindex(arr::AbstractArrayWrapper, args...) = begin
   AbstractArrayWrapper(res)
   #end
 end
-getindexvalue{T}(arr::AbstractArrayWrapper, ::Type{T}, args...) = getindexvalue(arr.a, T, args...)
 getindexvalue(arr::AbstractArrayWrapper, args...) = getindexvalue(arr.a, args...)
 
 Base.map(f, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
@@ -107,12 +111,6 @@ const LiftToNullableTypes = [Bool,
                              AbstractString,
                              Char,
                              Symbol]
-
-promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{promote_type(T,U)}
-promote_nullable_types{T,U}(::Type{T},::Type{Nullable{U}}) = Nullable{promote_type(T,U)}
-promote_nullable_types{T,U}(::Type{Nullable{T}},::Type{U}) = Nullable{promote_type(T,U)}
-promote_nullable_types{T,U}(::Type{T},::Type{U}) = promote_type(T,U)
-#promote_nullable_types(::DataType,::DataType) = Nullable{Any}
 
 promote_nullable_optypes{T,U}(op,::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
 promote_nullable_optypes{T,U}(op,::Type{T},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
@@ -205,13 +203,8 @@ macro absarray_binary_wrapper(ops...)
         resultdata = result.data
         na = convert(K,NaN)
         for i in eachindex(xa,ya)
-          @inbounds xai = xa[i]
-          @inbounds yai = ya[i]
-          if xai.isnull || yai.isnull
-            @inbounds resultdata[i] = na
-          else
-            @inbounds resultdata[i] = $(esc(op.args[2]))(xai.value, yai.value)
-          end
+          @inbounds v = $(esc(op.args[2]))(xa[i], ya[i])
+          @inbounds resultdata[i] = v.isnull ? na : v.value
         end
       end
       $(symbol(op.args[1],naop_suffix)){N,K,T,A,U}(result::FloatNAArray{K,N},
@@ -248,18 +241,6 @@ macro absarray_binary_wrapper(ops...)
         end
       end
       $(symbol(op.args[1],naop_suffix)){N,K,T,U<:Nullable}(result::FloatNAArray{K,N},
-                                                     x::AbstractArrayWrapper{T,N},
-                                                     y::AbstractArrayWrapper{U,N}) = begin
-        xa= x.a
-        ya = y.a
-        resultdata = result.data
-        na = convert(K,NaN)
-        for i in eachindex(xa,ya)
-          @inbounds v = $(esc(op.args[2]))(xa[i], ya[i])
-          @inbounds resultdata[i] = v.isnull ? na : v.value
-        end
-      end
-      $(symbol(op.args[1],naop_suffix)){N,K,T<:Nullable,U<:Nullable}(result::FloatNAArray{K,N},
                                                      x::AbstractArrayWrapper{T,N},
                                                      y::AbstractArrayWrapper{U,N}) = begin
         xa= x.a

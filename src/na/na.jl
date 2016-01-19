@@ -129,11 +129,12 @@ immutable FloatNAArray{T<:AbstractFloat,N,A} <: AbstractArray{Nullable{T},N}
 end
 
 FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{T,N}) = FloatNAArray{T,N,typeof(data)}(data)
-FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
-  nulldata = convert(T, NaN)
-  projdata = map(x->x.isnull ? nulldata : x.value, data)
-  FloatNAArray(projdata)
-end
+#it'll be better to live without it.
+#FloatNAArray{T<:AbstractFloat,N}(data::AbstractArray{Nullable{T},N}) = begin
+#  nulldata = convert(T, NaN)
+#  projdata = map(x->x.isnull ? nulldata : x.value, data)
+#  FloatNAArray(projdata)
+#end
 Base.eltype{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Nullable{T}
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::Int) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
 Base.getindex{T<:AbstractFloat}(arr::FloatNAArray{T}, arg::CartesianIndex) = (r=getindex(arr.data, arg);isnan(r) ? Nullable{T}() : Nullable(r))
@@ -161,6 +162,8 @@ Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
 @delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
                                       Base.sub, Base.slice)
+Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, n::Int) = FloatNAArray(repmat(arr.data, n))
+Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, m::Int, n::Int) = FloatNAArray(repmat(arr.data, m, n))
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
@@ -175,7 +178,6 @@ Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   floatnaarray_map_inner!(result, firstelem, f, arr0, arrs)
   result
 end
-getindexvalue{T}(arr::FloatNAArray, ::Type{T}, args...) = convert(T, getindexvalue(arr.data, args...))
 getindexvalue(arr::FloatNAArray, args...) = getindexvalue(arr.data, args...)
 
 floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::FloatNAArray, arrs) = begin
@@ -192,7 +194,7 @@ end
 Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs...))
 Base.sort(arr::FloatNAArray; kwargs...) = FloatNAArray(sort(arr.data; kwargs...))
 Base.sort!(arr::FloatNAArray; kwargs...) = FloatNAArray(sort!(arr.data; kwargs...))
-Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)))
+Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)...))
 Base.vcat(arrs::FloatNAArray...) = cat(1, arrs...)
 Base.hcat(arrs::FloatNAArray...) = cat(2, arrs...)
 Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
@@ -521,6 +523,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 """
 function igna end
 
+igna(arr::AbstractArrayWrapper) = AbstractArrayWrapper(igna(arr.a))
 igna{T}(arr::AbstractArray{Nullable{T}}) = if isempty(arr)
   similar(arr, T)
 else
@@ -671,9 +674,9 @@ isna(arr::AbstractArray{Nullable}) = map(elem->elem.isnull, arr)
 isna{T<:AbstractFloat}(arr::FloatNAArray{T}) = map(isnan, arr.data)
 isna{T,N,A}(arr::AbstractArrayWrapper{T,N,A}) = AbstractArrayWrapper(isna(arr.a))
 isna{T<:AbstractFloat}(arr::AbstractArray{Nullable{T}}) = map(elem->elem.isnull || isnan(elem.value), arr)
-isna(x::Nullable) = x.isnull
 isna(arr::AbstractArray, coords...) = isna(arr[coords...])
 isna(arr::Nullable) = arr.isnull
+isna{T,N,V,R}(arr::EnumerationArray{T,N,V,R}) = (zeroR=zero(R); map(x->x==zeroR, arr.elems))
 
 # this is a little bit out of place...
 (==)(::AbstractArrayWrapper, ::DefaultAxis) = false

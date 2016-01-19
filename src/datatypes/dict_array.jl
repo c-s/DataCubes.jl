@@ -183,6 +183,8 @@ Base.sub(arr::DictArray, args::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}
   create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, map(x->sub(x, args...), arr.data.values)))
 Base.slice(arr::DictArray, args::Union{Colon, Int64, AbstractArray{TypeVar(:T), 1}}...) =
   create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, map(x->slice(x, args...), arr.data.values)))
+Base.sub(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}}}) = sub(arr, args...)
+Base.slice(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}}}) = slice(arr, args...)
 
 """
 
@@ -195,7 +197,7 @@ getindexvalue(arr::DictArray, args...) = ntuple(length(arr.data)) do i
   #arr.data.values[i][args...]
   getindexvalue(arr.data.values[i], args...)
 end
-getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
+#getindexvalue{T}(arr::DictArray, ::Type{T}, args...) = error("need more specifics")
 """
 
 `getindexvalue(arr::AbstractArray, args...)`
@@ -204,7 +206,7 @@ Return `arr[args...]`.
 
 """
 getindexvalue(arr::AbstractArray, args...) = getindex(arr, args...)
-getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...)::T
+#getindexvalue{T}(arr::AbstractArray, ::Type{T}, args...) = getindex(arr, args...)::T
 # for internal use to impose type constraints. Similarly for other getindexvalue methods below.
 # note that these versions are used only to access one element, and not a range.
 getindexvalue{T1}(arr::DictArray, ::Type{Tuple{T1}}, args...) =
@@ -218,7 +220,7 @@ getindexvalue{T1,T2,T3}(arr::DictArray, ::Type{Tuple{T1,T2,T3}}, args...) =
     getindexvalue(arr.data.values[2],args...)::T2,
     getindexvalue(arr.data.values[3],args...)::T3)
 getindexvalue{T1,T2,T3,T4}(arr::DictArray, ::Type{Tuple{T1,T2,T3,T4}}, args...) =
-  (getindexvalue(arr.data.values[1]margs...)::T1,
+  (getindexvalue(arr.data.values[1],args...)::T1,
     getindexvalue(arr.data.values[2],args...)::T2,
     getindexvalue(arr.data.values[3],args...)::T3,
     getindexvalue(arr.data.values[4],args...)::T4)
@@ -673,6 +675,9 @@ Base.repeat(arr::DictArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Array
 # move this to LabeledArray.jl
 #Base.convert(::Type{DictArray}, larr::LabeledArray) = selectfields(larr, allfieldnames(larr)...)
 
+Base.repmat(arr::Union{DictArray{TypeVar(:T),1},DictArray{TypeVar(:T),2}}, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,n), arr.data))
+Base.repmat(arr::Union{DictArray{TypeVar(:T),1},DictArray{TypeVar(:T),2}}, m::Int, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,m,n), arr.data))
+
 Base.Multimedia.writemime{N}(io::IO,
                              ::MIME"text/html",
                              arr::DictArray{TypeVar(:T),N};
@@ -913,9 +918,6 @@ reverse_if_required(rev::Bool, arr::AbstractArray) = if rev
 else
   arr
 end
-
-check_ldict(::LDict) = true
-check_ldict(_) = false
 
 """
 

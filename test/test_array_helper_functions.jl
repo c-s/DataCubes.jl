@@ -17,6 +17,7 @@ facts("ArrayHelperFunctions tests") do
   @fact prod(@nalift([1.0,2.0,3.0,NA])) --> x -> DataCubes.naop_eq(x, Nullable(6.0)).value
   @fact prod(@nalift([1,2,3,NA,15])) --> x -> DataCubes.naop_eq(x, Nullable(90)).value
   @fact prod(@nalift([1.0,2.0,3.0,NA,15.0])) --> x -> DataCubes.naop_eq(x, Nullable(90.0)).value
+  @fact diff(1.0*nalift([1 2 3;6 5 4]),1,2) --> 1.0*nalift([1 -4 -2;5 3 1])
   @fact collect(DataCubes.dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))) --> [1,20,3,50]
   @fact collect(DataCubes.dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))) --> [1.0,20.0,3.0,50.0]
   @fact DataCubes.simplify_array(map(x->x[1],collect(DataCubes.enum_dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))))) --> map(x->x[1],DataCubes.wrap_array(collect(zip([1,2,3,5],@nalift([1,20,3,50])))))

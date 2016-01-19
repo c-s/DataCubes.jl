@@ -230,6 +230,7 @@ facts("ArrayUtil tests") do
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:x) --> LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x"))
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->d .== :a) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2:30) --> LDict(:a=>Nullable(1))
+    @fact discard(larr(a=[1 2 3;4 5 6]), 1:1, 2:3) --> larr(a=[4]')
     @fact namerge(@nalift([1,2,NA,4,NA]), @nalift([11,12,13,NA,NA])) --> @nalift([11,12,13,4,NA])
     @fact namerge(@nalift([1,2,NA,4,NA]), @nalift([11,12,13,NA,NA]), @nalift([NA,21,22,NA,25])) --> @nalift([11,21,22,4,25])
     @fact namerge(@nalift([1,2,NA,4,NA]), Nullable(3)) --> @nalift([3,3,3,3,3])
