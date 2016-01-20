@@ -246,6 +246,15 @@ facts("ArrayUtil tests") do
     @fact namerge(Nullable(1), Nullable(2)).value --> 2
     @fact namerge(1, 2).value --> 2
     @fact namerge(Nullable{Int}(), Nullable{Int}()) --> x->x.isnull
+    @fact mapvalues(+, 1, darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
+    @fact mapvalues(+, Nullable(1), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
+    @fact mapvalues(+, darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), 1) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
+    @fact mapvalues(+, darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), Nullable(1)) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
+    @fact mapvalues(+, darr(b=[11 12;13 14],a=[1 2;3 4]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> darr(b=1.0*[12 14;16 18],a=1.0*[2 4;6 8])
+    @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> larr(b=1.0*[12 14;16 18],a=1.0*[2 4;6 8],axis1=[:x,:y])
+    @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), 1) --> larr(b=1.0*[13 15;17 19],a=1.0*[3 5;7 9],axis1=[:x,:y])
+    @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), Nullable(1)) --> larr(b=1.0*[13 15;17 19],a=1.0*[3 5;7 9],axis1=[:x,:y])
+    @fact_throws mapvrlues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), larr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]))
   end
 end
 

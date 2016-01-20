@@ -265,7 +265,6 @@ macro absarray_binary_wrapper(ops...)
       end
 
 
-
       $(esc(op.args[1])){T,U<:Nullable}(x::AbstractArrayWrapper{T}, y::U) = begin
         result = similar(x, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result.a, x, y)
@@ -343,6 +342,14 @@ macro absarray_binary_wrapper(ops...)
         end
       end
 
+      $(esc(op.args[1]))(x::Nullable, y::Union{DictArray,LabeledArray}) = mapvalues($(esc(op.args[1])), x, y)
+      $(esc(op.args[1]))(x::Union{DictArray,LabeledArray}, y::Nullable) = mapvalues($(esc(op.args[1])), x, y)
+      $(esc(op.args[1]))(x::Union{DictArray,LabeledArray}, y::Union{DictArray,LabeledArray}) = mapvalues($(esc(op.args[1])), x, y)
+
+      # to avoid some type ambiguity.
+      $(esc(op.args[1]))(x::Bool, y::LabeledArray{Bool}) = mapvalues($(esc(op.args[1])), x, y)
+      $(esc(op.args[1]))(x::LabeledArray{Bool}, y::Bool) = mapvalues($(esc(op.args[1])), x, y)
+
       for nulltype in $LiftToNullableTypes
         $(esc(op.args[1]))(x::AbstractArrayWrapper{nulltype}, y::nulltype) = begin
           #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
@@ -393,6 +400,11 @@ macro absarray_binary_wrapper(ops...)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
           result
         end
+
+        $(esc(op.args[1]))(x::nulltype, y::DictArray) = mapvalues($(esc(op.args[1])), x, y)
+        $(esc(op.args[1]))(x::nulltype, y::LabeledArray) = mapvalues($(esc(op.args[1])), x, y)
+        $(esc(op.args[1]))(x::DictArray, y::nulltype) = mapvalues($(esc(op.args[1])), x, y)
+        $(esc(op.args[1]))(x::LabeledArray, y::nulltype) = mapvalues($(esc(op.args[1])), x, y)
       end
     end
   end
@@ -415,6 +427,23 @@ end
 /{T<:Real}(x::AbstractArrayWrapper, y::Nullable{T}) = x ./ y
 /{T<:Complex}(x::Nullable{T}, y::AbstractArrayWrapper) = x ./ y
 /{T<:Complex}(x::AbstractArrayWrapper, y::Nullable{T}) = x ./ y
+
+*(x::Real, y::Union{DictArray,LabeledArray}) = x .* y
+*(x::Union{DictArray,LabeledArray}, y::Real) = x .* y
+*(x::Complex, y::Union{DictArray,LabeledArray}) = x .* y
+*(x::Union{DictArray,LabeledArray}, y::Complex) = x .* y
+*{T<:Real}(x::Nullable{T}, y::Union{DictArray,LabeledArray}) = x .* y
+*{T<:Real}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x .* y
+*{T<:Complex}(x::Nullable{T}, y::Union{DictArray,LabeledArray}) = x .* y
+*{T<:Complex}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x .* y
+/(x::Real, y::Union{DictArray,LabeledArray}) = x ./ y
+/(x::Union{DictArray,LabeledArray}, y::Real) = x ./ y
+/(x::Complex, y::Union{DictArray,LabeledArray}) = x ./ y
+/(x::Union{DictArray,LabeledArray}, y::Complex) = x ./ y
+/{T<:Real}(x::Nullable{T}, y::Union{DictArray,LabeledArray}) = x ./ y
+/{T<:Real}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x ./ y
+/{T<:Complex}(x::Nullable{T}, y::Union{DictArray,LabeledArray}) = x ./ y
+/{T<:Complex}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x ./ y
 
 macro nullable_unary_wrapper(ops...)
   targetexpr = map(ops) do op

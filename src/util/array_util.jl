@@ -87,8 +87,8 @@ type_array(arr::EnumerationArray) = arr
 # used in join functions. broadcast an array of dimensions N1x...xNn into
 # size(front_dims) x N1 x ... x Nn x size(back_dims).
 expand_dims(arr::LabeledArray, front_dims::NTuple{TypeVar(:M),AbstractArray}, back_dims::NTuple{TypeVar(:N),AbstractArray}) = begin
-  front_size = find_size(front_dims)
-  back_size = find_size(back_dims)
+  front_size = map(length,front_dims)
+  back_size = map(length,back_dims)
   data = expand_dims(arr.data, front_size, back_size)
   axes = (front_dims..., arr.axes..., back_dims...)
   LabeledArray(data, axes)
@@ -114,18 +114,6 @@ end
     data
   end
 end
-
-# Used internally to interpret the input parameter. If it is a vector, its length is returned. If it is a number, the number is returned.
-# Otherwise, an error occurs.
-find_size(dims_vec) = map(dims_vec) do d
-    if isa(d, AbstractArray)
-      length(d)
-    elseif isa(d, Real)
-      d
-    else
-      error("cannot recognize the dimension $(dims_vec)")
-    end
-  end
 
 # used internally as a default function to create a new field name.
 generic_fieldname(i::Int) = symbol('x', i)
@@ -727,6 +715,42 @@ mapvalues(f::Function, arr::LabeledArray) = begin
     LabeledArray(mapvalues(f, arr.data), arr.axes)
   end
 end
+mapvalues(f::Function, xs...) = begin
+  allkeys = union(filter(x->!isempty(x), map(mapvalues_getkeys_helper, xs))...)
+  reordered_xs = map(x->mapvalues_reorder_helper(allkeys,x), xs)
+  result = map(reordered_xs...) do elems...
+    f(elems...)
+  end
+  isanydarr = any(x->isa(x,DictArray) || (isa(x,LabeledArray) && isa(peel(x),DictArray)), xs)
+  labels = Nullable()
+  for x in xs
+    if isa(x, LabeledArray)
+      if labels.isnull
+        labels = Nullable(pickaxis(x))
+      elseif labels != pickaxis(x)
+        throw(ArgumentError("axes do not match."))
+      end
+    end
+  end
+  if isanydarr
+    if labels.isnull
+      DictArray(allkeys, result)
+    else
+      LabeledArray(DictArray(allkeys, result), labels.value)
+    end
+  else
+    result
+  end
+end
+
+mapvalues_getkeys_helper(xs) = []
+mapvalues_getkeys_helper(xs::LDict) = keys(xs)
+mapvalues_getkeys_helper(xs::DictArray) = mapvalues_getkeys_helper(peel(xs))
+mapvalues_getkeys_helper(xs::LabeledArray) = mapvalues_getkeys_helper(peel(xs))
+mapvalues_reorder_helper(allkeys, xs) = fill(xs, length(allkeys))
+mapvalues_reorder_helper(allkeys, xs::LDict) = keys(xs)==allkeys ? values(xs) : values(extract(xs, allkeys))
+mapvalues_reorder_helper(allkeys, xs::DictArray) = mapvalues_reorder_helper(allkeys, peel(xs))
+mapvalues_reorder_helper(allkeys, xs::LabeledArray) = mapvalues_reorder_helper(allkeys, peel(xs))
 
 # permutedims only if necessary. Otherwise, return the argument itself.
 # used mainly to reshuffle an array as an intermediate result, and
@@ -1405,7 +1429,7 @@ extract{K,V}(ldict::LDict{K,Nullable{V}}, k) = begin
   ind = findfirst(ldict.keys, k)
   ind > 0 ? ldict.values[ind] : Nullable{V}()
 end
-extract{K}(ldict::LDict{K,Nullable}, k) = begin
+extract{K}(ldict::LDict{K}, k) = begin
   ind = findfirst(ldict.keys, k)
   ind > 0 ? ldict.values[ind] : Nullable{Any}()
 end
@@ -1414,7 +1438,7 @@ extract{K,V}(ldict::LDict{K,Nullable{V}}, ks::AbstractArray) = begin
   ldictvalues = ldict.values
   LDict(collect(ks), [(ind=findfirst(ldictkeys,k);ind>0 ? ldictvalues[ind] : Nullable{V}()) for k in ks])
 end
-extract{K}(ldict::LDict{K,Nullable}, ks::AbstractArray) = begin
+extract{K}(ldict::LDict{K}, ks::AbstractArray) = begin
   ldictkeys = ldict.keys
   ldictvalues = ldict.values
   LDict(collect(ks), [(ind=findfirst(ldictkeys,k);ind>0 ? ldictvalues[ind] : Nullable{Any}()) for k in ks])
@@ -1422,7 +1446,7 @@ end
 extract(ldict::LDict{Function,Nullable}, ks::Function) = error("not yet implemented.")
 # to disambiguate a method choice.
 extract{K,V}(ldict::LDict{K,Nullable{V}}, ks::Function) = extract_function_inner(ldict, ks)
-extract{K}(ldict::LDict{K,Nullable}, ks::Function) = extract_function_inner(ldict, ks)
+extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
 extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
 extract_function_inner(ldict::LDict, ks::Function) = begin
   # it does not make sense to automatically extend the keys, because they are not Nullable.
