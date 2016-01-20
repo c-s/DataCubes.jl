@@ -28,11 +28,11 @@ facts("DataFrameInterface tests") do
 
   #using DataCubes;using DataFrames;using RDatasets
   context("RDatasets readability tests") do
-    for pd in zip(collect(values(peel(@select(@darr(datasets()), :Package, :Dataset))))...)
-      d = @darr(dataset(map(x->x.value, pd)...))
-      l = @larr(dataset(map(x->x.value, pd)...))
-      nothing
-    end
+    #for pd in zip(collect(values(peel(@select(@darr(datasets()), :Package, :Dataset))))...)
+    #  d = @darr(dataset(map(x->x.value, pd)...))
+    #  l = @larr(dataset(map(x->x.value, pd)...))
+    #  nothing
+    #end
     @fact (dataset("datasets", "iris");nothing) --> nothing
     @fact @darr(dataset("datasets", "iris")) --> convert(DictArray, dataset("datasets", "iris"))
     @fact @larr(dataset("datasets", "iris")) --> convert(LabeledArray, dataset("datasets", "iris"))
