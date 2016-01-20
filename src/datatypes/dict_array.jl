@@ -160,15 +160,6 @@ Base.getindex(arr::DictArray, args...) = begin
 end
 Base.getindex{K,SV}(arr::DictArray{K,TypeVar(:N),TypeVar(:VS),SV}, args::Int...) =
   create_ldict_nocheck(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
-Base.setindex!(arr::DictArray, v::DictArray, args...) = begin
-  if arr.data.keys != v.data.keys
-    throw(KeysDoNotMatchException(arr.data.keys, v.data.keys))
-  end
-  for (tgt,src) in zip(arr.data.values, v.data.values) #map(arr.data.values, v.data.values) do tgt, src
-    setindex!(tgt, src, args...)
-  end
-  arr
-end
 # used internally to skip key check.
 setindex_nocheck!(arr::DictArray, v::DictArray, args...) = begin
   for (tgt,src) in zip(arr.data.values, v.data.values)
@@ -842,6 +833,7 @@ a  b    |a  b    |a  b
 15 15.0 |40 40.0 |65 65.0 
 
 
+# note how the order of axes changed. the newly generated directions always preced the existing ones.
 julia> mapslices(x->msum(x), darr(a=reshape(1:15,5,3), b=1.0*reshape(1:15,5,3)), [2])
 reseltype = DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},Nullable{T}}
 3 x 5 DictArray

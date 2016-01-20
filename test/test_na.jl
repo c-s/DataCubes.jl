@@ -16,8 +16,11 @@ facts("NA tests") do
   @fact simplify_array(Any[Nullable(3.5), Nullable(2.0), Nullable{Float64}()]) --> AbstractArrayWrapper(FloatNAArray([3.5, 2.0, NaN]))
   @fact (t=@larr(a=[1 2 3;4 5 6], b=[4 5 6;7 8 9]);dcube.setna!(t.data.data[:a],2,2);dcube.setna!(t,2,1);t) --> @larr(a=[1 2 3;NA NA 6], b=[4 5 6;NA 8 9])
   @fact simplify_array(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
+  @fact DataCubes.simplify_floatarray(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
   @fact sort(nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
   @fact sort!(@nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
+  @fact vcat(@nalift(1.0*[1 2 3]),@nalift(1.0*[4 5 6])) --> nalift([1 2 3;4 5 6]*1.0)
+  @fact hcat(@nalift(1.0*[1 2 3]),@nalift(1.0*[4 5 6])) --> nalift([1 2 3 4 5 6]*1.0)
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
   @fact igna(Nullable(1.0), 3.0) --> 1.0

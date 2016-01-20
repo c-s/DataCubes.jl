@@ -697,7 +697,7 @@ function mapvalues end
 mapvalues(f::Function, arr::AbstractArray) = map(f, arr)
 mapvalues(f::Function, arr::DictArray) = begin
   results = mapvalues(f, arr.data)
-  if all(x->isa(x, AbstractArray), results.values)
+  if mapvalues_helper_allarrays_checker(results.values...)
     create_dictarray_nocheck(results)
   else
     results
@@ -706,7 +706,7 @@ end
 mapvalues(f::Function, arr::LabeledArray) = begin
   if isa(arr.data, DictArray)
     results = mapvalues(f, arr.data.data)
-    if all(x->isa(x, AbstractArray), results.values)
+    if mapvalues_helper_allarrays_checker(results.values...)
       LabeledArray(create_dictarray_nocheck(results), arr.axes)
     else
       results
@@ -732,14 +732,20 @@ mapvalues(f::Function, xs...) = begin
       end
     end
   end
-  if isanydarr
-    if labels.isnull
-      DictArray(allkeys, result)
-    else
-      LabeledArray(DictArray(allkeys, result), labels.value)
+  if isempty(allkeys)
+    # This is a degenerate case without any key.
+    # An empty result will be returned.
+    result
+  elseif mapvalues_helper_allarrays_checker(result...)
+    if isanydarr
+      if labels.isnull
+        DictArray(allkeys, result)
+      else
+        LabeledArray(DictArray(allkeys, result), labels.value)
+      end
     end
   else
-    result
+    LDict(allkeys, result)
   end
 end
 
@@ -752,9 +758,12 @@ mapvalues_reorder_helper(allkeys, xs::LDict) = keys(xs)==allkeys ? values(xs) : 
 mapvalues_reorder_helper(allkeys, xs::DictArray) = mapvalues_reorder_helper(allkeys, peel(xs))
 mapvalues_reorder_helper(allkeys, xs::LabeledArray) = mapvalues_reorder_helper(allkeys, peel(xs))
 
+mapvalues_helper_allarrays_checker(::AbstractArray...) = true
+mapvalues_helper_allarrays_checker(::Any...) = false
+
 # permutedims only if necessary. Otherwise, return the argument itself.
 # used mainly to reshuffle an array as an intermediate result, and
-# a copy is not necessarily required.
+# when a copy is not necessarily required.
 permutedims_if_necessary(arr::AbstractArray, perms) = ntuple(identity,ndims(arr))==perms ? arr : permutedims(arr, perms)
 ipermutedims_if_necessary(arr::AbstractArray, perms) = ntuple(identity,ndims(arr))==perms ? arr : ipermutedims(arr, perms)
 
@@ -2214,5 +2223,3 @@ end
 Base.push!{T,V,R}(arr::EnumerationArray{T,1,V,R}, elem::R) = push!(arr.elems, elem)
 Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::Nullable{T}) = push!(arr.data, elem.isnull ? convert(T,NaN) : elem.value)
 Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::T) = push!(arr.data, elem)
-
-# TODO byarray_isless

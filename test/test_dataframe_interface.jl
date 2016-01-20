@@ -3,7 +3,7 @@ module TestDataFrameInterface
 using FactCheck
 using DataCubes
 import DataFrames: DataFrame
-import RDatasets: dataset
+import RDatasets: datasets, dataset
 
 facts("DataFrameInterface tests") do
   @fact DictArray(DataFrame(Any[collect(1:10), repmat(["x","y"], 5), fill(:sym,10)], [:A,:B,:C])) -->
@@ -28,11 +28,11 @@ facts("DataFrameInterface tests") do
 
   #using DataCubes;using DataFrames;using RDatasets
   context("RDatasets readability tests") do
-    #for pd in zip(collect(values(peel(@select(@darr(RDatasets.datasets()), :Package, :Dataset))))...)
-    #  d = @darr(dataset(map(x->x.value, pd)...))
-    #  l = @larr(dataset(map(x->x.value, pd)...))
-    #  nothing
-    #end
+    for pd in zip(collect(values(peel(@select(@darr(datasets()), :Package, :Dataset))))...)
+      d = @darr(dataset(map(x->x.value, pd)...))
+      l = @larr(dataset(map(x->x.value, pd)...))
+      nothing
+    end
     @fact (dataset("datasets", "iris");nothing) --> nothing
     @fact @darr(dataset("datasets", "iris")) --> convert(DictArray, dataset("datasets", "iris"))
     @fact @larr(dataset("datasets", "iris")) --> convert(LabeledArray, dataset("datasets", "iris"))

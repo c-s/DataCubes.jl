@@ -254,7 +254,15 @@ facts("ArrayUtil tests") do
     @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> larr(b=1.0*[12 14;16 18],a=1.0*[2 4;6 8],axis1=[:x,:y])
     @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), 1) --> larr(b=1.0*[13 15;17 19],a=1.0*[3 5;7 9],axis1=[:x,:y])
     @fact mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), Nullable(1)) --> larr(b=1.0*[13 15;17 19],a=1.0*[3 5;7 9],axis1=[:x,:y])
-    @fact_throws mapvrlues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), larr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]))
+    @fact mapvalues((x,y,z)->Nullable(1),1,larr(a=[1,2,3]),darr(a=[4,5,6])) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),1,darr(a=[1,2,3]),darr(a=[4,5,6])) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),darr(a=[1,2,3]),darr(a=[4,5,6]),2) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),darr(a=[4,5,6]),3,1) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),2,1) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),1,Nullable(3)) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),1,Nullable(5)) --> nalift(LDict(:a=>1))
+    @fact mapvalues((x,y,z)->Nullable(1),3,2,1) --> isempty
+    @fact_throws mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), larr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]))
   end
 end
 

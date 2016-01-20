@@ -1002,13 +1002,29 @@ julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=
   C |[Nullable(6),Nullable(12)] 
 
 
-  julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
+julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
   2 LabeledArray
 
   k |                                        
   --+----------------------------------------
   X |[Nullable(2),Nullable(4),Nullable(6)]   
   Y |[Nullable(8),Nullable(10),Nullable(12)] 
+
+
+# note how the order of axes changed. the newly generated directions always preced the existing ones.
+julia> mapslices(x->msum(x), larr(axis1=[:A,:B,:C,:D,:E],axis2=['X','Y','Z'],a=reshape(1:15,5,3), b=1.0*reshape(1:15,5,3)), [2])
+3 x 5 LabeledArray
+
+  |A       |B       |C       |D       |E       
+--+--------+--------+--------+--------+--------
+  |a  b    |a  b    |a  b    |a  b    |a  b    
+--+--------+--------+--------+--------+--------
+X |1  1.0  |2  2.0  |3  3.0  |4  4.0  |5  5.0  
+Y |7  7.0  |9  9.0  |11 11.0 |13 13.0 |15 15.0 
+Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0 
+
+
+
 ```
 
 """

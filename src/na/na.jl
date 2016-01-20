@@ -523,7 +523,9 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 """
 function igna end
 
-igna(arr::AbstractArrayWrapper) = AbstractArrayWrapper(igna(arr.a))
+igna{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}, na_replace::T) = AbstractArrayWrapper(igna(arr.a, na_replace))
+igna{T<:Nullable}(arr::AbstractArrayWrapper{T}) = AbstractArrayWrapper(igna(arr.a))
+igna{T}(arr::AbstractArrayWrapper{Nullable{T}}, na_replace::T) = AbstractArrayWrapper(igna(arr.a, na_replace))
 igna{T}(arr::AbstractArray{Nullable{T}}) = if isempty(arr)
   similar(arr, T)
 else
