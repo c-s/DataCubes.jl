@@ -10,7 +10,8 @@ end
 # some statements for compatibility.
 
 iosize_expr = if startswith(string(VERSION), "0.5")
-  :(iosize_compat = Base.iosize)
+  :(iosize_compat = Base.tty_size)
+  #:(iosize_compat = Base.iosize)
 else
   :(iosize_compat = Base.tty_size)
 end

@@ -108,6 +108,8 @@ facts("EnumerationArray tests") do
     @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, nalift([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1],[1,2,3]))
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, enumeration([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1]))
+    @fact typeof(similar(@enumeration([1.0 2.0 NA]))) --> EnumerationArray{Float64,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
+    @fact typeof(similar(enumeration([:a :b]))) --> EnumerationArray{Symbol,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
   end
 end
 

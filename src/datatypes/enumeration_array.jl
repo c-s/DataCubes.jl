@@ -88,8 +88,8 @@ Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::Nullable{T}, indices.
     arr
   end
 end
-Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::R, indices...) = begin
-  setindex!(arr.elems, v, indices...)
+Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::Integer, indices...) = begin
+  setindex!(arr.elems, convert(R,v), indices...)
   arr
 end
 Base.copy!(tgt::EnumerationArray, src::EnumerationArray) = begin
@@ -98,6 +98,7 @@ Base.copy!(tgt::EnumerationArray, src::EnumerationArray) = begin
 end
 Base.copy(arr::EnumerationArray) = EnumerationArray((copy(arr.elems), copy(arr.pool)))
 
+Base.similar(arr::EnumerationArray) = EnumerationArray((similar(arr.elems),arr.pool))
 Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, dims::NTuple{M,Int}) = EnumerationArray((similar(arr.elems, dims),arr.pool))
 Base.similar{T,N,V,R,U,M}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.elems, U, dims)
 Base.linearindexing{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.linearindexing(V)
@@ -111,6 +112,16 @@ Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(
 Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
 Base.sort(arr::EnumerationArray, args...) = EnumerationArray((sort(arr.elems, args...), arr.pool))
 Base.sort!(arr::EnumerationArray, args...) = (sort!(arr.elems, args...); arr)
+Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Integer) = fill!(arr.elems, convert(R,elem))
+Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Nullable{T}) = begin
+  if elem.isnull
+    fill!(arr.elems, zero(R))
+  else
+    order = convert(R, findfirst(arr.pool, elem.value))
+    fill!(arr.elems, order)
+  end
+end
+
 Base.cat(dim::Int, arr1::EnumerationArray, arrs::EnumerationArray...) = begin
   pool = arr1.pool
   for arr in arrs

@@ -2110,6 +2110,7 @@ withdrawnames(arr::LabeledArray, check_fieldname::Function=is_generic_fieldname)
   LabeledArray(newdata, newaxes)
 end
 
+# note the return value of namerge_inner! matters.
 namerge_inner!(x::Nullable, y::Nullable) = y.isnull ? x : y
 namerge_inner!{T<:Nullable}(x::Nullable, y::AbstractArray{T}) = begin
   result = similar(y)
@@ -2123,6 +2124,7 @@ namerge_inner!{T<:Nullable,U<:Nullable}(x::AbstractArray{T}, y::U) = begin
     x
   else
     fill!(x, y)
+    x
   end
 end
 namerge_inner!{T<:Nullable}(x::AbstractArray{T}, y::AbstractArray{T}) = begin

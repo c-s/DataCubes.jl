@@ -19,8 +19,22 @@ facts("NA tests") do
   @fact DataCubes.simplify_floatarray(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
   @fact sort(nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
   @fact sort!(@nalift([5.0,3.0,4.0])) --> nalift([3.0,4.0,5.0])
-  @fact vcat(@nalift(1.0*[1 2 3]),@nalift(1.0*[4 5 6])) --> nalift([1 2 3;4 5 6]*1.0)
-  @fact hcat(@nalift(1.0*[1 2 3]),@nalift(1.0*[4 5 6])) --> nalift([1 2 3 4 5 6]*1.0)
+  @fact DataCubes.wrap_array(vcat(FloatNAArray(1.0*[1 2 3]),FloatNAArray(1.0*[4 5 6]))) --> DataCubes.wrap_array(FloatNAArray([1 2 3;4 5 6]*1.0))
+  @fact DataCubes.wrap_array(hcat(FloatNAArray(1.0*[1 2 3]),FloatNAArray(1.0*[4 5 6]))) --> DataCubes.wrap_array(FloatNAArray([1 2 3 4 5 6]*1.0))
+  @fact DataCubes.simplify_floatarray(Nullable{Float64}[]) --> isempty
+  @fact typeof(DataCubes.simplify_floatarray(Nullable{Float64}[])) --> DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}
+  @fact nalift(FloatNAArray([1.0 2.0 NaN])) --> @nalift([1.0 2.0 NA])
+  @fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);t) --> nalift(fill(Nullable{Any}(),1,3))
+  @fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);typeof(t)) --> DataCubes.AbstractArrayWrapper{Nullable,2,Array{Nullable,2}}
+  @fact (t=@nalift([1.0 2.0 3.0]);DataCubes.setna!(t);t) --> nalift(fill(NaN,1,3))
+  @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t);wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
+  @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t);typeof(t)) --> EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}
+  @fact (t=enumeration([:a,:b,:a]);fill!(t,0);wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
+  @fact (t=enumeration([:a,:b,:a]);fill!(t,Nullable(:c));wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
+  @fact (t=enumeration([:a,:b,:a]);fill!(t,Nullable{Symbol}());wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
+  @fact (t=@nalift([1.0 2.0 3.0]);fill!(t,NaN);t) --> @nalift([NA NA NA])
+  @fact (t=@nalift([1.0 2.0 3.0]);fill!(t,Nullable{Float64}());t) --> @nalift([NA NA NA])
+  @fact (t=@nalift([1.0 2.0 3.0]);fill!(t,Nullable(5.0));t) --> @nalift([5.0 5.0 5.0])
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
   @fact igna(Nullable(1.0), 3.0) --> 1.0

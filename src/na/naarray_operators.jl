@@ -29,7 +29,7 @@ Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,Abstrac
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, n::Int) = AbstractArrayWrapper(repmat(arr.a, n))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, m::Int, n::Int) = AbstractArrayWrapper(repmat(arr.a, m, n))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
-                           Base.ndims, Base.length, Base.setindex!, Base.find)
+                           Base.ndims, Base.length, Base.setindex!, Base.find, Base.fill!)
 @delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
                                    Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
