@@ -168,6 +168,8 @@ Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(a
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
 Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
 Base.copy(arr::FloatNAArray) = FloatNAArray(copy(arr.data))
+Base.fill!{T}(arr::FloatNAArray{T}, elem::Nullable) = fill!(arr.data, elem.isnull ? convert(T, NaN) : elem.value)
+Base.fill!{T}(arr::FloatNAArray{T}, elem::AbstractFloat) = fill!(arr.data, convert(T,elem))
 Base.map(f::Function, arr0::FloatNAArray, arrs::AbstractArray...) = begin
   if isempty(arr0)
     return similar(arr0, Nullable{Any})
@@ -200,7 +202,6 @@ Base.hcat(arrs::FloatNAArray...) = cat(2, arrs...)
 Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
 Base.slice(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
 simplify_floatarray(arr::FloatNAArray) = arr
-simplify_floatarray{T<:AbstractFloat,N,A}(arr::FloatNAArray{T,N,A}) = arr
 simplify_floatarray{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = arr
 simplify_floatarray{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}) =
   AbstractArrayWrapper(simplify_floatarray(arr.a))
@@ -461,6 +462,8 @@ setna!{T}(arr::AbstractArray{Nullable{T}}) = fill!(arr, Nullable{T}())
 setna!(arr::AbstractArray{Nullable}) = fill!(arr, Nullable{Any}())
 setna!{T}(arr::AbstractArray{Nullable{T}}, args...) = setindex!(arr, Nullable{T}(), args...)
 setna!(arr::AbstractArray{Nullable}, args...) = setindex!(arr, Nullable{Any}(), args...)
+setna!(arr::EnumerationArray) = fill!(arr, 0)
+setna!(arr::EnumerationArray, args...) = setindex!(arr, 0, args...)
 setna!{T<:AbstractFloat}(arr::FloatNAArray{T}, args...) = setindex!(arr.data, convert(T,NaN), args...)
 setna!{T<:AbstractFloat}(arr::FloatNAArray{T}) = fill!(arr.data, convert(T,NaN))
 setna!(arr::AbstractArrayWrapper, args...) = setna!(arr.a, args...)
@@ -523,7 +526,9 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 """
 function igna end
 
-igna(arr::AbstractArrayWrapper) = AbstractArrayWrapper(igna(arr.a))
+igna{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}, na_replace::T) = AbstractArrayWrapper(igna(arr.a, na_replace))
+igna{T<:Nullable}(arr::AbstractArrayWrapper{T}) = AbstractArrayWrapper(igna(arr.a))
+igna{T}(arr::AbstractArrayWrapper{Nullable{T}}, na_replace::T) = AbstractArrayWrapper(igna(arr.a, na_replace))
 igna{T}(arr::AbstractArray{Nullable{T}}) = if isempty(arr)
   similar(arr, T)
 else

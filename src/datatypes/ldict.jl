@@ -73,9 +73,6 @@ Base.done(ldict::LDict, s) = s > length(ldict)
 Base.length(ldict::LDict) = length(ldict.keys)
 Base.eltype{K, V}(::Type{LDict{K, V}}) = Pair{K, V}
 
-Base.keys(dict::LDict) = dict.keys
-Base.values(dict::LDict) = dict.values
-
 """
 
 `merge(dict::LDict, ds...)`
@@ -229,13 +226,6 @@ function ==(x::LDict, y::LDict)
 end
 Base.isequal(x::LDict, y::LDict) = x==y
 Base.haskey(ldict::LDict, k) = 0 < findfirst(ldict.keys, k)
-
-# igna applies igna to each value. Usually igna maps Nullable(x) to x and Nullable{T}() to any arbitrary value.
-# it is meant to be used when you know there is no null value.
-# However, the usage is not robust in the sense that you can apply igna to any nullable array.
-# it is here now, but probably will be removed later.
-igna(ldict::LDict, na_replace) = LDict(ldict.keys, igna(ldict.values, na_replace))
-igna(ldict::LDict) = LDict(ldict.keys, map(igna, ldict.values))
 
 isna{K,V<:AbstractArray}(ldict::LDict{K,V}) = reduce(&, map(isna, ldict.values))
 isna{K,V}(ldict::LDict{K,V}) = all(map(isna, ldict.values))

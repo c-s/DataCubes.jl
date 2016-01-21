@@ -2,7 +2,7 @@ module TestNAArrayOperators
 
 using FactCheck
 using DataCubes
-using DataCubes.AbstractArrayWrapper
+using DataCubes: AbstractArrayWrapper,FloatNAArray,wrap_array
 
 facts("NAArrayOperators tests") do
   context("AbstractArrayWrapper tests") do
@@ -54,6 +54,7 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> @nalift([2.0,4.0,NA])
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) --> @nalift([2.0,4.0,NA])
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([1,2,3]) --> [2.0,4.0,6.0]
+    @fact AbstractArrayWrapper([1,2,3]) ./ AbstractArrayWrapper([1,2,3]) --> [1.0,1.0,1.0]
     @fact (2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
     @fact @nalift([1,2,NA]) * (2+3im)--> @nalift([2+3im,4+6im,NA])
     @fact Nullable(2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
@@ -112,7 +113,58 @@ facts("NAArrayOperators tests") do
     @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,3.0,NA]) --> false
     @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,NA,3.0]) --> true
     @fact @nalift([1.0,NA,3.0]) == @nalift([1.0,NA,2.0]) --> false
-
+    @fact larr(a=[1,2,3]) + Nullable(1) --> larr(a=[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) + Nullable(1) --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) + Nullable(1.0) --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) .+ Nullable(1.0) --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) .* Nullable(2.0) --> larr(a=2.0*[1,2,3])
+    @fact larr(a=1.0*[1,2,3]) * Nullable(2.0) --> larr(a=2.0*[1,2,3])
+    @fact Nullable(2.0) * larr(a=1.0*[1,2,3]) --> larr(a=2.0*[1,2,3])
+    @fact Nullable(2) .* larr(a=1.0*[1,2,3]) --> larr(a=2.0*[1,2,3])
+    @fact larr(a=[1,2,3]) + 1 --> larr(a=[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) + 1 --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) * im --> larr(a=im*1.0*[1,2,3])
+    @fact larr(a=1.0*[1,2,3]) / im --> larr(a=-im*1.0*[1,2,3])
+    @fact larr(a=1.0*[1,2,3]) * Nullable(im) --> larr(a=1.0im*[1,2,3])
+    @fact larr(a=1.0*[1,2,3]) / Nullable(im) --> larr(a=-1.0im*[1,2,3])
+    @fact im * larr(a=1.0*[1,2,3]) --> larr(a=im*[1,2,3]*1.0)
+    @fact im / larr(a=1.0*[1,2,3]) --> larr(a=im./(1.0*[1,2,3]))
+    @fact Nullable(im) * larr(a=1.0*[1,2,3]) --> larr(a=im.*[1,2,3])
+    @fact Nullable(im) / larr(a=1.0*[1,2,3]) --> larr(a=im./(1.0*[1,2,3]))
+    @fact larr(a=1.0*[1,2,3]) + 1.0 --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) .+ 1.0 --> larr(a=1.0*[2,3,4])
+    @fact larr(a=1.0*[1,2,3]) .* 2.0 --> larr(a=2.0*[1,2,3])
+    @fact larr(a=1.0*[1,2,3]) * 2.0 --> larr(a=2.0*[1,2,3])
+    @fact 2.0 * larr(a=1.0*[1,2,3]) --> larr(a=2.0*[1,2,3])
+    @fact 2 .* larr(a=1.0*[1,2,3]) --> larr(a=2.0*[1,2,3])
+    @fact darr(a=[1,2,3]) + 1 --> darr(a=[2,3,4])
+    @fact darr(a=1.0*[1,2,3]) + 1 --> darr(a=1.0*[2,3,4])
+    @fact darr(a=1.0*[1,2,3]) + 1.0 --> darr(a=1.0*[2,3,4])
+    @fact darr(a=1.0*[1,2,3]) .+ 1.0 --> darr(a=1.0*[2,3,4])
+    @fact darr(a=1.0*[1,2,3]) .* 2.0 --> darr(a=2.0*[1,2,3])
+    @fact darr(a=1.0*[1,2,3]) * 2.0 --> darr(a=2.0*[1,2,3])
+    @fact 2.0 * darr(a=1.0*[1,2,3]) --> darr(a=2.0*[1,2,3])
+    @fact 2 .* darr(a=1.0*[1,2,3]) --> darr(a=2.0*[1,2,3])
+    @fact darr(a=[1,2,3]) / 1 --> darr(a=[1,2,3])
+    @fact darr(a=1.0*[1,2,3]) / 2 --> darr(a=[1,2,3]/2.0)
+    @fact darr(a=1.0*[1,2,3]) / 3.0 --> darr(a=[1,2,3]/3.0)
+    @fact darr(a=1.0*[1,2,3]) ./ 3.0 --> darr(a=[1,2,3]/3.0)
+    @fact darr(a=1.0*[1,2,3]) ./ 2.0 --> darr(a=[1,2,3]/2.0)
+    @fact darr(a=1.0*[1,2,3]) / 2.0 --> darr(a=[1,2,3]/2.0)
+    @fact darr(a=[1,2,3]) ./ darr(a=[3,2,1]) --> darr(a=[1,2,3]./[3,2,1])
+    @fact 2.0 / darr(a=1.0*[1,2,3]) --> darr(a=2.0./[1,2,3])
+    @fact 2.0 ./ darr(a=1.0*[1,2,3]) --> darr(a=2.0./[1,2,3])
+    @fact darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])+darr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16]) --> larr(a=[12 14 16;18 20 22],b=2.0*[1 2 3;4 5 6])
+    @fact darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])+larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) --> larr(a=[12 14 16;18 20 22],b=2.0*[1 2 3;4 5 6],axis1=[:X,:Y])
+    @fact darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])+larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) --> larr(a=[12 14 16;18 20 22],b=2.0*[1 2 3;4 5 6],axis1=[:X,:Y])
+    @fact larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) + darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6]) --> larr(b=2.0*[1 2 3;4 5 6],a=[12 14 16;18 20 22],axis1=[:X,:Y])
+    @fact_throws larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) + larr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])
+    @fact darr(a=[1.0 2.0]) * darr(a=[2.0,3.0]) --> darr(a=[8.0])
+    @fact darr(a=[1.0 2.0;3.0 4.0]) / darr(a=[2.0 3.0]) --> darr(a=[1.0 2.0;3.0 4.0]/[2.0 3.0])
+    @fact nalift([1.0 2.0]) * nalift([2.0,3.0]) --> nalift([8.0])
+    @fact nalift([1.0 2.0;3.0 4.0]) / nalift([2.0 3.0]) --> nalift([1.0 2.0;3.0 4.0]/[2.0 3.0])
+    @fact wrap_array(FloatNAArray([1.0 2.0]) * FloatNAArray([2.0,3.0])) --> wrap_array(FloatNAArray([8.0]))
+    @fact wrap_array(FloatNAArray([1.0 2.0;3.0 4.0]) / FloatNAArray([2.0 3.0])) --> wrap_array(FloatNAArray([1.0 2.0;3.0 4.0]/[2.0 3.0]))
   end
 end
 

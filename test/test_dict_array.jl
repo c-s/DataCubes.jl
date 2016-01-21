@@ -21,6 +21,11 @@ facts("DictArray tests") do
       @fact darr(Any[LDict(:a=>Nullable(1),:b=>Nullable{Int}()),LDict(:a=>Nullable(3),:b=>Nullable(4))]) --> @darr(a=[1,3], b=[NA,4])
       @fact convert(DictArray, [LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))]) --> @darr(a=[3,5],b=[NA,3])
       @fact convert(DictArray, nalift([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))])) --> @darr(a=[3,5],b=[NA,3])
+      @fact convert(DictArray, @darr(1=>[1 2 3;4 5 6])) --> darr(1=>[1 2 3;4 5 6])
+      #@fact_throws @darr([1,2,3])
+      #@fact_throws @darr(Dict(:a=>3))
+      #@fact_throws @darr(darr(a=[1,2,3]),darr(a=[1,2,3]))
+      #@fact_throws @darr()
     end
     context("constructing DictArrays with null elements...") do
       col1 = nalift(rand(10, 50))
@@ -88,6 +93,10 @@ facts("DictArray tests") do
     @fact @darr(a=1.0*[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[:a,:b] --> Any[1.0*nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z])]
     @fact @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[[:a,:b]] --> @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])
     @fact @darr(a=[1 2 3;4 5 6], b=[:a :b :c;:x :y :z])[(:a,:b)] --> (nalift([1 2 3;4 5 6]), nalift([:a :b :c;:x :y :z]))
+    @fact (t=darr(a=[1 2 3;4 5 6],b=[:a :b :c;:x :y :z]);t[1:2,1]=darr(a=[11,12],b=[:u,:v]);t) --> darr(a=[11 2 3;12 5 6],b=[:u :b :c;:v :y :z])
+    @fact (t=darr(a=[1 2 3;4 5 6],b=[:a :b :c;:x :y :z]);DataCubes.setindex_nocheck!(t,darr(a=[11,12],b=[:u,:v]),1:2,1);t) --> darr(a=[11 2 3;12 5 6],b=[:u :b :c;:v :y :z])
+    @fact (t=darr(a=[1 2 3;4 5 6],b=[:a :b :c;:x :y :z]);DataCubes.setindex_nocheck!(t,nalift(LDict(:a=>11,:b=>:u)),1,1);t) --> darr(a=[11 2 3;4 5 6],b=[:u :b :c;:x :y :z])
+    @fact findfirst(darr(a=[1,2,3],b=['a','b','c']),(Nullable(2),Nullable('b'))) --> 2
   end
   context("additional method tests") do
     d1 = darr(:a=>nalift(reshape(1:20, 5, 4)),
@@ -135,7 +144,9 @@ facts("DictArray tests") do
     @fact size(mapslices(x->[1], darr(a=rand(0,5,3)), [2])) --> (0,3)
 
     @fact sub(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    @fact sub(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
     @fact slice(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    @fact slice(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
     @fact typeof(repeat(darr(a=1.0*[1 2 3;4 5 6]), inner=[2,1], outer=[1,3])) --> DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
     @fact reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6) --> darr(a=1.0*[1 2 3 4 5 6])
     @fact typeof(reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6)) --> DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
@@ -164,6 +175,7 @@ facts("DictArray tests") do
     @fact larr(darr(a=1:10), axis1=11:20) --> larr(larr(a=1:10), axis1=11:20)
     @fact larr(darr(a=1:10), axis1=11:20) --> larr(a=1:10, axis1=11:20)
     @fact fill(LDict('a'=>1, 'b'=>10), 10, 20) --> darr('a'=>fill(1,10,20), 'b'=>fill(10,10,20))
+    @fact fill(LDict('a'=>1, 'b'=>10), (10, 20)) --> darr('a'=>fill(1,10,20), 'b'=>fill(10,10,20))
     @fact reshape(darr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15]), 3, 2) --> darr(a=[1 5;4 3;2 6],b=[10 14;13 12;11 15])
     @fact reducedim((x,y)->LDict(:a=>Nullable(x[:a].value+y[:a].value)), darr(a=[1 2 3;4 5 6]),[1],LDict(:a=>Nullable(0))) --> darr(a=[5,7,9])
     @fact reducedim((x,y)->x+y[:a].value, darr(a=[1 2 3;4 5 6]),[1],0) --> nalift([5,7,9])

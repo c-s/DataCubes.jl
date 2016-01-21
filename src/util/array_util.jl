@@ -87,8 +87,8 @@ type_array(arr::EnumerationArray) = arr
 # used in join functions. broadcast an array of dimensions N1x...xNn into
 # size(front_dims) x N1 x ... x Nn x size(back_dims).
 expand_dims(arr::LabeledArray, front_dims::NTuple{TypeVar(:M),AbstractArray}, back_dims::NTuple{TypeVar(:N),AbstractArray}) = begin
-  front_size = find_size(front_dims)
-  back_size = find_size(back_dims)
+  front_size = map(length,front_dims)
+  back_size = map(length,back_dims)
   data = expand_dims(arr.data, front_size, back_size)
   axes = (front_dims..., arr.axes..., back_dims...)
   LabeledArray(data, axes)
@@ -114,18 +114,6 @@ end
     data
   end
 end
-
-# Used internally to interpret the input parameter. If it is a vector, its length is returned. If it is a number, the number is returned.
-# Otherwise, an error occurs.
-find_size(dims_vec) = map(dims_vec) do d
-    if isa(d, AbstractArray)
-      length(d)
-    elseif isa(d, Real)
-      d
-    else
-      error("cannot recognize the dimension $(dims_vec)")
-    end
-  end
 
 # used internally as a default function to create a new field name.
 generic_fieldname(i::Int) = symbol('x', i)
@@ -709,7 +697,7 @@ function mapvalues end
 mapvalues(f::Function, arr::AbstractArray) = map(f, arr)
 mapvalues(f::Function, arr::DictArray) = begin
   results = mapvalues(f, arr.data)
-  if all(x->isa(x, AbstractArray), results.values)
+  if mapvalues_helper_allarrays_checker(results.values...)
     create_dictarray_nocheck(results)
   else
     results
@@ -718,7 +706,7 @@ end
 mapvalues(f::Function, arr::LabeledArray) = begin
   if isa(arr.data, DictArray)
     results = mapvalues(f, arr.data.data)
-    if all(x->isa(x, AbstractArray), results.values)
+    if mapvalues_helper_allarrays_checker(results.values...)
       LabeledArray(create_dictarray_nocheck(results), arr.axes)
     else
       results
@@ -727,10 +715,55 @@ mapvalues(f::Function, arr::LabeledArray) = begin
     LabeledArray(mapvalues(f, arr.data), arr.axes)
   end
 end
+mapvalues(f::Function, xs...) = begin
+  allkeys = union(filter(x->!isempty(x), map(mapvalues_getkeys_helper, xs))...)
+  reordered_xs = map(x->mapvalues_reorder_helper(allkeys,x), xs)
+  result = map(reordered_xs...) do elems...
+    f(elems...)
+  end
+  isanydarr = any(x->isa(x,DictArray) || (isa(x,LabeledArray) && isa(peel(x),DictArray)), xs)
+  labels = Nullable()
+  for x in xs
+    if isa(x, LabeledArray)
+      if labels.isnull
+        labels = Nullable(pickaxis(x))
+      elseif labels != pickaxis(x)
+        throw(ArgumentError("axes do not match."))
+      end
+    end
+  end
+  if isempty(allkeys)
+    # This is a degenerate case without any key.
+    # An empty result will be returned.
+    result
+  elseif mapvalues_helper_allarrays_checker(result...)
+    if isanydarr
+      if labels.isnull
+        DictArray(allkeys, result)
+      else
+        LabeledArray(DictArray(allkeys, result), labels.value)
+      end
+    end
+  else
+    LDict(allkeys, result)
+  end
+end
+
+mapvalues_getkeys_helper(xs) = []
+mapvalues_getkeys_helper(xs::LDict) = keys(xs)
+mapvalues_getkeys_helper(xs::DictArray) = mapvalues_getkeys_helper(peel(xs))
+mapvalues_getkeys_helper(xs::LabeledArray) = mapvalues_getkeys_helper(peel(xs))
+mapvalues_reorder_helper(allkeys, xs) = fill(xs, length(allkeys))
+mapvalues_reorder_helper(allkeys, xs::LDict) = keys(xs)==allkeys ? values(xs) : values(extract(xs, allkeys))
+mapvalues_reorder_helper(allkeys, xs::DictArray) = mapvalues_reorder_helper(allkeys, peel(xs))
+mapvalues_reorder_helper(allkeys, xs::LabeledArray) = mapvalues_reorder_helper(allkeys, peel(xs))
+
+mapvalues_helper_allarrays_checker(::AbstractArray...) = true
+mapvalues_helper_allarrays_checker(::Any...) = false
 
 # permutedims only if necessary. Otherwise, return the argument itself.
 # used mainly to reshuffle an array as an intermediate result, and
-# a copy is not necessarily required.
+# when a copy is not necessarily required.
 permutedims_if_necessary(arr::AbstractArray, perms) = ntuple(identity,ndims(arr))==perms ? arr : permutedims(arr, perms)
 ipermutedims_if_necessary(arr::AbstractArray, perms) = ntuple(identity,ndims(arr))==perms ? arr : ipermutedims(arr, perms)
 
@@ -1070,14 +1103,6 @@ function dropna end
 dropna{N}(arr::DictArray{TypeVar(:T),N}) = arr[dropna_coords(arr)...]
 dropna{N}(arr::LabeledArray{TypeVar(:T),N}) = arr[dropna_coords(arr.data)...]
 
-# internally used to check whether an indexing is scalar (otherwise, the indexing will give another array).
-is_scalar_indexing(::Tuple{}) = false
-is_scalar_indexing{R<:Integer,N}(::NTuple{N,R}) = true
-is_scalar_indexing{N}(::NTuple{N,CartesianIndex}) = true
-is_scalar_indexing(args) = begin
-  all(map(arg->isa(arg,Real) || isa(arg,CartesianIndex), args))
-end
-
 """
 
 `mapna(f::Function, args...)`
@@ -1405,7 +1430,7 @@ extract{K,V}(ldict::LDict{K,Nullable{V}}, k) = begin
   ind = findfirst(ldict.keys, k)
   ind > 0 ? ldict.values[ind] : Nullable{V}()
 end
-extract{K}(ldict::LDict{K,Nullable}, k) = begin
+extract{K}(ldict::LDict{K}, k) = begin
   ind = findfirst(ldict.keys, k)
   ind > 0 ? ldict.values[ind] : Nullable{Any}()
 end
@@ -1414,7 +1439,7 @@ extract{K,V}(ldict::LDict{K,Nullable{V}}, ks::AbstractArray) = begin
   ldictvalues = ldict.values
   LDict(collect(ks), [(ind=findfirst(ldictkeys,k);ind>0 ? ldictvalues[ind] : Nullable{V}()) for k in ks])
 end
-extract{K}(ldict::LDict{K,Nullable}, ks::AbstractArray) = begin
+extract{K}(ldict::LDict{K}, ks::AbstractArray) = begin
   ldictkeys = ldict.keys
   ldictvalues = ldict.values
   LDict(collect(ks), [(ind=findfirst(ldictkeys,k);ind>0 ? ldictvalues[ind] : Nullable{Any}()) for k in ks])
@@ -1422,7 +1447,7 @@ end
 extract(ldict::LDict{Function,Nullable}, ks::Function) = error("not yet implemented.")
 # to disambiguate a method choice.
 extract{K,V}(ldict::LDict{K,Nullable{V}}, ks::Function) = extract_function_inner(ldict, ks)
-extract{K}(ldict::LDict{K,Nullable}, ks::Function) = extract_function_inner(ldict, ks)
+extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
 extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
 extract_function_inner(ldict::LDict, ks::Function) = begin
   # it does not make sense to automatically extend the keys, because they are not Nullable.
@@ -2085,6 +2110,7 @@ withdrawnames(arr::LabeledArray, check_fieldname::Function=is_generic_fieldname)
   LabeledArray(newdata, newaxes)
 end
 
+# note the return value of namerge_inner! matters.
 namerge_inner!(x::Nullable, y::Nullable) = y.isnull ? x : y
 namerge_inner!{T<:Nullable}(x::Nullable, y::AbstractArray{T}) = begin
   result = similar(y)
@@ -2098,6 +2124,7 @@ namerge_inner!{T<:Nullable,U<:Nullable}(x::AbstractArray{T}, y::U) = begin
     x
   else
     fill!(x, y)
+    x
   end
 end
 namerge_inner!{T<:Nullable}(x::AbstractArray{T}, y::AbstractArray{T}) = begin
@@ -2190,5 +2217,3 @@ end
 Base.push!{T,V,R}(arr::EnumerationArray{T,1,V,R}, elem::R) = push!(arr.elems, elem)
 Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::Nullable{T}) = push!(arr.data, elem.isnull ? convert(T,NaN) : elem.value)
 Base.push!{T,A}(arr::FloatNAArray{T,1,A}, elem::T) = push!(arr.data, elem)
-
-# TODO byarray_isless

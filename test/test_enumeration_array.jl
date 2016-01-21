@@ -81,7 +81,7 @@ facts("EnumerationArray tests") do
     @fact mapslices(x -> x, @larr(a=enumeration([1 2 3;4 5 6])), []) --> @larr(a=[1 2 3;4 5 6])
     @fact map(x->x[:a], @larr(a=enumeration([1,2,3]),b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
     @fact dcube.create_dict(@larr(a=@enumeration([1 NA NA;4 5 6]),b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6
-    @fact collect(keys(dcube.create_dict(@larr(a=@enumeration([1 NA NA;4 5 6]),b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> [LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))]
+    @fact Set(keys(dcube.create_dict(@larr(a=@enumeration([1 NA NA;4 5 6]),b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> Set([LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))])
     @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)][LDict(:r=>Nullable(:x))] --> LDict(:a=>Nullable(1), :b=>Nullable{Int}())
     @fact reverse(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=enumeration([:x,:y,:z])]),[1]) --> @larr(a=[4 5 6;1 2 3],axis2[r=[:x,:y,:z]])
     @fact reverse(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=[:x,:y,:z]]),1:2) --> @larr(a=[6 5 4;3 2 1],axis2[r=[:z,:y,:x]])
@@ -108,6 +108,8 @@ facts("EnumerationArray tests") do
     @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, nalift([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1],[1,2,3]))
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, enumeration([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1]))
+    @fact typeof(similar(@enumeration([1.0 2.0 NA]))) --> EnumerationArray{Float64,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
+    @fact typeof(similar(enumeration([:a :b]))) --> EnumerationArray{Symbol,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
   end
 end
 

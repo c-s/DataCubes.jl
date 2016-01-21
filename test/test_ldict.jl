@@ -20,6 +20,9 @@ facts("LDict tests") do
     @fact eltype(LDict(:a=>3,:b=>2)) --> Pair{Symbol,Int}
     @fact keys(LDict(:a=>3,:b=>2)) --> [:a,:b]
     @fact values(LDict(:a=>3,:b=>2)) --> [3,2]
+    @fact_throws LDict(:a=>3,:b=>'a')[:x]
+    @fact get!(LDict(:a=>3,:b=>'a'), :a, 1.0) --> 3
+    @fact get!(LDict(:a=>3,:b=>'a'), :c, 1.0) --> 1.0
   end
   context("method tests") do
     @fact merge(LDict(:a=>1, :b=>2, :c=>3), LDict(:a=>10, :d=>15)) -->

@@ -50,6 +50,12 @@ facts("Join tests") do
     @fact leftjoin(lj_base_tbl, lj_src_tbl, 1=>pick(lj_base_tbl,:k1,:k2)) --> leftjoin(lj_base_tbl, lj_src_tbl, 1)
     @fact innerjoin(lj_base_tbl, lj_src_tbl, 1=>pick(lj_base_tbl,:k1,:k2)) --> innerjoin(lj_base_tbl, lj_src_tbl, 1=>pick(lj_base_tbl,[:k1,:k2]))
     @fact innerjoin(lj_base_tbl, lj_src_tbl, 1=>pick(lj_base_tbl,:k1,:k2)) --> innerjoin(lj_base_tbl, lj_src_tbl, 1)
+    @fact leftjoin(larr(a=[1,2,3],axis=[:a,:b,:c]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis=[:a,:b,:c],axis=[:x,:y,:z])
+    @fact leftjoin(larr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
+    @fact leftjoin(darr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
+    @fact innerjoin(larr(a=[1,2,3],axis=[:a,:b,:c]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis=[:a,:b,:c],axis=[:x,:y,:z])
+    @fact innerjoin(larr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
+    @fact innerjoin(darr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
   end
 end
 
