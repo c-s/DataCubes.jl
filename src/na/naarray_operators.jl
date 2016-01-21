@@ -69,6 +69,7 @@ getindexvalue(arr::AbstractArrayWrapper, args...) = getindexvalue(arr.a, args...
 
 Base.map(f, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
 Base.map(f, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
+Base.push!(arr::AbstractArrayWrapper, elems...) = push!(arr.a, elems...)
 
 macro absarray_unary_wrapper(ops...)
   targetexpr = map(ops) do op

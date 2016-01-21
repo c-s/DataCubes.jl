@@ -1103,14 +1103,6 @@ function dropna end
 dropna{N}(arr::DictArray{TypeVar(:T),N}) = arr[dropna_coords(arr)...]
 dropna{N}(arr::LabeledArray{TypeVar(:T),N}) = arr[dropna_coords(arr.data)...]
 
-# internally used to check whether an indexing is scalar (otherwise, the indexing will give another array).
-is_scalar_indexing(::Tuple{}) = false
-is_scalar_indexing{R<:Integer,N}(::NTuple{N,R}) = true
-is_scalar_indexing{N}(::NTuple{N,CartesianIndex}) = true
-is_scalar_indexing(args) = begin
-  all(map(arg->isa(arg,Real) || isa(arg,CartesianIndex), args))
-end
-
 """
 
 `mapna(f::Function, args...)`

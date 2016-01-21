@@ -10,7 +10,7 @@ A `LabeledArray` consists of one main array, which we call the *base* array, and
 
 ##### Constructors
 * `LabeledArray(arr, axes)` creates a `LabeledArray` from a *base* array `arr` and a tuple `axes` of one dimensional arrays for axes.
-* `LabeledArray(arr; kwargs...)` creates a `LabeledArray` from a *base* array `arr` and a keyword argument of the form `axisN=V` for some integer `N` for the axis direction and a one dimensional array `V`.
+* `LabeledArray(arr; kwargs...)` creates a `LabeledArray` from a *base* array `arr` and a keyword argument of the form `axisN=V` for some integer `N` for the axis direction and a one dimensional array `V`. If `N` in `axisN` is omitted, the smallest available number is automatically chosen.
 
 """
 immutable LabeledArray{T,N,AXES<:Tuple,TN} <: AbstractArray{T,N}
@@ -71,10 +71,17 @@ end
 LabeledArray{K,N,VS,SV,AXES<:Tuple}(data::DictArray{K,N,VS,SV}, axes::AXES) = LabeledArray{LDict{K,SV},N,AXES,typeof(data)}(data, axes)
 LabeledArray{T,N}(data::AbstractArray{T,N}; kwargs...) = begin
   axes = Any[DefaultAxis(x) for x in size(data)]
+  axis_last_index = 0
   for (k, v) in kwargs
     kstr = string(k)
     if startswith(kstr, "axis")
-      axisindex = parse(Int, kstr[5:endof(kstr)])
+      axisindex = if length(kstr) == 4
+        axis_last_index += 1
+        axis_last_index
+      else
+        axis_last_index = parse(Int, kstr[5:endof(kstr)])
+        axis_last_index
+      end
       axes[axisindex] = v
     end
   end
@@ -87,7 +94,7 @@ arr_width(x::DictArray) = length(x.data)
 arr_width(x::AbstractArray) = 1
 
 # some functions to set the height and width of output LabeledArrays to console.
-default_showsize = () -> ((height,width) = Base.tty_size();(height-20,width-6))
+default_showsize = () -> ((height,width) = iosize_compat();(height-20,width-6))
 
 @doc """
 
@@ -1265,12 +1272,12 @@ Create a `LabeledArray`. The arguments `...` can be one of the following:
 * `k=>v` creates a field using array `v` with field name `k` for the base of the return `LabeledArray`. `k` can be an arbitrary type. If the element type of `v` is not `Nullable`, each element will be wrapped by `Nullable`. If `NA` is provided as an element, it is translated as `Nullable{T}()` for an appropriate type `T`.
 * `k=v` creates a field using array `v` of the base with field name `:k`.
 * There can be at most one non pair type argument, which will be converted into a `LabeledArray` and other pair arguments will update it.
-* `axisN[...]` for some integer `N`: this creates an axis along the `N`th direction. If `...` are either keywords or pairs, those are used to create a `DictArray`. Otherwise, an array will be created using `...`.
+* `axisN[...]` for some integer `N`: this creates an axis along the `N`th direction. If `...` are either keywords or pairs, those are used to create a `DictArray`. Otherwise, an array will be created using `...`. If `N` in `axisN` is omitted, the smallest available number is automatically chosen.
 
 ##### Examples
 
 ```julia
-julia> t = @larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1[:U,NA,:W],axis2[r=['m','n']])
+julia> t = @larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1[:U,NA,:W],axis[r=['m','n']])
 3 x 2 LabeledArray
 
 r |m       |n       
@@ -1373,14 +1380,14 @@ Create a `LabeledArray`. The arguments `...` can be one of the following:
 
 * `k=>v` creates a field using array `v` with field name `k` for the underlying base `DictArray`. `k` can be an arbitrary type. If the element type of `v` is not `Nullable`, each element will be wrapped by `Nullable`. If you want to manually provide a `Nullable` array with `Nullable{T}()` elements in it, the macro version `@larr` may be more convenient to use. Note that this type of argument precedes the keyword type argument in the return `LabeledArray`, as shown in Examples below.
 * `k=v` creates a field using an array `v` with field name `:k` for the underlying base `DictArray`.
-* The keyword `axisN=v` for some integer `N` and an array `v` is treated specially. This will create the `N`th axis using the array `v`.
+* The keyword `axisN=v` for some integer `N` and an array `v` is treated specially. This will create the `N`th axis using the array `v`. If `N` in `axisN` is omitted, the smallest available number is automatically chosen.
 * There can be at most one non pair type argument, which will be converted into a `LabeledArray` and other pair arguments will update it.
 Especially, if the non pair type argument is an array of `LDict`, it will be converted into a `DictArray`.
 
 ##### Examples
 
 ```julia
-julia> t = larr(a=[1 2;3 4;5 6],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1=[:U,:V,:W],axis2=darr(r=['m','n']))
+julia> t = larr(a=[1 2;3 4;5 6],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis=[:U,:V,:W],axis2=darr(r=['m','n']))
 3 x 2 LabeledArray
 
 r |m       |n       
@@ -1411,10 +1418,17 @@ function larr end
 larr0(arr::LabeledArray, kwargs...) = begin
   data = []
   newaxes = Any[arr.axes...]
+  axis_count = 0
   for (k,v) in kwargs
     kstr = string(k)
     if startswith(kstr, "axis")
-      axisindex = parse(Int, kstr[5:endof(kstr)])
+      axisindex = if length(kstr) == 4
+        axis_count += 1
+        axis_count
+      else
+        axis_count = parse(Int, kstr[5:endof(kstr)])
+        axis_count
+      end
       newaxes[axisindex] = nalift(v)
     else
       push!(data, k=>nalift(v))

@@ -15,14 +15,14 @@ facts("LabeledArray tests") do
     larr1 = LabeledArray(d, (axis1c1, axis1c2))
     larr2 = LabeledArray(d, axis1=axis1c1, axis2=axis1c2)
     @fact larr1 --> larr2
-    @fact convert(LabeledArray, LabeledArray([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))],axis1=darr(k=[:x,:y]))) --> @larr(a=[3,5],b=[NA,3],axis1[darr(k=[:x,:y])])
-    @fact convert(LabeledArray, LabeledArray(nalift([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))]),axis1=darr(k=[:x,:y]))) --> @larr(a=[3,5],b=[NA,3],axis1[darr(k=[:x,:y])])
+    @fact convert(LabeledArray, LabeledArray([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))],axis1=darr(k=[:x,:y]))) --> @larr(a=[3,5],b=[NA,3],axis[darr(k=[:x,:y])])
+    @fact convert(LabeledArray, LabeledArray(nalift([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))]),axis1=darr(k=[:x,:y]))) --> @larr(a=[3,5],b=[NA,3],axis[darr(k=[:x,:y])])
     @fact convert(LabeledArray, LabeledArray(map(Nullable,[LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))]),axis1=darr(k=[:x,:y]))) --> @larr(a=[3,5],b=[NA,3],axis1[darr(k=[:x,:y])])
     @fact convert(LabeledArray, [LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))]) --> @larr(a=[3,5],b=[NA,3])
     @fact convert(LabeledArray, nalift([LDict(:a=>Nullable(3),:b=>Nullable{Int}()), LDict(:a=>Nullable(5),:b=>Nullable(3))])) --> @larr(a=[3,5],b=[NA,3])
     @fact @larr(a=[1,2,3],b=1,axis1[k=[:A,:B,:C]]) --> larr(a=[1,2,3],b=[1,1,1],axis1=darr(k=[:A,:B,:C]))
-    @fact larr(@larr(a=[1,2,3],b=1,axis1[k=[:A,:B,:C]]), c=[:x,:y,:z], :d=>[1,2,3], axis1=darr(k=["X", "Y", "Z"])) --> larr(axis1=darr(k=["X","Y","Z"]), a=[1,2,3],b=[1,1,1],d=[1,2,3],c=[:x,:y,:z])
-    @fact @larr(@larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1[:U,NA,:W],axis2[r=['m','n']]), c=[NA NA;3 4;5 6], :d=>:X, axis1[k=["g","h","i"]]) --> @larr(a=[1 NA;3 4;NA NA],b=[1.0 1.5;:sym 'a';"X" "Y"],c=[NA NA;3 4;5 6],d=reshape(fill(:X,6),3,2),axis2[r=['m','n']],axis1[k=["g","h","i"]])
+    @fact larr(@larr(a=[1,2,3],b=1,axis[k=[:A,:B,:C]]), c=[:x,:y,:z], :d=>[1,2,3], axis1=darr(k=["X", "Y", "Z"])) --> larr(axis1=darr(k=["X","Y","Z"]), a=[1,2,3],b=[1,1,1],d=[1,2,3],c=[:x,:y,:z])
+    @fact @larr(@larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis[:U,NA,:W],axis[r=['m','n']]), c=[NA NA;3 4;5 6], :d=>:X, axis1[k=["g","h","i"]]) --> @larr(a=[1 NA;3 4;NA NA],b=[1.0 1.5;:sym 'a';"X" "Y"],c=[NA NA;3 4;5 6],d=reshape(fill(:X,6),3,2),axis2[r=['m','n']],axis1[k=["g","h","i"]])
     @fact_throws larr(a=[1,2,3],axis1=[1 2 3])
     @fact_throws LabeledArray([1 2 3],([1,2,3],[4,5,6]))
   end
@@ -47,7 +47,7 @@ facts("LabeledArray tests") do
                                       :b=>nalift([14.0 24.0 34.0]),
                                       2=>nalift([:sym :sym :sym]),
                                       :third=>nalift(["str_7" "str_12" "str_17"])),
-                            axis1=DictArray(k1=nalift(["a"]), k2=nalift([102])),
+                            axis=DictArray(k1=nalift(["a"]), k2=nalift([102])),
                             axis2=DictArray(r1=nalift([:beta,:gamma,:delta])))
     @fact collapse_axes(peel(larr(a=reshape(1:15,3,5),axis1=[10,11,12])[1,:])) --> collapse_axes(peel(larr(a=[1 4 7 10 13], axis1=[10])))
     @fact larr(a=reshape(1:15,3,5),axis1=[10,11,12])[:,1] --> larr(a=[1,2,3], axis1=[10,11,12])
@@ -58,6 +58,8 @@ facts("LabeledArray tests") do
     @fact pick(arr,:a)[1,1].value --> 1
     @fact_throws pick(arr,:nonexistcol)
     @fact pick(larr(a=[1 2 3;4 5 6],axis1=darr(k=[:X,:Y])),:k) --> pick(larr(a=rand(2,3),axis1=darr(k=[:X,:Y])),:k)
+    @fact pickaxis(larr(a=[1 2 3;4 5 6],axis=darr(k=[:X,:Y])),1) --> darr(k=[:X,:Y])
+    @fact pickaxis(larr(a=[1 2 3;4 5 6],axis=darr(k=[:X,:Y])),1,:k) --> nalift([:X,:Y])
     @fact pick(arr,:b)[1,1].value --> 2.0
     @fact pick(arr,(:a,))[1][1,1].value --> 1
     @fact pick(arr,(:b,))[1][1,1].value --> 2.0
@@ -126,10 +128,10 @@ facts("LabeledArray tests") do
 
     @fact mapslices(x->[1], larr(a=Int[]), [1])  --> isnull
     @fact size(mapslices(x->[1], larr(a=rand(0,5,3)), [2])) --> (0,3)
-    @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
-    @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis1[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
+    @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
+    @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
     @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6
-    @fact collect(keys(dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> [LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))]
+    @fact Set(keys(dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)])) --> Set([LDict(:r=>Nullable(:x)), LDict(:r=>Nullable(:z))])
     @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(1)][LDict(:r=>Nullable(:x))] --> LDict(:a=>Nullable(1), :b=>Nullable{Int}())
     @fact reverse(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])) --> @larr(a=[4 5 6;1 2 3],axis2[r=[:x,:y,:z]])
     @fact_throws reverse(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]), 1)
