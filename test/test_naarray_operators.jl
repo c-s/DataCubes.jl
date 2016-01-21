@@ -2,7 +2,7 @@ module TestNAArrayOperators
 
 using FactCheck
 using DataCubes
-using DataCubes.AbstractArrayWrapper
+using DataCubes: AbstractArrayWrapper,FloatNAArray,wrap_array
 
 facts("NAArrayOperators tests") do
   context("AbstractArrayWrapper tests") do
@@ -159,6 +159,12 @@ facts("NAArrayOperators tests") do
     @fact darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])+larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) --> larr(a=[12 14 16;18 20 22],b=2.0*[1 2 3;4 5 6],axis1=[:X,:Y])
     @fact larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) + darr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6]) --> larr(b=2.0*[1 2 3;4 5 6],a=[12 14 16;18 20 22],axis1=[:X,:Y])
     @fact_throws larr(b=[1 2 3;4 5 6],a=[11 12 13;14 15 16],axis1=[:X,:Y]) + larr(a=[1 2 3;4 5 6],b=1.0*[1 2 3;4 5 6])
+    @fact darr(a=[1.0 2.0]) * darr(a=[2.0,3.0]) --> darr(a=[8.0])
+    @fact darr(a=[1.0 2.0;3.0 4.0]) / darr(a=[2.0 3.0]) --> darr(a=[1.0 2.0;3.0 4.0]/[2.0 3.0])
+    @fact nalift([1.0 2.0]) * nalift([2.0,3.0]) --> nalift([8.0])
+    @fact nalift([1.0 2.0;3.0 4.0]) / nalift([2.0 3.0]) --> nalift([1.0 2.0;3.0 4.0]/[2.0 3.0])
+    @fact wrap_array(FloatNAArray([1.0 2.0]) * FloatNAArray([2.0,3.0])) --> wrap_array(FloatNAArray([8.0]))
+    @fact wrap_array(FloatNAArray([1.0 2.0;3.0 4.0]) / FloatNAArray([2.0 3.0])) --> wrap_array(FloatNAArray([1.0 2.0;3.0 4.0]/[2.0 3.0]))
   end
 end
 

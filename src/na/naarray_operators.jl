@@ -68,7 +68,7 @@ end
 getindexvalue(arr::AbstractArrayWrapper, args...) = getindexvalue(arr.a, args...)
 
 Base.map(f::Function, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
-Base.map(f::Function, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
+Base.map(f::Function, arr::AbstractArrayWrapper, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, arr.a, map(x->x.a, arrs)...))
 Base.push!(arr::AbstractArrayWrapper, elems...) = push!(arr.a, elems...)
 
 macro absarray_unary_wrapper(ops...)
@@ -133,16 +133,13 @@ const naop_suffix = "!"
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     nullelem = if length(op.args) == 2
-      #Expr(:curly, :Nullable, Expr(:call, :promote_type, :T, :U))
       :(promote_nullable_optypes($(op.args[1]),T,U))
     elseif length(op.args) == 3
-      #Expr(:curly, :Nullable, op.args[3])
       :(preset_nullable_type(T,U,$(op.args[3])))
     end
     quote
       $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
         @assert(size(x) == size(y))
-        #AbstractArrayWrapper(map((u,v)->$(esc(op.args[2]))(u,v), x.a, y.a))
         result = similar(x, $nullelem)
         $(symbol(op.args[1],naop_suffix))(result.a, x, y)
         result
@@ -352,7 +349,6 @@ macro absarray_binary_wrapper(ops...)
 
       for nulltype in $LiftToNullableTypes
         $(esc(op.args[1]))(x::AbstractArrayWrapper{nulltype}, y::nulltype) = begin
-          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
           T = eltype(x)
           U = typeof(y)
           result = similar(x, $nullelem)
@@ -361,7 +357,6 @@ macro absarray_binary_wrapper(ops...)
         end
 
         $(esc(op.args[1]))(x::nulltype, y::AbstractArrayWrapper{nulltype}) = begin
-          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
           T = typeof(x)
           U = eltype(y)
           result = similar(y, $nullelem)
@@ -370,7 +365,6 @@ macro absarray_binary_wrapper(ops...)
         end
 
         $(esc(op.args[1])){T<:nulltype}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
           U = typeof(y)
           result = similar(x, $nullelem)
           $(symbol(op.args[1],"nulltype2",naop_suffix))(result.a, x, y)
@@ -378,7 +372,6 @@ macro absarray_binary_wrapper(ops...)
         end
 
         $(esc(op.args[1])){U<:nulltype}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
-          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
           T = typeof(x)
           result = similar(y, $nullelem)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
@@ -386,7 +379,6 @@ macro absarray_binary_wrapper(ops...)
         end
 
         $(esc(op.args[1])){T<:Nullable}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-          #AbstractArrayWrapper(map(u->$(esc(op.args[2]))(u,y), x.a))
           U = typeof(y)
           result = similar(x, $nullelem)
           $(symbol(op.args[1],"nulltype2",naop_suffix))(result.a, x, y)
@@ -394,7 +386,6 @@ macro absarray_binary_wrapper(ops...)
         end
 
         $(esc(op.args[1])){U<:Nullable}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
-          #AbstractArrayWrapper(map(v->$(esc(op.args[2]))(x,v), y.a))
           T = typeof(x)
           result = similar(y, $nullelem)
           $(symbol(op.args[1],"nulltype1",naop_suffix))(result.a, x, y)
@@ -436,6 +427,12 @@ end
 *{T<:Real}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x .* y
 *{T<:Complex}(x::Nullable{T}, y::Union{DictArray,LabeledArray}) = x .* y
 *{T<:Complex}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x .* y
+*(x::FloatNAArray, y::FloatNAArray) = FloatNAArray(x.data * y.data)
+/(x::FloatNAArray, y::FloatNAArray) = FloatNAArray(x.data / y.data)
+*(x::AbstractArrayWrapper, y::AbstractArrayWrapper) = AbstractArrayWrapper(x.a * y.a)
+/(x::AbstractArrayWrapper, y::AbstractArrayWrapper) = AbstractArrayWrapper(x.a / y.a)
+*(x::DictArray, y::DictArray) = mapvalues(*, x, y)
+/(x::DictArray, y::DictArray) = mapvalues(/, x, y)
 /(x::Real, y::Union{DictArray,LabeledArray}) = x ./ y
 /(x::Union{DictArray,LabeledArray}, y::Real) = x ./ y
 /(x::Complex, y::Union{DictArray,LabeledArray}) = x ./ y
