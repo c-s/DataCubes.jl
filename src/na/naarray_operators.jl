@@ -67,8 +67,8 @@ Base.getindex(arr::AbstractArrayWrapper, args...) = begin
 end
 getindexvalue(arr::AbstractArrayWrapper, args...) = getindexvalue(arr.a, args...)
 
-Base.map(f, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
-Base.map(f, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
+Base.map(f::Function, arr::AbstractArrayWrapper) = AbstractArrayWrapper(map(f, arr.a))
+Base.map(f::Function, arrs::AbstractArrayWrapper...) = AbstractArrayWrapper(map(f, map(x->x.a, arrs)...))
 Base.push!(arr::AbstractArrayWrapper, elems...) = push!(arr.a, elems...)
 
 macro absarray_unary_wrapper(ops...)
@@ -259,7 +259,6 @@ macro absarray_binary_wrapper(ops...)
         xa= x.a
         ya = y.a
         resultdata = result.data
-        na = convert(K,NaN)
         for i in eachindex(xa,ya)
           @inbounds resultdata[i] = $(esc(op.args[2]))(xa[i], ya[i])
         end

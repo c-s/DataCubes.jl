@@ -54,6 +54,7 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) + AbstractArrayWrapper([1.0,2.0,3.0]) --> @nalift([2.0,4.0,NA])
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) --> @nalift([2.0,4.0,NA])
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([1,2,3]) --> [2.0,4.0,6.0]
+    @fact AbstractArrayWrapper([1,2,3]) ./ AbstractArrayWrapper([1,2,3]) --> [1.0,1.0,1.0]
     @fact (2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
     @fact @nalift([1,2,NA]) * (2+3im)--> @nalift([2+3im,4+6im,NA])
     @fact Nullable(2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
