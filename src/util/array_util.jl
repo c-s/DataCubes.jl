@@ -642,11 +642,13 @@ end
 
 """
 
-`mapvalues(f::Function, x)`
+`mapvalues(f::Function, xs...)`
 
-Apply a function `f` to `x`, which can be of type `LDict`/`DictArray`/`LabeledArray`.
+Apply a function `f` to each tuple constructed from `xs`. Each element of `xs` will be of type `LDict`/`DictArray`/`LabeledArray`. The input tuple is constructed by combining the element in the same position in each `xs` (or the constant value in case it is not an array).
 
 ##### Returns
+
+For each element `x` in `xs`,
 
 * If `x` is `LDict`, `f` is applied to each value and the result is again `LDict` with the same keys and the new values.
 * If `x` is `DictArray`, `f` is applied to each field. The return value will be `DictArray` if the return value of `f` is also an `AbstractArray`. Otherwise, an `LDict` will be returned.
@@ -685,10 +687,19 @@ DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
 
-julia> mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
+
+julia> mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis=[:m,:n,:p]))
 DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
+
+
+julia> mapvalues((x,y)->2x.*y,darr(a=[1 2 3]),darr(a=[4 5 6]))
+1 x 3 DictArray
+
+a |a  |a  
+--+---+---
+8 |20 |36 
 ```
 
 """

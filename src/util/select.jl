@@ -475,10 +475,10 @@ Base.eltype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = T
 Base.endof(arr::SubArrayView) = length(arr.indices)
 Base.linearindexing{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.LinearFast()
 Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.data, U, dims)
-Base.sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(sub(arr.indices, args...))
-Base.slice(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(slice(arr.indices, args...))
-Base.sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(sub(arr.indices, args...))
-Base.slice(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = SubArrayView(slice(arr.indices, args...))
+Base.sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, sub(arr.indices, args...))
+Base.slice(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, slice(arr.indices, args...))
+Base.sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(arr.data, sub(arr.indices, args...))
+Base.slice(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = SubArrayView(arr.data, slice(arr.indices, args...))
 #getindexvalue{T}(arr::SubArrayView, ::Type{T}, arg::Int) = getindexvalue(arr.data, T, arr.indices[arg]...)
 getindexvalue(arr::SubArrayView, arg::Int) = getindexvalue(arr.data, arr.indices[arg]...)
 
@@ -1109,7 +1109,7 @@ replace_expr(expr) = begin
   noescape_symbols = [:none, :LineNumberNode, :QuoteNode, :line, :quote]
   result = if :head in fieldnames(expr) && expr.head == :kw || expr.head == :(=>) || expr.head == :(=)
     # this is for a or b case.
-    key = if expr.head == :(=) || expr.head == :kw; quote_symbol(expr.args[1]) else expr.args[1] end #quote_symbol(expr.args[1])
+    key = if expr.head == :(=) || expr.head == :kw; quote_symbol(expr.args[1]) else expr.args[1] end
     if :head in fieldnames(expr.args[2]) && expr.args[2].head == :ref && expr.args[2].args[1] == verbatim_magic_symbol
       Expr(:(=>), esc(key), esc(expr.args[2].args[2]))
     else
@@ -1136,6 +1136,8 @@ replace_expr_inner(expr, noescape_symbols...) = begin
   elseif :head in fieldnames(expr) && expr.head==:macrocall && expr.args[1] == symbol("@rap")
     # if it is @rap, give precedence to it.
     replace_expr_inner(recursive_rap(expr.args[2:end]...), noescape_symbols...)
+  elseif :head in fieldnames(expr) && expr.head==:kw
+    Expr(:kw, expr.args[1], replace_expr_inner(expr.args[2], noescape_symbols...))
   elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("__")
     Expr(:ref, Expr(:call, :igna, :d), esc(expr.args[2]))
   elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("_!")
