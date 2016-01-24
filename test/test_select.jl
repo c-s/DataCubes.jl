@@ -17,10 +17,13 @@ facts("Select tests") do
   d = DictArray(c1=col1, c2=col2, c3=col3, c4=col4)
   lar = LabeledArray(d, axis1=axis1c1, axis2=axis1c2)
   context("@select tests") do
+    @fact @select(lar) === lar --> true
     context("aggregate tests") do
       @fact @select(lar,:c2,:c3).data --> pick(lar,[:c2,:c3])
       @fact @select(lar,c2=_c2 .* 2,:c3).data --> @darr(c2=2*pick(lar,:c2),c3=pick(lar,:c3))
       @fact @select(lar,c2=_c2 .* 2,:c3) --> @select(lar,c2=_[:c2].*2,:c3)
+      @fact @select(larr(a=[1,2,3],b=[4,5,6]), :a=>sum(_a), :b=>length(_b)) --> nalift(LDict(:a=>6,:b=>3))
+      @fact_throws @select(larr(rand(3,4)), :a)
     end
     context("condition tests") do
       @fact @select(lar, where[10 .< _c2 .< 25]) --> begin

@@ -129,7 +129,7 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 ```
 
 """
-zip_dropnaiter{N}(arrs::AbstractArrayWrapper{TypeVar(:T),N}...) = begin
+zip_dropnaiter{N}(arrs::AbstractArray{TypeVar(:T),N}...) = begin
   T = Tuple{map(x->eltype(eltype(x)), arrs)...}
   ZipNonNAIterator{T,N,length(arrs),typeof(arrs)}(arrs)
 end
@@ -371,6 +371,7 @@ end
 for opspec in [:cumsum, :cumprod, :cummin, :cummax, :diff]
   @eval begin
     $(opspec){T}(arr::AbstractArrayWrapper{Nullable{T}};rev=false) = $(opspec)(arr, 1;rev=rev)
+    $(opspec){T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}};rev=false) = $(opspec)(arr, 1;rev=rev)
     $(opspec)(arr::DictArray, dims::Integer...;rev=false) = DictArray(mapvalues(v->$(opspec)(v, dims...;rev=rev), arr.data))
     $(opspec)(arr::LabeledArray, dims::Integer...;rev=false) = LabeledArray($(opspec)(arr.data, dims...;rev=rev), arr.axes)
   end
@@ -379,14 +380,14 @@ end
 for opspec in [:msum, :mprod, :mmean, :mminimum, :mmaximum, :mmedian, :mmiddle, :nafill]
   @eval begin
     $(opspec){T}(arr::AbstractArrayWrapper{Nullable{T}};rev=false,window=0) = $(opspec)(arr, 1;rev=rev,window=window)
+    $(opspec){T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}};rev=false,window=0) = $(opspec)(arr, 1;rev=rev,window=window)
     $(opspec)(arr::DictArray, dims::Integer...;rev=false,window=0) = DictArray(mapvalues(v->$(opspec)(v, dims...;rev=rev,window=window), arr.data))
     $(opspec)(arr::LabeledArray, dims::Integer...;rev=false,window=0) = LabeledArray($(opspec)(arr.data, dims...;rev=rev,window=window), arr.axes)
   end
 end
 
-mquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, quantile::Number;rev=false,window=0) = begin
-  mquantile(arr, quantile, 1; rev=rev,window=window)
-end
+mquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, quantile::Number;rev=false,window=0) = mquantile(arr, quantile, 1; rev=rev,window=window)
+mquantile{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, quantile::Number;rev=false,window=0) = mquantile(arr, quantile, 1; rev=rev,window=window)
 mquantile(arr::DictArray, quantile::Number, dims::Integer...;rev=false,window=0) =
   DictArray(mapvalues(v->mquantile(v, quantile, dims...;rev=rev,window=window), arr.data))
 mquantile(arr::LabeledArray, quantile::Number, dims::Integer...;rev=false,window=0) =
@@ -403,7 +404,21 @@ Base.cumsum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+Base.cumsum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false) = begin
+  function update!(tgt, src)
+    acc = zero(T)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        acc += src[i]
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
@@ -418,7 +433,23 @@ Base.cumprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fal
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+Base.cumprod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
+                    dims::Integer...
+                    ;rev=false) = begin
+  function update!(tgt, src)
+    acc = one(T)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        acc *= src[i]
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
@@ -433,7 +464,23 @@ Base.cummin{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+Base.cummin{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
+                   dims::Integer...
+                   ;rev=false) = begin
+  function update!(tgt, src)
+    acc = convert(T, NaN)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        acc = isnan(acc) ? src[i] : min(acc, src[i])
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
@@ -448,13 +495,29 @@ Base.cummax{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+Base.cummax{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
+                   dims::Integer...
+                   ;rev=false) = begin
+  function update!(tgt, src)
+    acc = convert(T, NaN)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        acc = isnan(acc) ? src[i] : max(acc, src[i])
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
 cummiddle{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false) = begin
   DIVTYPE = typeof(one(T) / 2)
-  function update!{U,T}(tgt::AbstractArray{Nullable{U}}, src::AbstractArray{Nullable{T}})
+  function update!(tgt::AbstractArray{Nullable{DIVTYPE}}, src::AbstractArray{Nullable{T}})
     accmin = Nullable{T}()
     accmax = Nullable{T}()
     for i in eachindex(src)
@@ -462,15 +525,33 @@ cummiddle{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false)
         accmin = accmin.isnull ? src[i] : Nullable(min(accmin.value, src[i].value))
         accmax = accmax.isnull ? src[i] : Nullable(max(accmax.value, src[i].value))
       end
-      tgt[i] = (accmin.isnull || accmax.isnull ? Nullable{U}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{U}
+      tgt[i] = (accmin.isnull || accmax.isnull ? Nullable{DIVTYPE}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{DIVTYPE}
     end
   end
   result = similar(arr, Nullable{DIVTYPE})
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+cummiddle{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false) = begin
+  DIVTYPE = typeof(one(T) / 2)
+  function update!(tgt, src)
+    accmin = convert(T, NaN)
+    accmax = convert(T, NaN)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        accmin = isnan(accmin) ? src[i] : min(accmin, src[i])
+        accmax = isnan(accmax) ? src[i] : max(accmax, src[i])
+      end
+      tgt[i] = isnan(accmin) || isnan(accmax) ? convert(DIVTYPE, NaN) : (accmin + accmax) / 2
+    end
+  end
+  result = similar(arr, Nullable{DIVTYPE})
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
-nafill0{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false) = begin
+nafill0(arr::AbstractArrayWrapper, dims::Integer...;rev=false) = AbstractArrayWrapper(nafill0(arr.a, dims...; rev=rev))
+nafill0{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false) = begin
   function update!(tgt, src)
     lastelem = Nullable{T}()
     for i in eachindex(src)
@@ -482,6 +563,20 @@ nafill0{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false) =
   end
   result = similar(arr)
   map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  result
+end
+nafill0{T}(arr::FloatNAArray{T}, dims::Integer...;rev=false) = begin
+  function update!(tgt, src)
+    lastelem = convert(T, NaN)
+    for i in eachindex(src)
+      if !isnan(src[i])
+        lastelem = src[i]
+      end
+      tgt[i] = lastelem
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.data, arr.data, dims...;rev=rev)
   result
 end
 
@@ -504,19 +599,19 @@ Fill forward (backward if `rev=true`) `arr` using non-null values from the last 
 julia> t = @nalift([1 NA;NA 4;NA NA])
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
- Nullable{Int64}()  Nullable(4)      
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable{Int64}()
- Nullable(1)  Nullable(4)      
- Nullable(1)  Nullable(4)      
+ Nullable(1)  Nullable(4)
+ Nullable(1)  Nullable(4)
 
 julia> nafill(t,2)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable(1)        Nullable(1)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(1)
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t,2,1)
@@ -527,21 +622,22 @@ julia> nafill(t,2,1)
 
 julia> nafill(t, rev=true)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable(1)        Nullable(4)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(4)
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia> nafill(t, window=2)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
- Nullable(1)        Nullable(4)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(4)
+ Nullable{Int64}()  Nullable(4)
 ```
 
 """
 function nafill end
 
-nafill{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, window=0) = begin
+nafill(arr::AbstractArrayWrapper, dims::Integer...;rev=false, window=0) = AbstractArrayWrapper(nafill(arr.a, dims...; rev=rev, window=window))
+nafill{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false, window=0) = begin
   if window == 0
     return nafill0(arr, dims...;rev=rev)
   end
@@ -565,6 +661,30 @@ nafill{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, wi
   map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
   result
 end
+nafill{T}(arr::FloatNAArray{T}, dims::Integer...;rev=false, window=0) = begin
+  if window == 0
+    return nafill0(arr, dims...;rev=rev)
+  end
+  function update!(tgt, src)
+    lastelem = convert(T, NaN)
+    age = 0
+    for i in eachindex(src)
+      if isnan(src[i])
+        age += 1
+        if age >= window
+          lastelem = convert(T, NaN)
+        end
+      else
+        lastelem = src[i]
+        age = 0
+      end
+      tgt[i] = lastelem
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.data, arr.data, dims...;rev=rev)
+  result
+end
 
 
 
@@ -586,39 +706,39 @@ Note that `diff` applied to `AbstractArrayWrapper` (or to `LabeledArray` or `Dic
 ```julia
 julia> diff(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)     
+ Nullable(10)
  Nullable{Int64}()
  Nullable{Int64}()
- Nullable(2)      
- Nullable(3)      
+ Nullable(2)
+ Nullable(3)
 
 julia> diff(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |-2 2  |-2 2  
-3  -3 |3  -3 |3  -3 
+11 10 |-2 2  |-2 2
+3  -3 |3  -3 |3  -3
 
 
 julia> diff(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b 
+a  b  |a  b  |a  b
 ------+------+-----
--3 3  |-3 3  |-3 3 
-2  -2 |2  -2 |16 5 
+-3 3  |-3 3  |-3 3
+2  -2 |2  -2 |16 5
 
 
 julia> diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2     |3    
+  |1     |2     |3
 --+------+------+-----
-  |a  b  |a  b  |a  b 
+  |a  b  |a  b  |a  b
 --+------+------+-----
-1 |-3 3  |-3 3  |-3 3 
-2 |2  -2 |2  -2 |16 5 
+1 |-3 3  |-3 3  |-3 3
+2 |2  -2 |2  -2 |16 5
 ```
 
 """
@@ -633,7 +753,19 @@ Base.diff{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false)
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+Base.diff{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false) = begin
+  function update!(tgt, src)
+    acc = zero(T)
+    for i in eachindex(src)
+      tgt[i] = src[i] - acc
+      acc = src[i]
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
@@ -672,21 +804,21 @@ julia> msum(@nalift([10,NA,12,14,17]))
 julia> msum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |37 26 |65 40 
-25 17 |52 32 |81 45 
+11 10 |37 26 |65 40
+25 17 |52 32 |81 45
 
 
 julia> msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2     |3     
+  |1     |2     |3
 --+------+------+------
-  |a  b  |a  b  |a  b  
+  |a  b  |a  b  |a  b
 --+------+------+------
-1 |81 45 |56 28 |29 13 
-2 |70 35 |44 19 |16 5  
+1 |81 45 |56 28 |29 13
+2 |70 35 |44 19 |16 5
 ```
 
 """
@@ -700,7 +832,7 @@ msum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false,windo
   function update!(tgt, src)
     ringbuf = fill(zero(T), window)
     acc = zero(T)
-    ringbuf_index = 1 #window
+    ringbuf_index = 1
     for i in eachindex(src)
       if src[i].isnull
         acc -= ringbuf[ringbuf_index]
@@ -718,7 +850,36 @@ msum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false,windo
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
+  result
+end
+msum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false,window=0) = begin
+  if window == 0
+    return cumsum(arr, dims...;rev=rev)
+  end
+
+  function update!(tgt, src)
+    ringbuf = fill(zero(T), window)
+    acc = zero(T)
+    ringbuf_index = 1
+    for i in eachindex(src)
+      if isnan(src[i])
+        acc -= ringbuf[ringbuf_index]
+        ringbuf[ringbuf_index] = zero(T)
+      else
+        acc += src[i] - ringbuf[ringbuf_index]
+        ringbuf[ringbuf_index] = src[i]
+      end
+      if ringbuf_index == window
+        ringbuf_index = 1
+      else
+        ringbuf_index += 1
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
   result
 end
 
@@ -740,38 +901,38 @@ Calculate moving product of `arr` using the last `window` elements, or cumulativ
 ```julia
 julia> mprod(@nalift([10,11,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)    
- Nullable(110)   
- Nullable(1320)  
- Nullable(18480) 
+ Nullable(10)
+ Nullable(110)
+ Nullable(1320)
+ Nullable(18480)
  Nullable(314160)
 
 julia> mprod(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)   
- Nullable(10)   
- Nullable(120)  
- Nullable(1680) 
+ Nullable(10)
+ Nullable(10)
+ Nullable(120)
+ Nullable(1680)
  Nullable(28560)
 
 julia> mprod(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a   b  |a     b    |a       b      
+a   b  |a     b    |a       b
 -------+-----------+---------------
-11  10 |1848  630  |360360  30240  
-154 70 |27720 3780 |5765760 151200 
+11  10 |1848  630  |360360  30240
+154 70 |27720 3780 |5765760 151200
 
 
 julia> mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1              |2          |3      
+  |1              |2          |3
 --+---------------+-----------+-------
-  |a       b      |a     b    |a   b  
+  |a       b      |a     b    |a   b
 --+---------------+-----------+-------
-1 |5765760 151200 |37440 2160 |208 40 
-2 |524160  15120  |3120  240  |16  5  
+1 |5765760 151200 |37440 2160 |208 40
+2 |524160  15120  |3120  240  |16  5
 ```
 
 """
@@ -802,9 +963,38 @@ mprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, win
     end
   end
   result = similar(arr)
-  map_array_preserve_shape!(update!, result, arr, dims...;rev=rev)
+  map_array_preserve_shape!(update!, result.a, arr.a, dims...;rev=rev)
   result
 end
+mprod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false, window=0) = begin
+  if window == 0
+    return cumprod(arr, dims...;rev=rev)
+  end
+  function update!(tgt, src)
+    ringbuf = fill(one(T), window)
+    acc = one(T)
+    ringbuf_index = 1
+    for i in eachindex(src)
+      if isnan(src[i])
+        acc /= ringbuf[ringbuf_index]
+        ringbuf[ringbuf_index] = one(T)
+      else
+        acc *= src[i] / ringbuf[ringbuf_index]
+        ringbuf[ringbuf_index] = src[i]
+      end
+      if ringbuf_index == window
+        ringbuf_index = 1
+      else
+        ringbuf_index += 1
+      end
+      tgt[i] = acc
+    end
+  end
+  result = similar(arr)
+  map_array_preserve_shape!(update!, result.a.data, arr.a.data, dims...;rev=rev)
+  result
+end
+
 
 """
 
@@ -824,38 +1014,38 @@ Calculate moving mean of `arr` using the last `window` elements, or cumulative m
 ```julia
 julia> mmean(@nalift([10,11,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(10.0) 
- Nullable(10.5) 
- Nullable(11.0) 
+ Nullable(10.0)
+ Nullable(10.5)
+ Nullable(11.0)
  Nullable(11.75)
- Nullable(12.8) 
+ Nullable(12.8)
 
 julia> mmean(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(10.0) 
- Nullable(10.0) 
- Nullable(11.0) 
- Nullable(12.0) 
+ Nullable(10.0)
+ Nullable(10.0)
+ Nullable(11.0)
+ Nullable(12.0)
  Nullable(13.25)
 
 julia> mmean(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a                  b                 |a    b   
+a    b    |a                  b                 |a    b
 ----------+-------------------------------------+---------
-11.0 10.0 |12.333333333333334 8.666666666666666 |13.0 8.0 
-12.5 8.5  |13.0               8.0               |13.5 7.5 
+11.0 10.0 |12.333333333333334 8.666666666666666 |13.0 8.0
+12.5 8.5  |13.0               8.0               |13.5 7.5
 
 
 julia> mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2                                    |3        
+  |1        |2                                    |3
 --+---------+-------------------------------------+---------
-  |a    b   |a                  b                 |a    b   
+  |a    b   |a                  b                 |a    b
 --+---------+-------------------------------------+---------
-1 |13.5 7.5 |14.0               7.0               |14.5 6.5 
-2 |14.0 7.0 |14.666666666666666 6.333333333333333 |16.0 5.0 
+1 |13.5 7.5 |14.0               7.0               |14.5 6.5
+2 |14.0 7.0 |14.666666666666666 6.333333333333333 |16.0 5.0
 ```
 
 """
@@ -865,9 +1055,19 @@ mmean{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, win
   DIVTYPE = typeof(one(T) / 1)
   result = similar(arr, Nullable{DIVTYPE})
   if window == 0
-    map_array_preserve_shape!((tgt,src)->cummean_update!(tgt,src), result, arr, dims...;rev=rev)
+    map_array_preserve_shape!((tgt,src)->cummean_update!(tgt,src), result.a, arr.a, dims...;rev=rev)
   else
-    map_array_preserve_shape!((tgt,src)->mmean_update!(tgt,src,window), result, arr, dims...;rev=rev)
+    map_array_preserve_shape!((tgt,src)->mmean_update!(tgt,src,window), result.a, arr.a, dims...;rev=rev)
+  end
+  result
+end
+mmean{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, dims::Integer...;rev=false, window=0) = begin
+  DIVTYPE = typeof(one(T) / 1)
+  result = similar(arr, Nullable{DIVTYPE})
+  if window == 0
+    map_array_preserve_shape!((tgt,src)->cummean_update!(tgt,src), result.a.data, arr.a.data, dims...;rev=rev)
+  else
+    map_array_preserve_shape!((tgt,src)->mmean_update!(tgt,src,window), result.a.data, arr.a.data, dims...;rev=rev)
   end
   result
 end
@@ -896,6 +1096,30 @@ function mmean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{
     tgt[i] = (num_non_nullable == 0 ? Nullable{T}() : Nullable(acc / num_non_nullable))::Nullable{T}
   end
 end
+function mmean_update!{T<:AbstractFloat,U<:AbstractFloat}(tgt::AbstractArray{T}, src::AbstractArray{U}, window::Integer)
+  ringbuf = fill(convert(U,NaN), window)
+  acc = zero(U)
+  num_non_nullable = 0
+  ringbuf_index = 1
+  for i in eachindex(src)
+    srci = src[i]
+    if !isnan(srci)
+      num_non_nullable += 1
+      acc += srci
+    end
+    if !isnan(ringbuf[ringbuf_index])
+      num_non_nullable -= 1
+      acc -= ringbuf[ringbuf_index]
+    end
+    ringbuf[ringbuf_index] = srci
+    if ringbuf_index == window
+      ringbuf_index = 1
+    else
+      ringbuf_index += 1
+    end
+    tgt[i] = num_non_nullable == 0 ? convert(T,NaN) : acc / num_non_nullable
+  end
+end
 
 function cummean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{Nullable{U}})
   acc = zero(U)
@@ -907,6 +1131,18 @@ function cummean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArra
       acc += srci.value
     end
     tgt[i] = (num_non_nullable == 0 ? Nullable{T}() : Nullable(acc / num_non_nullable))::Nullable{T}
+  end
+end
+function cummean_update!{T<:AbstractFloat,U<:AbstractFloat}(tgt::AbstractArray{T}, src::AbstractArray{U})
+  acc = zero(U)
+  num_non_nullable = 0
+  for i in eachindex(src)
+    srci = src[i]
+    if !isnan(srci)
+      num_non_nullable += 1
+      acc += srci
+    end
+    tgt[i] = num_non_nullable == 0 ? convert(T,NaN) : acc / num_non_nullable
   end
 end
 
@@ -945,21 +1181,21 @@ julia> mminimum(@nalift([15,NA,12,11,17]))
 julia> mminimum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b |a  b 
+a  b  |a  b |a  b
 ------+-----+-----
-11 10 |11 7 |11 6 
-11 7  |11 6 |11 5 
+11 10 |11 7 |11 6
+11 7  |11 6 |11 5
 
 
 julia> mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1    |2    |3    
+  |1    |2    |3
 --+-----+-----+-----
-  |a  b |a  b |a  b 
+  |a  b |a  b |a  b
 --+-----+-----+-----
-1 |11 5 |12 5 |13 5 
-2 |12 5 |13 5 |16 5 
+1 |11 5 |12 5 |13 5
+2 |12 5 |13 5 |16 5
 ```
 
 """
@@ -1009,21 +1245,21 @@ julia> mmaximum(@nalift([11,NA,12,11,17]))
 julia> mmaximum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |14 10 |15 10 
-14 10 |15 10 |16 10 
+11 10 |14 10 |15 10
+14 10 |15 10 |16 10
 
 
 julia> mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2    |3    
+  |1     |2    |3
 --+------+-----+-----
-  |a  b  |a  b |a  b 
+  |a  b  |a  b |a  b
 --+------+-----+-----
-1 |16 10 |16 9 |16 8 
-2 |16 9  |16 8 |16 5 
+1 |16 10 |16 9 |16 8
+2 |16 9  |16 8 |16 5
 ```
 
 """
@@ -1073,21 +1309,21 @@ julia> mmedian(@nalift([11,NA,12,11,17]))
 julia> mmedian(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a    b   |a    b   
+a    b    |a    b   |a    b
 ----------+---------+---------
-11.0 10.0 |12.5 8.5 |14.0 8.5 
-12.5 8.5  |14.0 8.5 |14.5 8.5 
+11.0 10.0 |12.5 8.5 |14.0 8.5
+12.5 8.5  |14.0 8.5 |14.5 8.5
 
 
 julia> mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2        |3        
+  |1        |2        |3
 --+---------+---------+---------
-  |a    b   |a    b   |a    b   
+  |a    b   |a    b   |a    b
 --+---------+---------+---------
-1 |14.5 8.5 |14.5 8.0 |14.5 6.5 
-2 |14.5 8.0 |14.5 6.5 |16.0 5.0 
+1 |14.5 8.5 |14.5 8.0 |14.5 6.5
+2 |14.5 8.0 |14.5 6.5 |16.0 5.0
 ```
 
 """
@@ -1138,21 +1374,21 @@ julia> mmiddle(@nalift([11,NA,12,11,17]))
 julia> mmiddle(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a    b   |a    b   
+a    b    |a    b   |a    b
 ----------+---------+---------
-11.0 10.0 |12.5 8.5 |13.0 8.0 
-12.5 8.5  |13.0 8.0 |13.5 7.5 
+11.0 10.0 |12.5 8.5 |13.0 8.0
+12.5 8.5  |13.0 8.0 |13.5 7.5
 
 
 julia> mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2        |3        
+  |1        |2        |3
 --+---------+---------+---------
-  |a    b   |a    b   |a    b   
+  |a    b   |a    b   |a    b
 --+---------+---------+---------
-1 |13.5 7.5 |14.0 7.0 |14.5 6.5 
-2 |14.0 7.0 |14.5 6.5 |16.0 5.0 
+1 |13.5 7.5 |14.0 7.0 |14.5 6.5
+2 |14.0 7.0 |14.5 6.5 |16.0 5.0
 ```
 
 """
@@ -1187,38 +1423,38 @@ Calculate moving quantile of `arr` using the last `window` elements, or cumulati
 ```julia
 julia> mquantile(@nalift([11,14,12,11,17]), 0.25)
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(11.0) 
+ Nullable(11.0)
  Nullable(11.75)
  Nullable(11.75)
  Nullable(11.75)
- Nullable(12.5) 
+ Nullable(12.5)
 
 julia> mquantile(@nalift([11,NA,12,11,17]), 0.25)
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(11.0) 
- Nullable(11.0) 
+ Nullable(11.0)
+ Nullable(11.0)
  Nullable(11.25)
  Nullable(11.25)
- Nullable(11.5) 
+ Nullable(11.5)
 
 julia> mquantile(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 1, 2)
 2 x 3 DictArray
 
-a     b    |a     b    |a     b    
+a     b    |a     b    |a     b
 -----------+-----------+-----------
-11.0  10.0 |11.75 7.75 |12.5  7.75 
-11.75 7.75 |12.5  7.75 |13.25 7.75 
+11.0  10.0 |11.75 7.75 |12.5  7.75
+11.75 7.75 |12.5  7.75 |13.25 7.75
 
 
 julia> mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1          |2          |3          
+  |1          |2          |3
 --+-----------+-----------+-----------
-  |a     b    |a     b    |a     b    
+  |a     b    |a     b    |a     b
 --+-----------+-----------+-----------
-1 |13.75 7.25 |13.75 6.5  |13.75 5.75 
-2 |13.75 6.5  |13.75 5.75 |16.0  5.0  
+1 |13.75 7.25 |13.75 6.5  |13.75 5.75
+2 |13.75 6.5  |13.75 5.75 |16.0  5.0
 ```
 
 """
@@ -1230,10 +1466,48 @@ mquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::Number, dims::Integer...
   end
   DIVTYPE = typeof(one(T) / 1)
   result = similar(arr, Nullable{DIVTYPE})
-  map_array_preserve_shape!((tgt,src) -> moving_update!(x->quantile(x, q), window, tgt, src), result, arr, dims...;rev=rev)
+  # we don't mind changing the input src. native quantile function was not fast enough.
+  map_array_preserve_shape!((tgt,src) -> moving_update!(x->mquantile_quickselect!(DIVTYPE, x, q), window, tgt, src), result, arr, dims...;rev=rev)
   result
 end
 
+mquantile_quickselect!{T,R}(::Type{T}, arr::AbstractArray, p::R) =
+  mquantile_quickselect_inner!(T, arr, 1,
+                               length(arr),
+                               one(R) + p * (length(arr)-1))
+mquantile_quickselect_inner!{T,R}(::Type{T}, arr::AbstractArray, left::Int, right::Int, expected_position::R) = begin
+  while true
+    if left == right
+      return convert(T, arr[left])
+    elseif left == right - 1
+      return convert(T, (expected_position - left) * arr[right] + (right - expected_position) * arr[left])
+    else
+      pivotindex = div(right + left, 2)
+      pivotindex = mquantile_partition(arr, left, right, pivotindex)
+      if expected_position == pivotindex
+        return convert(T, arr[pivotindex])
+      elseif expected_position < pivotindex
+        right = pivotindex
+      else
+        left = pivotindex
+      end
+    end
+  end
+  error("this should not be reacheable.")
+end
+mquantile_partition(arr::AbstractArray, left::Int, right::Int, pivotindex::Int) = begin
+  pivotvalue = arr[pivotindex]
+  temp = arr[right]; arr[right] = arr[pivotindex]; arr[pivotindex] = temp
+  storeindex = left
+  for i in left:right-1
+    if arr[i] < pivotvalue
+      temp = arr[storeindex]; arr[storeindex] = arr[i]; arr[i] = temp
+      storeindex += 1
+    end
+  end
+  temp = arr[right]; arr[right] = arr[storeindex]; arr[storeindex] = temp
+  return storeindex
+end
 moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::AbstractArrayWrapper{Nullable{U}}) = moving_update!(f, window, tgt.a, src.a)
 moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::AbstractArray{Nullable{U}}) = moving_update!(f, window, tgt.a, src)
 moving_update!{T,U}(f::Function, window::Integer, tgt::AbstractArrayWrapper{Nullable{T}}, src::FloatNAArray{U}) = moving_update!(f, window, tgt.a, src)
@@ -1442,19 +1716,19 @@ DataCubes.LDict{Symbol,Any} with 10 entries:
 julia> describe(@darr(a=[1,2,3,4,NA],b=[1,2,3,4,5]))
 2 LabeledArray
 
-  |min q1   med q3   max mean std                count nacount naratio 
+  |min q1   med q3   max mean std                count nacount naratio
 --+--------------------------------------------------------------------
-a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2     
-b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0     
+a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2
+b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 
 
 julia> describe(@larr(a=[1,2,3,4,NA],b=[1,2,3,4,5],axis1[:m,:n,:p,:q,:r]))
 2 LabeledArray
 
-  |min q1   med q3   max mean std                count nacount naratio 
+  |min q1   med q3   max mean std                count nacount naratio
 --+--------------------------------------------------------------------
-a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2     
-b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0     
+a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2
+b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 ```
 
 """
@@ -1527,30 +1801,30 @@ julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
 
 julia> shift(nalift([1 2 3;4 5 6;7 8 9]), 1, -1)
 3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(4)        Nullable(5)      
- Nullable{Int64}()  Nullable(7)        Nullable(8)      
+ Nullable{Int64}()  Nullable(4)        Nullable(5)
+ Nullable{Int64}()  Nullable(7)        Nullable(8)
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia> shift(darr(a=[1 2 3;4 5 6;7 8 9]), 1, -1)
 3 x 3 DictArray
 
-a |a |a 
+a |a |a
 --+--+--
-  |4 |5 
-  |7 |8 
-  |  |  
+  |4 |5
+  |7 |8
+  |  |
 
 
 julia> shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 3 x 3 LabeledArray
 
-  |X |Y |Z 
+  |X |Y |Z
 --+--+--+--
-  |a |a |a 
+  |a |a |a
 --+--+--+--
-1 |  |4 |5 
-2 |  |7 |8 
-3 |  |  |  
+1 |  |4 |5
+2 |  |7 |8
+3 |  |  |
 ```
 
 """

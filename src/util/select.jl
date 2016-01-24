@@ -86,7 +86,7 @@ selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
         if isa(t.data, DictArray)
           darr([(k, onea(t, selected_cartesian_indices)) for (k,onea) in a]...)
         else
-          error("this should not happen: the data part of the LabeledArray is not a DictArray, but agg expression is provided.")
+          error("The data part of the LabeledArray is not a DictArray, but agg expression is provided.")
         end
       end
       create_square_array(aggvecs, t, selected_cartesian_indices)
@@ -664,60 +664,60 @@ If `t` is `DictArray` and the transformed `LabeledArray` has `DefaultAxis` along
 julia> t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia> @select(t, :a, :b=>_b .* 2)
 10 LabeledArray
 
-   |a  b 
+   |a  b
 ---+-----
-1  |1  2 
-2  |2  4 
-3  |3  6 
-4  |4    
-5  |5    
-6  |6    
-7  |7  2 
-8  |8  2 
-9  |9  4 
-10 |10 6 
+1  |1  2
+2  |2  4
+3  |3  6
+4  |4
+5  |5
+6  |6
+7  |7  2
+8  |8  2
+9  |9  4
+10 |10 6
 
 
 julia> @select(t, :a, :b=>_b .* 2, where[_c .!= :z], where[_a .> 2])
 5 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |3 6 
-2 |4   
-3 |5   
-4 |6   
-5 |7 2 
+1 |3 6
+2 |4
+3 |5
+4 |6
+5 |7 2
 
 
 julia> @select(t, a=mean(_a), b=sum(_b .* 2), by[d=_b .* 2], by[:c])
 4 x 3 LabeledArray
 
-c |x     |y     |z      
+c |x     |y     |z
 --+------+------+-------
-d |a   b |a   b |a    b 
+d |a   b |a   b |a    b
 --+------+------+-------
-  |4.0 0 |5.5 0 |       
-2 |1.0 2 |7.0 2 |8.0  2 
-4 |2.0 4 |      |9.0  4 
-6 |3.0 6 |      |10.0 6 
+  |4.0 0 |5.5 0 |
+2 |1.0 2 |7.0 2 |8.0  2
+4 |2.0 4 |      |9.0  4
+6 |3.0 6 |      |10.0 6
 ```
 
 """
@@ -753,60 +753,60 @@ If `t` is `DictArray` and the transformed `LabeledArray` has `DefaultAxis` along
 julia> t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia> selct(t, :a, :b=>d->d[:b] .* 2)
 10 LabeledArray
 
-   |a  b 
+   |a  b
 ---+-----
-1  |1  2 
-2  |2  4 
-3  |3  6 
-4  |4    
-5  |5    
-6  |6    
-7  |7  2 
-8  |8  2 
-9  |9  4 
-10 |10 6 
+1  |1  2
+2  |2  4
+3  |3  6
+4  |4
+5  |5
+6  |6
+7  |7  2
+8  |8  2
+9  |9  4
+10 |10 6
 
 
 julia> selct(t, :a, :b=>d->d[:b] .* 2, where=[d->d[:c] .!= :z], where=[d->d[:a] .> 2])
 5 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |3 6 
-2 |4   
-3 |5   
-4 |6   
-5 |7 2 
+1 |3 6
+2 |4
+3 |5
+4 |6
+5 |7 2
 
 
 julia> selct(t, a=d->mean(d[:a]), b=d->sum(d[:b] .* 2), by=Any[:d=>d->d[:b] .* 2], by=[:c])
 4 x 3 LabeledArray
 
-c |x     |y     |z      
+c |x     |y     |z
 --+------+------+-------
-d |a   b |a   b |a    b 
+d |a   b |a   b |a    b
 --+------+------+-------
-  |4.0 0 |5.5 0 |       
-2 |1.0 2 |7.0 2 |8.0  2 
-4 |2.0 4 |      |9.0  4 
-6 |3.0 6 |      |10.0 6 
+  |4.0 0 |5.5 0 |
+2 |1.0 2 |7.0 2 |8.0  2
+4 |2.0 4 |      |9.0  4
+6 |3.0 6 |      |10.0 6
 ```
 
 """
@@ -864,69 +864,69 @@ An updated array of the same type as `t`.
 julia> t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia> @update(t, a=_a .+ 100, d=_a .* _b)
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |104   x    
-5  |105   y    
-6  |106   y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |104   x
+5  |105   y
+6  |106   y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia> @update(t, a=_a .+ 100, d=_a .* _b, where[~isna(_b)])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |4     x    
-5  |5     y    
-6  |6     y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |4     x
+5  |5     y
+6  |6     y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia> @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 10 LabeledArray
 
-   |a  b c d  
+   |a  b c d
 ---+----------
-1  |16 1 x 8  
-2  |11 2 x 18 
-3  |13 3 x 30 
-4  |4    x    
-5  |5    y    
-6  |6    y    
-7  |16 1 y 7  
-8  |16 1 z 1  
-9  |11 2 z 4  
-10 |13 3 z 9  
+1  |16 1 x 8
+2  |11 2 x 18
+3  |13 3 x 30
+4  |4    x
+5  |5    y
+6  |6    y
+7  |16 1 y 7
+8  |16 1 z 1
+9  |11 2 z 4
+10 |13 3 z 9
 ```
 
 """
@@ -963,69 +963,69 @@ An updated array of the same type as `t`.
 julia> t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia> update(t, a=d->d[:a] .+ 100, d=d->d[:a] .* d[:b])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |104   x    
-5  |105   y    
-6  |106   y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |104   x
+5  |105   y
+6  |106   y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia> update(t, a=d->d[:a] .+ 100, d=d->d[:a] .* d[:b], where=[d-> ~isna(d[:b])])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |4     x    
-5  |5     y    
-6  |6     y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |4     x
+5  |5     y
+6  |6     y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia> update(t, a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna(d[:b])], by=[:b])
 10 LabeledArray
 
-   |a  b c d  
+   |a  b c d
 ---+----------
-1  |16 1 x 8  
-2  |11 2 x 18 
-3  |13 3 x 30 
-4  |4    x    
-5  |5    y    
-6  |6    y    
-7  |16 1 y 7  
-8  |16 1 z 1  
-9  |11 2 z 4  
-10 |13 3 z 9  
+1  |16 1 x 8
+2  |11 2 x 18
+3  |13 3 x 30
+4  |4    x
+5  |5    y
+6  |6    y
+7  |16 1 y 7
+8  |16 1 z 1
+9  |11 2 z 4
+10 |13 3 z 9
 ```
 
 """

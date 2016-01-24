@@ -94,6 +94,10 @@ facts("ArrayHelperFunctions tests") do
   @fact mmiddle(1.0*@nalift([1 NA 3;4 NA NA]),window=2,1) --> @nalift([1.0 NA 3.0;2.5 NA 3.0])
   @fact mmiddle(@nalift([1 NA 3;4 NA NA]),window=2,2) --> @nalift([1.0 1.0 3.0;4.0 4.0 NA])
   @fact mmiddle(1.0*@nalift([1 NA 3;4 NA NA]),window=2,2) --> @nalift([1.0 1.0 3.0;4.0 4.0 NA])
+  @fact mmiddle(@nalift([1 NA 3;4 NA NA]),1) --> @nalift([1.0 NA 3.0;2.5 NA 3.0])
+  @fact mmiddle(1.0*@nalift([1 NA 3;4 NA NA]),1) --> @nalift([1.0 NA 3.0;2.5 NA 3.0])
+  @fact mmiddle(@nalift([1 NA 3;4 NA NA]),2) --> @nalift([1.0 1.0 2.0;4.0 4.0 4.0])
+  @fact mmiddle(1.0*@nalift([1 NA 3;4 NA NA]),2) --> @nalift([1.0 1.0 2.0;4.0 4.0 4.0])
   @fact mmean(@nalift([1 NA 3;4 NA NA]),window=2,1) --> @nalift([1.0 NA 3.0;2.5 NA 3.0])
   @fact mmean(1.0*@nalift([1 NA 3;4 NA NA]),window=2,1) --> @nalift([1.0 NA 3.0;2.5 NA 3.0])
   @fact mmean(@nalift([1 NA 3;4 NA NA]),2,window=2) --> @nalift([1.0 1.0 3.0;4.0 4.0 NA])
@@ -309,6 +313,11 @@ facts("ArrayHelperFunctions tests") do
     @fact shift(larr(a=[1 2 3;4 5 6],axis2=[:m,:n,:p]),1,1,isbound=true) --> larr(a=[5 6 6;5 6 6],axis2=[:m,:n,:p])
     @fact shift(larr(a=1.0*[1 2 3;4 5 6],axis2=[:m,:n,:p]),1,1,isbound=true) --> larr(a=1.0*[5 6 6;5 6 6],axis2=[:m,:n,:p])
   end
+  @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],0) --> 10.0
+  @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],0.25) --> 20.0
+  @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],0.5) --> 30.0
+  @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],3//4) --> 40.0
+  @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],1) --> 50.0
 end
 
 end
