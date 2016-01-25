@@ -56,6 +56,8 @@ facts("Join tests") do
     @fact innerjoin(larr(a=[1,2,3],axis=[:a,:b,:c]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis=[:a,:b,:c],axis=[:x,:y,:z])
     @fact innerjoin(larr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
     @fact innerjoin(darr(a=[1,2,3]),larr(b=[4,5,6],axis=[:x,:y,:z])) --> larr(a=[1 1 1;2 2 2;3 3 3],b=[4 5 6;4 5 6;4 5 6],axis2=[:x,:y,:z])
+    @fact leftjoin(larr(axis=['X','Y'],s1=[1 2 1;2 1 2],s2=[:a :a :a;:b :b :b],s3=[:c :d :e;:c :e :e]), @larr(axis[s2=[:a,:b]],axis[s3=[:c,:d]],r=[1.0 2.0;3.0 4.0]), 2,1) --> larr(axis1=['X','Y'],s1=[1 2 1;2 1 2],s2=[:a :a :a;:b :b :b],s3=[:c :d :e;:c :e :e],r=[1.0 2.0 NaN;3.0 NaN NaN])
+    @fact innerjoin(larr(s1=[1 2 1;2 1 2],s2=[:a :a :a;:b :b :b],s3=[:c :d :e;:c :e :e]), @larr(axis[s2=[:a,:b]],axis[s3=[:c,:d]],r=[1.0 2.0;3.0 4.0]), 2,1) --> larr(s1=[1 2;2 1],s2=[:a :a;:b :b],s3=[:c :d;:c :e],r=[1.0 2.0;3.0 NaN])
   end
 end
 

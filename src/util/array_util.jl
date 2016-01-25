@@ -25,8 +25,8 @@ julia> type_array(Any[1, 3.0, 2])
 
 julia> type_array(Any[1, 3.0, 'x'])
 3-element Array{Any,1}:
- 1   
- 3.0 
+ 1
+ 3.0
   'x'
 ```
 
@@ -176,16 +176,16 @@ If `arr` is a LabeledArray, all the labels along the flattened direction are com
 julia> collapse_axes(darr(a=reshape(1:40, 2,4,5), b=reshape(11:50, 2,4,5)), 1, 2)
 8 x 5 DictArray
 
-a b  |a  b  |a  b  |a  b  |a  b  
+a b  |a  b  |a  b  |a  b  |a  b
 -----+------+------+------+------
-1 11 |9  19 |17 27 |25 35 |33 43 
-2 12 |10 20 |18 28 |26 36 |34 44 
-3 13 |11 21 |19 29 |27 37 |35 45 
-4 14 |12 22 |20 30 |28 38 |36 46 
-5 15 |13 23 |21 31 |29 39 |37 47 
-6 16 |14 24 |22 32 |30 40 |38 48 
-7 17 |15 25 |23 33 |31 41 |39 49 
-8 18 |16 26 |24 34 |32 42 |40 50 
+1 11 |9  19 |17 27 |25 35 |33 43
+2 12 |10 20 |18 28 |26 36 |34 44
+3 13 |11 21 |19 29 |27 37 |35 45
+4 14 |12 22 |20 30 |28 38 |36 46
+5 15 |13 23 |21 31 |29 39 |37 47
+6 16 |14 24 |22 32 |30 40 |38 48
+7 17 |15 25 |23 33 |31 41 |39 49
+8 18 |16 26 |24 34 |32 42 |40 50
 ```
 
 """
@@ -261,11 +261,11 @@ julia> @rap _*2 x->x+1 10
 
 julia> @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)     
- Nullable(8)      
+ Nullable(10)
+ Nullable(8)
  Nullable{Int64}()
- Nullable(4)      
- Nullable(2)      
+ Nullable(4)
+ Nullable(2)
 ```
 """
 macro rap(args...)
@@ -362,34 +362,34 @@ If the field name array is null for an argument in `args` (`i=>[]`), the corresp
 julia> t = larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=darr(k=[:x,:y]), axis2=["A","B","C"])
 2 x 3 LabeledArray
 
-  |A   |B   |C   
+  |A   |B   |C
 --+----+----+----
-k |a b |a b |a b 
+k |a b |a b |a b
 --+----+----+----
-x |1 a |2 b |3 c 
-y |4 d |5 e |6 f 
+x |1 a |2 b |3 c
+y |4 d |5 e |6 f
 
 
 julia> replace_axes(t, 1=>[:a])
 2 x 3 LabeledArray
 
-  |A   |B   |C   
+  |A   |B   |C
 --+----+----+----
-a |b k |b k |b k 
+a |b k |b k |b k
 --+----+----+----
-1 |a x |b x |c x 
-4 |d y |e y |f y 
+1 |a x |b x |c x
+4 |d y |e y |f y
 
 
 julia> replace_axes(t, 1=>[:a, :b])
 2 x 3 LabeledArray
 
-    |A |B |C 
+    |A |B |C
 ----+--+--+--
-a b |k |k |k 
+a b |k |k |k
 ----+--+--+--
-1 a |x |x |x 
-4 d |y |y |y 
+1 a |x |x |x
+4 d |y |y |y
 ```
 
 """
@@ -475,23 +475,23 @@ Otherwise, the new data will be a normal array.
 julia> t = larr(a=[1,2,3], b=[:x,:y,:z])
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |1 x 
-2 |2 y 
-3 |3 z 
+1 |1 x
+2 |2 y
+3 |3 z
 
 
 julia> flds2axis(t, axisname=:newaxis, fieldname=:newfield)
 3 x 2 LabeledArray
 
-newaxis |a        |b        
+newaxis |a        |b
 --------+---------+---------
-        |newfield |newfield 
+        |newfield |newfield
 --------+---------+---------
-1       |1        |x        
-2       |2        |y        
-3       |3        |z        
+1       |1        |x
+2       |2        |y
+3       |3        |z
 ```
 
 """
@@ -537,66 +537,66 @@ Collapse a dimension of a [`LabeledArray`](#type__labeledarray.1), making the ax
 julia> t = larr(reshape(1:10,5,2), axis1=darr(k=['a','b','c','d','e']), axis2=darr(r1=[:M,:N],r2=["A","A"]))
 5 x 2 LabeledArray
 
-r1 |M |N  
-r2 |A |A  
+r1 |M |N
+r2 |A |A
 ---+--+---
-k  |  |   
+k  |  |
 ---+--+---
-a  |1 |6  
-b  |2 |7  
-c  |3 |8  
-d  |4 |9  
-e  |5 |10 
+a  |1 |6
+b  |2 |7
+c  |3 |8
+d  |4 |9
+e  |5 |10
 
 
 julia> axis2flds(t)
 5 LabeledArray
 
-k |M_A N_A 
+k |M_A N_A
 --+--------
-a |1   6   
-b |2   7   
-c |3   8   
-d |4   9   
-e |5   10  
+a |1   6
+b |2   7
+c |3   8
+d |4   9
+e |5   10
 
 
 julia> axis2flds(t, name_collapse_function=x->join(x, "*"))
 5 LabeledArray
 
-k |M*A N*A 
+k |M*A N*A
 --+--------
-a |1   6   
-b |2   7   
-c |3   8   
-d |4   9   
-e |5   10  
+a |1   6
+b |2   7
+c |3   8
+d |4   9
+e |5   10
 
 
 julia> m = @larr(reshape(1:10,5,2), axis1[k=['a','b','c','d','e']], axis2[:M,NA])
 5 x 2 LabeledArray
 
-  |M |   
+  |M |
 --+--+---
-k |  |   
+k |  |
 --+--+---
-a |1 |6  
-b |2 |7  
-c |3 |8  
-d |4 |9  
-e |5 |10 
+a |1 |6
+b |2 |7
+c |3 |8
+d |4 |9
+e |5 |10
 
 
 julia> axis2flds(m, default_axis_value="N/A")
 5 LabeledArray
 
-k |M N/A 
+k |M N/A
 --+------
-a |1 6   
-b |2 7   
-c |3 8   
-d |4 9   
-e |5 10  
+a |1 6
+b |2 7
+c |3 8
+d |4 9
+e |5 10
 ```
 
 """
@@ -642,11 +642,13 @@ end
 
 """
 
-`mapvalues(f::Function, x)`
+`mapvalues(f::Function, xs...)`
 
-Apply a function `f` to `x`, which can be of type `LDict`/`DictArray`/`LabeledArray`.
+Apply a function `f` to each tuple constructed from `xs`. Each element of `xs` will be of type `LDict`/`DictArray`/`LabeledArray`. The input tuple is constructed by combining the element in the same position in each `xs` (or the constant value in case it is not an array).
 
 ##### Returns
+
+For each element `x` in `xs`,
 
 * If `x` is `LDict`, `f` is applied to each value and the result is again `LDict` with the same keys and the new values.
 * If `x` is `DictArray`, `f` is applied to each field. The return value will be `DictArray` if the return value of `f` is also an `AbstractArray`. Otherwise, an `LDict` will be returned.
@@ -663,21 +665,21 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 julia> mapvalues(x->x .+ 1, darr(a=[1,2,3], b=[4,5,6]))
 3 DictArray
 
-a b 
+a b
 ----
-2 5 
-3 6 
-4 7 
+2 5
+3 6
+4 7
 
 
 julia> mapvalues(x->x .+ 1, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-m |2 5 
-n |3 6 
-p |4 7 
+m |2 5
+n |3 6
+p |4 7
 
 
 julia> mapvalues(sum, darr(a=[1,2,3], b=[4,5,6]))
@@ -685,10 +687,19 @@ DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
 
-julia> mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
+
+julia> mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis=[:m,:n,:p]))
 DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
   :a => Nullable(6)
   :b => Nullable(15)
+
+
+julia> mapvalues((x,y)->2x.*y,darr(a=[1 2 3]),darr(a=[4 5 6]))
+1 x 3 DictArray
+
+a |a  |a
+--+---+---
+8 |20 |36
 ```
 
 """
@@ -718,9 +729,6 @@ end
 mapvalues(f::Function, xs...) = begin
   allkeys = union(filter(x->!isempty(x), map(mapvalues_getkeys_helper, xs))...)
   reordered_xs = map(x->mapvalues_reorder_helper(allkeys,x), xs)
-  result = map(reordered_xs...) do elems...
-    f(elems...)
-  end
   isanydarr = any(x->isa(x,DictArray) || (isa(x,LabeledArray) && isa(peel(x),DictArray)), xs)
   labels = Nullable()
   for x in xs
@@ -733,19 +741,27 @@ mapvalues(f::Function, xs...) = begin
     end
   end
   if isempty(allkeys)
-    # This is a degenerate case without any key.
-    # An empty result will be returned.
-    result
-  elseif mapvalues_helper_allarrays_checker(result...)
-    if isanydarr
-      if labels.isnull
-        DictArray(allkeys, result)
-      else
-        LabeledArray(DictArray(allkeys, result), labels.value)
-      end
+    result = f(reordered_xs...)
+    if labels.isnull
+      result
+    else
+      LabeledArray(result, labels.value)
     end
   else
-    LDict(allkeys, result)
+    result = map(reordered_xs...) do elems...
+      f(elems...)
+    end
+    if mapvalues_helper_allarrays_checker(result...)
+      if isanydarr
+        if labels.isnull
+          DictArray(allkeys, result)
+        else
+          LabeledArray(DictArray(allkeys, result), labels.value)
+        end
+      end
+    else
+      LDict(allkeys, result)
+    end
   end
 end
 
@@ -753,7 +769,7 @@ mapvalues_getkeys_helper(xs) = []
 mapvalues_getkeys_helper(xs::LDict) = keys(xs)
 mapvalues_getkeys_helper(xs::DictArray) = mapvalues_getkeys_helper(peel(xs))
 mapvalues_getkeys_helper(xs::LabeledArray) = mapvalues_getkeys_helper(peel(xs))
-mapvalues_reorder_helper(allkeys, xs) = fill(xs, length(allkeys))
+mapvalues_reorder_helper(allkeys, xs) = isempty(allkeys) ? xs : fill(xs, length(allkeys))
 mapvalues_reorder_helper(allkeys, xs::LDict) = keys(xs)==allkeys ? values(xs) : values(extract(xs, allkeys))
 mapvalues_reorder_helper(allkeys, xs::DictArray) = mapvalues_reorder_helper(allkeys, peel(xs))
 mapvalues_reorder_helper(allkeys, xs::LabeledArray) = mapvalues_reorder_helper(allkeys, peel(xs))
@@ -786,11 +802,11 @@ DataCubes.LDict{Symbol,DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}}
 julia> peel(larr(a=[1,2,3], b=[:m,:n,:p], axis1=["X","Y","Z"]))
 3 DictArray
 
-a b 
+a b
 ----
-1 m 
-2 n 
-3 p 
+1 m
+2 n
+3 p
 ```
 
 """
@@ -827,24 +843,24 @@ julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a,))
 
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a, :b)
 2-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
- [Nullable(1),Nullable(2),Nullable(3)]   
+ [Nullable(1),Nullable(2),Nullable(3)]
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia> pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a, :b))
 2-element Array{DataCubes.AbstractArrayWrapper{T,1,A<:AbstractArray{T,N}},1}:
- [Nullable(1),Nullable(2),Nullable(3)]   
+ [Nullable(1),Nullable(2),Nullable(3)]
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia> t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=["X","Y","Z"]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia> pick(t, :a)
@@ -858,7 +874,7 @@ julia> pick(t, :a, :k)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
- Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
+ Nullable(5)  Nullable(6)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
@@ -869,7 +885,7 @@ julia> pick(t, (:a, :k))
  3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
- Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
+ Nullable(5)  Nullable(6)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
@@ -878,11 +894,11 @@ julia> pick(t, (:a, :k))
 julia> pick(t, [:a, :k])
 3 x 2 DictArray
 
-a k |a k 
+a k |a k
 ----+----
-1 X |2 X 
-3 Y |4 Y 
-5 Z |6 Z 
+1 X |2 X
+3 Y |4 Y
+5 Z |6 Z
 ```
 
 """
@@ -896,13 +912,10 @@ pick(arr::LabeledArray, field) = selectfield(arr, field)
 pick(arr::LabeledArray, fields::Tuple) = [selectfield(arr, field) for field in fields]
 pick(arr::LabeledArray, fields...) = [selectfield(arr, field) for field in fields]
 pick(arr::LabeledArray, fields::AbstractArray) = selectfields(arr, fields...)
-pick{K,V}(arr::LDict{K,Nullable{V}}, ks::AbstractArray) = extract(arr, ks)
-pick{K}(arr::LDict{K,Nullable}, ks::AbstractArray) = extract(arr, ks)
-pick{K,V}(arr::LDict{K,Nullable{V}}, k) = extract(arr, k)
-pick{K}(arr::LDict{K,Nullable}, k) = extract(arr, k)
-pick{K<:AbstractArray}(arr::LDict{K,Nullable}, ks::AbstractArray) = extract(arr, ks...)
-pick{K}(arr::LDict{K}, ks::AbstractArray) = selectkeys(arr, ks...)
-pick{K}(arr::LDict{K}, k) = arr[k]
+pick(arr::LDict, ks::AbstractArray) = selectkeys(arr, ks...)
+pick(arr::LDict, k) = arr[k]
+pick(arr::LDict, ks::Tuple) = [arr[k] for k in ks]
+pick(arr::LDict, ks...) = pick(arr, ks)
 
 """
 
@@ -918,33 +931,33 @@ Pick axes from a `LabeledArray`.
 julia> t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=["X","Y","Z"]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia> pickaxis(t)
 (3 DictArray
 
-k 
+k
 --
-X 
-Y 
-Z 
+X
+Y
+Z
 ,[Nullable(:A),Nullable(:B)])
 
 julia> pickaxis(t, 1)
 3 DictArray
 
-k 
+k
 --
-X 
-Y 
-Z 
+X
+Y
+Z
 
 
 julia> pickaxis(t, 1, :k)
@@ -978,35 +991,35 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 julia> delete(darr(a=[1,2,3], b=[:m,:n,:p]), :b)
 3 DictArray
 
-a 
+a
 --
-1 
-2 
-3 
+1
+2
+3
 
 
 julia> t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=["X","Y","Z"]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia> delete(t, :k, :b)
 3 x 2 LabeledArray
 
-  |A |B 
+  |A |B
 --+--+--
-  |a |a 
+  |a |a
 --+--+--
-1 |1 |2 
-2 |3 |4 
-3 |5 |6 
+1 |1 |2
+2 |3 |4
+3 |5 |6
 ```
 
 """
@@ -1060,41 +1073,41 @@ Remove any `NA` entries. If all elements are `NA` along some slice, that slice w
 julia> t = @darr(a=[1 2 NA;NA 5 NA], b=[NA :n NA;:x NA NA])
 2 x 3 DictArray
 
-a b |a b |a b 
+a b |a b |a b
 ----+----+----
-1   |2 n |    
-  x |5   |    
+1   |2 n |
+  x |5   |
 
 
 julia> dropna(t)
 2 x 2 DictArray
 
-a b |a b 
+a b |a b
 ----+----
-1   |2 n 
-  x |5   
+1   |2 n
+  x |5
 
 
 julia> m = @larr(a=[1 2 NA;NA 5 NA], b=[NA :n NA;:x NA NA], axis1[:M,:N])
 d2 x 3 LabeledArray
 
-  |1   |2   |3   
+  |1   |2   |3
 --+----+----+----
-  |a b |a b |a b 
+  |a b |a b |a b
 --+----+----+----
-M |1   |2 n |    
-N |  x |5   |    
+M |1   |2 n |
+N |  x |5   |
 
 
 julia> dropna(m)
 2 x 2 LabeledArray
 
-  |1   |2   
+  |1   |2
 --+----+----
-  |a b |a b 
+  |a b |a b
 --+----+----
-M |1   |2 n 
-N |  x |5   
+M |1   |2 n
+N |  x |5
 ```
 
 """
@@ -1123,12 +1136,12 @@ A nullable array after applying `f` to elements of `args` for each index. `f` ma
 ```julia
 julia> mapna((x,y)->x+y+1, @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
 2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(5)        Nullable(7)      
+ Nullable{Int64}()  Nullable(5)        Nullable(7)
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 
 julia> mapna((x,y)->Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
 2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(5)        Nullable(7)      
+ Nullable{Int64}()  Nullable(5)        Nullable(7)
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 ```
 
@@ -1201,23 +1214,23 @@ julia> tensorprod(@nalift([1,2,NA]), @nalift([3,NA]))
 julia> tensorprod(@darr(a=[1,2,NA]), @darr(b=[3,NA]))
 3 x 2 DictArray
 
-a b |a b 
+a b |a b
 ----+----
-1 3 |1   
-2 3 |2   
-  3 |    
+1 3 |1
+2 3 |2
+  3 |
 
 
 julia> tensorprod(@larr(a=[1,2,NA], axis1[:m,:n,:p]), @larr(b=[3,NA], axis1[:X,:Y]))
 3 x 2 LabeledArray
 
-  |X   |Y   
+  |X   |Y
 --+----+----
-  |a b |a b 
+  |a b |a b
 --+----+----
-m |1 3 |1   
-n |2 3 |2   
-p |  3 |    
+m |1 3 |1
+n |2 3 |2
+p |  3 |
 ```
 
 """
@@ -1279,50 +1292,50 @@ It takes first `N1` elements along direction 1, and similarly for other directio
 julia> t = larr(a=rand(5,3), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V])
 5 x 3 LabeledArray
 
-  |1                     |2                      |3                      
+  |1                     |2                      |3
 --+----------------------+-----------------------+-----------------------
-  |a                   b |a                   b  |a                   b  
+  |a                   b |a                   b  |a                   b
 --+----------------------+-----------------------+-----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6  |0.8784616074632225  11 
-Y |0.04069063166302023 2 |0.06614308437642014 7  |0.31870618693881947 12 
-Z |0.7855545407740521  3 |0.5208010912357377  8  |0.4421485355996708  13 
-U |0.8134241459627629  4 |0.8256022894268482  9  |0.3127049127123851  14 
-V |0.8536688845922342  5 |0.7263660648355621  10 |0.9315379228053462  15 
+X |0.3219487839233375  1 |0.4863723989946185  6  |0.8784616074632225  11
+Y |0.04069063166302023 2 |0.06614308437642014 7  |0.31870618693881947 12
+Z |0.7855545407740521  3 |0.5208010912357377  8  |0.4421485355996708  13
+U |0.8134241459627629  4 |0.8256022894268482  9  |0.3127049127123851  14
+V |0.8536688845922342  5 |0.7263660648355621  10 |0.9315379228053462  15
 
 
 julia> gtake(t, 3, 2)
 3 x 2 LabeledArray
 
-  |1                     |2                     
+  |1                     |2
 --+----------------------+----------------------
-  |a                   b |a                   b 
+  |a                   b |a                   b
 --+----------------------+----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6 
-Y |0.04069063166302023 2 |0.06614308437642014 7 
-Z |0.7855545407740521  3 |0.5208010912357377  8 
+X |0.3219487839233375  1 |0.4863723989946185  6
+Y |0.04069063166302023 2 |0.06614308437642014 7
+Z |0.7855545407740521  3 |0.5208010912357377  8
 
 
 julia> gtake(t, 3, 4)
 3 x 4 LabeledArray
 
-  |1                     |2                     |3                      |4                     
+  |1                     |2                     |3                      |4
 --+----------------------+----------------------+-----------------------+----------------------
-  |a                   b |a                   b |a                   b  |a                   b 
+  |a                   b |a                   b |a                   b  |a                   b
 --+----------------------+----------------------+-----------------------+----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6 |0.8784616074632225  11 |0.3219487839233375  1 
-Y |0.04069063166302023 2 |0.06614308437642014 7 |0.31870618693881947 12 |0.04069063166302023 2 
-Z |0.7855545407740521  3 |0.5208010912357377  8 |0.4421485355996708  13 |0.7855545407740521  3 
+X |0.3219487839233375  1 |0.4863723989946185  6 |0.8784616074632225  11 |0.3219487839233375  1
+Y |0.04069063166302023 2 |0.06614308437642014 7 |0.31870618693881947 12 |0.04069063166302023 2
+Z |0.7855545407740521  3 |0.5208010912357377  8 |0.4421485355996708  13 |0.7855545407740521  3
 
 
 julia> gtake(t, -2, -1)
 2 x 1 LabeledArray
 
-  |1                     
+  |1
 --+----------------------
-  |a                  b  
+  |a                  b
 --+----------------------
-U |0.3127049127123851 14 
-V |0.9315379228053462 15 
+U |0.3127049127123851 14
+V |0.9315379228053462 15
 ```
 
 """
@@ -1371,54 +1384,54 @@ An array or `LDict` of the same type as `arr`, which is selected based on `ns`..
 julia> t = larr(a=map(x->'a'+x,reshape(0:14,5,3)), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V], axis2=darr(r1=[:A,:A,:B],r2=[:m,:n,:n]))
 5 x 3 LabeledArray
 
-r1 |A   |A    |B    
-r2 |m   |n    |n    
+r1 |A   |A    |B
+r2 |m   |n    |n
 ---+----+-----+-----
-   |a b |a b  |a b  
+   |a b |a b  |a b
 ---+----+-----+-----
-X  |a 1 |f 6  |k 11 
-Y  |b 2 |g 7  |l 12 
-Z  |c 3 |h 8  |m 13 
-U  |d 4 |i 9  |n 14 
-V  |e 5 |j 10 |o 15 
+X  |a 1 |f 6  |k 11
+Y  |b 2 |g 7  |l 12
+Z  |c 3 |h 8  |m 13
+U  |d 4 |i 9  |n 14
+V  |e 5 |j 10 |o 15
 
 
 julia> extract(t, [:X,:V,:W], map(Nullable,(:A,:m)))
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-X |a 1 
-V |e 5 
-W |    
+X |a 1
+V |e 5
+W |
 
 
 julia> extract(t, [:X,:V,:W], darr(r1=[:A,:B],r2=[:m,:m]))
 3 x 2 LabeledArray
 
-r1 |A   |B   
-r2 |m   |m   
+r1 |A   |B
+r2 |m   |m
 ---+----+----
-   |a b |a b 
+   |a b |a b
 ---+----+----
-X  |a 1 |    
-V  |e 5 |    
-W  |    |    
+X  |a 1 |
+V  |e 5 |
+W  |    |
 
 
 julia> extract(t, :, d->d[:r1] .== :A)
 5 x 2 LabeledArray
 
-r1 |A   |A    
-r2 |m   |n    
+r1 |A   |A
+r2 |m   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-X  |a 1 |f 6  
-Y  |b 2 |g 7  
-Z  |c 3 |h 8  
-U  |d 4 |i 9  
-V  |e 5 |j 10 
+X  |a 1 |f 6
+Y  |b 2 |g 7
+Z  |c 3 |h 8
+U  |d 4 |i 9
+V  |e 5 |j 10
 ```
 
 """
@@ -1497,45 +1510,45 @@ It drops the first `N1` elements along direction 1, and similarly for other dire
 julia> t = larr(a=rand(5,3), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V])
 5 x 3 LabeledArray
 
-  |1                     |2                      |3                      
+  |1                     |2                      |3
 --+----------------------+-----------------------+-----------------------
-  |a                   b |a                   b  |a                   b  
+  |a                   b |a                   b  |a                   b
 --+----------------------+-----------------------+-----------------------
-X |0.27289790581491746 1 |0.8493197848353495  6  |0.8370920536703472  11 
-Y |0.8424940964507834  2 |0.21518951524950136 7  |0.9290437789813346  12 
-Z |0.9498541774517255  3 |0.942687447396005   8  |0.1341678643795654  13 
-U |0.7356663426240728  4 |0.7662948222160162  9  |0.24109069576951692 14 
-V |0.8716491751450759  5 |0.27472373001295436 10 |0.08909928028262804 15 
+X |0.27289790581491746 1 |0.8493197848353495  6  |0.8370920536703472  11
+Y |0.8424940964507834  2 |0.21518951524950136 7  |0.9290437789813346  12
+Z |0.9498541774517255  3 |0.942687447396005   8  |0.1341678643795654  13
+U |0.7356663426240728  4 |0.7662948222160162  9  |0.24109069576951692 14
+V |0.8716491751450759  5 |0.27472373001295436 10 |0.08909928028262804 15
 
 
 julia> gdrop(t, 3, 2)
 2 x 1 LabeledArray
 
-  |1                      
+  |1
 --+-----------------------
-  |a                   b  
+  |a                   b
 --+-----------------------
-U |0.24109069576951692 14 
-V |0.08909928028262804 15 
+U |0.24109069576951692 14
+V |0.08909928028262804 15
 
 
 julia> gdrop(t, 5)
 0 x 3 LabeledArray
 
- |1   |2   |3   
+ |1   |2   |3
 -+----+----+----
- |a b |a b |a b 
+ |a b |a b |a b
 
 
 julia> gdrop(t, -3, -2)
 2 x 1 LabeledArray
 
-  |1                     
+  |1
 --+----------------------
-  |a                   b 
+  |a                   b
 --+----------------------
-X |0.27289790581491746 1 
-Y |0.8424940964507834  2 
+X |0.27289790581491746 1
+Y |0.8424940964507834  2
 ```
 
 """
@@ -1580,57 +1593,57 @@ An array or `LDict` of the same type as `arr`, which is selected based on `ns`..
 julia> t = larr(a=map(x->'a'+x,reshape(0:14,5,3)), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V], axis2=darr(r1=[:A,:A,:B],r2=[:m,:n,:n]))
 5 x 3 LabeledArray
 
-r1 |A   |A    |B    
-r2 |m   |n    |n    
+r1 |A   |A    |B
+r2 |m   |n    |n
 ---+----+-----+-----
-   |a b |a b  |a b  
+   |a b |a b  |a b
 ---+----+-----+-----
-X  |a 1 |f 6  |k 11 
-Y  |b 2 |g 7  |l 12 
-Z  |c 3 |h 8  |m 13 
-U  |d 4 |i 9  |n 14 
-V  |e 5 |j 10 |o 15 
+X  |a 1 |f 6  |k 11
+Y  |b 2 |g 7  |l 12
+Z  |c 3 |h 8  |m 13
+U  |d 4 |i 9  |n 14
+V  |e 5 |j 10 |o 15
 
 
 julia> discard(t, [:X,:V,:W], map(Nullable,(:A,:m)))
 3 x 2 LabeledArray
 
-r1 |A   |B    
-r2 |n   |n    
+r1 |A   |B
+r2 |n   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-Y  |g 7 |l 12 
-Z  |h 8 |m 13 
-U  |i 9 |n 14 
+Y  |g 7 |l 12
+Z  |h 8 |m 13
+U  |i 9 |n 14
 
 
 julia> discard(t, [:X,:V,:W], darr(r1=[:A,:B],r2=[:m,:m]))
 3 x 2 LabeledArray
 
-r1 |A   |B    
-r2 |n   |n    
+r1 |A   |B
+r2 |n   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-Y  |g 7 |l 12 
-Z  |h 8 |m 13 
-U  |i 9 |n 14 
+Y  |g 7 |l 12
+Z  |h 8 |m 13
+U  |i 9 |n 14
 
 
 julia> discard(t, [], d->d[:r1] .== :A)
 5 x 1 LabeledArray
 
-r1 |B    
-r2 |n    
+r1 |B
+r2 |n
 ---+-----
-   |a b  
+   |a b
 ---+-----
-X  |k 11 
-Y  |l 12 
-Z  |m 13 
-U  |n 14 
-V  |o 15 
+X  |k 11
+Y  |l 12
+Z  |m 13
+U  |n 14
+V  |o 15
 ```
 
 """
@@ -1999,23 +2012,23 @@ By default, it generates `:xN` for an index integer `N`.
 julia> t = larr([1 2 3;4 5 6], axis1=[:X,:Y], axis2=darr(k=["A","B","C"]))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 
 
 julia> providenames(t)
 2 x 3 LabeledArray
 
-k  |A  |B  |C  
+k  |A  |B  |C
 ---+---+---+---
-x2 |x1 |x1 |x1 
+x2 |x1 |x1 |x1
 ---+---+---+---
-X  |1  |2  |3  
-Y  |4  |5  |6  
+X  |1  |2  |3
+Y  |4  |5  |6
 ```
 
 """
@@ -2060,34 +2073,34 @@ If a field name in `LabeledArray` gives `true` when applied to `check_fieldname`
 julia> t = larr([1 2 3;4 5 6], axis1=[:X,:Y], axis2=darr(k=["A","B","C"]))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 
 
 julia> providenames(t)
 2 x 3 LabeledArray
 
-k  |A  |B  |C  
+k  |A  |B  |C
 ---+---+---+---
-x2 |x1 |x1 |x1 
+x2 |x1 |x1 |x1
 ---+---+---+---
-X  |1  |2  |3  
-Y  |4  |5  |6  
+X  |1  |2  |3
+Y  |4  |5  |6
 
 
 julia> withdrawnames(providenames(t))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 ```
 
 """

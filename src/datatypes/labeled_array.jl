@@ -156,10 +156,10 @@ true
 julia> darr(a=[1 2 3;4 5 6], b=[:x :y :z;:u :v :w])
 2 x 3 DictArray
 
-a b |a b |a b 
+a b |a b |a b
 ----+----+----
-1 x |2 y |3 z 
-4 u |5 v |6 w 
+1 x |2 y |3 z
+4 u |5 v |6 w
 
 
 julia> set_showalongrow!!(false)
@@ -168,11 +168,11 @@ false
 julia> darr(a=[1 2 3;4 5 6], b=[:x :y :z;:u :v :w])
 2 x 3 DictArray
 
-a |1 2 3 
-b |x y z 
+a |1 2 3
+b |x y z
 --+------
-a |4 5 6 
-b |u v w 
+a |4 5 6
+b |u v w
 ```
 
 """
@@ -584,12 +584,21 @@ show_string_matrix(io::IO, m::Matrix, show_height, show_width, indent, hline_pos
     j_count += 1
     if j_count > show_height
       show_indent(io, indent)
+      running_nchars = indent
       for i in 1:max_i
         if i in vline_pos
           print(io, '|')
+          running_nchars = 1
         end
-        print(io, rpad(":", max_widths[i]))
-        print(io, ' ')
+        expected_running_nchars = running_nchars + max_widths[i] + 1
+        if expected_running_nchars >= show_width
+          print(io, ":")
+          break
+        else
+          print(io, rpad(":", max_widths[i]))
+          running_nchars = expected_running_nchars
+          print(io, ' ')
+        end
       end
       print(io, '\n')
       break
@@ -808,31 +817,31 @@ The axis along the `catdim` direction will be the concatenation of the axis of e
 julia> t1 = larr(a=[1 2 3;4 5 6], axis1=[:x,:y], axis2=["A","B","C"])
 t2 x 3 LabeledArray
 
-  |  |A B C 
+  |  |A B C
 --+--+------
-x |a |1 2 3 
+x |a |1 2 3
 --+--+------
-y |a |4 5 6 
+y |a |4 5 6
 
 
 julia> t2 = larr(a=[11 12 13;14 15 16], axis1=[:x,:y], axis2=["D","E","F"])
 2 x 3 LabeledArray
 
-  |  |D  E  F  
+  |  |D  E  F
 --+--+---------
-x |a |11 12 13 
+x |a |11 12 13
 --+--+---------
-y |a |14 15 16 
+y |a |14 15 16
 
 
 julia> cat(2, t1, t2)
 2 x 6 LabeledArray
 
-  |  |A B C D  E  F  
+  |  |A B C D  E  F
 --+--+---------------
-x |a |1 2 3 11 12 13 
+x |a |1 2 3 11 12 13
 --+--+---------------
-y |a |4 5 6 14 15 16 
+y |a |4 5 6 14 15 16
 ```
 
 """
@@ -1002,33 +1011,33 @@ Otherwise, the return value is an `Array`.
 julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[1])
 3 LabeledArray
 
-  |                           
+  |
   --+---------------------------
-  A |[Nullable(2),Nullable(8)]  
-  B |[Nullable(4),Nullable(10)] 
-  C |[Nullable(6),Nullable(12)] 
+  A |[Nullable(2),Nullable(8)]
+  B |[Nullable(4),Nullable(10)]
+  C |[Nullable(6),Nullable(12)]
 
 
 julia> mapslices(d->d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
   2 LabeledArray
 
-  k |                                        
+  k |
   --+----------------------------------------
-  X |[Nullable(2),Nullable(4),Nullable(6)]   
-  Y |[Nullable(8),Nullable(10),Nullable(12)] 
+  X |[Nullable(2),Nullable(4),Nullable(6)]
+  Y |[Nullable(8),Nullable(10),Nullable(12)]
 
 
 # note how the order of axes changed. the newly generated directions always preced the existing ones.
 julia> mapslices(x->msum(x), larr(axis1=[:A,:B,:C,:D,:E],axis2=['X','Y','Z'],a=reshape(1:15,5,3), b=1.0*reshape(1:15,5,3)), [2])
 3 x 5 LabeledArray
 
-  |A       |B       |C       |D       |E       
+  |A       |B       |C       |D       |E
 --+--------+--------+--------+--------+--------
-  |a  b    |a  b    |a  b    |a  b    |a  b    
+  |a  b    |a  b    |a  b    |a  b    |a  b
 --+--------+--------+--------+--------+--------
-X |1  1.0  |2  2.0  |3  3.0  |4  4.0  |5  5.0  
-Y |7  7.0  |9  9.0  |11 11.0 |13 13.0 |15 15.0 
-Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0 
+X |1  1.0  |2  2.0  |3  3.0  |4  4.0  |5  5.0
+Y |7  7.0  |9  9.0  |11 11.0 |13 13.0 |15 15.0
+Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0
 
 
 
@@ -1052,11 +1061,11 @@ Create a nested `Dict` from a `LabeledArray`.
 julia> t = larr(a=[1 2;3 4], axis1=[:x,:y], axis2=["A","B"])
 2 x 2 LabeledArray
 
-  |  |A B 
+  |  |A B
 --+--+----
-x |a |1 2 
+x |a |1 2
 --+--+----
-y |a |3 4 
+y |a |3 4
 
 
 julia> create_dict(t)
@@ -1129,50 +1138,50 @@ as long as the axis positions are concerned.
 julia> t = larr(a=[1 2 3;4 5 6], axis1=[:x,:y], axis2=["A","B","C"])
 2 x 3 LabeledArray
 
-  |A |B |C 
+  |A |B |C
 --+--+--+--
-  |a |a |a 
+  |a |a |a
 --+--+--+--
-x |1 |2 |3 
-y |4 |5 |6 
+x |1 |2 |3
+y |4 |5 |6
 
 
 1 x 6 LabeledArray
 
-x1 |x |y |x |y |x |y 
-x2 |A |A |B |B |C |C 
+x1 |x |y |x |y |x |y
+x2 |A |A |B |B |C |C
 ---+--+--+--+--+--+--
-   |a |a |a |a |a |a 
+   |a |a |a |a |a |a
 ---+--+--+--+--+--+--
-1  |1 |4 |2 |5 |3 |6 
+1  |1 |4 |2 |5 |3 |6
 
 
 julia> reshape(t, 6, 1)
 6 x 1 LabeledArray
 
-      |1 
+      |1
 ------+--
-x1 x2 |a 
+x1 x2 |a
 ------+--
-x  A  |1 
-y  A  |4 
-x  B  |2 
-y  B  |5 
-x  C  |3 
-y  C  |6 
+x  A  |1
+y  A  |4
+x  B  |2
+y  B  |5
+x  C  |3
+y  C  |6
 
 
 julia> reshape(t, 6)
 6 LabeledArray
 
-x1 x2 |a 
+x1 x2 |a
 ------+--
-x  A  |1 
-y  A  |4 
-x  B  |2 
-y  B  |5 
-x  C  |3 
-y  C  |6 
+x  A  |1
+y  A  |4
+x  B  |2
+y  B  |5
+x  C  |3
+y  C  |6
 
 
 julia> reshape(t, 3,2)
@@ -1280,25 +1289,25 @@ Create a `LabeledArray`. The arguments `...` can be one of the following:
 julia> t = @larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis1[:U,NA,:W],axis[r=['m','n']])
 3 x 2 LabeledArray
 
-r |m       |n       
+r |m       |n
 --+--------+--------
-  |a b   c |a b   c 
+  |a b   c |a b   c
 --+--------+--------
-U |1 1.0 1 |  1.5 1 
-  |3 sym 1 |4 a   1 
-W |  X   1 |  Y   1 
+U |1 1.0 1 |  1.5 1
+  |3 sym 1 |4 a   1
+W |  X   1 |  Y   1
 
 
 julia> @larr(t, c=[NA NA;3 4;5 6], :d=>:X, axis1[k=["g","h","i"]])
 3 x 2 LabeledArray
 
-r |m         |n         
+r |m         |n
 --+----------+----------
-k |a b   c d |a b   c d 
+k |a b   c d |a b   c d
 --+----------+----------
-g |1 1.0   X |  1.5   X 
-h |3 sym 3 X |4 a   4 X 
-i |  X   5 X |  Y   6 X 
+g |1 1.0   X |  1.5   X
+h |3 sym 3 X |4 a   4 X
+i |  X   5 X |  Y   6 X
 ```
 
 """
@@ -1390,25 +1399,25 @@ Especially, if the non pair type argument is an array of `LDict`, it will be con
 julia> t = larr(a=[1 2;3 4;5 6],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis=[:U,:V,:W],axis2=darr(r=['m','n']))
 3 x 2 LabeledArray
 
-r |m       |n       
+r |m       |n
 --+--------+--------
-  |b   a c |b   a c 
+  |b   a c |b   a c
 --+--------+--------
-U |1.0 1 1 |1.5 2 1 
-V |sym 3 1 |a   4 1 
-W |X   5 1 |Y   6 1 
+U |1.0 1 1 |1.5 2 1
+V |sym 3 1 |a   4 1
+W |X   5 1 |Y   6 1
 
 
 julia> larr(t, c=[1 2;3 4;5 6], :d=>:X, axis1=darr(k=["g","h","i"]))
 3 x 2 LabeledArray
 
-r |m         |n         
+r |m         |n
 --+----------+----------
-k |b   a c d |b   a c d 
+k |b   a c d |b   a c d
 --+----------+----------
-g |1.0 1 1 X |1.5 2 2 X 
-h |sym 3 3 X |a   4 4 X 
-i |X   5 5 X |Y   6 6 X 
+g |1.0 1 1 X |1.5 2 2 X
+h |sym 3 3 X |a   4 4 X
+i |X   5 5 X |Y   6 6 X
 ```
 
 """
@@ -1505,11 +1514,11 @@ The bases are merged together and the common axes set is used.
 julia> merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),larr(c=[4,5,6],b=[:m,:n,:p],axis1=[:a,:b,:c]))
 3 LabeledArray
 
-  |a b c 
+  |a b c
 --+------
-a |1 m 4 
-b |2 n 5 
-c |3 p 6 
+a |1 m 4
+b |2 n 5
+c |3 p 6
 ```
 
 """
@@ -1531,11 +1540,11 @@ Together with the axes set of the input `LabeledArray`, return a new `LabeledArr
 julia> merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),darr(c=[4,5,6],b=[:m,:n,:p]),darr(a=["X","Y","Z"]))
 3 LabeledArray
 
-  |a b c 
+  |a b c
 --+------
-a |X m 4 
-b |Y n 5 
-c |Z p 6 
+a |X m 4
+b |Y n 5
+c |Z p 6
 ```
 
 """

@@ -28,6 +28,7 @@ facts("NA tests") do
   @fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);typeof(t)) --> DataCubes.AbstractArrayWrapper{Nullable,2,Array{Nullable,2}}
   @fact (t=@nalift([1.0 2.0 3.0]);DataCubes.setna!(t);t) --> nalift(fill(NaN,1,3))
   @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t);wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
+  @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t,1);wrap_array(t)) --> wrap_array(@enumeration([NA,:b,:a],[:a,:b]))
   @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t);typeof(t)) --> EnumerationArray{Symbol,1,DataCubes.AbstractArrayWrapper{Int64,1,Array{Int64,1}},Int64}
   @fact (t=enumeration([:a,:b,:a]);fill!(t,0);wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
   @fact (t=enumeration([:a,:b,:a]);fill!(t,Nullable(:c));wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
@@ -49,6 +50,9 @@ facts("NA tests") do
   @fact igna(@nalift([1.0 3.0 NA]), 1.0) --> [1.0 3.0 1.0]
   @fact igna(@nalift([1.0 3.0 NA]))[3] --> isnan
   @fact igna(@nalift([1.0 3.0 5.0]), 1.0) --> [1.0 3.0 5.0]
+  @fact igna([Nullable(1.0) Nullable(3.0) Nullable{Float64}()])[3] --> isnan
+  @fact igna([Nullable(1.0) Nullable(3.0) Nullable(5.0)], 1.0) --> [1.0 3.0 5.0]
+  @fact igna([Nullable(1.0) Nullable(3.0) Nullable{Float64}()], 1.0) --> [1.0 3.0 1.0]
   @fact isna(Nullable{Int}()) --> true
   @fact isna(Nullable(1)) --> false
   @fact isna(Nullable(1.0)) --> false

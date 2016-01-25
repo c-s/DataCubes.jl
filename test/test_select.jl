@@ -17,10 +17,13 @@ facts("Select tests") do
   d = DictArray(c1=col1, c2=col2, c3=col3, c4=col4)
   lar = LabeledArray(d, axis1=axis1c1, axis2=axis1c2)
   context("@select tests") do
+    @fact @select(lar) === lar --> true
     context("aggregate tests") do
       @fact @select(lar,:c2,:c3).data --> pick(lar,[:c2,:c3])
       @fact @select(lar,c2=_c2 .* 2,:c3).data --> @darr(c2=2*pick(lar,:c2),c3=pick(lar,:c3))
       @fact @select(lar,c2=_c2 .* 2,:c3) --> @select(lar,c2=_[:c2].*2,:c3)
+      @fact @select(larr(a=[1,2,3],b=[4,5,6]), :a=>sum(_a), :b=>length(_b)) --> nalift(LDict(:a=>6,:b=>3))
+      @fact_throws @select(larr(rand(3,4)), :a)
     end
     context("condition tests") do
       @fact @select(lar, where[10 .< _c2 .< 25]) --> begin
@@ -193,6 +196,24 @@ facts("Select tests") do
     @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z']), s=[5,7,9])
     @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z']), s=[5,7,9])
     @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r,r7=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z'],r7=['X','Y','Z']), s=[5,7,9])
+    @fact size(@select(darr(a=repmat(1:10_000,1000),b=1.0*1:10_000_000), by[:a], s=msum(_b))) --> (10000,)
+    @fact size(@update(darr(a=repmat(1:10_000,1000),b=1.0*1:10_000_000), by[:a], s=msum(_b))) --> (10000000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mprod(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mprod(_b, rev=true, window=10))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmean(_b, window=10))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmean(_b, window=1))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mminimum(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mminimum(_b, 1, window=10))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmaximum(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmaximum(_b))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmedian(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmedian(_b))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmiddle(_b, 1, rev=true))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mmiddle(_b))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mquantile(_b, 0.2, window=20))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mquantile(_b, 0.5))) --> (100000,)
+    @fact size(@select(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mquantile(_b, 0.1, rev=true))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1000,100),b=1.0*1:100000), by[:a], s=mquantile(_b, 0.8, rev=true))) --> (100000,)
   end
 
 end

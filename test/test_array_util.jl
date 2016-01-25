@@ -284,13 +284,17 @@ facts("ArrayUtil tests") do
     @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),2,1) --> nalift(LDict(:a=>1))
     @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),1,Nullable(3)) --> nalift(LDict(:a=>1))
     @fact mapvalues((x,y,z)->Nullable(1),larr(a=[4,5,6]),1,Nullable(5)) --> nalift(LDict(:a=>1))
-    @fact mapvalues((x,y,z)->Nullable(1),3,2,1) --> isempty
+    @fact mapvalues((x,y,z)->Nullable(1),3,2,1).value --> 1
     @fact mapvalues(x->DataCubes.naop_plus(x,2), larr([1 2 3])) --> larr([3 4 5])
     @fact_throws mapvalues(+, larr(b=[11 12;13 14],a=[1 2;3 4],axis1=[:x,:y]), larr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]))
     @fact (a=enumeration([:a,:b,:a]);push!(a, Nullable(:a));DataCubes.wrap_array(a)) --> DataCubes.wrap_array(enumeration([:a,:b,:a,:a]))
     @fact (a=enumeration([:a,:b,:a]);push!(a, Nullable{Symbol}());DataCubes.wrap_array(a)) --> DataCubes.wrap_array(@enumeration([:a,:b,:a,NA]))
     @fact (a=nalift([1.0,2.0,3.0]);push!(a, Nullable(5.0));a) --> nalift([1.0,2.0,3.0,5.0])
     @fact (a=nalift([1.0,2.0,3.0]);push!(a, Nullable{Float64}());a) --> @nalift([1.0,2.0,3.0,NA])
+    @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], [:a]) --> LDict(:a=>Nullable(1))
+    @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a).value --> 1
+    @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))[1].value --> 1
+    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable,1}
   end
 end
 
