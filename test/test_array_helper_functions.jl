@@ -17,6 +17,7 @@ facts("ArrayHelperFunctions tests") do
   @fact prod(@nalift([1.0,2.0,3.0,NA])) --> x -> DataCubes.naop_eq(x, Nullable(6.0)).value
   @fact prod(@nalift([1,2,3,NA,15])) --> x -> DataCubes.naop_eq(x, Nullable(90)).value
   @fact prod(@nalift([1.0,2.0,3.0,NA,15.0])) --> x -> DataCubes.naop_eq(x, Nullable(90.0)).value
+  @fact diff(nalift([1 2 3;6 5 4]),1,2) --> nalift([1 -4 -2;5 3 1])
   @fact diff(1.0*nalift([1 2 3;6 5 4]),1,2) --> 1.0*nalift([1 -4 -2;5 3 1])
   @fact collect(DataCubes.dropnaiter(@nalift([1,20,3,NA,50,NA,NA]))) --> [1,20,3,50]
   @fact collect(DataCubes.dropnaiter(@nalift([1.0,20.0,3.0,NA,50.0,NA,NA]))) --> [1.0,20.0,3.0,50.0]
@@ -49,6 +50,9 @@ facts("ArrayHelperFunctions tests") do
   @fact quantile(@nalift([1.0,10.0,NA,100.0,2.0,3.0,NA]),0.75).value --> roughly(10.0)
   @fact quantile(@nalift([1,10,NA,100,2,3,NA]),1.0).value --> roughly(100.0)
   @fact quantile(@nalift([1.0,10.0,NA,100.0,2.0,3.0,NA]),1.0).value --> roughly(100.0)
+  @fact nalift(quantile(@nalift([1,10,NA,100,2,3,NA]),[0.0,0.25,0.5,0.75,1.0])) --> nalift([1.0,2.0,3.0,10.0,100.0])
+  @fact nalift(quantile(2.0*@nalift([1,10,NA,100,2,3,NA]),[0.0,0.25,0.5,0.75,1.0])) --> 2.0*nalift([1.0,2.0,3.0,10.0,100.0])
+  @fact quantile(nalift([Nullable{Int}(),Nullable{Int}()]),0.5) --> x->x.isnull
   @fact cumsum(larr(a=reshape(1:10,2,5), axis1=darr(k=[:x,:y]))) --> larr(a=[1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))
   @fact cumsum(larr(a=1.0 * reshape(1:10,2,5), axis1=darr(k=[:x,:y]))) --> larr(a=1.0 * [1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))
   @fact cumsum(larr(a=reshape(1:10,2,5), axis1=darr(k=[:x,:y])),1) --> larr(a=[1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))
@@ -67,6 +71,9 @@ facts("ArrayHelperFunctions tests") do
   @fact cumprod(@nalift([1.0 2.0 3.0;4.0 5.0 NA])) --> 1.0*nalift([1 2 3;4 10 3])
   @fact mean(larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0], axis1=[:x,:y]))[:a].value --> roughly(3.5)
   @fact mean(larr(a=1.0*[1 2 3;4 5 6],b=1.0*[1.0 2.0 3.0;4.0 5.0 6.0], axis1=[:x,:y]))[:a].value --> roughly(3.5)
+  @fact cor(darr(a=[1 2;3 4],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
+  @fact cor(darr(a=1.0*[1 2;3 4],b=1.0*[5 6;7 8]))[1,2].value --> roughly(1.0)
+  @fact cor(darr(a=[1.0 2.0;3.0 4.0],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
   @fact cor(larr(a=[1 2;3 4],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
   @fact cor(larr(a=1.0*[1 2;3 4],b=1.0*[5 6;7 8]))[1,2].value --> roughly(1.0)
   @fact cor(larr(a=[1.0 2.0;3.0 4.0],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
@@ -294,6 +301,14 @@ facts("ArrayHelperFunctions tests") do
     @fact nafill(@larr([1 NA 3;4 NA NA]),window=1,1) --> @larr([1 NA 3;4 NA NA])
     @fact nafill(@larr([1 NA 3;4 NA NA]),window=2,1) --> @larr([1 NA 3;4 NA 3])
     @fact nafill(@larr([1 NA 3;4 NA NA]),1) --> @larr([1 NA 3;4 NA 3])
+
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),window=1,2) --> 1.0*@larr([1 NA 3;4 NA NA])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),window=2,2) --> 1.0*@larr([1 1 3;4 4 NA])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),window=3,2) --> 1.0*@larr([1 1 3;4 4 4])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),2) --> 1.0*@larr([1 1 3;4 4 4])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),window=1,1) --> 1.0*@larr([1 NA 3;4 NA NA])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),window=2,1) --> 1.0*@larr([1 NA 3;4 NA 3])
+    @fact nafill(1.0*@larr([1 NA 3;4 NA NA]),1) --> 1.0*@larr([1 NA 3;4 NA 3])
   end
   context("describe tests") do
     @fact wrap_array(extract(describe(@darr(a=[1,2,3,4,5])), Nullable(:a)).values) --> nalift([1.0,2.0,3.0,4.0,5.0,3.0,std([1,2,3,4,5]),5.0,0.0,0.0])
@@ -318,6 +333,7 @@ facts("ArrayHelperFunctions tests") do
   @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],0.5) --> 30.0
   @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],3//4) --> 40.0
   @fact DataCubes.mquantile_quickselect!(Float64,[30,10,40,20,50],1) --> 50.0
+  @fact var(nalift([1,2,3,4,5])).value --> roughly(DataCubes.naop_mul(std(nalift([1,2,3,4,5])),std(nalift([1,2,3,4,5]))).value)
 end
 
 end
