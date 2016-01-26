@@ -954,7 +954,7 @@ print_string_reprmat_to_html_table{T<:AbstractString}(io::IO, strrep::AbstractAr
     print(io, """<tr style="border:0">""")
     for col in 1:size(strrep,2)
       if col > width-buffer
-        print(io, """<td style="border:1px solid #000; border-width:0 0 0 0"></td>""")
+        print(io, """<td style="border:1px solid #000; border-width:0 0 0 0">...</td>""")
         break
       end
       ishline = row in hlines
