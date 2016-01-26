@@ -100,11 +100,12 @@ Base.copy(arr::EnumerationArray) = EnumerationArray((copy(arr.elems), copy(arr.p
 
 Base.similar(arr::EnumerationArray) = EnumerationArray((similar(arr.elems),arr.pool))
 Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, dims::NTuple{M,Int}) = EnumerationArray((similar(arr.elems, dims),arr.pool))
+Base.similar{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, dims::Int...) = EnumerationArray((similar(arr.elems, dims...),arr.pool))
 Base.similar{T,N,V,R,U,M}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.elems, U, dims)
+Base.similar{T,N,V,R,U}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::Int...) = similar(arr.elems, U, dims...)
 Base.linearindexing{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.linearindexing(V)
 Base.reshape(arr::EnumerationArray, args::Tuple{Vararg{Int}}) = EnumerationArray((reshape(arr.elems, args), arr.pool))
 Base.reshape(arr::EnumerationArray, args::Int...) = EnumerationArray((reshape(arr.elems, args...), arr.pool))
-Base.reshape(arr::EnumerationArray, args...) = EnumerationArray((reshape(arr.elems, args...), arr.pool))
 Base.transpose(arr::EnumerationArray, args...) = EnumerationArray((transpose(arr.elems, args...), arr.pool))
 Base.permutedims(arr::EnumerationArray, args...) = EnumerationArray((permutedims(arr.elems, args...), arr.pool))
 Base.repeat(arr::EnumerationArray, args...;kwargs...) = EnumerationArray((repeat(arr.elems, args...;kwargs...), arr.pool))

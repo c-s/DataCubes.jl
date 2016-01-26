@@ -145,7 +145,6 @@ Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args::Int...
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::Nullable, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, if v.isnull;nulldata else v.value end, args...))
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, args::Int...) = setindex!(arr.data, v, args...)
 Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, arg::Int) = setindex!(arr.data, v, arg)
-Base.setindex!{T<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractFloat, arg::Int) = setindex!(arr.data, v, arg)
 Base.setindex!{T<:AbstractFloat,V<:AbstractFloat}(arr::FloatNAArray{T}, v::AbstractArray{V}, args...) = setindex!(arr.data, v, args...)
 Base.setindex!{T<:AbstractFloat,V<:Nullable}(arr::FloatNAArray{T}, v::AbstractArray{V}, args...) = (nulldata=convert(T,NaN);setindex!(arr.data, map(x->if x.isnull;nulldata else x.value end, v), args...))
 
@@ -160,12 +159,14 @@ Base.slice(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatN
 Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= FloatNAArray(sub(arr.data, args...))
 Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(slice(arr.data, args...))
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
-@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.repeat, Base.reshape, Base.sort, Base.sort!, Base.reverse,
+@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.reshape, Base.sort, Base.sort!, Base.reverse,
                                       Base.sub, Base.slice)
 Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, n::Int) = FloatNAArray(repmat(arr.data, n))
 Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, m::Int, n::Int) = FloatNAArray(repmat(arr.data, m, n))
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)
 Base.similar{T<:AbstractFloat,N}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::NTuple{N,Int}) = FloatNAArray(similar(arr.data, T, dims))
+Base.similar{T}(arr::FloatNAArray, ::Type{T}, dims::Int...) = similar(arr.data, T, dims...)
+Base.similar{T<:AbstractFloat}(arr::FloatNAArray, ::Type{Nullable{T}}, dims::Int...) = FloatNAArray(similar(arr.data, T, dims...))
 Base.copy!(tgt::FloatNAArray, src::FloatNAArray) = copy!(tgt.data, src.data)
 Base.copy(arr::FloatNAArray) = FloatNAArray(copy(arr.data))
 Base.fill!{T}(arr::FloatNAArray{T}, elem::Nullable) = fill!(arr.data, elem.isnull ? convert(T, NaN) : elem.value)
@@ -199,8 +200,6 @@ Base.sort!(arr::FloatNAArray; kwargs...) = FloatNAArray(sort!(arr.data; kwargs..
 Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)...))
 Base.vcat(arrs::FloatNAArray...) = cat(1, arrs...)
 Base.hcat(arrs::FloatNAArray...) = cat(2, arrs...)
-Base.sub(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
-Base.slice(arr::FloatNAArray, args::Union{Base.Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
 simplify_floatarray(arr::FloatNAArray) = arr
 simplify_floatarray{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = arr
 simplify_floatarray{T<:AbstractFloat}(arr::AbstractArrayWrapper{Nullable{T}}) =

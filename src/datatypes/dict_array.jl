@@ -848,6 +848,7 @@ a  b    |a  b    |a  b    |a  b    |a  b
 
 """
 Base.mapslices(f::Function, arr::DictArray, dims::AbstractVector) = mapslices_darr_larr(f, arr, dims)
+Base.mapslices(f::Function, arr::DictArray, dims::Int...) = mapslices_darr_larr(f, arr, [dims...])
 
 # if dims spans all dimensions, f! cannot be inplace. It will be f!::U->T. Otherwise, f will be f!(AbstractArray{T,N}, AbstractArray{U,N}).
 map_array_preserve_shape!{T,U,N}(f!::Function, tgt::AbstractArray{T,N}, src::AbstractArray{U,N}, dims::Int...;rev=false) = begin

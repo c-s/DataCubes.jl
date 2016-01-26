@@ -1045,6 +1045,7 @@ Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0
 
 """
 Base.mapslices(f::Function, arr::LabeledArray, dims::AbstractVector) = mapslices_darr_larr(f, arr, dims)
+Base.mapslices(f::Function, arr::LabeledArray, dims::Int...) = mapslices_darr_larr(f, arr, [dims...])
 
 recursive_pair_types{K1,K2,V}(::Type{Pair{K1,Pair{K2,V}}}) = DataType[K1, recursive_pair_types(Pair{K2,V})...]
 recursive_pair_types{K,V}(::Type{Pair{K,V}}) = DataType[K, V]
@@ -1550,15 +1551,6 @@ c |Z p 6
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
 
-#Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = begin
-#  newdata = similar(arr.data, U, dims)
-#  arraxes = arr.axes
-#  newaxes = ntuple(length(arraxes)) do d
-#    axis = arraxes[d]
-#    similar(axis, dims[d])
-#  end
-#  LabeledArray(newdata, newaxes)
-#end
 Base.similar(arr::LabeledArray) = similar(arr, size(arr))
 Base.similar{T,U,N}(arr::LabeledArray{T}, ::Type{U}, dims::NTuple{N,Int}) = similar(arr.data, U, dims)
 Base.similar{T,U}(arr::LabeledArray{T}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims)

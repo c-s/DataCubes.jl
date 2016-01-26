@@ -24,8 +24,8 @@ Base.eltype{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = T
 Base.linearindexing{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = Base.linearindexing(A)
 Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
 Base.slice(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(slice(arr.a, args...))
-Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args...))
-Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args...))
+Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args))
+Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, n::Int) = AbstractArrayWrapper(repmat(arr.a, n))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, m::Int, n::Int) = AbstractArrayWrapper(repmat(arr.a, m, n))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
@@ -37,14 +37,23 @@ Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{
 Base.reshape(arr::AbstractArrayWrapper, args::Tuple{Vararg{Int}}) = AbstractArrayWrapper(reshape(arr.a, args))
 Base.reshape(arr::AbstractArrayWrapper, args::Int...) = AbstractArrayWrapper(reshape(arr.a, args...))
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))
+Base.similar{T}(arr::AbstractArrayWrapper, ::Type{T}, dims::Int...) = AbstractArrayWrapper(similar(arr.a, T, dims...))
 Base.similar{T<:AbstractFloat,U<:AbstractFloat,N,A,M}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                     ::Type{Nullable{U}},
                                                     dims::NTuple{M,Int}) =
   AbstractArrayWrapper(FloatNAArray(similar(arr.a.data, U, dims)))
+Base.similar{T<:AbstractFloat,U<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
+                                                    ::Type{Nullable{U}},
+                                                    dims::Int...) =
+  AbstractArrayWrapper(FloatNAArray(similar(arr.a.data, U, dims...)))
 Base.similar{U<:AbstractFloat,M}(arr::AbstractArrayWrapper,
                                  ::Type{Nullable{U}},
                                  dims::NTuple{M,Int}) =
   AbstractArrayWrapper(FloatNAArray(similar(arr.a, U, dims)))
+Base.similar{U<:AbstractFloat}(arr::AbstractArrayWrapper,
+                                 ::Type{Nullable{U}},
+                                 dims::Int...) =
+  AbstractArrayWrapper(FloatNAArray(similar(arr.a, U, dims...)))
 Base.repeat(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(repeat(arr.a; kwargs...))
 Base.sort(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort(arr.a; kwargs...))
 Base.sort!(arr::AbstractArrayWrapper; kwargs...) = AbstractArrayWrapper(sort!(arr.a; kwargs...))
@@ -429,10 +438,19 @@ end
 *{T<:Complex}(x::Union{DictArray,LabeledArray}, y::Nullable{T}) = x .* y
 *(x::FloatNAArray, y::FloatNAArray) = FloatNAArray(x.data * y.data)
 /(x::FloatNAArray, y::FloatNAArray) = FloatNAArray(x.data / y.data)
+# these are not supported yet properly other than for FloatNAArray.
 *(x::AbstractArrayWrapper, y::AbstractArrayWrapper) = AbstractArrayWrapper(x.a * y.a)
 /(x::AbstractArrayWrapper, y::AbstractArrayWrapper) = AbstractArrayWrapper(x.a / y.a)
 *(x::DictArray, y::DictArray) = mapvalues(*, x, y)
 /(x::DictArray, y::DictArray) = mapvalues(/, x, y)
+*(x::LabeledArray, y::LabeledArray) = begin
+  assert(x.axes[end] == y.axes[1])
+  LabeledArray(mapvalues(*, x.data, y.data), (x.axes[1:end-1]...,y.axes[2:end]...))
+end
+/(x::LabeledArray{TypeVar(:T),2}, y::LabeledArray{TypeVar(:T),2}) = begin
+  assert(x.axes[end] == y.axes[end])
+  LabeledArray(mapvalues(/, x.data, y.data), (x.axes[1], y.axes[1]))
+end
 /(x::Real, y::Union{DictArray,LabeledArray}) = x ./ y
 /(x::Union{DictArray,LabeledArray}, y::Real) = x ./ y
 /(x::Complex, y::Union{DictArray,LabeledArray}) = x ./ y

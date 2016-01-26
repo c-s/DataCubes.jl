@@ -98,7 +98,9 @@ facts("LabeledArray tests") do
     @fact delete(merge(d1, d2), :a,2,:third) --> pick(d2, [:x, :z])
     @fact pick(d1, [:a]) --> DictArray(a=pick(d1, :a))
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[1]) --> @larr(c=[2,2,2], axis1[r=[:m,:n,:p]])
+    @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),1) --> @larr(c=[2,2,2], axis1[r=[:m,:n,:p]])
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[2]) --> @larr(c=[3,3], axis1[k=[:x,:y]])
+    @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),2) --> @larr(c=[3,3], axis1[k=[:x,:y]])
     @fact mapslices(x->Nullable(length(x)),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"]),[1]) --> LabeledArray(@nalift([2,2,2]), axes1=@nalift([1,2,3]))
     @fact size(mapslices(identity, @larr(a=[1 2 3;4 5 6]), [])) --> (2,3)
     @fact mapslices(x->LDict(:c1=>DataCubes.naop_plus(x[:a],x[:b]),:c2=>Nullable(10)), @larr(a=[1 2 3;4 5 6],b=[1.0 2.0 3.0;4.0 5.0 6.0]), []) --> @larr(c1=[2.0 4.0 6.0;8.0 10.0 12.0], c2=@rap reshape(_,(2,3)) fill (10,6)...)
@@ -128,6 +130,9 @@ facts("LabeledArray tests") do
 
     @fact mapslices(x->[1], larr(a=Int[]), [1])  --> isnull
     @fact size(mapslices(x->[1], larr(a=rand(0,5,3)), [2])) --> (0,3)
+    @fact mapslices(x->msum(x,1,2), larr(reshape(1:24,2,3,4),axis=[:a,:b],axis=['x','y','z']),2,1) --> larr(reshape([1,3,6,10,15,21,7,15,24,34,45,57,13,27,42,58,75,93,19,39,60,82,105,129],2,3,4),axis=[:a,:b],axis=['x','y','z'])
+    @fact mapslices(x->msum(x,2,1), 3.0*larr(reshape(1:24,2,3,4),axis=[:a,:b],axis=['x','y','z']),[2,1]) --> 3.0*larr(reshape([1,3,6,10,15,21,7,15,24,34,45,57,13,27,42,58,75,93,19,39,60,82,105,129],2,3,4),axis=[:a,:b],axis=['x','y','z'])
+
     @fact map(x->LDict(:c=>x[:a]), @larr(a=[1,2,3],b=[4,5,6],axis[[:x,:y,:z]])) --> @larr(c=[1,2,3],axis1[[:x,:y,:z]])
     @fact map(x->x[:a], @larr(a=[1,2,3],b=[4,5,6],axis[[:x,:y,:z]])) --> @larr([1,2,3],axis1[[:x,:y,:z]])
     @fact dcube.create_dict(@larr(a=[1 NA NA;4 5 6],b=[NA NA 6; 7 8 9],axis2[r=[:x,:y,:z]]))[Nullable(2)][LDict(:r=>Nullable(:z))][:a].value --> 6

@@ -2,6 +2,7 @@ module TestEnumerationArray
 
 using FactCheck
 using DataCubes
+import DataCubes: wrap_array
 
 facts("EnumerationArray tests") do
   @fact EnumerationArray(@nalift(["a" NA "b" "b";NA "b" "a" "c"])).elems --> Int[1 0 2 2;0 2 1 3]
@@ -20,7 +21,8 @@ facts("EnumerationArray tests") do
   @fact_throws enumeration([1 2.0 NA])
   @fact_throws enumeration([1 2.0 NA],[2.0,1])
   @fact dcube.wrap_array(sort(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
-  @fact dcube.wrap_array(sort!(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
+  @fact dcube.wrap_array((a=enumeration([6,5,3,1,2,1]);sort!(a);a)) --> nalift([6,5,3,1,1,2])
+  @fact dcube.wrap_array((a=enumeration([6,5,3,1,2,1],1:6);sort!(a);a)) --> nalift([1,1,2,3,5,6])
 
   context("enumerations in labeled array tests") do
     arr = larr(
@@ -110,6 +112,11 @@ facts("EnumerationArray tests") do
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, enumeration([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1]))
     @fact typeof(similar(@enumeration([1.0 2.0 NA]))) --> EnumerationArray{Float64,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
     @fact typeof(similar(enumeration([:a :b]))) --> EnumerationArray{Symbol,2,DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}},Int64}
+    @fact typeof(similar(enumeration([:a :b]),2,2,1)) --> EnumerationArray{Symbol,3,DataCubes.AbstractArrayWrapper{Int64,3,Array{Int64,3}},Int64}
+    @fact typeof(similar(enumeration([:a :b]),(2,2,1))) --> EnumerationArray{Symbol,3,DataCubes.AbstractArrayWrapper{Int64,3,Array{Int64,3}},Int64}
+    @fact_throws cat(1, enumeration([:a,:b]), enumeration([:c,:d]))
+    @fact wrap_array(vcat(enumeration([:a :b :c],[:c,:b,:a,:d]), enumeration([:b :c :d],[:c,:b,:a,:d]), enumeration([:c :d :a],[:c,:b,:a,:d]))) --> wrap_array(enumeration([:a :b :c;:b :c :d;:c :d :a],[:c,:b,:a,:d]))
+    @fact wrap_array(hcat(enumeration([:a :b :c],[:c,:b,:a,:d]), enumeration([:b :c :d],[:c,:b,:a,:d]), enumeration([:c :d :a],[:c,:b,:a,:d]))) --> wrap_array(enumeration([:a :b :c :b :c :d :c :d :a],[:c,:b,:a,:d]))
   end
 end
 

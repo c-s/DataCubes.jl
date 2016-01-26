@@ -68,7 +68,7 @@ sortbase(arr::Union{DictArray,LabeledArray}, axis::Integer, algorithm, order::Ba
 
 """
 
-`sort(arr, axis fields... [; alg=..., ...])`
+`sort(arr, axis, fields... [; alg=..., ...])`
 
 Sort a `DictArray` or `LabeledArray` along some axis.
 
