@@ -93,6 +93,47 @@ end
 arr_width(x::DictArray) = length(x.data)
 arr_width(x::AbstractArray) = 1
 
+format_string_map = Dict{DataType,AbstractString}(Float64=>"%0.8g")
+
+@doc """
+
+`set_format_string!!(T, format_string)`
+
+Set the formatting string for type `T` to `format_string`.
+By default, `Float64` is displayed with the type format string `"%0.8g"`, and this is the only one.
+
+```julia
+
+julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
+3 x 5 LabeledArray
+
+  |1             |2              |3             |4              |5             
+--+--------------+---------------+--------------+---------------+--------------
+  |a          b  |a          b   |a          b  |a          b   |a          b  
+--+--------------+---------------+--------------+---------------+--------------
+1 |0.47740705 6  |0.29141232 10  |0.83865594 8  |0.99285171 10  |0.70529279 2  
+2 |0.39800798 4  |0.32770802 2   |0.6787478  3  |0.74177887 2   |0.19838391 9  
+3 |0.73599273 7  |0.53117299 4   |0.97372752 8  |0.58885829 4   |0.30529039 8  
+
+
+julia> DataCubes.set_format_string!!(Float64, "%0.2f")
+"%0.2f"
+
+julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
+3 x 5 LabeledArray
+
+  |1         |2         |3         |4          |5         
+--+----------+----------+----------+-----------+----------
+  |a    b    |a    b    |a    b    |a    b     |a    b    
+--+----------+----------+----------+-----------+----------
+1 |0.27 6.00 |0.29 7.00 |0.23 1.00 |0.68 2.00  |0.45 7.00 
+2 |0.95 6.00 |0.71 5.00 |0.61 1.00 |0.64 10.00 |0.10 7.00 
+3 |0.05 5.00 |0.52 7.00 |0.11 8.00 |0.52 6.00  |0.21 2.00 
+```
+
+"""
+set_format_string!!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
+
 # some functions to set the height and width of output LabeledArrays to console.
 default_showsize = () -> ((height,width) = iosize_compat();(height-20,width-6))
 
@@ -798,6 +839,7 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 allfieldnames(table::LabeledArray) = simplify_array(unique(vcat(vcat(map(allfieldnames, table.axes)...),allfieldnames(table.data))))
 allfieldnames(table::AbstractArray) = Array(Any, 0)
 cell_to_string(cell::Nullable) = cell.isnull ? "" : string(cell.value)
+cell_to_string{T}(cell::Nullable{T}) = cell.isnull ? "" : haskey(format_string_map,T) ? sprintf1(format_string_map[T], cell.value) : string(cell.value)
 cell_to_string{K,T}(cell::LDict{K,Nullable{T}}) = string(cell)
 cell_to_string(cell::AbstractArray) = string(map(x->string(cell_to_string(x)," "), cell)...)
 

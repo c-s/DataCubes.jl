@@ -218,6 +218,8 @@ facts("LabeledArray tests") do
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
       @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!!(Float64, "%0.2f");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!!(Float64, "%0.8g");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
 
       @fact (dcube.set_dispsize!!(5,5);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_dispheight!!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
@@ -227,6 +229,8 @@ facts("LabeledArray tests") do
       @fact (dcube.set_default_dispsize!!();nothing) --> nothing
       @fact (dcube.set_dispalongrow!!(false);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_dispalongrow!!(true);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!!(Float64, "%0.2f");writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!!(Float64, "%0.8g");writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
     end
   end
 end
