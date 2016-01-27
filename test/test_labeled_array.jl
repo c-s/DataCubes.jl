@@ -25,6 +25,7 @@ facts("LabeledArray tests") do
     @fact @larr(@larr(a=[1 NA;3 4;NA NA],:b=>[1.0 1.5;:sym 'a';"X" "Y"],c=1,axis[:U,NA,:W],axis[r=['m','n']]), c=[NA NA;3 4;5 6], :d=>:X, axis1[k=["g","h","i"]]) --> @larr(a=[1 NA;3 4;NA NA],b=[1.0 1.5;:sym 'a';"X" "Y"],c=[NA NA;3 4;5 6],d=reshape(fill(:X,6),3,2),axis2[r=['m','n']],axis1[k=["g","h","i"]])
     @fact_throws larr(a=[1,2,3],axis1=[1 2 3])
     @fact_throws LabeledArray([1 2 3],([1,2,3],[4,5,6]))
+    @fact_throws LabeledArray([1,2,3],([1,2,3],[4,5,6]))
   end
   context("array related method tests") do
     arr = LabeledArray(
@@ -68,11 +69,14 @@ facts("LabeledArray tests") do
                                            axis1=arr.axes[2],
                                            axis2=arr.axes[1])
     @fact permutedims(arr, (2,1)) --> transpose(arr)
+    @fact_throws permutedims(arr, (2,1,3))
     @fact LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) ==
           LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) --> true
     @fact copy(arr) !== arr --> true
     @fact size(cat(1, arr, arr)) --> ntuple(n->n==1 ? size(arr,1)*2 : size(arr,n), ndims(arr))
     @fact size(cat(2, arr, arr)) --> ntuple(n->n==2 ? size(arr,2)*2 : size(arr,n), ndims(arr))
+    @fact cat(2, arr) === arr --> true
+    @fact_throws cat(larr([1 2 3;4 5 6]), larr([10 11;12 13;14 15]))
     @fact size(vcat(arr, arr)) --> ntuple(n->n==1 ? size(arr,1)*2 : size(arr,n), ndims(arr))
     @fact size(hcat(arr, arr)) --> ntuple(n->n==2 ? size(arr,2)*2 : size(arr,n), ndims(arr))
     @fact size(repeat(arr, inner=[5,2], outer=[3,4])) --> (size(arr,1)*5*3, size(arr,2)*2*4)
@@ -149,6 +153,7 @@ facts("LabeledArray tests") do
     @fact_throws reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),2,1,5)
     @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),(6,)) --> larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
     @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,6) --> @rap transpose reshape(_,6,1) larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
+    @fact_throws reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,3)
     @fact reshape(larr([1 2 3;4 5 6],axis1=[10,11]),1,6) --> larr([1 4 2 5 3 6], axis2=repmat([10,11],3))
     @fact reducedim((x,y)->x+y[:a].value, larr(a=reshape(1:24,2,3,4)),[1],0) --> larr([3 15 27 39;7 19 31 43;11 23 35 47])
     @fact reducedim((x,y)->x+y[:a].value, larr(a=reshape(1:24,2,3,4)),[1,2],0) --> larr([21,57,93,129])
@@ -206,7 +211,12 @@ facts("LabeledArray tests") do
       @fact show(larr(slice([1,2],1))) --> nothing
       @fact show(larr(a=[])) --> nothing
       @fact show(larr(a=rand(2))) --> nothing
+      @fact show(larr(a=rand(2), axis=[:X,:Y])) --> nothing
       @fact show(larr(a=rand(2,3), axis1=[:a,:b], axis2=["X","Y","Z"])) --> nothing
+      @fact show(larr(a=rand(2,3), axis2=["X","Y","Z"])) --> nothing
+      @fact show(larr(a=rand(2,3), axis2=darr(k=["X","Y","Z"]))) --> nothing
+      @fact show(larr(a=rand(2,3), axis=["X","Y"])) --> nothing
+      @fact show(larr(a=rand(2,3))) --> nothing
       @fact show(larr(a=rand(2,3,2), axis3=[:x,:y])) --> nothing
       @fact show(larr(a=rand(2,3,2,2))) --> nothing
       @fact show(larr(a=rand(2,3,2,2))) --> nothing
@@ -215,6 +225,8 @@ facts("LabeledArray tests") do
       @fact (dcube.set_showwidth!!(3);show(larr(a=rand(10,10)))) --> nothing
       @fact (dcube.set_default_showsize!!();nothing) --> nothing
       @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3),b=rand(3),c=fill(:X,3), axis=['X','Y','Z']))) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3),b=rand(3),c=fill(:X,3), axis=darr(k=['X','Y','Z'])))) --> nothing
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
       @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
