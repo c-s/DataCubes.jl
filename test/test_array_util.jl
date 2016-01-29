@@ -63,6 +63,8 @@ facts("ArrayUtil tests") do
           @larr(r1=[10.0 11.0 12.0;10.0 11.0 12.0],axis1[c1=[1,4],k1=["x","y"]],axis2[c2=[:a,:b,:c],k2=['a','a','a']])
     @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>['a']) --> larr(b=[:x,:y,:z], axis1=darr('a'=>[1,2,3]))
     @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>[:b]) --> larr(axis1=darr(b=[:x,:y,:z]), 'a'=>[1,2,3])
+    @fact replace_axes(larr(a=[1 2;3 4;5 6], axis=[:x,:y,:z]),1=>[:a]) --> @larr(axis[a=[1,3,5]], x1=[:x :x;:y :y;:z :z])
+    @fact replace_axes(larr(a=[1 2;3 4;5 6], axis=[:x,:y,:z]),1=>[]) --> @larr(a=[1 2;3 4;5 6], x1=[:x :x;:y :y;:z :z])
     @fact permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]])),(2,3,1))[:,:,1] -->
           LabeledArray(nalift([1 'a';2 'b';3 'c']), axis1=@darr(k=[100,200,300]), axis2=nalift([:X,:Y]))
     @fact permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]), axisname="newaxis"),(2,3,1))[:,:,1] -->
@@ -144,6 +146,7 @@ facts("ArrayUtil tests") do
     @fact tensorprod(darr(a=[1,2,3]), darr(b=[2 3;0 1])) --> darr(a=reshape(repmat([1,2,3],4),3,2,2),b=reshape([2,2,2,0,0,0,3,3,3,1,1,1],3,2,2))
     @fact tensorprod(@nalift([1,NA,0]), nalift([1,0]), nalift([1,0])) --> reshape(@nalift([(1,1,1),NA,(0,1,1),(1,0,1),NA,(0,0,1),(1,1,0),NA,(0,1,0),(1,0,0),NA,(0,0,0)]),3,2,2)
     @fact_throws tensorprod()
+    @fact mapvalues(namerge, 10, @larr(a=[3 5 NA;1 1 1]),@larr(a=[1 2 NA;4 NA 6])) --> @larr(a=[1 2 10;4 1 6])
   end
   context("enumeration array tests") do
     @fact wrap_array(EnumerationArray(nalift([:c,:b,:b,:a]), [:b,:c,:a])) --> wrap_array(enumeration([:c,:b,:b,:a], [:b,:c,:a]))
@@ -293,6 +296,7 @@ facts("ArrayUtil tests") do
     @fact (a=nalift([1.0,2.0,3.0]);push!(a, Nullable{Float64}());a) --> @nalift([1.0,2.0,3.0,NA])
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], [:a]) --> LDict(:a=>Nullable(1))
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a).value --> 1
+    @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a, :b) --> nalift([1,:x])
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))[1].value --> 1
     @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable,1}
   end

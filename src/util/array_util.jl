@@ -406,7 +406,10 @@ replace_axes(arr::LabeledArray, arg) = begin
   elseif isa(resaxis, DefaultAxis)
     LDict()
   else
-    LDict(create_additional_fieldname(arr, tracker) => res.axis)
+    newkey = create_additional_fieldname(arr, tracker)
+    axiswithkey = create_ldict_nocheck(newkey => resaxis)
+    res = larr(res, symbol(:axis,axis_index) => create_dictarray_nocheck(axiswithkey))
+    axiswithkey
   end
   orig_axis_keys = axis.keys
   new_axis = if isempty(axis_keys)
@@ -735,7 +738,7 @@ mapvalues(f::Function, xs...) = begin
     if isa(x, LabeledArray)
       if labels.isnull
         labels = Nullable(pickaxis(x))
-      elseif labels != pickaxis(x)
+      elseif labels.value != pickaxis(x)
         throw(ArgumentError("axes do not match."))
       end
     end
@@ -915,7 +918,9 @@ pick(arr::LabeledArray, fields::AbstractArray) = selectfields(arr, fields...)
 pick(arr::LDict, ks::AbstractArray) = selectkeys(arr, ks...)
 pick(arr::LDict, k) = arr[k]
 pick(arr::LDict, ks::Tuple) = [arr[k] for k in ks]
-pick(arr::LDict, ks...) = pick(arr, ks)
+pick(arr::LDict, ks...) = wraparray_if_nullable_abstractarray(pick(arr, ks))
+wraparray_if_nullable_abstractarray{T<:Nullable}(arr::AbstractArray{T}) = wrap_array(arr)
+wraparray_if_nullable_abstractarray(arr) = arr
 
 """
 

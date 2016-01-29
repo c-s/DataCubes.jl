@@ -23,7 +23,10 @@ facts("Select tests") do
       @fact @select(lar,c2=_c2 .* 2,:c3).data --> @darr(c2=2*pick(lar,:c2),c3=pick(lar,:c3))
       @fact @select(lar,c2=_c2 .* 2,:c3) --> @select(lar,c2=_[:c2].*2,:c3)
       @fact @select(larr(a=[1,2,3],b=[4,5,6]), :a=>sum(_a), :b=>length(_b)) --> nalift(LDict(:a=>6,:b=>3))
+      @fact @select(@darr(a=[1 2 3 NA]), s=sum(_a), where[_a.>=2.0]) --> nalift(LDict(:s=>5))
+      @fact @select(larr(a=[1 2 3;4 5 6]), :a) --> larr(a=[1 2 3;4 5 6])
       @fact_throws @select(larr(rand(3,4)), :a)
+      @fact_throws @select(larr(rand(5,3)), a=_a)
     end
     context("condition tests") do
       @fact @select(lar, where[10 .< _c2 .< 25]) --> begin
