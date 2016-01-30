@@ -1593,4 +1593,6 @@ c |Z p 6
 """
 Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
 
+Base.similar(arr::LabeledArray) = LabeledArray(similar(peel(arr)), arr.axes)
+Base.similar{T}(arr::LabeledArray, ::Type{T}) = LabeledArray(similar(peel(arr), T), arr.axes)
 Base.similar(arr::LabeledArray, args...) = similar(peel(arr), args...)

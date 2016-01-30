@@ -88,7 +88,7 @@ e |5 10
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:603](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L603)
+[DataCubes/src/util/array_util.jl:619](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L619)
 
 ---
 
@@ -129,7 +129,7 @@ a b  |a  b  |a  b  |a  b  |a  b
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:192](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L192)
+[DataCubes/src/util/array_util.jl:192](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L192)
 
 ---
 
@@ -181,7 +181,7 @@ a b
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1218](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1218)
+[DataCubes/src/datatypes/dict_array.jl:1218](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1218)
 
 ---
 
@@ -238,7 +238,7 @@ julia> delete(t, :k, :b)
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1026](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1026)
+[DataCubes/src/util/array_util.jl:1044](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1044)
 
 ---
 
@@ -289,7 +289,7 @@ b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1735](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1735)
+[DataCubes/src/util/array_helper_functions.jl:1735](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1735)
 
 ---
 
@@ -375,7 +375,7 @@ V  |o 15
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1650](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1650)
+[DataCubes/src/util/array_util.jl:1668](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1668)
 
 ---
 
@@ -430,7 +430,7 @@ N |  x |5
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1114](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1114)
+[DataCubes/src/util/array_util.jl:1132](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1132)
 
 ---
 
@@ -497,7 +497,7 @@ julia> enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 
 
 *source:*
-[DataCubes/src/datatypes/enumeration_array.jl:202](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/enumeration_array.jl#L202)
+[DataCubes/src/datatypes/enumeration_array.jl:202](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L202)
 
 ---
 
@@ -581,7 +581,7 @@ V  |e 5 |j 10
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1438](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1438)
+[DataCubes/src/util/array_util.jl:1456](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1456)
 
 ---
 
@@ -635,7 +635,7 @@ newaxis |a        |b
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:498](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L498)
+[DataCubes/src/util/array_util.jl:514](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L514)
 
 ---
 
@@ -689,7 +689,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 
 
 *source:*
-[DataCubes/src/na/na.jl:526](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L526)
+[DataCubes/src/na/na.jl:526](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L526)
 
 ---
 
@@ -725,7 +725,7 @@ julia> ignabool(@nalift([true true NA;false NA true]))
 
 
 *source:*
-[DataCubes/src/na/na.jl:614](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L614)
+[DataCubes/src/na/na.jl:614](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L614)
 
 ---
 
@@ -815,7 +815,7 @@ u |u   |v 2
 
 
 *source:*
-[DataCubes/src/util/join.jl:260](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/join.jl#L260)
+[DataCubes/src/util/join.jl:260](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/join.jl#L260)
 
 ---
 
@@ -866,7 +866,7 @@ julia> isna(@nalift([1 2 NA;NA 5 6]))
 
 
 *source:*
-[DataCubes/src/na/na.jl:674](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L674)
+[DataCubes/src/na/na.jl:674](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L674)
 
 ---
 
@@ -915,7 +915,7 @@ i |X   5 5 X |Y   6 6 X
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1467](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1467)
+[DataCubes/src/datatypes/labeled_array.jl:1467](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1467)
 
 ---
 
@@ -1006,7 +1006,7 @@ y |z 2 |u 4 |v 6
 
 
 *source:*
-[DataCubes/src/util/join.jl:85](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/join.jl#L85)
+[DataCubes/src/util/join.jl:85](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/join.jl#L85)
 
 ---
 
@@ -1043,7 +1043,7 @@ julia> mapna((x,y)->Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1149](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1149)
+[DataCubes/src/util/array_util.jl:1167](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1167)
 
 ---
 
@@ -1113,7 +1113,7 @@ a |a  |a
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:706](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L706)
+[DataCubes/src/util/array_util.jl:722](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L722)
 
 ---
 
@@ -1173,7 +1173,7 @@ julia> mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1266](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1266)
+[DataCubes/src/util/array_helper_functions.jl:1266](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1266)
 
 ---
 
@@ -1233,7 +1233,7 @@ julia> mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1052](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1052)
+[DataCubes/src/util/array_helper_functions.jl:1052](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1052)
 
 ---
 
@@ -1293,7 +1293,7 @@ julia> mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1330](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1330)
+[DataCubes/src/util/array_helper_functions.jl:1330](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1330)
 
 ---
 
@@ -1353,7 +1353,7 @@ julia> mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1395](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1395)
+[DataCubes/src/util/array_helper_functions.jl:1395](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1395)
 
 ---
 
@@ -1413,7 +1413,7 @@ julia> mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1202](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1202)
+[DataCubes/src/util/array_helper_functions.jl:1202](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1202)
 
 ---
 
@@ -1473,7 +1473,7 @@ julia> mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:939](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L939)
+[DataCubes/src/util/array_helper_functions.jl:939](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L939)
 
 ---
 
@@ -1534,7 +1534,7 @@ julia> mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, rev=
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1461](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1461)
+[DataCubes/src/util/array_helper_functions.jl:1461](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1461)
 
 ---
 
@@ -1594,7 +1594,7 @@ julia> msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:825](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L825)
+[DataCubes/src/util/array_helper_functions.jl:825](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L825)
 
 ---
 
@@ -1655,7 +1655,7 @@ julia> nafill(t, window=2)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:637](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L637)
+[DataCubes/src/util/array_helper_functions.jl:637](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L637)
 
 ---
 
@@ -1700,7 +1700,7 @@ a b |a b
 
 
 *source:*
-[DataCubes/src/na/na.jl:267](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L267)
+[DataCubes/src/na/na.jl:267](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L267)
 
 ---
 
@@ -1751,7 +1751,7 @@ julia> namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:2203](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L2203)
+[DataCubes/src/util/array_util.jl:2221](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2221)
 
 ---
 
@@ -1785,7 +1785,7 @@ a b
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:813](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L813)
+[DataCubes/src/util/array_util.jl:829](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L829)
 
 ---
 
@@ -1879,7 +1879,7 @@ a k |a k
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:905](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L905)
+[DataCubes/src/util/array_util.jl:921](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L921)
 
 ---
 
@@ -1936,7 +1936,7 @@ julia> pickaxis(t, 1, :k)
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:970](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L970)
+[DataCubes/src/util/array_util.jl:988](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L988)
 
 ---
 
@@ -1980,7 +1980,7 @@ Y  |4  |5  |6
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:2035](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L2035)
+[DataCubes/src/util/array_util.jl:2053](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2053)
 
 ---
 
@@ -1997,7 +1997,7 @@ A new `DictArray` whose first few field names are `ks`.
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1098](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1098)
+[DataCubes/src/datatypes/dict_array.jl:1098](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1098)
 
 ---
 
@@ -2014,7 +2014,7 @@ A new `DictArray` whose fields are shuffled from `arr` so that the first few fie
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1084](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1084)
+[DataCubes/src/datatypes/dict_array.jl:1084](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1084)
 
 ---
 
@@ -2031,7 +2031,7 @@ e.g. `replace_axes(labeled_array, 1=>[:c1,:c2], 3=>[:c3])`
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:342](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L342)
+[DataCubes/src/util/array_util.jl:342](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L342)
 
 ---
 
@@ -2122,7 +2122,7 @@ d |a   b |a   b |a    b
 
 
 *source:*
-[DataCubes/src/util/select.jl:816](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L816)
+[DataCubes/src/util/select.jl:816](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L816)
 
 ---
 
@@ -2191,7 +2191,7 @@ julia> shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:1831](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L1831)
+[DataCubes/src/util/array_helper_functions.jl:1831](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1831)
 
 ---
 
@@ -2240,7 +2240,7 @@ p |  3 |
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1237](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1237)
+[DataCubes/src/util/array_util.jl:1255](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1255)
 
 ---
 
@@ -2310,7 +2310,7 @@ julia> ungroup(m, 2)
 
 
 *source:*
-[DataCubes/src/util/ungroup.jl:64](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/ungroup.jl#L64)
+[DataCubes/src/util/ungroup.jl:64](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/ungroup.jl#L64)
 
 ---
 
@@ -2411,7 +2411,7 @@ julia> update(t, a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna
 
 
 *source:*
-[DataCubes/src/util/select.jl:1035](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L1035)
+[DataCubes/src/util/select.jl:1035](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L1035)
 
 ---
 
@@ -2468,7 +2468,7 @@ Y |4 |5 |6
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:2107](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L2107)
+[DataCubes/src/util/array_util.jl:2125](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2125)
 
 ---
 
@@ -2485,7 +2485,7 @@ A new `LabeledArray` whose first few field names of the base of `arr` are `ks`.
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1314](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1314)
+[DataCubes/src/datatypes/labeled_array.jl:1314](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1314)
 
 ---
 
@@ -2509,7 +2509,7 @@ DataCubes.LDict{Any,Int64} with 3 entries:
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:290](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L290)
+[DataCubes/src/datatypes/ldict.jl:290](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L290)
 
 ---
 
@@ -2527,7 +2527,7 @@ A new `LabeledArray` whose base fields are shuffled from `arr` so that the first
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1302](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1302)
+[DataCubes/src/datatypes/labeled_array.jl:1302](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1302)
 
 ---
 
@@ -2551,7 +2551,7 @@ DataCubes.LDict{Symbol,Int64} with 3 entries:
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:271](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L271)
+[DataCubes/src/datatypes/ldict.jl:271](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L271)
 
 ---
 
@@ -2565,6 +2565,8 @@ DataCubes.LDict{Symbol,Int64} with 3 entries:
 
 ##### Returns
 For each `i=>[f1,f2,...]` in `args`, the `i`th axis is replaced by the fields `f1`, `f2`, ....
+A nonarray value in `i=>f1` will be automatically promoted to an array with one element: `[f1]`.
+If the key `i` is omitted, the smallest relevant axis number will be automatically assigned.
 Only the first elements will be taken. For example, if the underlying data array is 2 dimensional, and if you want to use some field for the 1st axis, `[:,1]` components will be used.
 The original axis becomes the data part of `LabeledArray` after properly broadcast.
 If the field name array is null for an argument in `args` (`i=>[]`), the corresponding axis will be `DefaultAxis`.
@@ -2583,7 +2585,7 @@ x |1 a |2 b |3 c
 y |4 d |5 e |6 f
 
 
-julia> replace_axes(t, 1=>[:a])
+julia> replace_axes(t, 1=>[:a])      # == replace_axes(t, [:a]) == replace_axes(t, :a)
 2 x 3 LabeledArray
 
   |A   |B   |C
@@ -2608,7 +2610,7 @@ a b |k |k |k
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:396](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L396)
+[DataCubes/src/util/array_util.jl:398](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L398)
 
 ---
 
@@ -2643,7 +2645,7 @@ DictArray(;kwargs...)
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:31](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L31)
+[DataCubes/src/datatypes/dict_array.jl:31](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L31)
 
 ---
 
@@ -2657,7 +2659,7 @@ Use `enumeration` to create an `EnumerationArray`.
 
 
 *source:*
-[DataCubes/src/datatypes/enumeration_array.jl:8](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/enumeration_array.jl#L8)
+[DataCubes/src/datatypes/enumeration_array.jl:8](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L8)
 
 ---
 
@@ -2679,7 +2681,7 @@ LDict(ps::Tuple...)
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:18](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L18)
+[DataCubes/src/datatypes/ldict.jl:18](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L18)
 
 ---
 
@@ -2699,7 +2701,7 @@ A `LabeledArray` consists of one main array, which we call the *base* array, and
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:16](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L16)
+[DataCubes/src/datatypes/labeled_array.jl:16](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L16)
 
 ---
 
@@ -2742,7 +2744,7 @@ a b   c d |a b   c d
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1139](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1139)
+[DataCubes/src/datatypes/dict_array.jl:1139](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1139)
 
 ---
 
@@ -2807,7 +2809,7 @@ julia> @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
 
 
 *source:*
-[DataCubes/src/datatypes/enumeration_array.jl:271](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/enumeration_array.jl#L271)
+[DataCubes/src/datatypes/enumeration_array.jl:271](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L271)
 
 ---
 
@@ -2855,7 +2857,7 @@ i |  X   5 X |  Y   6 X
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1357](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1357)
+[DataCubes/src/datatypes/labeled_array.jl:1357](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1357)
 
 ---
 
@@ -2904,7 +2906,7 @@ julia> @nalift(larr(a=[1 2;3 4;5 6], b=[:x :y;:z :w;:u :v]))
 
 
 *source:*
-[DataCubes/src/na/na.jl:378](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L378)
+[DataCubes/src/na/na.jl:378](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L378)
 
 ---
 
@@ -2936,7 +2938,7 @@ julia> @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:271](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L271)
+[DataCubes/src/util/array_util.jl:271](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L271)
 
 ---
 
@@ -3033,7 +3035,7 @@ d |a   b |a   b |a    b
 
 
 *source:*
-[DataCubes/src/util/select.jl:727](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L727)
+[DataCubes/src/util/select.jl:727](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L727)
 
 ---
 
@@ -3140,7 +3142,7 @@ julia> @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 
 
 *source:*
-[DataCubes/src/util/select.jl:936](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L936)
+[DataCubes/src/util/select.jl:936](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L936)
 
 ## Internal
 
@@ -3175,7 +3177,7 @@ Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1121](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1121)
+[DataCubes/src/datatypes/labeled_array.jl:1121](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1121)
 
 ---
 
@@ -3238,7 +3240,7 @@ Y |0.8424940964507834  2
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1555](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1555)
+[DataCubes/src/util/array_util.jl:1573](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1573)
 
 ---
 
@@ -3306,7 +3308,7 @@ V |0.9315379228053462 15
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:1342](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L1342)
+[DataCubes/src/util/array_util.jl:1360](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1360)
 
 ---
 
@@ -3319,7 +3321,7 @@ If `inds` is `nothing`, it chooses an entire `fld` from `t`.
 
 
 *source:*
-[DataCubes/src/util/select.jl:495](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L495)
+[DataCubes/src/util/select.jl:495](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L495)
 
 ---
 
@@ -3377,7 +3379,7 @@ Y |4 u |5 v |6 w
 
 
 *source:*
-[DataCubes/src/na/na.jl:458](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L458)
+[DataCubes/src/na/na.jl:458](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L458)
 
 ---
 
@@ -3415,7 +3417,7 @@ julia> type_array(Any[1, 3.0, 'x'])
 
 
 *source:*
-[DataCubes/src/util/array_util.jl:34](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_util.jl#L34)
+[DataCubes/src/util/array_util.jl:34](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L34)
 
 ---
 
@@ -3476,7 +3478,7 @@ julia> diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:745](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L745)
+[DataCubes/src/util/array_helper_functions.jl:745](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L745)
 
 ---
 
@@ -3499,7 +3501,7 @@ julia> allfieldnames(darr(a=reshape(1:6,3,2),b=rand(3,2)))
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:546](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L546)
+[DataCubes/src/datatypes/dict_array.jl:546](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L546)
 
 ---
 
@@ -3511,7 +3513,7 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:839](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L839)
+[DataCubes/src/datatypes/labeled_array.jl:839](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L839)
 
 ---
 
@@ -3559,7 +3561,7 @@ y |a |4 5 6 14 15 16
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:890](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L890)
+[DataCubes/src/datatypes/labeled_array.jl:890](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L890)
 
 ---
 
@@ -3595,7 +3597,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:636](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L636)
+[DataCubes/src/datatypes/dict_array.jl:636](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L636)
 
 ---
 
@@ -3607,7 +3609,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/util/dataframe_interface.jl:84](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/dataframe_interface.jl#L84)
+[DataCubes/src/util/dataframe_interface.jl:84](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L84)
 
 ---
 
@@ -3619,7 +3621,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/util/dataframe_interface.jl:112](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/dataframe_interface.jl#L112)
+[DataCubes/src/util/dataframe_interface.jl:112](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L112)
 
 ---
 
@@ -3631,7 +3633,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/util/dataframe_interface.jl:91](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/dataframe_interface.jl#L91)
+[DataCubes/src/util/dataframe_interface.jl:91](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L91)
 
 ---
 
@@ -3643,7 +3645,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/util/dataframe_interface.jl:98](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/dataframe_interface.jl#L98)
+[DataCubes/src/util/dataframe_interface.jl:98](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L98)
 
 ---
 
@@ -3655,7 +3657,7 @@ a b c |a b c |a b c |a b c |a b c |a b c
 
 
 *source:*
-[DataCubes/src/util/dataframe_interface.jl:105](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/dataframe_interface.jl#L105)
+[DataCubes/src/util/dataframe_interface.jl:105](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L105)
 
 ---
 
@@ -3675,7 +3677,7 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:152](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L152)
+[DataCubes/src/datatypes/ldict.jl:152](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L152)
 
 ---
 
@@ -3701,7 +3703,7 @@ julia> for x in dropnaiter(@nalift([1,2,NA,4,5]))
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:24](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L24)
+[DataCubes/src/util/array_helper_functions.jl:24](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L24)
 
 ---
 
@@ -3726,7 +3728,7 @@ julia> for x in enum_dropnaiter(@nalift([:A,:B,NA,NA,:C]))
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:44](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L44)
+[DataCubes/src/util/array_helper_functions.jl:44](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L44)
 
 ---
 
@@ -3743,7 +3745,7 @@ A new `DictArray` whose elements are `ldict` and whose dimensions are `dims...`.
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1071](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1071)
+[DataCubes/src/datatypes/dict_array.jl:1071](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1071)
 
 ---
 
@@ -3796,7 +3798,7 @@ a b |a b |a b
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1059](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1059)
+[DataCubes/src/datatypes/dict_array.jl:1059](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1059)
 
 ---
 
@@ -3810,7 +3812,7 @@ Return `arr[args...]`.
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:199](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L199)
+[DataCubes/src/datatypes/dict_array.jl:199](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L199)
 
 ---
 
@@ -3824,7 +3826,7 @@ Return the value tuple of `arr` at index `args`.
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:187](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L187)
+[DataCubes/src/datatypes/dict_array.jl:187](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L187)
 
 ---
 
@@ -3881,7 +3883,7 @@ julia> intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2], 
 
 
 *source:*
-[DataCubes/src/util/intersect.jl:53](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/intersect.jl#L53)
+[DataCubes/src/util/intersect.jl:53](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/intersect.jl#L53)
 
 ---
 
@@ -3904,7 +3906,7 @@ julia> keys(darr(a=[1,2,3], b=[:x,:y,:z]))
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:931](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L931)
+[DataCubes/src/datatypes/dict_array.jl:931](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L931)
 
 ---
 
@@ -3939,7 +3941,7 @@ c   |c
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:745](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L745)
+[DataCubes/src/datatypes/dict_array.jl:745](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L745)
 
 ---
 
@@ -4010,7 +4012,7 @@ a  b    |a  b    |a  b    |a  b    |a  b
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:850](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L850)
+[DataCubes/src/datatypes/dict_array.jl:850](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L850)
 
 ---
 
@@ -4071,7 +4073,7 @@ Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1089](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1089)
+[DataCubes/src/datatypes/labeled_array.jl:1089](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1089)
 
 ---
 
@@ -4098,7 +4100,7 @@ a b c
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:349](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L349)
+[DataCubes/src/datatypes/dict_array.jl:349](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L349)
 
 ---
 
@@ -4125,7 +4127,7 @@ a b c
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:328](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L328)
+[DataCubes/src/datatypes/dict_array.jl:328](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L328)
 
 ---
 
@@ -4153,7 +4155,7 @@ c |Z p 6
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1594](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1594)
+[DataCubes/src/datatypes/labeled_array.jl:1594](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1594)
 
 ---
 
@@ -4181,7 +4183,7 @@ c |3 p 6
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1568](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1568)
+[DataCubes/src/datatypes/labeled_array.jl:1568](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1568)
 
 ---
 
@@ -4207,7 +4209,7 @@ DataCubes.LDict{Any,Any} with 4 entries:
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:95](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L95)
+[DataCubes/src/datatypes/ldict.jl:95](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L95)
 
 ---
 
@@ -4241,7 +4243,7 @@ Nullable(21)
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:774](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L774)
+[DataCubes/src/datatypes/dict_array.jl:774](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L774)
 
 ---
 
@@ -4255,7 +4257,7 @@ Apply `repeat` field by field to the `DictArray` `arr`.
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:663](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L663)
+[DataCubes/src/datatypes/dict_array.jl:663](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L663)
 
 ---
 
@@ -4278,7 +4280,7 @@ for the field k in the table t at the coordinates selected so far.
 
 
 *source:*
-[DataCubes/src/util/select.jl:1111](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L1111)
+[DataCubes/src/util/select.jl:1111](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L1111)
 
 ---
 
@@ -4353,7 +4355,7 @@ ERROR: ArgumentError: dims (3,2) are inconsistent.
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:1235](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L1235)
+[DataCubes/src/datatypes/labeled_array.jl:1235](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1235)
 
 ---
 
@@ -4406,7 +4408,7 @@ a b |a b |a b
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:1002](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L1002)
+[DataCubes/src/datatypes/dict_array.jl:1002](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1002)
 
 ---
 
@@ -4430,7 +4432,7 @@ for the field `k` in the table `t` at the coordinates selected so far.
 
 
 *source:*
-[DataCubes/src/util/select.jl:590](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L590)
+[DataCubes/src/util/select.jl:590](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L590)
 
 ---
 
@@ -4450,7 +4452,7 @@ main select function. This function is internal and is meant to be used via `sel
 
 
 *source:*
-[DataCubes/src/util/select.jl:34](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L34)
+[DataCubes/src/util/select.jl:34](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L34)
 
 ---
 
@@ -4473,7 +4475,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 
 
 *source:*
-[DataCubes/src/datatypes/ldict.jl:183](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/ldict.jl#L183)
+[DataCubes/src/datatypes/ldict.jl:183](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L183)
 
 ---
 
@@ -4511,7 +4513,7 @@ b |z
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:387](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L387)
+[DataCubes/src/datatypes/dict_array.jl:387](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L387)
 
 ---
 
@@ -4549,7 +4551,7 @@ b |z
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:387](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L387)
+[DataCubes/src/datatypes/dict_array.jl:387](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L387)
 
 ---
 
@@ -4568,7 +4570,7 @@ Show a LabeledArray.
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:291](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L291)
+[DataCubes/src/datatypes/labeled_array.jl:291](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L291)
 
 ---
 
@@ -4587,7 +4589,7 @@ Show a LabeledArray.
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:291](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L291)
+[DataCubes/src/datatypes/labeled_array.jl:291](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L291)
 
 ---
 
@@ -4666,7 +4668,7 @@ Y |5 e |7 d |3 f
 
 
 *source:*
-[DataCubes/src/util/sort.jl:141](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/sort.jl#L141)
+[DataCubes/src/util/sort.jl:141](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/sort.jl#L141)
 
 ---
 
@@ -4774,7 +4776,7 @@ Z |1 a |2 b
 
 
 *source:*
-[DataCubes/src/util/unique.jl:102](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/unique.jl#L102)
+[DataCubes/src/util/unique.jl:102](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/unique.jl#L102)
 
 ---
 
@@ -4794,7 +4796,7 @@ main update function. This function is internal and is meant to be used via `upd
 
 
 *source:*
-[DataCubes/src/util/select.jl:142](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/select.jl#L142)
+[DataCubes/src/util/select.jl:142](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L142)
 
 ---
 
@@ -4817,7 +4819,7 @@ julia> values(darr(a=[1,2,3], b=[:x,:y,:z]))
 
 
 *source:*
-[DataCubes/src/datatypes/dict_array.jl:949](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/dict_array.jl#L949)
+[DataCubes/src/datatypes/dict_array.jl:949](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L949)
 
 ---
 
@@ -4831,7 +4833,7 @@ Wrap an array by `AbstractArrayWrapper` if it is not `DictArray` or `labeledArra
 
 
 *source:*
-[DataCubes/src/na/naarray_operators.jl:14](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/naarray_operators.jl#L14)
+[DataCubes/src/na/naarray_operators.jl:14](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/naarray_operators.jl#L14)
 
 ---
 
@@ -4857,7 +4859,7 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 
 
 *source:*
-[DataCubes/src/util/array_helper_functions.jl:132](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/util/array_helper_functions.jl#L132)
+[DataCubes/src/util/array_helper_functions.jl:132](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L132)
 
 ---
 
@@ -4884,7 +4886,7 @@ best to introduce a new wrapper class for that.
 
 
 *source:*
-[DataCubes/src/na/na.jl:25](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/na/na.jl#L25)
+[DataCubes/src/na/na.jl:25](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L25)
 
 ---
 
@@ -4899,5 +4901,5 @@ In this case, the result array of reduced size will again have a `DefaultAxis` o
 
 
 *source:*
-[DataCubes/src/datatypes/labeled_array.jl:47](https://github.com/c-s/DataCubes.jl/tree/13409ecabd5f46aba09e6bea11c89c4e947eaa4d/src/datatypes/labeled_array.jl#L47)
+[DataCubes/src/datatypes/labeled_array.jl:47](https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L47)
 

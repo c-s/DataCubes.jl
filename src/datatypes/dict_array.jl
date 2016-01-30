@@ -303,7 +303,7 @@ Base.reshape(arr::DictArray, dims::Tuple{Vararg{Int}}) = reshape(arr, dims...)
 arrayadd(arr1::DictArray, arr2::DictArray) = DictArray(merge(arr1.data, arr2.data))
 arrayadd(arr1::DictArray, args...;kwargs...) = arrayadd(arr1, darr(args...;kwargs...))
 arrayadd(arr1::DictArray, args::AbstractArray) = throw(ArgumentError("cannot implement."))
-arrayadd(arr1::AbstractArray, arr2::AbstractArray) = reshape(collect(zip(arr1, arr2)), size(arr1))
+arrayadd(arr1::AbstractArray, arr2::AbstractArray) = mapna((x,y)->(x,y), arr1, arr2)
 
 """
 

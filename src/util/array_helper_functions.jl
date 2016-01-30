@@ -260,7 +260,7 @@ Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrappe
   end
   if n == 1
     # well, it's not really correct. If T and U are Int64, the result might be a Float64.
-    Nullable{promote_type(T,U)}()
+    Nullable{Base.return_types(/, (promote_type(T,U),Int))[1]}()
   else
     resize!(v1, n-1)
     resize!(v2, n-1)
@@ -346,12 +346,12 @@ for op = [:cov, :cor]
       axis1 = keys(arr1)
       axis2 = keys(arr2)
       # the covariance matrix should not be large.
-      # so let's not care about the specific type here.
-      data = cell(length(axis1), length(axis2))
-      for j in eachindex(axis2)
-        for i in eachindex(axis1)
-          data[i,j] = $(op)(arr1.data.values[i], arr2.data.values[j])
-        end
+      len1 = length(axis1)
+      len2 = length(axis2)
+      inds = reshape(collect(zip(repeat(collect(1:len1),inner=[1],outer=[len2]),
+                                 repeat(collect(1:len2),inner=[len1],outer=[1]))),len1,len2)
+      data = map(inds) do xy
+        $(op)(arr1.data.values[xy[1]], arr2.data.values[xy[2]])
       end
       larr(data, axis1=axis1, axis2=axis2)
     end

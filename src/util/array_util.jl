@@ -352,6 +352,8 @@ replace_axes(arr::LabeledArray) = arr
 
 ##### Returns
 For each `i=>[f1,f2,...]` in `args`, the `i`th axis is replaced by the fields `f1`, `f2`, ....
+A nonarray value in `i=>f1` will be automatically promoted to an array with one element: `[f1]`.
+If the key `i` is omitted, the smallest relevant axis number will be automatically assigned.
 Only the first elements will be taken. For example, if the underlying data array is 2 dimensional, and if you want to use some field for the 1st axis, `[:,1]` components will be used.
 The original axis becomes the data part of `LabeledArray` after properly broadcast.
 If the field name array is null for an argument in `args` (`i=>[]`), the corresponding axis will be `DefaultAxis`.
@@ -370,7 +372,7 @@ x |1 a |2 b |3 c
 y |4 d |5 e |6 f
 
 
-julia> replace_axes(t, 1=>[:a])
+julia> replace_axes(t, 1=>[:a])      # == replace_axes(t, [:a]) == replace_axes(t, :a)
 2 x 3 LabeledArray
 
   |A   |B   |C
@@ -393,13 +395,17 @@ a b |k |k |k
 ```
 
 """
-replace_axes(arr::LabeledArray, args...) = replace_axes(replace_axes(arr, args[1]), args[2:end]...)
+replace_axes(arr::LabeledArray, args...; index_counter::Int=1) = begin
+  new_index_counter, axis_pair = replace_axes_inner_create_axis_pair(index_counter, args[1])
+  replace_axes(replace_axes(arr, axis_pair; index_counter=1), args[2:end]...; index_counter=new_index_counter)
+end
 
-replace_axes(arr::LabeledArray, arg) = begin
+replace_axes(arr::LabeledArray, arg; index_counter::Int=1) = begin
   res = arr
   numdims = ndims(arr)
   tracker = []
-  axis_index, axis_keys = arg
+  (_, (axis_index, axis_keys_raw)) = replace_axes_inner_create_axis_pair(index_counter, arg)
+  axis_keys = replace_axes_inner_collect_if_necessary(axis_keys_raw)
   resaxis = res.axes[axis_index]
   axis = if isa(resaxis, DictArray)
     resaxis.data
@@ -450,6 +456,13 @@ replace_axes(arr::LabeledArray, arg) = begin
   end
   LabeledArray(DictArray(resdict...), axes)
 end
+
+replace_axes_inner_collect_if_necessary(axis_keys_raw) = [axis_keys_raw]
+replace_axes_inner_collect_if_necessary(axis_keys_raw::AbstractArray) = axis_keys_raw
+
+replace_axes_inner_create_axis_pair(index_counter::Int, arg::Pair) = (arg[1]+1, arg)
+replace_axes_inner_create_axis_pair(index_counter::Int, arg::NTuple{2}) = (arg[1]+1, arg)
+replace_axes_inner_create_axis_pair(index_counter::Int, arg) = (index_counter+1, index_counter => arg)
 
 """
 

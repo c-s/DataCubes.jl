@@ -207,6 +207,7 @@ facts("DictArray tests") do
     @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact reshape(darr(a=enumeration(11:16)),2,3) --> darr(a=[11 13 15;12 14 16])
     @fact reshape(darr(a=enumeration(11:16)),(2,3)) --> darr(a=[11 13 15;12 14 16])
+    @fact mapna((x,y)->(x,y),nalift([1 2 3;4 5 6]),nalift(1.0*[2 3 4;5 6 7])) --> nalift([(1,2.0) (2,3.0) (3,4.0);(4,5.0) (5,6.0) (6,7.0)])
     @fact show(darr(a=rand(2))) --> nothing
     @fact show(darr(a=rand(2,3))) --> nothing
     @fact show(darr(a=rand(2,3,2))) --> nothing

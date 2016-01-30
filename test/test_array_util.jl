@@ -61,8 +61,25 @@ facts("ArrayUtil tests") do
                              axis1[k1=["x","y"],k2=['a','b']],
                              axis2[r1=[10.0,11.0,12.0]]), 1=>[:c1,:k1], 2=>[:c2,:k2]) -->
           @larr(r1=[10.0 11.0 12.0;10.0 11.0 12.0],axis1[c1=[1,4],k1=["x","y"]],axis2[c2=[:a,:b,:c],k2=['a','a','a']])
+    @fact replace_axes(@larr(c1=[1 2 3;4 5 6],
+                             c2=[:a :b :c;:d :e :f],
+                             axis1[k1=["x","y"],k2=['a','b']],
+                             axis2[r1=[10.0,11.0,12.0]]), [:c1,:k1], 2=>[:c2,:k2]) -->
+          @larr(r1=[10.0 11.0 12.0;10.0 11.0 12.0],axis1[c1=[1,4],k1=["x","y"]],axis2[c2=[:a,:b,:c],k2=['a','a','a']])
+    @fact replace_axes(@larr(c1=[1 2 3;4 5 6],
+                             c2=[:a :b :c;:d :e :f],
+                             axis1[k1=["x","y"],k2=['a','b']],
+                             axis2[r1=[10.0,11.0,12.0]]), 1=>[:c1,:k1], [:c2,:k2]) -->
+          @larr(r1=[10.0 11.0 12.0;10.0 11.0 12.0],axis1[c1=[1,4],k1=["x","y"]],axis2[c2=[:a,:b,:c],k2=['a','a','a']])
+    @fact replace_axes(@larr(c1=[1 2 3;4 5 6],
+                             c2=[:a :b :c;:d :e :f],
+                             axis1[k1=["x","y"],k2=['a','b']],
+                             axis2[r1=[10.0,11.0,12.0]]), [:c1,:k1], [:c2,:k2]) -->
+          @larr(r1=[10.0 11.0 12.0;10.0 11.0 12.0],axis1[c1=[1,4],k1=["x","y"]],axis2[c2=[:a,:b,:c],k2=['a','a','a']])
     @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>['a']) --> larr(b=[:x,:y,:z], axis1=darr('a'=>[1,2,3]))
     @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>[:b]) --> larr(axis1=darr(b=[:x,:y,:z]), 'a'=>[1,2,3])
+    @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>'a') --> larr(b=[:x,:y,:z], axis1=darr('a'=>[1,2,3]))
+    @fact replace_axes(larr('a'=>[1,2,3], b=[:x,:y,:z]), 1=>:b) --> larr(axis1=darr(b=[:x,:y,:z]), 'a'=>[1,2,3])
     @fact replace_axes(larr(a=[1 2;3 4;5 6], axis=[:x,:y,:z]),1=>[:a]) --> @larr(axis[a=[1,3,5]], x1=[:x :x;:y :y;:z :z])
     @fact replace_axes(larr(a=[1 2;3 4;5 6], axis=[:x,:y,:z]),1=>[]) --> @larr(a=[1 2;3 4;5 6], x1=[:x :x;:y :y;:z :z])
     @fact permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]])),(2,3,1))[:,:,1] -->
@@ -211,6 +228,17 @@ facts("ArrayUtil tests") do
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->d .== :a) --> LDict(:a=>Nullable(1))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2:3) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2).value --> 3
+    @fact extract(nalift(LDict(:a=>1,:b=>3)), :a).value --> 1
+    @fact extract(nalift(LDict(:a=>1,:b=>3,:c=>5)), x->2).value --> 3
+    @fact extract(nalift(LDict(:a=>1,:b=>3,:c=>5)), x->[2,3]) --> nalift(LDict(:b=>3,:c=>5))
+
+    @fact extract(nalift(LDict(:a=>1,:b=>3,:c=>'x')), x->2).value --> 3
+    @fact extract(nalift(LDict(:a=>1,:b=>3,:c=>'x')), x->[2,3]) --> nalift(LDict(:b=>3,:c=>'x'))
+    @fact extract(nalift(LDict(:a=>1,:b=>3,:c=>'x')), x->[1,2]) --> nalift(LDict(:a=>1,:b=>3))
+    @fact dcube.gdrop(nalift(LDict(:a=>1,:b=>3,:c=>5)),2) --> LDict(:c=>Nullable(5))
+    @fact dcube.gdrop(nalift(LDict(:a=>1,:b=>3,:c=>5)),3) --> isempty
+    @fact discard([7,5,3,1],1:2) --> nalift([3,1])
+    @fact discard([7,5,3,1],x->[1,3]) --> nalift([5,1])
 
     @fact gdrop(collapse_axes(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"]))), 2) --> larr(a=[2,5,3,6],b=['y','v','z','w'],axis1=darr(x1=[:m,:n,:m,:n],r=["B","B","C","C"]))
     @fact gdrop(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), 2) --> isempty
@@ -272,6 +300,15 @@ facts("ArrayUtil tests") do
     @fact namerge(Nullable(1), Nullable(2)).value --> 2
     @fact namerge(1, 2).value --> 2
     @fact namerge(Nullable{Int}(), Nullable{Int}()) --> x->x.isnull
+    @fact namerge(@nalift([1 2 NA;4 5 6])) --> @nalift([1 2 NA;4 5 6])
+    @fact namerge(@nalift([1 2 NA;4 5 6])) --> @nalift([1 2 NA;4 5 6])
+    @fact namerge(@larr([1 2 NA;4 5 6])) --> @larr([1 2 NA;4 5 6])
+    @fact namerge(@larr([1 2 NA;4 5 6])) --> @larr([1 2 NA;4 5 6])
+    @fact namerge(@darr(a=[1 2 NA;4 5 6])) --> @darr(a=[1 2 NA;4 5 6])
+    @fact namerge(@darr(a=[1 2 NA;4 5 6])) --> @darr(a=[1 2 NA;4 5 6])
+    @fact namerge(@larr(a=[1 2 NA;4 5 6],axis[:x,:y])) --> @larr(a=[1 2 NA;4 5 6],axis[:x,:y])
+    @fact namerge(@larr(a=[1 2 NA;4 5 6],axis[:x,:y])) --> @larr(a=[1 2 NA;4 5 6],axis[:x,:y])
+    @fact_throws namerge()
     @fact mapvalues(+, 1, darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
     @fact mapvalues(+, Nullable(1), darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0])) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])
     @fact mapvalues(+, darr(a=[1 2;3 4],b=[1.0 2.0;3.0 4.0]), 1) --> darr(a=[2 3;4 5],b=1.0*[2 3;4 5])

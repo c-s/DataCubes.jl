@@ -201,6 +201,13 @@ facts("LabeledArray tests") do
     @fact_throws larr(axis1=[4,5])
     @fact_throws LabeledArray(a=[1,2,3], ([4,5,6],[7,8,9]))
     @fact_throws larr(a=rand(4,5), axis1=rand(4,2))
+    @fact size(similar(larr(rand(3,5)))) --> (3,5)
+    @fact typeof(similar(larr(rand(3,5)))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.DefaultAxis,DataCubes.DefaultAxis},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
+
+    @fact size(similar(larr(rand(3,5),axis2=[:a,:b,:c,:d,:e]))) --> (3,5)
+    @fact typeof(similar(larr(rand(3,5),axis2=[:a,:b,:c,:d,:e]))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.DefaultAxis,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,Array{Nullable{Symbol},1}}},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
+    @fact size(similar(larr(k=rand(3,5),axis=[:a,:b,:c]))) --> (3,5)
+    @fact typeof(similar(larr(k=rand(3,5),axis=[:a,:b,:c]))) --> LabeledArray{DataCubes.LDict{Symbol,Nullable{Float64}},2,Tuple{DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,Array{Nullable{Symbol},1}},DataCubes.DefaultAxis},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}}
     #@fact typeof(similar(larr(a=rand(3,5), axis1=darr(k=[1,2,3])))) --> LabeledArray{DataCubes.LDict{Symbol,Nullable{Float64}},2,Tuple{DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Nullable{Int64}},Array{Nullable{Int64},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}}
     #@fact typeof(similar(larr(rand(3,5), axis1=darr(k=[1,2,3])))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Nullable{Int64}},Array{Nullable{Int64},1}},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
     #@fact typeof(similar(larr(rand(3,5), axis1=[1,2,3]))) --> LabeledArray{Nullable{Float64},2,Tuple{DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}},Array{Nullable{Int64},1}},DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}}
