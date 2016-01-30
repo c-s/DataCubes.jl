@@ -142,70 +142,70 @@
 <pre><code class="julia">julia&gt; t = larr(reshape(1:10,5,2), axis1=darr(k=['a','b','c','d','e']), axis2=darr(r1=[:M,:N],r2=[&quot;A&quot;,&quot;A&quot;]))
 5 x 2 LabeledArray
 
-r1 |M |N  
-r2 |A |A  
+r1 |M |N
+r2 |A |A
 ---+--+---
-k  |  |   
+k  |  |
 ---+--+---
-a  |1 |6  
-b  |2 |7  
-c  |3 |8  
-d  |4 |9  
-e  |5 |10 
+a  |1 |6
+b  |2 |7
+c  |3 |8
+d  |4 |9
+e  |5 |10
 
 
 julia&gt; axis2flds(t)
 5 LabeledArray
 
-k |M_A N_A 
+k |M_A N_A
 --+--------
-a |1   6   
-b |2   7   
-c |3   8   
-d |4   9   
-e |5   10  
+a |1   6
+b |2   7
+c |3   8
+d |4   9
+e |5   10
 
 
 julia&gt; axis2flds(t, name_collapse_function=x-&gt;join(x, &quot;*&quot;))
 5 LabeledArray
 
-k |M*A N*A 
+k |M*A N*A
 --+--------
-a |1   6   
-b |2   7   
-c |3   8   
-d |4   9   
-e |5   10  
+a |1   6
+b |2   7
+c |3   8
+d |4   9
+e |5   10
 
 
 julia&gt; m = @larr(reshape(1:10,5,2), axis1[k=['a','b','c','d','e']], axis2[:M,NA])
 5 x 2 LabeledArray
 
-  |M |   
+  |M |
 --+--+---
-k |  |   
+k |  |
 --+--+---
-a |1 |6  
-b |2 |7  
-c |3 |8  
-d |4 |9  
-e |5 |10 
+a |1 |6
+b |2 |7
+c |3 |8
+d |4 |9
+e |5 |10
 
 
 julia&gt; axis2flds(m, default_axis_value=&quot;N/A&quot;)
 5 LabeledArray
 
-k |M N/A 
+k |M N/A
 --+------
-a |1 6   
-b |2 7   
-c |3 8   
-d |4 9   
-e |5 10  
+a |1 6
+b |2 7
+c |3 8
+d |4 9
+e |5 10
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L603">DataCubes/src/util/array_util.jl:603</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L619">DataCubes/src/util/array_util.jl:619</a></p>
 <hr />
 <p><a id="function__collapse_axes.1" class="lexicon_definition"></a></p>
 <h4 id="datacubescollapse_axes">DataCubes.collapse_axes <a href="#function__collapse_axes.1">¶</a></h4>
@@ -223,20 +223,20 @@ If <code>arr</code> is a LabeledArray, all the labels along the flattened direct
 <pre><code class="julia">julia&gt; collapse_axes(darr(a=reshape(1:40, 2,4,5), b=reshape(11:50, 2,4,5)), 1, 2)
 8 x 5 DictArray
 
-a b  |a  b  |a  b  |a  b  |a  b  
+a b  |a  b  |a  b  |a  b  |a  b
 -----+------+------+------+------
-1 11 |9  19 |17 27 |25 35 |33 43 
-2 12 |10 20 |18 28 |26 36 |34 44 
-3 13 |11 21 |19 29 |27 37 |35 45 
-4 14 |12 22 |20 30 |28 38 |36 46 
-5 15 |13 23 |21 31 |29 39 |37 47 
-6 16 |14 24 |22 32 |30 40 |38 48 
-7 17 |15 25 |23 33 |31 41 |39 49 
-8 18 |16 26 |24 34 |32 42 |40 50 
+1 11 |9  19 |17 27 |25 35 |33 43
+2 12 |10 20 |18 28 |26 36 |34 44
+3 13 |11 21 |19 29 |27 37 |35 45
+4 14 |12 22 |20 30 |28 38 |36 46
+5 15 |13 23 |21 31 |29 39 |37 47
+6 16 |14 24 |22 32 |30 40 |38 48
+7 17 |15 25 |23 33 |31 41 |39 49
+8 18 |16 26 |24 34 |32 42 |40 50
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L192">DataCubes/src/util/array_util.jl:192</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L192">DataCubes/src/util/array_util.jl:192</a></p>
 <hr />
 <p><a id="function__darr.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdarr">DataCubes.darr <a href="#function__darr.1">¶</a></h4>
@@ -279,7 +279,7 @@ a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1217">DataCubes/src/datatypes/dict_array.jl:1217</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1218">DataCubes/src/datatypes/dict_array.jl:1218</a></p>
 <hr />
 <p><a id="function__delete.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdelete">DataCubes.delete <a href="#function__delete.1">¶</a></h4>
@@ -297,39 +297,39 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 julia&gt; delete(darr(a=[1,2,3], b=[:m,:n,:p]), :b)
 3 DictArray
 
-a 
+a
 --
-1 
-2 
-3 
+1
+2
+3
 
 
 julia&gt; t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=[&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia&gt; delete(t, :k, :b)
 3 x 2 LabeledArray
 
-  |A |B 
+  |A |B
 --+--+--
-  |a |a 
+  |a |a
 --+--+--
-1 |1 |2 
-2 |3 |4 
-3 |5 |6 
+1 |1 |2
+2 |3 |4
+3 |5 |6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1024">DataCubes/src/util/array_util.jl:1024</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1044">DataCubes/src/util/array_util.jl:1044</a></p>
 <hr />
 <p><a id="function__describe.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdescribe">DataCubes.describe <a href="#function__describe.1">¶</a></h4>
@@ -355,23 +355,23 @@ DataCubes.LDict{Symbol,Any} with 10 entries:
 julia&gt; describe(@darr(a=[1,2,3,4,NA],b=[1,2,3,4,5]))
 2 LabeledArray
 
-  |min q1   med q3   max mean std                count nacount naratio 
+  |min q1   med q3   max mean std                count nacount naratio
 --+--------------------------------------------------------------------
-a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2     
-b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0     
+a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2
+b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 
 
 julia&gt; describe(@larr(a=[1,2,3,4,NA],b=[1,2,3,4,5],axis1[:m,:n,:p,:q,:r]))
 2 LabeledArray
 
-  |min q1   med q3   max mean std                count nacount naratio 
+  |min q1   med q3   max mean std                count nacount naratio
 --+--------------------------------------------------------------------
-a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2     
-b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0     
+a |1   1.75 2.5 3.25 4   2.5  1.2909944487358056 5     1       0.2
+b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1461">DataCubes/src/util/array_helper_functions.jl:1461</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1735">DataCubes/src/util/array_helper_functions.jl:1735</a></p>
 <hr />
 <p><a id="function__discard.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdiscard">DataCubes.discard <a href="#function__discard.1">¶</a></h4>
@@ -392,61 +392,61 @@ b |1   2.0  3.0 4.0  5   3.0  1.5811388300841898 5     0       0.0
 <pre><code class="julia">julia&gt; t = larr(a=map(x-&gt;'a'+x,reshape(0:14,5,3)), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V], axis2=darr(r1=[:A,:A,:B],r2=[:m,:n,:n]))
 5 x 3 LabeledArray
 
-r1 |A   |A    |B    
-r2 |m   |n    |n    
+r1 |A   |A    |B
+r2 |m   |n    |n
 ---+----+-----+-----
-   |a b |a b  |a b  
+   |a b |a b  |a b
 ---+----+-----+-----
-X  |a 1 |f 6  |k 11 
-Y  |b 2 |g 7  |l 12 
-Z  |c 3 |h 8  |m 13 
-U  |d 4 |i 9  |n 14 
-V  |e 5 |j 10 |o 15 
+X  |a 1 |f 6  |k 11
+Y  |b 2 |g 7  |l 12
+Z  |c 3 |h 8  |m 13
+U  |d 4 |i 9  |n 14
+V  |e 5 |j 10 |o 15
 
 
 julia&gt; discard(t, [:X,:V,:W], map(Nullable,(:A,:m)))
 3 x 2 LabeledArray
 
-r1 |A   |B    
-r2 |n   |n    
+r1 |A   |B
+r2 |n   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-Y  |g 7 |l 12 
-Z  |h 8 |m 13 
-U  |i 9 |n 14 
+Y  |g 7 |l 12
+Z  |h 8 |m 13
+U  |i 9 |n 14
 
 
 julia&gt; discard(t, [:X,:V,:W], darr(r1=[:A,:B],r2=[:m,:m]))
 3 x 2 LabeledArray
 
-r1 |A   |B    
-r2 |n   |n    
+r1 |A   |B
+r2 |n   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-Y  |g 7 |l 12 
-Z  |h 8 |m 13 
-U  |i 9 |n 14 
+Y  |g 7 |l 12
+Z  |h 8 |m 13
+U  |i 9 |n 14
 
 
 julia&gt; discard(t, [], d-&gt;d[:r1] .== :A)
 5 x 1 LabeledArray
 
-r1 |B    
-r2 |n    
+r1 |B
+r2 |n
 ---+-----
-   |a b  
+   |a b
 ---+-----
-X  |k 11 
-Y  |l 12 
-Z  |m 13 
-U  |n 14 
-V  |o 15 
+X  |k 11
+Y  |l 12
+Z  |m 13
+U  |n 14
+V  |o 15
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1648">DataCubes/src/util/array_util.jl:1648</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1668">DataCubes/src/util/array_util.jl:1668</a></p>
 <hr />
 <p><a id="function__dropna.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdropna">DataCubes.dropna <a href="#function__dropna.1">¶</a></h4>
@@ -455,45 +455,45 @@ V  |o 15
 <pre><code class="julia">julia&gt; t = @darr(a=[1 2 NA;NA 5 NA], b=[NA :n NA;:x NA NA])
 2 x 3 DictArray
 
-a b |a b |a b 
+a b |a b |a b
 ----+----+----
-1   |2 n |    
-  x |5   |    
+1   |2 n |
+  x |5   |
 
 
 julia&gt; dropna(t)
 2 x 2 DictArray
 
-a b |a b 
+a b |a b
 ----+----
-1   |2 n 
-  x |5   
+1   |2 n
+  x |5
 
 
 julia&gt; m = @larr(a=[1 2 NA;NA 5 NA], b=[NA :n NA;:x NA NA], axis1[:M,:N])
 d2 x 3 LabeledArray
 
-  |1   |2   |3   
+  |1   |2   |3
 --+----+----+----
-  |a b |a b |a b 
+  |a b |a b |a b
 --+----+----+----
-M |1   |2 n |    
-N |  x |5   |    
+M |1   |2 n |
+N |  x |5   |
 
 
 julia&gt; dropna(m)
 2 x 2 LabeledArray
 
-  |1   |2   
+  |1   |2
 --+----+----
-  |a b |a b 
+  |a b |a b
 --+----+----
-M |1   |2 n 
-N |  x |5   
+M |1   |2 n
+N |  x |5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1112">DataCubes/src/util/array_util.jl:1112</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1132">DataCubes/src/util/array_util.jl:1132</a></p>
 <hr />
 <p><a id="function__enumeration.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesenumeration">DataCubes.enumeration <a href="#function__enumeration.1">¶</a></h4>
@@ -551,7 +551,7 @@ julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/enumeration_array.jl#L201">DataCubes/src/datatypes/enumeration_array.jl:201</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L202">DataCubes/src/datatypes/enumeration_array.jl:202</a></p>
 <hr />
 <p><a id="function__extract.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesextract">DataCubes.extract <a href="#function__extract.1">¶</a></h4>
@@ -573,58 +573,58 @@ julia&gt; enumeration([:A,:A,:B,:B,:C], [:C,:B]).elems
 <pre><code class="julia">julia&gt; t = larr(a=map(x-&gt;'a'+x,reshape(0:14,5,3)), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V], axis2=darr(r1=[:A,:A,:B],r2=[:m,:n,:n]))
 5 x 3 LabeledArray
 
-r1 |A   |A    |B    
-r2 |m   |n    |n    
+r1 |A   |A    |B
+r2 |m   |n    |n
 ---+----+-----+-----
-   |a b |a b  |a b  
+   |a b |a b  |a b
 ---+----+-----+-----
-X  |a 1 |f 6  |k 11 
-Y  |b 2 |g 7  |l 12 
-Z  |c 3 |h 8  |m 13 
-U  |d 4 |i 9  |n 14 
-V  |e 5 |j 10 |o 15 
+X  |a 1 |f 6  |k 11
+Y  |b 2 |g 7  |l 12
+Z  |c 3 |h 8  |m 13
+U  |d 4 |i 9  |n 14
+V  |e 5 |j 10 |o 15
 
 
 julia&gt; extract(t, [:X,:V,:W], map(Nullable,(:A,:m)))
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-X |a 1 
-V |e 5 
-W |    
+X |a 1
+V |e 5
+W |
 
 
 julia&gt; extract(t, [:X,:V,:W], darr(r1=[:A,:B],r2=[:m,:m]))
 3 x 2 LabeledArray
 
-r1 |A   |B   
-r2 |m   |m   
+r1 |A   |B
+r2 |m   |m
 ---+----+----
-   |a b |a b 
+   |a b |a b
 ---+----+----
-X  |a 1 |    
-V  |e 5 |    
-W  |    |    
+X  |a 1 |
+V  |e 5 |
+W  |    |
 
 
 julia&gt; extract(t, :, d-&gt;d[:r1] .== :A)
 5 x 2 LabeledArray
 
-r1 |A   |A    
-r2 |m   |n    
+r1 |A   |A
+r2 |m   |n
 ---+----+-----
-   |a b |a b  
+   |a b |a b
 ---+----+-----
-X  |a 1 |f 6  
-Y  |b 2 |g 7  
-Z  |c 3 |h 8  
-U  |d 4 |i 9  
-V  |e 5 |j 10 
+X  |a 1 |f 6
+Y  |b 2 |g 7
+Z  |c 3 |h 8
+U  |d 4 |i 9
+V  |e 5 |j 10
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1436">DataCubes/src/util/array_util.jl:1436</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1456">DataCubes/src/util/array_util.jl:1456</a></p>
 <hr />
 <p><a id="function__flds2axis.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesflds2axis">DataCubes.flds2axis <a href="#function__flds2axis.1">¶</a></h4>
@@ -647,27 +647,27 @@ Otherwise, the new data will be a normal array.</p>
 <pre><code class="julia">julia&gt; t = larr(a=[1,2,3], b=[:x,:y,:z])
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |1 x 
-2 |2 y 
-3 |3 z 
+1 |1 x
+2 |2 y
+3 |3 z
 
 
 julia&gt; flds2axis(t, axisname=:newaxis, fieldname=:newfield)
 3 x 2 LabeledArray
 
-newaxis |a        |b        
+newaxis |a        |b
 --------+---------+---------
-        |newfield |newfield 
+        |newfield |newfield
 --------+---------+---------
-1       |1        |x        
-2       |2        |y        
-3       |3        |z        
+1       |1        |x
+2       |2        |y
+3       |3        |z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L498">DataCubes/src/util/array_util.jl:498</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L514">DataCubes/src/util/array_util.jl:514</a></p>
 <hr />
 <p><a id="function__igna.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesigna">DataCubes.igna <a href="#function__igna.1">¶</a></h4>
@@ -716,7 +716,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L527">DataCubes/src/na/na.jl:527</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L526">DataCubes/src/na/na.jl:526</a></p>
 <hr />
 <p><a id="function__ignabool.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesignabool">DataCubes.ignabool <a href="#function__ignabool.1">¶</a></h4>
@@ -744,7 +744,7 @@ julia&gt; ignabool(@nalift([true true NA;false NA true]))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L615">DataCubes/src/na/na.jl:615</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L614">DataCubes/src/na/na.jl:614</a></p>
 <hr />
 <p><a id="function__innerjoin.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesinnerjoin">DataCubes.innerjoin <a href="#function__innerjoin.1">¶</a></h4>
@@ -824,7 +824,7 @@ u |u   |v 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/join.jl#L260">DataCubes/src/util/join.jl:260</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/join.jl#L260">DataCubes/src/util/join.jl:260</a></p>
 <hr />
 <p><a id="function__isna.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesisna">DataCubes.isna <a href="#function__isna.1">¶</a></h4>
@@ -867,7 +867,7 @@ julia&gt; isna(@nalift([1 2 NA;NA 5 6]))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L675">DataCubes/src/na/na.jl:675</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L674">DataCubes/src/na/na.jl:674</a></p>
 <hr />
 <p><a id="function__larr.1" class="lexicon_definition"></a></p>
 <h4 id="datacubeslarr">DataCubes.larr <a href="#function__larr.1">¶</a></h4>
@@ -885,29 +885,29 @@ Especially, if the non pair type argument is an array of <code>LDict</code>, it 
 <pre><code class="julia">julia&gt; t = larr(a=[1 2;3 4;5 6],:b=&gt;[1.0 1.5;:sym 'a';&quot;X&quot; &quot;Y&quot;],c=1,axis=[:U,:V,:W],axis2=darr(r=['m','n']))
 3 x 2 LabeledArray
 
-r |m       |n       
+r |m       |n
 --+--------+--------
-  |b   a c |b   a c 
+  |b   a c |b   a c
 --+--------+--------
-U |1.0 1 1 |1.5 2 1 
-V |sym 3 1 |a   4 1 
-W |X   5 1 |Y   6 1 
+U |1.0 1 1 |1.5 2 1
+V |sym 3 1 |a   4 1
+W |X   5 1 |Y   6 1
 
 
 julia&gt; larr(t, c=[1 2;3 4;5 6], :d=&gt;:X, axis1=darr(k=[&quot;g&quot;,&quot;h&quot;,&quot;i&quot;]))
 3 x 2 LabeledArray
 
-r |m         |n         
+r |m         |n
 --+----------+----------
-k |b   a c d |b   a c d 
+k |b   a c d |b   a c d
 --+----------+----------
-g |1.0 1 1 X |1.5 2 2 X 
-h |sym 3 3 X |a   4 4 X 
-i |X   5 5 X |Y   6 6 X 
+g |1.0 1 1 X |1.5 2 2 X
+h |sym 3 3 X |a   4 4 X
+i |X   5 5 X |Y   6 6 X
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1415">DataCubes/src/datatypes/labeled_array.jl:1415</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1467">DataCubes/src/datatypes/labeled_array.jl:1467</a></p>
 <hr />
 <p><a id="function__leftjoin.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesleftjoin">DataCubes.leftjoin <a href="#function__leftjoin.1">¶</a></h4>
@@ -988,7 +988,7 @@ y |z 2 |u 4 |v 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/join.jl#L85">DataCubes/src/util/join.jl:85</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/join.jl#L85">DataCubes/src/util/join.jl:85</a></p>
 <hr />
 <p><a id="function__mapna.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmapna">DataCubes.mapna <a href="#function__mapna.1">¶</a></h4>
@@ -1004,17 +1004,17 @@ y |z 2 |u 4 |v 6
 <h5 id="examples_16">Examples</h5>
 <pre><code class="julia">julia&gt; mapna((x,y)-&gt;x+y+1, @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
 2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(5)        Nullable(7)      
+ Nullable{Int64}()  Nullable(5)        Nullable(7)
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; mapna((x,y)-&gt;Nullable(x+y+1), @nalift([1 2 3;4 5 NA]), @nalift([NA 2 3;4 NA NA]))
 2x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(5)        Nullable(7)      
+ Nullable{Int64}()  Nullable(5)        Nullable(7)
  Nullable(9)        Nullable{Int64}()  Nullable{Int64}()
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1147">DataCubes/src/util/array_util.jl:1147</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1167">DataCubes/src/util/array_util.jl:1167</a></p>
 <hr />
 <p><a id="function__mapvalues.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmapvalues">DataCubes.mapvalues <a href="#function__mapvalues.1">¶</a></h4>
@@ -1036,21 +1036,21 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 julia&gt; mapvalues(x-&gt;x .+ 1, darr(a=[1,2,3], b=[4,5,6]))
 3 DictArray
 
-a b 
+a b
 ----
-2 5 
-3 6 
-4 7 
+2 5
+3 6
+4 7
 
 
 julia&gt; mapvalues(x-&gt;x .+ 1, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p]))
 3 LabeledArray
 
-  |a b 
+  |a b
 --+----
-m |2 5 
-n |3 6 
-p |4 7 
+m |2 5
+n |3 6
+p |4 7
 
 
 julia&gt; mapvalues(sum, darr(a=[1,2,3], b=[4,5,6]))
@@ -1068,13 +1068,13 @@ DataCubes.LDict{Symbol,Nullable{Int64}} with 2 entries:
 julia&gt; mapvalues((x,y)-&gt;2x.*y,darr(a=[1 2 3]),darr(a=[4 5 6]))
 1 x 3 DictArray
 
-a |a  |a  
+a |a  |a
 --+---+---
-8 |20 |36 
+8 |20 |36
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L706">DataCubes/src/util/array_util.jl:706</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L722">DataCubes/src/util/array_util.jl:722</a></p>
 <hr />
 <p><a id="function__mmaximum.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmmaximum">DataCubes.mmaximum <a href="#function__mmaximum.1">¶</a></h4>
@@ -1107,25 +1107,25 @@ julia&gt; mmaximum(@nalift([11,NA,12,11,17]))
 julia&gt; mmaximum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |14 10 |15 10 
-14 10 |15 10 |16 10 
+11 10 |14 10 |15 10
+14 10 |15 10 |16 10
 
 
 julia&gt; mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2    |3    
+  |1     |2    |3
 --+------+-----+-----
-  |a  b  |a  b |a  b 
+  |a  b  |a  b |a  b
 --+------+-----+-----
-1 |16 10 |16 9 |16 8 
-2 |16 9  |16 8 |16 5 
+1 |16 10 |16 9 |16 8
+2 |16 9  |16 8 |16 5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1030">DataCubes/src/util/array_helper_functions.jl:1030</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1266">DataCubes/src/util/array_helper_functions.jl:1266</a></p>
 <hr />
 <p><a id="function__mmean.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmmean">DataCubes.mmean <a href="#function__mmean.1">¶</a></h4>
@@ -1141,42 +1141,42 @@ julia&gt; mmaximum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 <h5 id="examples_19">Examples</h5>
 <pre><code class="julia">julia&gt; mmean(@nalift([10,11,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(10.0) 
- Nullable(10.5) 
- Nullable(11.0) 
+ Nullable(10.0)
+ Nullable(10.5)
+ Nullable(11.0)
  Nullable(11.75)
- Nullable(12.8) 
+ Nullable(12.8)
 
 julia&gt; mmean(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(10.0) 
- Nullable(10.0) 
- Nullable(11.0) 
- Nullable(12.0) 
+ Nullable(10.0)
+ Nullable(10.0)
+ Nullable(11.0)
+ Nullable(12.0)
  Nullable(13.25)
 
 julia&gt; mmean(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a                  b                 |a    b   
+a    b    |a                  b                 |a    b
 ----------+-------------------------------------+---------
-11.0 10.0 |12.333333333333334 8.666666666666666 |13.0 8.0 
-12.5 8.5  |13.0               8.0               |13.5 7.5 
+11.0 10.0 |12.333333333333334 8.666666666666666 |13.0 8.0
+12.5 8.5  |13.0               8.0               |13.5 7.5
 
 
 julia&gt; mmean(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2                                    |3        
+  |1        |2                                    |3
 --+---------+-------------------------------------+---------
-  |a    b   |a                  b                 |a    b   
+  |a    b   |a                  b                 |a    b
 --+---------+-------------------------------------+---------
-1 |13.5 7.5 |14.0               7.0               |14.5 6.5 
-2 |14.0 7.0 |14.666666666666666 6.333333333333333 |16.0 5.0 
+1 |13.5 7.5 |14.0               7.0               |14.5 6.5
+2 |14.0 7.0 |14.666666666666666 6.333333333333333 |16.0 5.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L862">DataCubes/src/util/array_helper_functions.jl:862</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1052">DataCubes/src/util/array_helper_functions.jl:1052</a></p>
 <hr />
 <p><a id="function__mmedian.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmmedian">DataCubes.mmedian <a href="#function__mmedian.1">¶</a></h4>
@@ -1209,25 +1209,25 @@ julia&gt; mmedian(@nalift([11,NA,12,11,17]))
 julia&gt; mmedian(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a    b   |a    b   
+a    b    |a    b   |a    b
 ----------+---------+---------
-11.0 10.0 |12.5 8.5 |14.0 8.5 
-12.5 8.5  |14.0 8.5 |14.5 8.5 
+11.0 10.0 |12.5 8.5 |14.0 8.5
+12.5 8.5  |14.0 8.5 |14.5 8.5
 
 
 julia&gt; mmedian(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2        |3        
+  |1        |2        |3
 --+---------+---------+---------
-  |a    b   |a    b   |a    b   
+  |a    b   |a    b   |a    b
 --+---------+---------+---------
-1 |14.5 8.5 |14.5 8.0 |14.5 6.5 
-2 |14.5 8.0 |14.5 6.5 |16.0 5.0 
+1 |14.5 8.5 |14.5 8.0 |14.5 6.5
+2 |14.5 8.0 |14.5 6.5 |16.0 5.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1094">DataCubes/src/util/array_helper_functions.jl:1094</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1330">DataCubes/src/util/array_helper_functions.jl:1330</a></p>
 <hr />
 <p><a id="function__mmiddle.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmmiddle">DataCubes.mmiddle <a href="#function__mmiddle.1">¶</a></h4>
@@ -1260,25 +1260,25 @@ julia&gt; mmiddle(@nalift([11,NA,12,11,17]))
 julia&gt; mmiddle(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a    b    |a    b   |a    b   
+a    b    |a    b   |a    b
 ----------+---------+---------
-11.0 10.0 |12.5 8.5 |13.0 8.0 
-12.5 8.5  |13.0 8.0 |13.5 7.5 
+11.0 10.0 |12.5 8.5 |13.0 8.0
+12.5 8.5  |13.0 8.0 |13.5 7.5
 
 
 julia&gt; mmiddle(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1        |2        |3        
+  |1        |2        |3
 --+---------+---------+---------
-  |a    b   |a    b   |a    b   
+  |a    b   |a    b   |a    b
 --+---------+---------+---------
-1 |13.5 7.5 |14.0 7.0 |14.5 6.5 
-2 |14.0 7.0 |14.5 6.5 |16.0 5.0 
+1 |13.5 7.5 |14.0 7.0 |14.5 6.5
+2 |14.0 7.0 |14.5 6.5 |16.0 5.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1159">DataCubes/src/util/array_helper_functions.jl:1159</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1395">DataCubes/src/util/array_helper_functions.jl:1395</a></p>
 <hr />
 <p><a id="function__mminimum.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmminimum">DataCubes.mminimum <a href="#function__mminimum.1">¶</a></h4>
@@ -1311,25 +1311,25 @@ julia&gt; mminimum(@nalift([15,NA,12,11,17]))
 julia&gt; mminimum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b |a  b 
+a  b  |a  b |a  b
 ------+-----+-----
-11 10 |11 7 |11 6 
-11 7  |11 6 |11 5 
+11 10 |11 7 |11 6
+11 7  |11 6 |11 5
 
 
 julia&gt; mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1    |2    |3    
+  |1    |2    |3
 --+-----+-----+-----
-  |a  b |a  b |a  b 
+  |a  b |a  b |a  b
 --+-----+-----+-----
-1 |11 5 |12 5 |13 5 
-2 |12 5 |13 5 |16 5 
+1 |11 5 |12 5 |13 5
+2 |12 5 |13 5 |16 5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L966">DataCubes/src/util/array_helper_functions.jl:966</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1202">DataCubes/src/util/array_helper_functions.jl:1202</a></p>
 <hr />
 <p><a id="function__mprod.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmprod">DataCubes.mprod <a href="#function__mprod.1">¶</a></h4>
@@ -1345,42 +1345,42 @@ julia&gt; mminimum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true
 <h5 id="examples_23">Examples</h5>
 <pre><code class="julia">julia&gt; mprod(@nalift([10,11,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)    
- Nullable(110)   
- Nullable(1320)  
- Nullable(18480) 
+ Nullable(10)
+ Nullable(110)
+ Nullable(1320)
+ Nullable(18480)
  Nullable(314160)
 
 julia&gt; mprod(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)   
- Nullable(10)   
- Nullable(120)  
- Nullable(1680) 
+ Nullable(10)
+ Nullable(10)
+ Nullable(120)
+ Nullable(1680)
  Nullable(28560)
 
 julia&gt; mprod(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a   b  |a     b    |a       b      
+a   b  |a     b    |a       b
 -------+-----------+---------------
-11  10 |1848  630  |360360  30240  
-154 70 |27720 3780 |5765760 151200 
+11  10 |1848  630  |360360  30240
+154 70 |27720 3780 |5765760 151200
 
 
 julia&gt; mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1              |2          |3      
+  |1              |2          |3
 --+---------------+-----------+-------
-  |a       b      |a     b    |a   b  
+  |a       b      |a     b    |a   b
 --+---------------+-----------+-------
-1 |5765760 151200 |37440 2160 |208 40 
-2 |524160  15120  |3120  240  |16  5  
+1 |5765760 151200 |37440 2160 |208 40
+2 |524160  15120  |3120  240  |16  5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L778">DataCubes/src/util/array_helper_functions.jl:778</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L939">DataCubes/src/util/array_helper_functions.jl:939</a></p>
 <hr />
 <p><a id="function__mquantile.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmquantile">DataCubes.mquantile <a href="#function__mquantile.1">¶</a></h4>
@@ -1397,42 +1397,42 @@ julia&gt; mprod(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 <h5 id="examples_24">Examples</h5>
 <pre><code class="julia">julia&gt; mquantile(@nalift([11,14,12,11,17]), 0.25)
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(11.0) 
+ Nullable(11.0)
  Nullable(11.75)
  Nullable(11.75)
  Nullable(11.75)
- Nullable(12.5) 
+ Nullable(12.5)
 
 julia&gt; mquantile(@nalift([11,NA,12,11,17]), 0.25)
 5-element DataCubes.AbstractArrayWrapper{Nullable{Float64},1,Array{Nullable{Float64},1}}:
- Nullable(11.0) 
- Nullable(11.0) 
+ Nullable(11.0)
+ Nullable(11.0)
  Nullable(11.25)
  Nullable(11.25)
- Nullable(11.5) 
+ Nullable(11.5)
 
 julia&gt; mquantile(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 1, 2)
 2 x 3 DictArray
 
-a     b    |a     b    |a     b    
+a     b    |a     b    |a     b
 -----------+-----------+-----------
-11.0  10.0 |11.75 7.75 |12.5  7.75 
-11.75 7.75 |12.5  7.75 |13.25 7.75 
+11.0  10.0 |11.75 7.75 |12.5  7.75
+11.75 7.75 |12.5  7.75 |13.25 7.75
 
 
 julia&gt; mquantile(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 0.25, 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1          |2          |3          
+  |1          |2          |3
 --+-----------+-----------+-----------
-  |a     b    |a     b    |a     b    
+  |a     b    |a     b    |a     b
 --+-----------+-----------+-----------
-1 |13.75 7.25 |13.75 6.5  |13.75 5.75 
-2 |13.75 6.5  |13.75 5.75 |16.0  5.0  
+1 |13.75 7.25 |13.75 6.5  |13.75 5.75
+2 |13.75 6.5  |13.75 5.75 |16.0  5.0
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1225">DataCubes/src/util/array_helper_functions.jl:1225</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1461">DataCubes/src/util/array_helper_functions.jl:1461</a></p>
 <hr />
 <p><a id="function__msum.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesmsum">DataCubes.msum <a href="#function__msum.1">¶</a></h4>
@@ -1465,25 +1465,25 @@ julia&gt; msum(@nalift([10,NA,12,14,17]))
 julia&gt; msum(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |37 26 |65 40 
-25 17 |52 32 |81 45 
+11 10 |37 26 |65 40
+25 17 |52 32 |81 45
 
 
 julia&gt; msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2     |3     
+  |1     |2     |3
 --+------+------+------
-  |a  b  |a  b  |a  b  
+  |a  b  |a  b  |a  b
 --+------+------+------
-1 |81 45 |56 28 |29 13 
-2 |70 35 |44 19 |16 5  
+1 |81 45 |56 28 |29 13
+2 |70 35 |44 19 |16 5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L693">DataCubes/src/util/array_helper_functions.jl:693</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L825">DataCubes/src/util/array_helper_functions.jl:825</a></p>
 <hr />
 <p><a id="function__nafill.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesnafill">DataCubes.nafill <a href="#function__nafill.1">¶</a></h4>
@@ -1500,19 +1500,19 @@ julia&gt; msum(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 2, 1, rev=true)
 <pre><code class="julia">julia&gt; t = @nalift([1 NA;NA 4;NA NA])
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
- Nullable{Int64}()  Nullable(4)      
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable{Int64}()
- Nullable(1)  Nullable(4)      
- Nullable(1)  Nullable(4)      
+ Nullable(1)  Nullable(4)
+ Nullable(1)  Nullable(4)
 
 julia&gt; nafill(t,2)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable(1)        Nullable(1)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(1)
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t,2,1)
@@ -1523,19 +1523,19 @@ julia&gt; nafill(t,2,1)
 
 julia&gt; nafill(t, rev=true)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable(1)        Nullable(4)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(4)
+ Nullable{Int64}()  Nullable(4)
  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; nafill(t, window=2)
 3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)        Nullable{Int64}()
- Nullable(1)        Nullable(4)      
- Nullable{Int64}()  Nullable(4)      
+ Nullable(1)        Nullable(4)
+ Nullable{Int64}()  Nullable(4)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L542">DataCubes/src/util/array_helper_functions.jl:542</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L637">DataCubes/src/util/array_helper_functions.jl:637</a></p>
 <hr />
 <p><a id="function__nalift.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesnalift">DataCubes.nalift <a href="#function__nalift.1">¶</a></h4>
@@ -1571,7 +1571,7 @@ a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L268">DataCubes/src/na/na.jl:268</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L267">DataCubes/src/na/na.jl:267</a></p>
 <hr />
 <p><a id="function__namerge.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesnamerge">DataCubes.namerge <a href="#function__namerge.1">¶</a></h4>
@@ -1611,7 +1611,7 @@ julia&gt; namerge(@nalift([1 2 NA;4 NA NA]), @nalift([11 NA NA;14 15 NA]))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L2201">DataCubes/src/util/array_util.jl:2201</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2221">DataCubes/src/util/array_util.jl:2221</a></p>
 <hr />
 <p><a id="function__peel.1" class="lexicon_definition"></a></p>
 <h4 id="datacubespeel">DataCubes.peel <a href="#function__peel.1">¶</a></h4>
@@ -1633,15 +1633,15 @@ DataCubes.LDict{Symbol,DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,
 julia&gt; peel(larr(a=[1,2,3], b=[:m,:n,:p], axis1=[&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;]))
 3 DictArray
 
-a b 
+a b
 ----
-1 m 
-2 n 
-3 p 
+1 m
+2 n
+3 p
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L808">DataCubes/src/util/array_util.jl:808</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L829">DataCubes/src/util/array_util.jl:829</a></p>
 <hr />
 <p><a id="function__pick.1" class="lexicon_definition"></a></p>
 <h4 id="datacubespick">DataCubes.pick <a href="#function__pick.1">¶</a></h4>
@@ -1669,24 +1669,24 @@ julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a,))
 
 julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), :a, :b)
 2-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
- [Nullable(1),Nullable(2),Nullable(3)]   
+ [Nullable(1),Nullable(2),Nullable(3)]
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia&gt; pick(darr(a=[1,2,3], b=[:m,:n,:p]), (:a, :b))
 2-element Array{DataCubes.AbstractArrayWrapper{T,1,A&lt;:AbstractArray{T,N}},1}:
- [Nullable(1),Nullable(2),Nullable(3)]   
+ [Nullable(1),Nullable(2),Nullable(3)]
  [Nullable(:m),Nullable(:n),Nullable(:p)]
 
 julia&gt; t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=[&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia&gt; pick(t, :a)
@@ -1700,7 +1700,7 @@ julia&gt; pick(t, :a, :k)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
- Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
+ Nullable(5)  Nullable(6)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable(&quot;X&quot;)  Nullable(&quot;X&quot;)
  Nullable(&quot;Y&quot;)  Nullable(&quot;Y&quot;)
@@ -1711,7 +1711,7 @@ julia&gt; pick(t, (:a, :k))
  3x2 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
- Nullable(5)  Nullable(6)                                                                                                                                                                                                                                                     
+ Nullable(5)  Nullable(6)
  3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A&lt;:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable(&quot;X&quot;)  Nullable(&quot;X&quot;)
  Nullable(&quot;Y&quot;)  Nullable(&quot;Y&quot;)
@@ -1720,15 +1720,15 @@ julia&gt; pick(t, (:a, :k))
 julia&gt; pick(t, [:a, :k])
 3 x 2 DictArray
 
-a k |a k 
+a k |a k
 ----+----
-1 X |2 X 
-3 Y |4 Y 
-5 Z |6 Z 
+1 X |2 X
+3 Y |4 Y
+5 Z |6 Z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L900">DataCubes/src/util/array_util.jl:900</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L921">DataCubes/src/util/array_util.jl:921</a></p>
 <hr />
 <p><a id="function__pickaxis.1" class="lexicon_definition"></a></p>
 <h4 id="datacubespickaxis">DataCubes.pickaxis <a href="#function__pickaxis.1">¶</a></h4>
@@ -1742,33 +1742,33 @@ a k |a k
 <pre><code class="julia">julia&gt; t = larr(a=[1 2;3 4;5 6], b=[:x :y;:z :u;:v :w], axis1=darr(k=[&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;]), axis2=[:A,:B])
 3 x 2 LabeledArray
 
-  |A   |B   
+  |A   |B
 --+----+----
-k |a b |a b 
+k |a b |a b
 --+----+----
-X |1 x |2 y 
-Y |3 z |4 u 
-Z |5 v |6 w 
+X |1 x |2 y
+Y |3 z |4 u
+Z |5 v |6 w
 
 
 julia&gt; pickaxis(t)
 (3 DictArray
 
-k 
+k
 --
-X 
-Y 
-Z 
+X
+Y
+Z
 ,[Nullable(:A),Nullable(:B)])
 
 julia&gt; pickaxis(t, 1)
 3 DictArray
 
-k 
+k
 --
-X 
-Y 
-Z 
+X
+Y
+Z
 
 
 julia&gt; pickaxis(t, 1, :k)
@@ -1779,7 +1779,7 @@ julia&gt; pickaxis(t, 1, :k)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L968">DataCubes/src/util/array_util.jl:968</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L988">DataCubes/src/util/array_util.jl:988</a></p>
 <hr />
 <p><a id="function__providenames.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesprovidenames">DataCubes.providenames <a href="#function__providenames.1">¶</a></h4>
@@ -1794,27 +1794,27 @@ By default, it generates <code>:xN</code> for an index integer <code>N</code>.</
 <pre><code class="julia">julia&gt; t = larr([1 2 3;4 5 6], axis1=[:X,:Y], axis2=darr(k=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;]))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 
 
 julia&gt; providenames(t)
 2 x 3 LabeledArray
 
-k  |A  |B  |C  
+k  |A  |B  |C
 ---+---+---+---
-x2 |x1 |x1 |x1 
+x2 |x1 |x1 |x1
 ---+---+---+---
-X  |1  |2  |3  
-Y  |4  |5  |6  
+X  |1  |2  |3
+Y  |4  |5  |6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L2033">DataCubes/src/util/array_util.jl:2033</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2053">DataCubes/src/util/array_util.jl:2053</a></p>
 <hr />
 <p><a id="function__rename.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesrename">DataCubes.rename <a href="#function__rename.1">¶</a></h4>
@@ -1823,7 +1823,7 @@ Y  |4  |5  |6
 <h5 id="return_5">Return</h5>
 <p>A new <code>DictArray</code> whose first few field names are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1097">DataCubes/src/datatypes/dict_array.jl:1097</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1098">DataCubes/src/datatypes/dict_array.jl:1098</a></p>
 <hr />
 <p><a id="function__reorder.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesreorder">DataCubes.reorder <a href="#function__reorder.1">¶</a></h4>
@@ -1832,7 +1832,7 @@ Y  |4  |5  |6
 <h5 id="return_6">Return</h5>
 <p>A new <code>DictArray</code> whose fields are shuffled from <code>arr</code> so that the first few field names are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1083">DataCubes/src/datatypes/dict_array.jl:1083</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1084">DataCubes/src/datatypes/dict_array.jl:1084</a></p>
 <hr />
 <p><a id="function__replace_axes.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesreplace_axes">DataCubes.replace_axes <a href="#function__replace_axes.1">¶</a></h4>
@@ -1843,7 +1843,7 @@ Only the first elements (<code>arr[:,...,:,1,:,...,:]</code>) will be taken. Tha
 you want to use the field <code>column1</code> as a new key for the 1st axis, <code>column1[:,1]</code> will be used as the new axis.
 e.g. <code>replace_axes(labeled_array, 1=&gt;[:c1,:c2], 3=&gt;[:c3])</code></p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L342">DataCubes/src/util/array_util.jl:342</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L342">DataCubes/src/util/array_util.jl:342</a></p>
 <hr />
 <p><a id="function__selct.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesselct">DataCubes.selct <a href="#function__selct.1">¶</a></h4>
@@ -1865,64 +1865,64 @@ If <code>t</code> is <code>DictArray</code> and the transformed <code>LabeledArr
 <pre><code class="julia">julia&gt; t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia&gt; selct(t, :a, :b=&gt;d-&gt;d[:b] .* 2)
 10 LabeledArray
 
-   |a  b 
+   |a  b
 ---+-----
-1  |1  2 
-2  |2  4 
-3  |3  6 
-4  |4    
-5  |5    
-6  |6    
-7  |7  2 
-8  |8  2 
-9  |9  4 
-10 |10 6 
+1  |1  2
+2  |2  4
+3  |3  6
+4  |4
+5  |5
+6  |6
+7  |7  2
+8  |8  2
+9  |9  4
+10 |10 6
 
 
 julia&gt; selct(t, :a, :b=&gt;d-&gt;d[:b] .* 2, where=[d-&gt;d[:c] .!= :z], where=[d-&gt;d[:a] .&gt; 2])
 5 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |3 6 
-2 |4   
-3 |5   
-4 |6   
-5 |7 2 
+1 |3 6
+2 |4
+3 |5
+4 |6
+5 |7 2
 
 
 julia&gt; selct(t, a=d-&gt;mean(d[:a]), b=d-&gt;sum(d[:b] .* 2), by=Any[:d=&gt;d-&gt;d[:b] .* 2], by=[:c])
 4 x 3 LabeledArray
 
-c |x     |y     |z      
+c |x     |y     |z
 --+------+------+-------
-d |a   b |a   b |a    b 
+d |a   b |a   b |a    b
 --+------+------+-------
-  |4.0 0 |5.5 0 |       
-2 |1.0 2 |7.0 2 |8.0  2 
-4 |2.0 4 |      |9.0  4 
-6 |3.0 6 |      |10.0 6 
+  |4.0 0 |5.5 0 |
+2 |1.0 2 |7.0 2 |8.0  2
+4 |2.0 4 |      |9.0  4
+6 |3.0 6 |      |10.0 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L813">DataCubes/src/util/select.jl:813</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L816">DataCubes/src/util/select.jl:816</a></p>
 <hr />
 <p><a id="function__shift.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesshift">DataCubes.shift <a href="#function__shift.1">¶</a></h4>
@@ -1955,34 +1955,34 @@ julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, 1)
 
 julia&gt; shift(nalift([1 2 3;4 5 6;7 8 9]), 1, -1)
 3x3 DataCubes.AbstractArrayWrapper{Nullable{Int64},2,Array{Nullable{Int64},2}}:
- Nullable{Int64}()  Nullable(4)        Nullable(5)      
- Nullable{Int64}()  Nullable(7)        Nullable(8)      
+ Nullable{Int64}()  Nullable(4)        Nullable(5)
+ Nullable{Int64}()  Nullable(7)        Nullable(8)
  Nullable{Int64}()  Nullable{Int64}()  Nullable{Int64}()
 
 julia&gt; shift(darr(a=[1 2 3;4 5 6;7 8 9]), 1, -1)
 3 x 3 DictArray
 
-a |a |a 
+a |a |a
 --+--+--
-  |4 |5 
-  |7 |8 
-  |  |  
+  |4 |5
+  |7 |8
+  |  |
 
 
 julia&gt; shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 3 x 3 LabeledArray
 
-  |X |Y |Z 
+  |X |Y |Z
 --+--+--+--
-  |a |a |a 
+  |a |a |a
 --+--+--+--
-1 |  |4 |5 
-2 |  |7 |8 
-3 |  |  |  
+1 |  |4 |5
+2 |  |7 |8
+3 |  |  |
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L1557">DataCubes/src/util/array_helper_functions.jl:1557</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L1831">DataCubes/src/util/array_helper_functions.jl:1831</a></p>
 <hr />
 <p><a id="function__tensorprod.1" class="lexicon_definition"></a></p>
 <h4 id="datacubestensorprod">DataCubes.tensorprod <a href="#function__tensorprod.1">¶</a></h4>
@@ -2003,27 +2003,27 @@ julia&gt; shift(larr(a=[1 2 3;4 5 6;7 8 9], axis2=[:X,:Y,:Z]), 1, -1)
 julia&gt; tensorprod(@darr(a=[1,2,NA]), @darr(b=[3,NA]))
 3 x 2 DictArray
 
-a b |a b 
+a b |a b
 ----+----
-1 3 |1   
-2 3 |2   
-  3 |    
+1 3 |1
+2 3 |2
+  3 |
 
 
 julia&gt; tensorprod(@larr(a=[1,2,NA], axis1[:m,:n,:p]), @larr(b=[3,NA], axis1[:X,:Y]))
 3 x 2 LabeledArray
 
-  |X   |Y   
+  |X   |Y
 --+----+----
-  |a b |a b 
+  |a b |a b
 --+----+----
-m |1 3 |1   
-n |2 3 |2   
-p |  3 |    
+m |1 3 |1
+n |2 3 |2
+p |  3 |
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1235">DataCubes/src/util/array_util.jl:1235</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1255">DataCubes/src/util/array_util.jl:1255</a></p>
 <hr />
 <p><a id="function__ungroup.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesungroup">DataCubes.ungroup <a href="#function__ungroup.1">¶</a></h4>
@@ -2082,7 +2082,7 @@ julia&gt; ungroup(m, 2)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/ungroup.jl#L64">DataCubes/src/util/ungroup.jl:64</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/ungroup.jl#L64">DataCubes/src/util/ungroup.jl:64</a></p>
 <hr />
 <p><a id="function__update.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesupdate">DataCubes.update <a href="#function__update.1">¶</a></h4>
@@ -2105,73 +2105,73 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 <pre><code class="julia">julia&gt; t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia&gt; update(t, a=d-&gt;d[:a] .+ 100, d=d-&gt;d[:a] .* d[:b])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |104   x    
-5  |105   y    
-6  |106   y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |104   x
+5  |105   y
+6  |106   y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia&gt; update(t, a=d-&gt;d[:a] .+ 100, d=d-&gt;d[:a] .* d[:b], where=[d-&gt; ~isna(d[:b])])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |4     x    
-5  |5     y    
-6  |6     y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |4     x
+5  |5     y
+6  |6     y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia&gt; update(t, a=d-&gt;sum(d[:a]), d=d-&gt;reverse(d[:a] .* d[:b]), where=[d-&gt; ~isna(d[:b])], by=[:b])
 10 LabeledArray
 
-   |a  b c d  
+   |a  b c d
 ---+----------
-1  |16 1 x 8  
-2  |11 2 x 18 
-3  |13 3 x 30 
-4  |4    x    
-5  |5    y    
-6  |6    y    
-7  |16 1 y 7  
-8  |16 1 z 1  
-9  |11 2 z 4  
-10 |13 3 z 9  
+1  |16 1 x 8
+2  |11 2 x 18
+3  |13 3 x 30
+4  |4    x
+5  |5    y
+6  |6    y
+7  |16 1 y 7
+8  |16 1 z 1
+9  |11 2 z 4
+10 |13 3 z 9
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L1032">DataCubes/src/util/select.jl:1032</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L1035">DataCubes/src/util/select.jl:1035</a></p>
 <hr />
 <p><a id="function__withdrawnames.1" class="lexicon_definition"></a></p>
 <h4 id="datacubeswithdrawnames">DataCubes.withdrawnames <a href="#function__withdrawnames.1">¶</a></h4>
@@ -2188,38 +2188,38 @@ julia&gt; update(t, a=d-&gt;sum(d[:a]), d=d-&gt;reverse(d[:a] .* d[:b]), where=[
 <pre><code class="julia">julia&gt; t = larr([1 2 3;4 5 6], axis1=[:X,:Y], axis2=darr(k=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;]))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 
 
 julia&gt; providenames(t)
 2 x 3 LabeledArray
 
-k  |A  |B  |C  
+k  |A  |B  |C
 ---+---+---+---
-x2 |x1 |x1 |x1 
+x2 |x1 |x1 |x1
 ---+---+---+---
-X  |1  |2  |3  
-Y  |4  |5  |6  
+X  |1  |2  |3
+Y  |4  |5  |6
 
 
 julia&gt; withdrawnames(providenames(t))
 2 x 3 LabeledArray
 
-k |A |B |C 
+k |A |B |C
 --+--+--+--
-  |  |  |  
+  |  |  |
 --+--+--+--
-X |1 |2 |3 
-Y |4 |5 |6 
+X |1 |2 |3
+Y |4 |5 |6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L2105">DataCubes/src/util/array_util.jl:2105</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L2125">DataCubes/src/util/array_util.jl:2125</a></p>
 <hr />
 <p><a id="method__rename.1" class="lexicon_definition"></a></p>
 <h4 id="renamearrdatacubeslabeledarrayt-n-axestuple-tn-ks">rename(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__rename.1">¶</a></h4>
@@ -2228,7 +2228,7 @@ Y |4 |5 |6
 <h5 id="return_11">Return</h5>
 <p>A new <code>LabeledArray</code> whose first few field names of the base of <code>arr</code> are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1262">DataCubes/src/datatypes/labeled_array.jl:1262</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1314">DataCubes/src/datatypes/labeled_array.jl:1314</a></p>
 <hr />
 <p><a id="method__rename.2" class="lexicon_definition"></a></p>
 <h4 id="renameldictdatacubesldictk-v-ks">rename(ldict::DataCubes.LDict{K, V},  ks...) <a href="#method__rename.2">¶</a></h4>
@@ -2243,7 +2243,7 @@ DataCubes.LDict{Any,Int64} with 3 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L290">DataCubes/src/datatypes/ldict.jl:290</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L290">DataCubes/src/datatypes/ldict.jl:290</a></p>
 <hr />
 <p><a id="method__reorder.1" class="lexicon_definition"></a></p>
 <h4 id="reorderarrdatacubeslabeledarrayt-n-axestuple-tn-ks">reorder(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  ks...) <a href="#method__reorder.1">¶</a></h4>
@@ -2253,7 +2253,7 @@ The base of <code>arr</code> is expected to be a <code>DictArray</code>.</p>
 <h5 id="return_12">Return</h5>
 <p>A new <code>LabeledArray</code> whose base fields are shuffled from <code>arr</code> so that the first few field names are <code>ks</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1250">DataCubes/src/datatypes/labeled_array.jl:1250</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1302">DataCubes/src/datatypes/labeled_array.jl:1302</a></p>
 <hr />
 <p><a id="method__reorder.2" class="lexicon_definition"></a></p>
 <h4 id="reorderldictdatacubesldictk-v-ks">reorder(ldict::DataCubes.LDict{K, V},  ks...) <a href="#method__reorder.2">¶</a></h4>
@@ -2268,7 +2268,7 @@ DataCubes.LDict{Symbol,Int64} with 3 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L271">DataCubes/src/datatypes/ldict.jl:271</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L271">DataCubes/src/datatypes/ldict.jl:271</a></p>
 <hr />
 <p><a id="method__replace_axes.1" class="lexicon_definition"></a></p>
 <h4 id="replace_axesarrdatacubeslabeledarrayt-n-axestuple-tn-args">replace_axes(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args...) <a href="#method__replace_axes.1">¶</a></h4>
@@ -2280,6 +2280,8 @@ DataCubes.LDict{Symbol,Int64} with 3 entries:
 </ul>
 <h5 id="returns_3">Returns</h5>
 <p>For each <code>i=&gt;[f1,f2,...]</code> in <code>args</code>, the <code>i</code>th axis is replaced by the fields <code>f1</code>, <code>f2</code>, ....
+A nonarray value in <code>i=&gt;f1</code> will be automatically promoted to an array with one element: <code>[f1]</code>.
+If the key <code>i</code> is omitted, the smallest relevant axis number will be automatically assigned.
 Only the first elements will be taken. For example, if the underlying data array is 2 dimensional, and if you want to use some field for the 1st axis, <code>[:,1]</code> components will be used.
 The original axis becomes the data part of <code>LabeledArray</code> after properly broadcast.
 If the field name array is null for an argument in <code>args</code> (<code>i=&gt;[]</code>), the corresponding axis will be <code>DefaultAxis</code>.</p>
@@ -2287,38 +2289,38 @@ If the field name array is null for an argument in <code>args</code> (<code>i=&g
 <pre><code class="julia">julia&gt; t = larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=darr(k=[:x,:y]), axis2=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;])
 2 x 3 LabeledArray
 
-  |A   |B   |C   
+  |A   |B   |C
 --+----+----+----
-k |a b |a b |a b 
+k |a b |a b |a b
 --+----+----+----
-x |1 a |2 b |3 c 
-y |4 d |5 e |6 f 
+x |1 a |2 b |3 c
+y |4 d |5 e |6 f
 
 
-julia&gt; replace_axes(t, 1=&gt;[:a])
+julia&gt; replace_axes(t, 1=&gt;[:a])      # == replace_axes(t, [:a]) == replace_axes(t, :a)
 2 x 3 LabeledArray
 
-  |A   |B   |C   
+  |A   |B   |C
 --+----+----+----
-a |b k |b k |b k 
+a |b k |b k |b k
 --+----+----+----
-1 |a x |b x |c x 
-4 |d y |e y |f y 
+1 |a x |b x |c x
+4 |d y |e y |f y
 
 
 julia&gt; replace_axes(t, 1=&gt;[:a, :b])
 2 x 3 LabeledArray
 
-    |A |B |C 
+    |A |B |C
 ----+--+--+--
-a b |k |k |k 
+a b |k |k |k
 ----+--+--+--
-1 a |x |x |x 
-4 d |y |y |y 
+1 a |x |x |x
+4 d |y |y |y
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L396">DataCubes/src/util/array_util.jl:396</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L398">DataCubes/src/util/array_util.jl:398</a></p>
 <hr />
 <p><a id="type__dictarray.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdictarrayk-n-vs-sv">DataCubes.DictArray{K, N, VS, SV} <a href="#type__dictarray.1">¶</a></h4>
@@ -2343,7 +2345,7 @@ DictArray(;kwargs...)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L31">DataCubes/src/datatypes/dict_array.jl:31</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L31">DataCubes/src/datatypes/dict_array.jl:31</a></p>
 <hr />
 <p><a id="type__enumerationarray.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesenumerationarrayt-n-v-rinteger">DataCubes.EnumerationArray{T, N, V, R&lt;:Integer} <a href="#type__enumerationarray.1">¶</a></h4>
@@ -2351,7 +2353,7 @@ DictArray(;kwargs...)
 That is, it is a pooled array.
 Use <code>enumeration</code> to create an <code>EnumerationArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/enumeration_array.jl#L8">DataCubes/src/datatypes/enumeration_array.jl:8</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L8">DataCubes/src/datatypes/enumeration_array.jl:8</a></p>
 <hr />
 <p><a id="type__ldict.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesldictk-v">DataCubes.LDict{K, V} <a href="#type__ldict.1">¶</a></h4>
@@ -2365,7 +2367,7 @@ LDict(ps::Tuple...)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L18">DataCubes/src/datatypes/ldict.jl:18</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L18">DataCubes/src/datatypes/ldict.jl:18</a></p>
 <hr />
 <p><a id="type__labeledarray.1" class="lexicon_definition"></a></p>
 <h4 id="datacubeslabeledarrayt-n-axestuple-tn">DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN} <a href="#type__labeledarray.1">¶</a></h4>
@@ -2379,7 +2381,7 @@ Use the function <code>larr</code> or a macro version <code>@larr</code> to crea
 <li><code>LabeledArray(arr; kwargs...)</code> creates a <code>LabeledArray</code> from a <em>base</em> array <code>arr</code> and a keyword argument of the form <code>axisN=V</code> for some integer <code>N</code> for the axis direction and a one dimensional array <code>V</code>. If <code>N</code> in <code>axisN</code> is omitted, the smallest available number is automatically chosen.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L16">DataCubes/src/datatypes/labeled_array.jl:16</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L16">DataCubes/src/datatypes/labeled_array.jl:16</a></p>
 <hr />
 <p><a id="macro___darr.1" class="lexicon_definition"></a></p>
 <h4 id="darrargs">@darr(args...) <a href="#macro___darr.1">¶</a></h4>
@@ -2413,7 +2415,7 @@ a b   c d |a b   c d
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1138">DataCubes/src/datatypes/dict_array.jl:1138</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1139">DataCubes/src/datatypes/dict_array.jl:1139</a></p>
 <hr />
 <p><a id="macro___enumeration.1" class="lexicon_definition"></a></p>
 <h4 id="enumerationargs">@enumeration(args...) <a href="#macro___enumeration.1">¶</a></h4>
@@ -2469,7 +2471,7 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/enumeration_array.jl#L270">DataCubes/src/datatypes/enumeration_array.jl:270</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/enumeration_array.jl#L271">DataCubes/src/datatypes/enumeration_array.jl:271</a></p>
 <hr />
 <p><a id="macro___larr.1" class="lexicon_definition"></a></p>
 <h4 id="larrargs">@larr(args...) <a href="#macro___larr.1">¶</a></h4>
@@ -2486,29 +2488,29 @@ julia&gt; @enumeration([:A,:A,:B,NA,NA], [:B,:A]).elems
 <pre><code class="julia">julia&gt; t = @larr(a=[1 NA;3 4;NA NA],:b=&gt;[1.0 1.5;:sym 'a';&quot;X&quot; &quot;Y&quot;],c=1,axis1[:U,NA,:W],axis[r=['m','n']])
 3 x 2 LabeledArray
 
-r |m       |n       
+r |m       |n
 --+--------+--------
-  |a b   c |a b   c 
+  |a b   c |a b   c
 --+--------+--------
-U |1 1.0 1 |  1.5 1 
-  |3 sym 1 |4 a   1 
-W |  X   1 |  Y   1 
+U |1 1.0 1 |  1.5 1
+  |3 sym 1 |4 a   1
+W |  X   1 |  Y   1
 
 
 julia&gt; @larr(t, c=[NA NA;3 4;5 6], :d=&gt;:X, axis1[k=[&quot;g&quot;,&quot;h&quot;,&quot;i&quot;]])
 3 x 2 LabeledArray
 
-r |m         |n         
+r |m         |n
 --+----------+----------
-k |a b   c d |a b   c d 
+k |a b   c d |a b   c d
 --+----------+----------
-g |1 1.0   X |  1.5   X 
-h |3 sym 3 X |4 a   4 X 
-i |  X   5 X |  Y   6 X 
+g |1 1.0   X |  1.5   X
+h |3 sym 3 X |4 a   4 X
+i |  X   5 X |  Y   6 X
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1305">DataCubes/src/datatypes/labeled_array.jl:1305</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1357">DataCubes/src/datatypes/labeled_array.jl:1357</a></p>
 <hr />
 <p><a id="macro___nalift.1" class="lexicon_definition"></a></p>
 <h4 id="naliftexpr">@nalift(expr) <a href="#macro___nalift.1">¶</a></h4>
@@ -2548,7 +2550,7 @@ julia&gt; @nalift(larr(a=[1 2;3 4;5 6], b=[:x :y;:z :w;:u :v]))
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L379">DataCubes/src/na/na.jl:379</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L378">DataCubes/src/na/na.jl:378</a></p>
 <hr />
 <p><a id="macro___rap.1" class="lexicon_definition"></a></p>
 <h4 id="rapargs">@rap(args...) <a href="#macro___rap.1">¶</a></h4>
@@ -2564,15 +2566,15 @@ julia&gt; @rap _*2 x-&gt;x+1 10
 
 julia&gt; @rap (_ .* 2) reverse @nalift [1,2,NA,4,5]
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)     
- Nullable(8)      
+ Nullable(10)
+ Nullable(8)
  Nullable{Int64}()
- Nullable(4)      
- Nullable(2)      
+ Nullable(4)
+ Nullable(2)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L271">DataCubes/src/util/array_util.jl:271</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L271">DataCubes/src/util/array_util.jl:271</a></p>
 <hr />
 <p><a id="macro___select.1" class="lexicon_definition"></a></p>
 <h4 id="selectt-args">@select(t, args...) <a href="#macro___select.1">¶</a></h4>
@@ -2599,64 +2601,64 @@ If <code>t</code> is <code>DictArray</code> and the transformed <code>LabeledArr
 <pre><code class="julia">julia&gt; t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia&gt; @select(t, :a, :b=&gt;_b .* 2)
 10 LabeledArray
 
-   |a  b 
+   |a  b
 ---+-----
-1  |1  2 
-2  |2  4 
-3  |3  6 
-4  |4    
-5  |5    
-6  |6    
-7  |7  2 
-8  |8  2 
-9  |9  4 
-10 |10 6 
+1  |1  2
+2  |2  4
+3  |3  6
+4  |4
+5  |5
+6  |6
+7  |7  2
+8  |8  2
+9  |9  4
+10 |10 6
 
 
 julia&gt; @select(t, :a, :b=&gt;_b .* 2, where[_c .!= :z], where[_a .&gt; 2])
 5 LabeledArray
 
-  |a b 
+  |a b
 --+----
-1 |3 6 
-2 |4   
-3 |5   
-4 |6   
-5 |7 2 
+1 |3 6
+2 |4
+3 |5
+4 |6
+5 |7 2
 
 
 julia&gt; @select(t, a=mean(_a), b=sum(_b .* 2), by[d=_b .* 2], by[:c])
 4 x 3 LabeledArray
 
-c |x     |y     |z      
+c |x     |y     |z
 --+------+------+-------
-d |a   b |a   b |a    b 
+d |a   b |a   b |a    b
 --+------+------+-------
-  |4.0 0 |5.5 0 |       
-2 |1.0 2 |7.0 2 |8.0  2 
-4 |2.0 4 |      |9.0  4 
-6 |3.0 6 |      |10.0 6 
+  |4.0 0 |5.5 0 |
+2 |1.0 2 |7.0 2 |8.0  2
+4 |2.0 4 |      |9.0  4
+6 |3.0 6 |      |10.0 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L724">DataCubes/src/util/select.jl:724</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L727">DataCubes/src/util/select.jl:727</a></p>
 <hr />
 <p><a id="macro___update.1" class="lexicon_definition"></a></p>
 <h4 id="updatet-args">@update(t, args...) <a href="#macro___update.1">¶</a></h4>
@@ -2685,73 +2687,73 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 <pre><code class="julia">julia&gt; t = @larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z])
 10 LabeledArray
 
-   |a  b c 
+   |a  b c
 ---+-------
-1  |1  1 x 
-2  |2  2 x 
-3  |3  3 x 
-4  |4    x 
-5  |5    y 
-6  |6    y 
-7  |7  1 y 
-8  |8  1 z 
-9  |9  2 z 
-10 |10 3 z 
+1  |1  1 x
+2  |2  2 x
+3  |3  3 x
+4  |4    x
+5  |5    y
+6  |6    y
+7  |7  1 y
+8  |8  1 z
+9  |9  2 z
+10 |10 3 z
 
 
 julia&gt; @update(t, a=_a .+ 100, d=_a .* _b)
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |104   x    
-5  |105   y    
-6  |106   y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |104   x
+5  |105   y
+6  |106   y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia&gt; @update(t, a=_a .+ 100, d=_a .* _b, where[~isna(_b)])
 10 LabeledArray
 
-   |a   b c d  
+   |a   b c d
 ---+-----------
-1  |101 1 x 1  
-2  |102 2 x 4  
-3  |103 3 x 9  
-4  |4     x    
-5  |5     y    
-6  |6     y    
-7  |107 1 y 7  
-8  |108 1 z 8  
-9  |109 2 z 18 
-10 |110 3 z 30 
+1  |101 1 x 1
+2  |102 2 x 4
+3  |103 3 x 9
+4  |4     x
+5  |5     y
+6  |6     y
+7  |107 1 y 7
+8  |108 1 z 8
+9  |109 2 z 18
+10 |110 3 z 30
 
 
 julia&gt; @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 10 LabeledArray
 
-   |a  b c d  
+   |a  b c d
 ---+----------
-1  |16 1 x 8  
-2  |11 2 x 18 
-3  |13 3 x 30 
-4  |4    x    
-5  |5    y    
-6  |6    y    
-7  |16 1 y 7  
-8  |16 1 z 1  
-9  |11 2 z 4  
-10 |13 3 z 9  
+1  |16 1 x 8
+2  |11 2 x 18
+3  |13 3 x 30
+4  |4    x
+5  |5    y
+6  |6    y
+7  |16 1 y 7
+8  |16 1 z 1
+9  |11 2 z 4
+10 |13 3 z 9
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L933">DataCubes/src/util/select.jl:933</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L936">DataCubes/src/util/select.jl:936</a></p>
 <h2 id="internal">Internal</h2>
 <hr />
 <p><a id="function__create_dict.1" class="lexicon_definition"></a></p>
@@ -2762,11 +2764,11 @@ julia&gt; @update(t, a=sum(_a), d=reverse(_a .* _b), where[~isna(_b)], by[:b])
 <pre><code class="julia">julia&gt; t = larr(a=[1 2;3 4], axis1=[:x,:y], axis2=[&quot;A&quot;,&quot;B&quot;])
 2 x 2 LabeledArray
 
-  |  |A B 
+  |  |A B
 --+--+----
-x |a |1 2 
+x |a |1 2
 --+--+----
-y |a |3 4 
+y |a |3 4
 
 
 julia&gt; create_dict(t)
@@ -2776,7 +2778,7 @@ Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1069">DataCubes/src/datatypes/labeled_array.jl:1069</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1121">DataCubes/src/datatypes/labeled_array.jl:1121</a></p>
 <hr />
 <p><a id="function__gdrop.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesgdrop">DataCubes.gdrop <a href="#function__gdrop.1">¶</a></h4>
@@ -2788,49 +2790,49 @@ It drops the first <code>N1</code> elements along direction 1, and similarly for
 <pre><code class="julia">julia&gt; t = larr(a=rand(5,3), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V])
 5 x 3 LabeledArray
 
-  |1                     |2                      |3                      
+  |1                     |2                      |3
 --+----------------------+-----------------------+-----------------------
-  |a                   b |a                   b  |a                   b  
+  |a                   b |a                   b  |a                   b
 --+----------------------+-----------------------+-----------------------
-X |0.27289790581491746 1 |0.8493197848353495  6  |0.8370920536703472  11 
-Y |0.8424940964507834  2 |0.21518951524950136 7  |0.9290437789813346  12 
-Z |0.9498541774517255  3 |0.942687447396005   8  |0.1341678643795654  13 
-U |0.7356663426240728  4 |0.7662948222160162  9  |0.24109069576951692 14 
-V |0.8716491751450759  5 |0.27472373001295436 10 |0.08909928028262804 15 
+X |0.27289790581491746 1 |0.8493197848353495  6  |0.8370920536703472  11
+Y |0.8424940964507834  2 |0.21518951524950136 7  |0.9290437789813346  12
+Z |0.9498541774517255  3 |0.942687447396005   8  |0.1341678643795654  13
+U |0.7356663426240728  4 |0.7662948222160162  9  |0.24109069576951692 14
+V |0.8716491751450759  5 |0.27472373001295436 10 |0.08909928028262804 15
 
 
 julia&gt; gdrop(t, 3, 2)
 2 x 1 LabeledArray
 
-  |1                      
+  |1
 --+-----------------------
-  |a                   b  
+  |a                   b
 --+-----------------------
-U |0.24109069576951692 14 
-V |0.08909928028262804 15 
+U |0.24109069576951692 14
+V |0.08909928028262804 15
 
 
 julia&gt; gdrop(t, 5)
 0 x 3 LabeledArray
 
- |1   |2   |3   
+ |1   |2   |3
 -+----+----+----
- |a b |a b |a b 
+ |a b |a b |a b
 
 
 julia&gt; gdrop(t, -3, -2)
 2 x 1 LabeledArray
 
-  |1                     
+  |1
 --+----------------------
-  |a                   b 
+  |a                   b
 --+----------------------
-X |0.27289790581491746 1 
-Y |0.8424940964507834  2 
+X |0.27289790581491746 1
+Y |0.8424940964507834  2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1553">DataCubes/src/util/array_util.jl:1553</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1573">DataCubes/src/util/array_util.jl:1573</a></p>
 <hr />
 <p><a id="function__gtake.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesgtake">DataCubes.gtake <a href="#function__gtake.1">¶</a></h4>
@@ -2842,61 +2844,61 @@ It takes first <code>N1</code> elements along direction 1, and similarly for oth
 <pre><code class="julia">julia&gt; t = larr(a=rand(5,3), b=reshape(1:15,5,3), axis1=[:X,:Y,:Z,:U,:V])
 5 x 3 LabeledArray
 
-  |1                     |2                      |3                      
+  |1                     |2                      |3
 --+----------------------+-----------------------+-----------------------
-  |a                   b |a                   b  |a                   b  
+  |a                   b |a                   b  |a                   b
 --+----------------------+-----------------------+-----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6  |0.8784616074632225  11 
-Y |0.04069063166302023 2 |0.06614308437642014 7  |0.31870618693881947 12 
-Z |0.7855545407740521  3 |0.5208010912357377  8  |0.4421485355996708  13 
-U |0.8134241459627629  4 |0.8256022894268482  9  |0.3127049127123851  14 
-V |0.8536688845922342  5 |0.7263660648355621  10 |0.9315379228053462  15 
+X |0.3219487839233375  1 |0.4863723989946185  6  |0.8784616074632225  11
+Y |0.04069063166302023 2 |0.06614308437642014 7  |0.31870618693881947 12
+Z |0.7855545407740521  3 |0.5208010912357377  8  |0.4421485355996708  13
+U |0.8134241459627629  4 |0.8256022894268482  9  |0.3127049127123851  14
+V |0.8536688845922342  5 |0.7263660648355621  10 |0.9315379228053462  15
 
 
 julia&gt; gtake(t, 3, 2)
 3 x 2 LabeledArray
 
-  |1                     |2                     
+  |1                     |2
 --+----------------------+----------------------
-  |a                   b |a                   b 
+  |a                   b |a                   b
 --+----------------------+----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6 
-Y |0.04069063166302023 2 |0.06614308437642014 7 
-Z |0.7855545407740521  3 |0.5208010912357377  8 
+X |0.3219487839233375  1 |0.4863723989946185  6
+Y |0.04069063166302023 2 |0.06614308437642014 7
+Z |0.7855545407740521  3 |0.5208010912357377  8
 
 
 julia&gt; gtake(t, 3, 4)
 3 x 4 LabeledArray
 
-  |1                     |2                     |3                      |4                     
+  |1                     |2                     |3                      |4
 --+----------------------+----------------------+-----------------------+----------------------
-  |a                   b |a                   b |a                   b  |a                   b 
+  |a                   b |a                   b |a                   b  |a                   b
 --+----------------------+----------------------+-----------------------+----------------------
-X |0.3219487839233375  1 |0.4863723989946185  6 |0.8784616074632225  11 |0.3219487839233375  1 
-Y |0.04069063166302023 2 |0.06614308437642014 7 |0.31870618693881947 12 |0.04069063166302023 2 
-Z |0.7855545407740521  3 |0.5208010912357377  8 |0.4421485355996708  13 |0.7855545407740521  3 
+X |0.3219487839233375  1 |0.4863723989946185  6 |0.8784616074632225  11 |0.3219487839233375  1
+Y |0.04069063166302023 2 |0.06614308437642014 7 |0.31870618693881947 12 |0.04069063166302023 2
+Z |0.7855545407740521  3 |0.5208010912357377  8 |0.4421485355996708  13 |0.7855545407740521  3
 
 
 julia&gt; gtake(t, -2, -1)
 2 x 1 LabeledArray
 
-  |1                     
+  |1
 --+----------------------
-  |a                  b  
+  |a                  b
 --+----------------------
-U |0.3127049127123851 14 
-V |0.9315379228053462 15 
+U |0.3127049127123851 14
+V |0.9315379228053462 15
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L1340">DataCubes/src/util/array_util.jl:1340</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L1360">DataCubes/src/util/array_util.jl:1360</a></p>
 <hr />
 <p><a id="function__selectfield.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesselectfield">DataCubes.selectfield <a href="#function__selectfield.1">¶</a></h4>
 <p><code>selectfield(t, fld, inds)</code> : select a field whose name is <code>fld</code> at cartesian coordinates <code>inds</code> in a LabeledArray <code>t</code>.
 If <code>inds</code> is <code>nothing</code>, it chooses an entire <code>fld</code> from <code>t</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L492">DataCubes/src/util/select.jl:492</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L495">DataCubes/src/util/select.jl:495</a></p>
 <hr />
 <p><a id="function__setna.1" class="lexicon_definition"></a></p>
 <h4 id="datacubessetna">DataCubes.setna! <a href="#function__setna.1">¶</a></h4>
@@ -2946,7 +2948,7 @@ Y |4 u |5 v |6 w
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L459">DataCubes/src/na/na.jl:459</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L458">DataCubes/src/na/na.jl:458</a></p>
 <hr />
 <p><a id="function__type_array.1" class="lexicon_definition"></a></p>
 <h4 id="datacubestype_array">DataCubes.type_array <a href="#function__type_array.1">¶</a></h4>
@@ -2969,13 +2971,13 @@ Sometimes, an array is given type <code>Array{Any}</code>, even though the compo
 
 julia&gt; type_array(Any[1, 3.0, 'x'])
 3-element Array{Any,1}:
- 1   
- 3.0 
+ 1
+ 3.0
   'x'
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_util.jl#L34">DataCubes/src/util/array_util.jl:34</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_util.jl#L34">DataCubes/src/util/array_util.jl:34</a></p>
 <hr />
 <p><a id="function__diff.1" class="lexicon_definition"></a></p>
 <h4 id="diff">diff <a href="#function__diff.1">¶</a></h4>
@@ -2991,43 +2993,43 @@ Note that <code>diff</code> applied to <code>AbstractArrayWrapper</code> (or to 
 <h5 id="examples_54">Examples</h5>
 <pre><code class="julia">julia&gt; diff(@nalift([10,NA,12,14,17]))
 5-element DataCubes.AbstractArrayWrapper{Nullable{Int64},1,Array{Nullable{Int64},1}}:
- Nullable(10)     
+ Nullable(10)
  Nullable{Int64}()
  Nullable{Int64}()
- Nullable(2)      
- Nullable(3)      
+ Nullable(2)
+ Nullable(3)
 
 julia&gt; diff(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b  
+a  b  |a  b  |a  b
 ------+------+------
-11 10 |-2 2  |-2 2  
-3  -3 |3  -3 |3  -3 
+11 10 |-2 2  |-2 2
+3  -3 |3  -3 |3  -3
 
 
 julia&gt; diff(darr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 2 x 3 DictArray
 
-a  b  |a  b  |a  b 
+a  b  |a  b  |a  b
 ------+------+-----
--3 3  |-3 3  |-3 3 
-2  -2 |2  -2 |16 5 
+-3 3  |-3 3  |-3 3
+2  -2 |2  -2 |16 5
 
 
 julia&gt; diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 2 x 3 LabeledArray
 
-  |1     |2     |3    
+  |1     |2     |3
 --+------+------+-----
-  |a  b  |a  b  |a  b 
+  |a  b  |a  b  |a  b
 --+------+------+-----
-1 |-3 3  |-3 3  |-3 3 
-2 |2  -2 |2  -2 |16 5 
+1 |-3 3  |-3 3  |-3 3
+2 |2  -2 |2  -2 |16 5
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L625">DataCubes/src/util/array_helper_functions.jl:625</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L745">DataCubes/src/util/array_helper_functions.jl:745</a></p>
 <hr />
 <p><a id="method__allfieldnames.1" class="lexicon_definition"></a></p>
 <h4 id="allfieldnamesarrdatacubesdictarrayk-n-vs-sv">allfieldnames(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__allfieldnames.1">¶</a></h4>
@@ -3041,13 +3043,13 @@ julia&gt; diff(larr(a=[11 12 13;14 15 16], b=[10 9 8;7 6 5]), 1, 2, rev=true)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L546">DataCubes/src/datatypes/dict_array.jl:546</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L546">DataCubes/src/datatypes/dict_array.jl:546</a></p>
 <hr />
 <p><a id="method__allfieldnames.2" class="lexicon_definition"></a></p>
 <h4 id="allfieldnamestabledatacubeslabeledarrayt-n-axestuple-tn">allfieldnames(table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__allfieldnames.2">¶</a></h4>
 <p>returns all field names for LabeledArray or DictArray. Returns an empty array for other types of arrays.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L789">DataCubes/src/datatypes/labeled_array.jl:789</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L839">DataCubes/src/datatypes/labeled_array.jl:839</a></p>
 <hr />
 <p><a id="method__cat.1" class="lexicon_definition"></a></p>
 <h4 id="catcatdiminteger-arr1datacubeslabeledarrayt-n-axestuple-tn-arrsdatacubeslabeledarrayt-n-axestuple-tn">cat(catdim::Integer,  arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arrs::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__cat.1">¶</a></h4>
@@ -3059,35 +3061,35 @@ The axis along the <code>catdim</code> direction will be the concatenation of th
 <pre><code class="julia">julia&gt; t1 = larr(a=[1 2 3;4 5 6], axis1=[:x,:y], axis2=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;])
 t2 x 3 LabeledArray
 
-  |  |A B C 
+  |  |A B C
 --+--+------
-x |a |1 2 3 
+x |a |1 2 3
 --+--+------
-y |a |4 5 6 
+y |a |4 5 6
 
 
 julia&gt; t2 = larr(a=[11 12 13;14 15 16], axis1=[:x,:y], axis2=[&quot;D&quot;,&quot;E&quot;,&quot;F&quot;])
 2 x 3 LabeledArray
 
-  |  |D  E  F  
+  |  |D  E  F
 --+--+---------
-x |a |11 12 13 
+x |a |11 12 13
 --+--+---------
-y |a |14 15 16 
+y |a |14 15 16
 
 
 julia&gt; cat(2, t1, t2)
 2 x 6 LabeledArray
 
-  |  |A B C D  E  F  
+  |  |A B C D  E  F
 --+--+---------------
-x |a |1 2 3 11 12 13 
+x |a |1 2 3 11 12 13
 --+--+---------------
-y |a |4 5 6 14 15 16 
+y |a |4 5 6 14 15 16
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L839">DataCubes/src/datatypes/labeled_array.jl:839</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L890">DataCubes/src/datatypes/labeled_array.jl:890</a></p>
 <hr />
 <p><a id="method__cat.2" class="lexicon_definition"></a></p>
 <h4 id="catcatdiminteger-arrsdatacubesdictarrayk-n-vs-sv">cat(catdim::Integer,  arrs::DataCubes.DictArray{K, N, VS, SV}...) <a href="#method__cat.2">¶</a></h4>
@@ -3115,37 +3117,37 @@ a b c |a b c |a b c |a b c |a b c |a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L636">DataCubes/src/datatypes/dict_array.jl:636</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L636">DataCubes/src/datatypes/dict_array.jl:636</a></p>
 <hr />
 <p><a id="method__convert.1" class="lexicon_definition"></a></p>
 <h4 id="converttypedatacubesdictarrayk-n-vs-sv-dfdataframesdataframe">convert(::Type{DataCubes.DictArray{K, N, VS, SV}},  df::DataFrames.DataFrame) <a href="#method__convert.1">¶</a></h4>
 <p><code>convert(::Type{DictArray}, df::DataFrame)</code> converts a <code>DataFrame</code> into <code>DictArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/dataframe_interface.jl#L84">DataCubes/src/util/dataframe_interface.jl:84</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L84">DataCubes/src/util/dataframe_interface.jl:84</a></p>
 <hr />
 <p><a id="method__convert.2" class="lexicon_definition"></a></p>
 <h4 id="converttypedatacubesenumerationarrayt-n-v-rinteger-arrdataarrayspooleddataarrayt-rinteger-n">convert(::Type{DataCubes.EnumerationArray{T, N, V, R&lt;:Integer}},  arr::DataArrays.PooledDataArray{T, R&lt;:Integer, N}) <a href="#method__convert.2">¶</a></h4>
 <p><code>convert(::Type{EnumerationArray}, arr::PooledDataArray)</code> converts a <code>PooledDataArray</code> into an <code>EnumerationArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/dataframe_interface.jl#L112">DataCubes/src/util/dataframe_interface.jl:112</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L112">DataCubes/src/util/dataframe_interface.jl:112</a></p>
 <hr />
 <p><a id="method__convert.3" class="lexicon_definition"></a></p>
 <h4 id="converttypedatacubeslabeledarrayt-n-axestuple-tn-dfdataframesdataframe">convert(::Type{DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}},  df::DataFrames.DataFrame) <a href="#method__convert.3">¶</a></h4>
 <p><code>convert(::Type{LabeledArray}, df::DataFrame)</code> converts a <code>DataFrame</code> into <code>LabeledArray</code> simply by wrapping <code>convert(DictArray, df)</code> by <code>LabeledArray</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/dataframe_interface.jl#L91">DataCubes/src/util/dataframe_interface.jl:91</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L91">DataCubes/src/util/dataframe_interface.jl:91</a></p>
 <hr />
 <p><a id="method__convert.4" class="lexicon_definition"></a></p>
 <h4 id="converttypedataframesdataframe-arrdatacubesdictarrayk-n-vs-sv">convert(::Type{DataFrames.DataFrame},  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__convert.4">¶</a></h4>
 <p><code>convert(::Type{DataFrame}, arr::DictArray)</code> converts a <code>DictArray</code> into a <code>DataFrame</code>. If the dimensions of <code>arr</code> are greater than 1, <code>arr</code> is first flattend into 1 dimension using <code>collapse_axes</code>, and then converted into a <code>DataFrame</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/dataframe_interface.jl#L98">DataCubes/src/util/dataframe_interface.jl:98</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L98">DataCubes/src/util/dataframe_interface.jl:98</a></p>
 <hr />
 <p><a id="method__convert.5" class="lexicon_definition"></a></p>
 <h4 id="converttypedataframesdataframe-arrdatacubeslabeledarrayt-n-axestuple-tn">convert(::Type{DataFrames.DataFrame},  arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__convert.5">¶</a></h4>
 <p><code>convert(::Type{DataFrame}, arr::LabeledArray)</code> converts a <code>LabeledArray</code> into a <code>DataFrame</code> by first creating a <code>DictArray</code> by broadcasting all axes, and then convert that <code>DictArray</code> into a <code>DataFrame</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/dataframe_interface.jl#L105">DataCubes/src/util/dataframe_interface.jl:105</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/dataframe_interface.jl#L105">DataCubes/src/util/dataframe_interface.jl:105</a></p>
 <hr />
 <p><a id="method__deletekeys.1" class="lexicon_definition"></a></p>
 <h4 id="deletekeysk-vdictdatacubesldictk-v-keys">deletekeys{K, V}(dict::DataCubes.LDict{K, V},  keys...) <a href="#method__deletekeys.1">¶</a></h4>
@@ -3157,7 +3159,7 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L152">DataCubes/src/datatypes/ldict.jl:152</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L152">DataCubes/src/datatypes/ldict.jl:152</a></p>
 <hr />
 <p><a id="method__dropnaiter.1" class="lexicon_definition"></a></p>
 <h4 id="dropnaitert-narrabstractarraynullablet-n">dropnaiter{T, N}(arr::AbstractArray{Nullable{T}, N}) <a href="#method__dropnaiter.1">¶</a></h4>
@@ -3174,7 +3176,7 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L24">DataCubes/src/util/array_helper_functions.jl:24</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L24">DataCubes/src/util/array_helper_functions.jl:24</a></p>
 <hr />
 <p><a id="method__enum_dropnaiter.1" class="lexicon_definition"></a></p>
 <h4 id="enum_dropnaitert-narrabstractarraynullablet-n">enum_dropnaiter{T, N}(arr::AbstractArray{Nullable{T}, N}) <a href="#method__enum_dropnaiter.1">¶</a></h4>
@@ -3190,7 +3192,7 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L44">DataCubes/src/util/array_helper_functions.jl:44</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L44">DataCubes/src/util/array_helper_functions.jl:44</a></p>
 <hr />
 <p><a id="method__fill.1" class="lexicon_definition"></a></p>
 <h4 id="fillldictdatacubesldictk-v-dimsinteger">fill(ldict::DataCubes.LDict{K, V},  dims::Integer...) <a href="#method__fill.1">¶</a></h4>
@@ -3199,7 +3201,7 @@ DataCubes.LDict{Symbol,Int64} with 1 entry:
 <h5 id="return_15">Return</h5>
 <p>A new <code>DictArray</code> whose elements are <code>ldict</code> and whose dimensions are <code>dims...</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1070">DataCubes/src/datatypes/dict_array.jl:1070</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1071">DataCubes/src/datatypes/dict_array.jl:1071</a></p>
 <hr />
 <p><a id="method__flipdim.1" class="lexicon_definition"></a></p>
 <h4 id="flipdimarrdatacubesdictarrayk-n-vs-sv-dimsinteger">flipdim(arr::DataCubes.DictArray{K, N, VS, SV},  dims::Integer...) <a href="#method__flipdim.1">¶</a></h4>
@@ -3241,21 +3243,21 @@ a b |a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1058">DataCubes/src/datatypes/dict_array.jl:1058</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1059">DataCubes/src/datatypes/dict_array.jl:1059</a></p>
 <hr />
 <p><a id="method__getindexvalue.1" class="lexicon_definition"></a></p>
 <h4 id="getindexvaluearrabstractarrayt-n-args">getindexvalue(arr::AbstractArray{T, N},  args...) <a href="#method__getindexvalue.1">¶</a></h4>
 <p><code>getindexvalue(arr::AbstractArray, args...)</code></p>
 <p>Return <code>arr[args...]</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L199">DataCubes/src/datatypes/dict_array.jl:199</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L199">DataCubes/src/datatypes/dict_array.jl:199</a></p>
 <hr />
 <p><a id="method__getindexvalue.2" class="lexicon_definition"></a></p>
 <h4 id="getindexvaluearrdatacubesdictarrayk-n-vs-sv-args">getindexvalue(arr::DataCubes.DictArray{K, N, VS, SV},  args...) <a href="#method__getindexvalue.2">¶</a></h4>
 <p><code>getindexvalue(arr::DictArray, args...)</code></p>
 <p>Return the value tuple of <code>arr</code> at index <code>args</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L187">DataCubes/src/datatypes/dict_array.jl:187</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L187">DataCubes/src/datatypes/dict_array.jl:187</a></p>
 <hr />
 <p><a id="method__intersect.1" class="lexicon_definition"></a></p>
 <h4 id="intersectdiminteger-arr0datacubeslabeledarrayt-n-axestuple-tn-arr_restdatacubeslabeledarrayt-n-axestuple-tn">intersect(dim::Integer,  arr0::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr_rest::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}...) <a href="#method__intersect.1">¶</a></h4>
@@ -3303,7 +3305,7 @@ julia&gt; intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/intersect.jl#L53">DataCubes/src/util/intersect.jl:53</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/intersect.jl#L53">DataCubes/src/util/intersect.jl:53</a></p>
 <hr />
 <p><a id="method__keys.1" class="lexicon_definition"></a></p>
 <h4 id="keysarrdatacubesdictarrayk-n-vs-sv">keys(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__keys.1">¶</a></h4>
@@ -3317,7 +3319,7 @@ julia&gt; intersect(1, larr(a=[1 2 3;4 5 6], axis1=[:X,:Y]), larr(a=[1 2 3;4 3 2
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L930">DataCubes/src/datatypes/dict_array.jl:930</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L931">DataCubes/src/datatypes/dict_array.jl:931</a></p>
 <hr />
 <p><a id="method__map.1" class="lexicon_definition"></a></p>
 <h4 id="mapffunction-arrdatacubesdictarrayk-n-vs-sv">map(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__map.1">¶</a></h4>
@@ -3344,7 +3346,7 @@ c   |c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L745">DataCubes/src/datatypes/dict_array.jl:745</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L745">DataCubes/src/datatypes/dict_array.jl:745</a></p>
 <hr />
 <p><a id="method__mapslices.1" class="lexicon_definition"></a></p>
 <h4 id="mapslicesffunction-arrdatacubesdictarrayk-n-vs-sv-dimsabstractarrayt-1">mapslices(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV},  dims::AbstractArray{T, 1}) <a href="#method__mapslices.1">¶</a></h4>
@@ -3406,7 +3408,7 @@ a  b    |a  b    |a  b    |a  b    |a  b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L850">DataCubes/src/datatypes/dict_array.jl:850</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L850">DataCubes/src/datatypes/dict_array.jl:850</a></p>
 <hr />
 <p><a id="method__mapslices.2" class="lexicon_definition"></a></p>
 <h4 id="mapslicesffunction-arrdatacubeslabeledarrayt-n-axestuple-tn-dimsabstractarrayt-1">mapslices(f::Function,  arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  dims::AbstractArray{T, 1}) <a href="#method__mapslices.2">¶</a></h4>
@@ -3425,40 +3427,40 @@ Otherwise, the return value is an <code>Array</code>.</p>
 <pre><code class="julia">julia&gt; mapslices(d-&gt;d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[1])
 3 LabeledArray
 
-  |                           
+  |
   --+---------------------------
-  A |[Nullable(2),Nullable(8)]  
-  B |[Nullable(4),Nullable(10)] 
-  C |[Nullable(6),Nullable(12)] 
+  A |[Nullable(2),Nullable(8)]
+  B |[Nullable(4),Nullable(10)]
+  C |[Nullable(6),Nullable(12)]
 
 
 julia&gt; mapslices(d-&gt;d[:a] .* 2,larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k=[:X,:Y]),axis2=['A','B','C']),[2])
   2 LabeledArray
 
-  k |                                        
+  k |
   --+----------------------------------------
-  X |[Nullable(2),Nullable(4),Nullable(6)]   
-  Y |[Nullable(8),Nullable(10),Nullable(12)] 
+  X |[Nullable(2),Nullable(4),Nullable(6)]
+  Y |[Nullable(8),Nullable(10),Nullable(12)]
 
 
 # note how the order of axes changed. the newly generated directions always preced the existing ones.
 julia&gt; mapslices(x-&gt;msum(x), larr(axis1=[:A,:B,:C,:D,:E],axis2=['X','Y','Z'],a=reshape(1:15,5,3), b=1.0*reshape(1:15,5,3)), [2])
 3 x 5 LabeledArray
 
-  |A       |B       |C       |D       |E       
+  |A       |B       |C       |D       |E
 --+--------+--------+--------+--------+--------
-  |a  b    |a  b    |a  b    |a  b    |a  b    
+  |a  b    |a  b    |a  b    |a  b    |a  b
 --+--------+--------+--------+--------+--------
-X |1  1.0  |2  2.0  |3  3.0  |4  4.0  |5  5.0  
-Y |7  7.0  |9  9.0  |11 11.0 |13 13.0 |15 15.0 
-Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0 
+X |1  1.0  |2  2.0  |3  3.0  |4  4.0  |5  5.0
+Y |7  7.0  |9  9.0  |11 11.0 |13 13.0 |15 15.0
+Z |18 18.0 |21 21.0 |24 24.0 |27 27.0 |30 30.0
 
 
 
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1038">DataCubes/src/datatypes/labeled_array.jl:1038</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1089">DataCubes/src/datatypes/labeled_array.jl:1089</a></p>
 <hr />
 <p><a id="method__merge.1" class="lexicon_definition"></a></p>
 <h4 id="mergearr1datacubesdictarrayk-n-vs-sv-args">merge(arr1::DataCubes.DictArray{K, N, VS, SV},  args...) <a href="#method__merge.1">¶</a></h4>
@@ -3476,7 +3478,7 @@ a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L349">DataCubes/src/datatypes/dict_array.jl:349</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L349">DataCubes/src/datatypes/dict_array.jl:349</a></p>
 <hr />
 <p><a id="method__merge.2" class="lexicon_definition"></a></p>
 <h4 id="mergearr1datacubesdictarrayk-n-vs-sv-arr2datacubesdictarrayk-n-vs-sv">merge(arr1::DataCubes.DictArray{K, N, VS, SV},  arr2::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__merge.2">¶</a></h4>
@@ -3495,7 +3497,7 @@ a b c
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L328">DataCubes/src/datatypes/dict_array.jl:328</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L328">DataCubes/src/datatypes/dict_array.jl:328</a></p>
 <hr />
 <p><a id="method__merge.3" class="lexicon_definition"></a></p>
 <h4 id="mergearr1datacubeslabeledarrayt-n-axestuple-tn-argsdatacubesdictarrayk-n-vs-sv">merge(arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  args::DataCubes.DictArray{K, N, VS, SV}...) <a href="#method__merge.3">¶</a></h4>
@@ -3506,15 +3508,15 @@ Together with the axes set of the input <code>LabeledArray</code>, return a new 
 <pre><code class="julia">julia&gt; merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),darr(c=[4,5,6],b=[:m,:n,:p]),darr(a=[&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;]))
 3 LabeledArray
 
-  |a b c 
+  |a b c
 --+------
-a |X m 4 
-b |Y n 5 
-c |Z p 6 
+a |X m 4
+b |Y n 5
+c |Z p 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1542">DataCubes/src/datatypes/labeled_array.jl:1542</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1594">DataCubes/src/datatypes/labeled_array.jl:1594</a></p>
 <hr />
 <p><a id="method__merge.4" class="lexicon_definition"></a></p>
 <h4 id="mergearr1datacubeslabeledarrayt-n-axestuple-tn-arr2datacubeslabeledarrayt-n-axestuple-tn">merge(arr1::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  arr2::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__merge.4">¶</a></h4>
@@ -3525,15 +3527,15 @@ The bases are merged together and the common axes set is used.</p>
 <pre><code class="julia">julia&gt; merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),larr(c=[4,5,6],b=[:m,:n,:p],axis1=[:a,:b,:c]))
 3 LabeledArray
 
-  |a b c 
+  |a b c
 --+------
-a |1 m 4 
-b |2 n 5 
-c |3 p 6 
+a |1 m 4
+b |2 n 5
+c |3 p 6
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1516">DataCubes/src/datatypes/labeled_array.jl:1516</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1568">DataCubes/src/datatypes/labeled_array.jl:1568</a></p>
 <hr />
 <p><a id="method__merge.5" class="lexicon_definition"></a></p>
 <h4 id="mergedictdatacubesldictk-v-dsassociativek-v">merge(dict::DataCubes.LDict{K, V},  ds::Associative{K, V}...) <a href="#method__merge.5">¶</a></h4>
@@ -3550,7 +3552,7 @@ DataCubes.LDict{Any,Any} with 4 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L95">DataCubes/src/datatypes/ldict.jl:95</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L95">DataCubes/src/datatypes/ldict.jl:95</a></p>
 <hr />
 <p><a id="method__reducedim.1" class="lexicon_definition"></a></p>
 <h4 id="reducedimffunction-arrdatacubesdictarrayk-n-vs-sv-dims-initial">reducedim(f::Function,  arr::DataCubes.DictArray{K, N, VS, SV},  dims,  initial) <a href="#method__reducedim.1">¶</a></h4>
@@ -3577,14 +3579,14 @@ Nullable(21)
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L774">DataCubes/src/datatypes/dict_array.jl:774</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L774">DataCubes/src/datatypes/dict_array.jl:774</a></p>
 <hr />
 <p><a id="method__repeat.1" class="lexicon_definition"></a></p>
 <h4 id="repeatarrdatacubesdictarrayk-n-vs-sv">repeat(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__repeat.1">¶</a></h4>
 <p><code>repeat(arr::DictArray [; inner=..., outer=...])</code></p>
 <p>Apply <code>repeat</code> field by field to the <code>DictArray</code> <code>arr</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L663">DataCubes/src/datatypes/dict_array.jl:663</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L663">DataCubes/src/datatypes/dict_array.jl:663</a></p>
 <hr />
 <p><a id="method__replace_expr.1" class="lexicon_definition"></a></p>
 <h4 id="replace_exprexpr">replace_expr(expr) <a href="#method__replace_expr.1">¶</a></h4>
@@ -3600,7 +3602,7 @@ for the field k in the table t at the coordinates selected so far.</p>
 <li><code>_</code> : translates to <code>t'</code> if none of the above is applicable. It is useful when the field name is not a symbol.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L1108">DataCubes/src/util/select.jl:1108</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L1111">DataCubes/src/util/select.jl:1111</a></p>
 <hr />
 <p><a id="method__reshape.1" class="lexicon_definition"></a></p>
 <h4 id="reshapearrdatacubeslabeledarrayt-n-axestuple-tn-dimsint64">reshape(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  dims::Int64...) <a href="#method__reshape.1">¶</a></h4>
@@ -3615,50 +3617,50 @@ as long as the axis positions are concerned.</p>
 <pre><code class="julia">julia&gt; t = larr(a=[1 2 3;4 5 6], axis1=[:x,:y], axis2=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;])
 2 x 3 LabeledArray
 
-  |A |B |C 
+  |A |B |C
 --+--+--+--
-  |a |a |a 
+  |a |a |a
 --+--+--+--
-x |1 |2 |3 
-y |4 |5 |6 
+x |1 |2 |3
+y |4 |5 |6
 
 
 1 x 6 LabeledArray
 
-x1 |x |y |x |y |x |y 
-x2 |A |A |B |B |C |C 
+x1 |x |y |x |y |x |y
+x2 |A |A |B |B |C |C
 ---+--+--+--+--+--+--
-   |a |a |a |a |a |a 
+   |a |a |a |a |a |a
 ---+--+--+--+--+--+--
-1  |1 |4 |2 |5 |3 |6 
+1  |1 |4 |2 |5 |3 |6
 
 
 julia&gt; reshape(t, 6, 1)
 6 x 1 LabeledArray
 
-      |1 
+      |1
 ------+--
-x1 x2 |a 
+x1 x2 |a
 ------+--
-x  A  |1 
-y  A  |4 
-x  B  |2 
-y  B  |5 
-x  C  |3 
-y  C  |6 
+x  A  |1
+y  A  |4
+x  B  |2
+y  B  |5
+x  C  |3
+y  C  |6
 
 
 julia&gt; reshape(t, 6)
 6 LabeledArray
 
-x1 x2 |a 
+x1 x2 |a
 ------+--
-x  A  |1 
-y  A  |4 
-x  B  |2 
-y  B  |5 
-x  C  |3 
-y  C  |6 
+x  A  |1
+y  A  |4
+x  B  |2
+y  B  |5
+x  C  |3
+y  C  |6
 
 
 julia&gt; reshape(t, 3,2)
@@ -3666,7 +3668,7 @@ ERROR: ArgumentError: dims (3,2) are inconsistent.
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L1183">DataCubes/src/datatypes/labeled_array.jl:1183</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L1235">DataCubes/src/datatypes/labeled_array.jl:1235</a></p>
 <hr />
 <p><a id="method__reverse.1" class="lexicon_definition"></a></p>
 <h4 id="reversearrdatacubesdictarrayk-n-vs-sv-dims">reverse(arr::DataCubes.DictArray{K, N, VS, SV},  dims) <a href="#method__reverse.1">¶</a></h4>
@@ -3708,7 +3710,7 @@ a b |a b |a b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L1001">DataCubes/src/datatypes/dict_array.jl:1001</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L1002">DataCubes/src/datatypes/dict_array.jl:1002</a></p>
 <hr />
 <p><a id="method__sel.1" class="lexicon_definition"></a></p>
 <h4 id="selfunc-t">sel(func,  t) <a href="#method__sel.1">¶</a></h4>
@@ -3723,7 +3725,7 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 </em> <code>b</code> : an array of arrays of pairs from field names to by functions specified as <code>t'</code> -&gt; a nullable array.
 * <code>a</code> : an array of pairs from field names to aggregate functions specified as <code>t'</code> -&gt; a nullable array.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L587">DataCubes/src/util/select.jl:587</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L590">DataCubes/src/util/select.jl:590</a></p>
 <hr />
 <p><a id="method__selectfunc.1" class="lexicon_definition"></a></p>
 <h4 id="selectfuncntdatacubeslabeledarrayt-n-axestuple-tn-c-b-a">selectfunc{N}(t::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__selectfunc.1">¶</a></h4>
@@ -3737,7 +3739,7 @@ for the field <code>k</code> in the table <code>t</code> at the coordinates sele
 <li>c : an array of pairs of field name =&gt; function <code>(t, inds)</code> -&gt; array. <code>t</code> is a LabeledArray and inds is either <code>nothing</code> to choose the entire <code>t</code> or an array of Cartesian indices.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L34">DataCubes/src/util/select.jl:34</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L34">DataCubes/src/util/select.jl:34</a></p>
 <hr />
 <p><a id="method__selectkeys.1" class="lexicon_definition"></a></p>
 <h4 id="selectkeysk-vdictdatacubesldictk-v-keys">selectkeys{K, V}(dict::DataCubes.LDict{K, V},  keys...) <a href="#method__selectkeys.1">¶</a></h4>
@@ -3751,7 +3753,7 @@ DataCubes.LDict{Symbol,Int64} with 2 entries:
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/ldict.jl#L183">DataCubes/src/datatypes/ldict.jl:183</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/ldict.jl#L183">DataCubes/src/datatypes/ldict.jl:183</a></p>
 <hr />
 <p><a id="method__show.1" class="lexicon_definition"></a></p>
 <h4 id="shownioio-arrdatacubesdictarrayk-n-vs-sv">show{N}(io::IO,  arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__show.1">¶</a></h4>
@@ -3781,7 +3783,7 @@ b |z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L387">DataCubes/src/datatypes/dict_array.jl:387</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L387">DataCubes/src/datatypes/dict_array.jl:387</a></p>
 <hr />
 <p><a id="method__show.2" class="lexicon_definition"></a></p>
 <h4 id="shownioio-arrdatacubesdictarrayk-n-vs-sv-indent">show{N}(io::IO,  arr::DataCubes.DictArray{K, N, VS, SV},  indent) <a href="#method__show.2">¶</a></h4>
@@ -3811,7 +3813,7 @@ b |z
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L387">DataCubes/src/datatypes/dict_array.jl:387</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L387">DataCubes/src/datatypes/dict_array.jl:387</a></p>
 <hr />
 <p><a id="method__show.3" class="lexicon_definition"></a></p>
 <h4 id="shownioio-tabledatacubeslabeledarrayt-n-axestuple-tn">show{N}(io::IO,  table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN}) <a href="#method__show.3">¶</a></h4>
@@ -3823,7 +3825,7 @@ b |z
 <li><code>alongrow</code>(optional, default set by <code>set_dispalongrow!!</code>. <code>tru</code> by default): if <code>true</code>, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L250">DataCubes/src/datatypes/labeled_array.jl:250</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L291">DataCubes/src/datatypes/labeled_array.jl:291</a></p>
 <hr />
 <p><a id="method__show.4" class="lexicon_definition"></a></p>
 <h4 id="shownioio-tabledatacubeslabeledarrayt-n-axestuple-tn-indent">show{N}(io::IO,  table::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  indent) <a href="#method__show.4">¶</a></h4>
@@ -3835,11 +3837,11 @@ b |z
 <li><code>alongrow</code>(optional, default set by <code>set_dispalongrow!!</code>. <code>tru</code> by default): if <code>true</code>, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L250">DataCubes/src/datatypes/labeled_array.jl:250</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L291">DataCubes/src/datatypes/labeled_array.jl:291</a></p>
 <hr />
 <p><a id="method__sort.1" class="lexicon_definition"></a></p>
 <h4 id="sortarrdatacubeslabeledarrayt-n-axestuple-tn-axisinteger-fields">sort(arr::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  axis::Integer,  fields...) <a href="#method__sort.1">¶</a></h4>
-<p><code>sort(arr, axis fields... [; alg=..., ...])</code></p>
+<p><code>sort(arr, axis, fields... [; alg=..., ...])</code></p>
 <p>Sort a <code>DictArray</code> or <code>LabeledArray</code> along some axis.</p>
 <h5 id="arguments_40">Arguments</h5>
 <ul>
@@ -3905,7 +3907,7 @@ Y |5 e |7 d |3 f
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/sort.jl#L141">DataCubes/src/util/sort.jl:141</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/sort.jl#L141">DataCubes/src/util/sort.jl:141</a></p>
 <hr />
 <p><a id="method__unique.1" class="lexicon_definition"></a></p>
 <h4 id="uniquetarrdatacubesabstractarraywrappernullablet-n-aabstractarrayt-n">unique{T}(arr::DataCubes.AbstractArrayWrapper{Nullable{T}, N, A&lt;:AbstractArray{T, N}}) <a href="#method__unique.1">¶</a></h4>
@@ -4004,7 +4006,7 @@ Z |1 a |2 b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/unique.jl#L102">DataCubes/src/util/unique.jl:102</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/unique.jl#L102">DataCubes/src/util/unique.jl:102</a></p>
 <hr />
 <p><a id="method__updatefunc.1" class="lexicon_definition"></a></p>
 <h4 id="updatefuncntdatacubeslabeledarrayt-n-axestuple-tn-c-b-a">updatefunc{N}(t::DataCubes.LabeledArray{T, N, AXES&lt;:Tuple, TN},  c,  b,  a) <a href="#method__updatefunc.1">¶</a></h4>
@@ -4018,7 +4020,7 @@ Z |1 a |2 b
 <li><code>c</code> : an array of pairs of field name =&gt; function <code>(t, inds)</code> -&gt; array. <code>t</code> is a LabeledArray and inds is either <code>nothing</code> to choose the entire <code>t</code> or an array of Cartesian indices.</li>
 </ul>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/select.jl#L142">DataCubes/src/util/select.jl:142</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/select.jl#L142">DataCubes/src/util/select.jl:142</a></p>
 <hr />
 <p><a id="method__values.1" class="lexicon_definition"></a></p>
 <h4 id="valuesarrdatacubesdictarrayk-n-vs-sv">values(arr::DataCubes.DictArray{K, N, VS, SV}) <a href="#method__values.1">¶</a></h4>
@@ -4032,17 +4034,17 @@ Z |1 a |2 b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/dict_array.jl#L948">DataCubes/src/datatypes/dict_array.jl:948</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/dict_array.jl#L949">DataCubes/src/datatypes/dict_array.jl:949</a></p>
 <hr />
 <p><a id="method__wrap_array.1" class="lexicon_definition"></a></p>
 <h4 id="wrap_arrayarrdatacubesabstractarraywrappert-n-aabstractarrayt-n">wrap_array(arr::DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}) <a href="#method__wrap_array.1">¶</a></h4>
 <p><code>wrap_array(arr)</code></p>
 <p>Wrap an array by <code>AbstractArrayWrapper</code> if it is not <code>DictArray</code> or <code>labeledArray</code>, and not already <code>AbstractArrayWrapper</code>.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/naarray_operators.jl#L14">DataCubes/src/na/naarray_operators.jl:14</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/naarray_operators.jl#L14">DataCubes/src/na/naarray_operators.jl:14</a></p>
 <hr />
 <p><a id="method__zip_dropnaiter.1" class="lexicon_definition"></a></p>
-<h4 id="zip_dropnaiternarrsdatacubesabstractarraywrappert-n-aabstractarrayt-n">zip_dropnaiter{N}(arrs::DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}}...) <a href="#method__zip_dropnaiter.1">¶</a></h4>
+<h4 id="zip_dropnaiternarrsabstractarrayt-n">zip_dropnaiter{N}(arrs::AbstractArray{T, N}...) <a href="#method__zip_dropnaiter.1">¶</a></h4>
 <p><code>zip_dropnaiter(arrs...)</code></p>
 <p>Generate a zipped iterator from nullable arrays <code>arrs...</code>. If any element in <code>arrs...</code> is null, the iterator will skip it and move to the next element tuple.</p>
 <h5 id="examples_74">Examples</h5>
@@ -4056,7 +4058,7 @@ Z |1 a |2 b
 </code></pre>
 
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/util/array_helper_functions.jl#L132">DataCubes/src/util/array_helper_functions.jl:132</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/util/array_helper_functions.jl#L132">DataCubes/src/util/array_helper_functions.jl:132</a></p>
 <hr />
 <p><a id="type__abstractarraywrapper.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesabstractarraywrappert-n-aabstractarrayt-n">DataCubes.AbstractArrayWrapper{T, N, A&lt;:AbstractArray{T, N}} <a href="#type__abstractarraywrapper.1">¶</a></h4>
@@ -4074,7 +4076,7 @@ For example,</p>
 <p>It is possible to redefine those operators for AbstractArray, but concerning about compatibility, it may be
 best to introduce a new wrapper class for that.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/na/na.jl#L25">DataCubes/src/na/na.jl:25</a></p>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/na/na.jl#L25">DataCubes/src/na/na.jl:25</a></p>
 <hr />
 <p><a id="type__defaultaxis.1" class="lexicon_definition"></a></p>
 <h4 id="datacubesdefaultaxis">DataCubes.DefaultAxis <a href="#type__defaultaxis.1">¶</a></h4>
@@ -4083,7 +4085,7 @@ It behaves mostly as an array <code>[Nullable(1), Nullable(2), ...]</code>.
 However, one notable exception is when using <code>@select</code>/<code>selct</code>/<code>extract</code>/<code>discard</code>/<code>getindex</code>/etc to choose, set or drop specific elements of a <code>LabeledArray</code>.
 In this case, the result array of reduced size will again have a <code>DefaultAxis</code> of an appropriate size.</p>
 <p><em>source:</em>
-<a href="https://github.com/c-s/DataCubes.jl/tree/276af5b394821966d46a463492998594fdec1031/src/datatypes/labeled_array.jl#L47">DataCubes/src/datatypes/labeled_array.jl:47</a></p></div>
+<a href="https://github.com/c-s/DataCubes.jl/tree/a612387e50536c03bdb6844474a160dd5cc1a90f/src/datatypes/labeled_array.jl#L47">DataCubes/src/datatypes/labeled_array.jl:47</a></p></div>
             
         </div>
 
