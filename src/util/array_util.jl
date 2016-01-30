@@ -807,6 +807,8 @@ Peel off a variable to see its underlying data.
 
 * `peel(arr::LabeledArray)`: returns the underlying data, which can be a `DictArray` but can also be any `AbstractArray`.
 
+* `peel(arr::EnumerationArray)`: returns the underlying index integers.
+
 ##### Examples
 
 ```julia
@@ -823,6 +825,13 @@ a b
 1 m
 2 n
 3 p
+
+
+julia> peel(@enumeration([NA :x :y;:x :z NA]))
+2x3 DataCubes.AbstractArrayWrapper{Int64,2,Array{Int64,2}}:
+ 0  1  3
+ 1  2  0
+
 ```
 
 """
@@ -830,6 +839,7 @@ function peel end
 
 peel(arr::DictArray) = arr.data
 peel(arr::LabeledArray) = arr.data
+peel(arr::EnumerationArray) = arr.elems
 
 """
 

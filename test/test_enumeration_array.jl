@@ -23,6 +23,7 @@ facts("EnumerationArray tests") do
   @fact dcube.wrap_array(sort(enumeration([6,5,3,1,2,1]))) --> nalift([6,5,3,1,1,2])
   @fact dcube.wrap_array((a=enumeration([6,5,3,1,2,1]);sort!(a);a)) --> nalift([6,5,3,1,1,2])
   @fact dcube.wrap_array((a=enumeration([6,5,3,1,2,1],1:6);sort!(a);a)) --> nalift([1,1,2,3,5,6])
+  @fact peel(@enumeration([NA :x :y;:x :z NA])) --> [0 1 3;1 2 0]
 
   context("enumerations in labeled array tests") do
     arr = larr(

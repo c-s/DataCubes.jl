@@ -236,6 +236,10 @@ facts("LabeledArray tests") do
       @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3),b=rand(3),c=fill(:X,3), axis=darr(k=['X','Y','Z'])))) --> nothing
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3),b=rand(3),c=fill(:X,3)))) --> nothing
       @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5),axis1=darr(k=['X','Y','Z'])))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5),axis1=darr(k=['X','Y','Z'])))) --> nothing
+      @fact (dcube.set_showalongrow!!(false);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5),axis2=darr(k=['X','Y','Z','U','V'])))) --> nothing
+      @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5),axis2=darr(k=['X','Y','Z','U','V'])))) --> nothing
       @fact (dcube.set_showalongrow!!(true);show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_format_string!!(Float64, "%0.2f");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_format_string!!(Float64, "%0.8g");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing

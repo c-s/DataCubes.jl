@@ -194,7 +194,6 @@ floatnaarray_map_inner!(result::AbstractArray, firstelem, f::Function, arr0::Flo
   end
 end
 
-Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs...))
 Base.sort(arr::FloatNAArray; kwargs...) = FloatNAArray(sort(arr.data; kwargs...))
 Base.sort!(arr::FloatNAArray; kwargs...) = FloatNAArray(sort!(arr.data; kwargs...))
 Base.cat(dim::Int, arr::FloatNAArray, arrs::FloatNAArray...) = FloatNAArray(cat(dim, arr.data, map(x->x.data, arrs)...))
