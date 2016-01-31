@@ -199,5 +199,3 @@ ungroup(arr::LabeledArray, indices::Tuple) = begin
   end
   error("ungroup a LabeledArray: cannot find an array component whose elements are also arrays.")
 end
-
-

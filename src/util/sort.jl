@@ -144,7 +144,13 @@ Base.sort(arr::Union{DictArray,LabeledArray}, axis::Integer, fields...; alg=Base
 end
 Base.sort(arr::DictArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sort(arr, axis, keys(arr)...; alg=alg, kwargs...)
 Base.sort(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = begin
-  axis_processed = peel(providenames(larr(pickaxis(arr, axis))))
+  coords = sortperm(arr, axis; alg=alg, kwargs...)
+  arr[coords...]
+end
+Base.sort(arr::Union{DictArray,LabeledArray}; alg=Base.Sort.defalg(arr), kwargs...) = sort(arr, 1; alg=alg, kwargs...)
+Base.sortperm(arr::DictArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(arr, axis, keys(arr)...; alg=alg, kwargs...)
+Base.sortperm(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = begin
+  axis_processed = sortperm_inner_convert_to_dictarray_if_necessary(pickaxis(arr,axis))
   ordering = AbstractArrayLT(axis_processed, 1, keys(axis_processed)...;kwargs...)
   axisorder = sortpermbase(axis_processed, 1, alg, ordering)[1]
   coords = ntuple(ndims(arr)) do d
@@ -154,9 +160,8 @@ Base.sort(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...
       Colon()
     end
   end
-  arr[coords...]
+  coords
 end
-Base.sort(arr::Union{DictArray,LabeledArray}; alg=Base.Sort.defalg(arr), kwargs...) = sort(arr, 1; alg=alg, kwargs...)
-Base.sortperm(arr::DictArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(arr, axis, keys(arr)...; alg=alg, kwargs...)
-Base.sortperm(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(pickaxis(arr,axis); alg=alg, kwargs...)
 Base.sortperm(arr::Union{DictArray,LabeledArray}; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(arr, 1; alg=alg, kwargs...)
+sortperm_inner_convert_to_dictarray_if_necessary(arr::DictArray) = arr
+sortperm_inner_convert_to_dictarray_if_necessary(arr::AbstractArray) = create_dictarray_nocheck(create_ldict_nocheck(:dummy=>arr))

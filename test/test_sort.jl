@@ -53,6 +53,18 @@ facts("Sort tests") do
     @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=darr(k=rand(0:1,3)));sort(t)==sort(t,1,:k)) --> true
     @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k=rand(0:1,5)));sort(t,2)==sort(t,2,:k)) --> true
     @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k1=rand(0:1,5),k2=rand(0:1,5)));sort(t,2)==sort(t,2,:k1,:k2)) --> true
+
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sortperm(t)==sortperm(t,1)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sortperm(t)==sortperm(t,1)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sortperm(t)==sortperm(t,1,:a,:b,:c)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sortperm(t,2)==sortperm(t,2,:a,:b,:c)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sortperm(t,2)==sortperm(t,2,:a,:b,:c)) --> true
+
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=rand(0:1,3));sortperm(t)==sortperm(t,1)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=darr(k=rand(0:1,3)));sortperm(t)==sortperm(t,1)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=darr(k=rand(0:1,3)));sortperm(t)==sortperm(t,1,:k)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k=rand(0:1,5)));sortperm(t,2)==sortperm(t,2,:k)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k1=rand(0:1,5),k2=rand(0:1,5)));sortperm(t,2)==sortperm(t,2,:k1,:k2)) --> true
   end
 end
 
