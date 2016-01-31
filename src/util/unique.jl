@@ -100,8 +100,8 @@ Z |1 a |2 b
 
 """
 Base.unique{T}(arr::AbstractArrayWrapper{Nullable{T}}) = unique(arr, 1:ndims(arr)...)
-Base.unique(arr::DictArray, dim::Int, dims::Int...) = unique(arr, 1:ndims(arr)...)
-Base.unique(arr::LabeledArray, dim::Int, dims::Int...) = unique(arr, 1:ndims(arr)...)
+Base.unique(arr::DictArray) = unique(arr, 1:ndims(arr)...)
+Base.unique(arr::LabeledArray) = unique(arr, 1:ndims(arr)...)
 Base.unique{T}(arr::AbstractArrayWrapper{Nullable{T}}, dim::Int, dims::Int...) = unique_inner(arr, (dim, dims...))[2]
 Base.unique(arr::DictArray, dim::Int, dims::Int...) = unique_inner(arr, (dim, dims...))[2]
 Base.unique(arr::LabeledArray, dim::Int, dims::Int...) = begin
