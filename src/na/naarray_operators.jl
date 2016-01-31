@@ -141,9 +141,9 @@ const naop_suffix = "!"
 macro absarray_binary_wrapper(ops...)
   targetexpr = map(ops) do op
     nullelem = if length(op.args) == 2
-      :(promote_nullable_optypes($(op.args[1]),T,U))
+      :(promote_nullable_optypes($(esc(op.args[1])),T,U))
     elseif length(op.args) == 3
-      :(preset_nullable_type(T,U,$(op.args[3])))
+      :(preset_nullable_type(T,U,$(esc(op.args[3]))))
     end
     quote
       $(esc(op.args[1])){T,U}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin

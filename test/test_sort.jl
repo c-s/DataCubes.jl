@@ -41,6 +41,19 @@ facts("Sort tests") do
   @fact sort(larr(a=enumeration([1,7,4,3,5,3]),axis1=enumeration([1,12,13,14,15,16])),1,:a) --> larr(a=[1,7,4,3,3,5], axis1=[1,12,13,14,16,15])
   @fact sortperm(larr(a=enumeration([1,7,4,3,5,3]),axis1=enumeration([1,12,13,14,15,16])),1,:a) --> ([1,2,3,4,6,5],)
   @fact sortperm(larr(a=[1,7,4,3,5,3],axis1=enumeration([1,12,13,14,15,16])),1,:a) --> ([1,4,6,3,5,2],)
+  for i in 1:100
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sort(t)==sort(t,1)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sort(t)==sort(t,1)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sort(t)==sort(t,1,:a,:b,:c)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sort(t,2)==sort(t,2,:a,:b,:c)) --> true
+    @fact (t=darr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5));sort(t,2)==sort(t,2,:a,:b,:c)) --> true
+
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=rand(0:1,3));sort(t)==sort(t,1)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=darr(k=rand(0:1,3)));sort(t)==sort(t,1)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis=darr(k=rand(0:1,3)));sort(t)==sort(t,1,:k)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k=rand(0:1,5)));sort(t,2)==sort(t,2,:k)) --> true
+    @fact (t=larr(a=rand(0:1,3,5),b=rand(0:1,3,5),c=rand(0:1,3,5),axis2=darr(k1=rand(0:1,5),k2=rand(0:1,5)));sort(t,2)==sort(t,2,:k1,:k2)) --> true
+  end
 end
 
 end

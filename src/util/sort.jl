@@ -75,8 +75,8 @@ Sort a `DictArray` or `LabeledArray` along some axis.
 ##### Arguments
 
 * `arr` : either a `DictArray` or a `LabeledArray`.
-* `axis` : an axis direction integer to denote which direction to sort along.
-* `fields...` : the names of fields to determine the order. The preceding ones have precedence over the later ones. Note only the components [1,...,1,:,1,...1], where : is placed at the axis position, will be used out of each field.
+* `axis` : an axis direction integer to denote which direction to sort along. If omitted, axis=1.
+* `fields...` : the names of fields to determine the order. The preceding ones have precedence over the later ones. Note only the components [1,...,1,:,1,...1], where : is placed at the axis position, will be used out of each field. If omitted, all fields will be used in their order for `DictArray` and the axis along the `axis` direction for `LabeledArray`.
 * optionally, `alg=algorithm` determines the sorting algorithm. `fieldname_lt=ltfunc` sets the less-than function for the field fieldname, and similarly for `by`/`rev`/`ord`.
 
 ##### Examples
@@ -138,11 +138,25 @@ Y |5 e |7 d |3 f
 ```
 
 """
-Base.sort(arr::LabeledArray, axis::Integer, fields...; alg=Base.Sort.defalg(arr), kwargs...) = begin
+Base.sort(arr::Union{DictArray,LabeledArray}, axis::Integer, fields...; alg=Base.Sort.defalg(arr), kwargs...) = begin
   ordering = AbstractArrayLT(arr, axis, fields...;kwargs...)
   sortbase(arr, axis, alg, ordering)
 end
-Base.sort(arr::DictArray, axis::Integer, fields...; alg=Base.Sort.defalg(arr), kwargs...) = begin
-  ordering = AbstractArrayLT(arr, axis, fields...;kwargs...)
-  sortbase(arr, axis, alg, ordering)
+Base.sort(arr::DictArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sort(arr, axis, keys(arr)...; alg=alg, kwargs...)
+Base.sort(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = begin
+  axis_processed = peel(providenames(larr(pickaxis(arr, axis))))
+  ordering = AbstractArrayLT(axis_processed, 1, keys(axis_processed)...;kwargs...)
+  axisorder = sortpermbase(axis_processed, 1, alg, ordering)[1]
+  coords = ntuple(ndims(arr)) do d
+    if d == axis
+      axisorder
+    else
+      Colon()
+    end
+  end
+  arr[coords...]
 end
+Base.sort(arr::Union{DictArray,LabeledArray}; alg=Base.Sort.defalg(arr), kwargs...) = sort(arr, 1; alg=alg, kwargs...)
+Base.sortperm(arr::DictArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(arr, axis, keys(arr)...; alg=alg, kwargs...)
+Base.sortperm(arr::LabeledArray, axis::Integer; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(pickaxis(arr,axis); alg=alg, kwargs...)
+Base.sortperm(arr::Union{DictArray,LabeledArray}; alg=Base.Sort.defalg(arr), kwargs...) = sortperm(arr, 1; alg=alg, kwargs...)
