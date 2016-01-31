@@ -1489,12 +1489,10 @@ extract(ldict::LDict{Function,Nullable}, ks::Function) = error("not yet implemen
 # to disambiguate a method choice.
 extract{K,V}(ldict::LDict{K,Nullable{V}}, ks::Function) = extract_function_inner(ldict, ks)
 extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
-extract(ldict::LDict, ks::Function) = extract_function_inner(ldict, ks)
 extract_function_inner(ldict::LDict, ks::Function) = begin
   # it does not make sense to automatically extend the keys, because they are not Nullable.
   inds = convert_boolarray_if_necessary(ks(keys(ldict)))
   extract_ldict_from_indices(ldict, inds)
-  #LDict(keys(ldict)[inds], values(ldict)[inds])
 end
 extract_ldict_from_indices(ldict::LDict, inds::AbstractArray) = LDict(keys(ldict)[inds], values(ldict)[inds])
 extract_ldict_from_indices(ldict::LDict, ind) = values(ldict)[ind]
@@ -1973,10 +1971,10 @@ promote_to_array_if_necessary(x::AbstractArray) = x
 promote_to_array_if_necessary(x::Colon) = x
 promote_to_array_if_necessary(x) = [x]
 
+create_discard_indices(axis::AbstractVector{Nullable{Function}}, region::Function) = error("this is ambiguous")
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::AbstractArray{T}) = create_discard_indices(axis, nalift(region))
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::Nullable{T}) = create_discard_indices(axis, wrap_array([region]))
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::T) = create_discard_indices(axis, wrap_array([Nullable(region)]))
-create_discard_indices(axis::AbstractVector{Nullable{Function}}, region::Function) = error("this is ambiguous")
 create_discard_indices(axis::DefaultAxis, region::Function) = create_discard_indices(axis, promote_to_array_if_necessary(convert_boolarray_if_necessary(region(axis))))
 create_discard_indices(axis::AbstractVector, region::Function) = begin
   converted_indices = collect(promote_to_array_if_necessary(convert_boolarray_if_necessary(region(axis))))
