@@ -107,16 +107,16 @@ end
 
 # Ideally, lift every possible types using some supertypes. However, a lot of annoying ambiguity warnings may occur.
 # So, try to fiddle around with possible combinations that do not give any ambiguity warnings.
-const LiftToNullableTypes = [Bool,
-                             Integer,
-                             AbstractFloat,
-                             Rational,
-                             Irrational{:e},
-                             Real,
-                             Complex,
-                             AbstractString,
-                             Char,
-                             Symbol]
+const LiftToNullableTypes = [:Bool,
+                             :Integer,
+                             :AbstractFloat,
+                             :Rational,
+                             :(Irrational{:e}),
+                             :Real,
+                             :Complex,
+                             :AbstractString,
+                             :Char,
+                             :Symbol]
 
 promote_nullable_optypes{T,U}(op,::Type{Nullable{T}},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
 promote_nullable_optypes{T,U}(op,::Type{T},::Type{Nullable{U}}) = Nullable{return_types(op,(T,U))[1]}
@@ -134,7 +134,6 @@ const naop_suffix = "!"
 .^(x::Base.Irrational{:e}, y::AbstractArrayWrapper{Real}) = AbstractArrayWrapper(.^(x, y.a))
 .^{T<:Real}(x::Base.Irrational{:e}, y::AbstractArrayWrapper{T}) = AbstractArrayWrapper(.^(x, y.a))
 
-# not used anymore.
 absarray_binary_wrapper(op) = begin
   nullelem = if length(op) == 2
     :(promote_nullable_optypes($(op[1]),T,U))
@@ -315,13 +314,13 @@ absarray_binary_wrapper(op) = begin
       end
     end
 
-    $(symbol(op[1],"nulltype2", naop_suffix))(result, x::AbstractArrayWrapper, y) = begin
+    $(symbol(op[1],"adhoctype2", naop_suffix))(result, x::AbstractArrayWrapper, y) = begin
       xa = x.a
       for i in eachindex(xa)
         @inbounds result[i] = $(op[2])(xa[i],y)
       end
     end
-    $(symbol(op[1],"nulltype2", naop_suffix)){K,T,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y) = begin
+    $(symbol(op[1],"adhoctype2", naop_suffix)){K,T,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y) = begin
       xadata = x.a.data
       resultdata = result.data
       for i in eachindex(xadata)
@@ -329,13 +328,13 @@ absarray_binary_wrapper(op) = begin
       end
     end
 
-    $(symbol(op[1],"nulltype1", naop_suffix))(result, x, y::AbstractArrayWrapper) = begin
+    $(symbol(op[1],"adhoctype1", naop_suffix))(result, x, y::AbstractArrayWrapper) = begin
       ya = y.a
       for i in eachindex(ya)
         @inbounds result[i] = $(op[2])(x,ya[i])
       end
     end
-    $(symbol(op[1],"nulltype1", naop_suffix)){K,N,T,A}(result::FloatNAArray{K,N}, x, y::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+    $(symbol(op[1],"adhoctype1", naop_suffix)){K,N,T,A}(result::FloatNAArray{K,N}, x, y::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
       yadata = y.a.data
       resultdata = result.data
       for i in eachindex(yadata)
@@ -350,57 +349,64 @@ absarray_binary_wrapper(op) = begin
     # to avoid some type ambiguity.
     $(op[1])(x::Bool, y::LabeledArray{Bool}) = mapvalues($(op[1]), x, y)
     $(op[1])(x::LabeledArray{Bool}, y::Bool) = mapvalues($(op[1]), x, y)
+  end
+end
 
-    for nulltype in $LiftToNullableTypes
-      $(op[1])(x::AbstractArrayWrapper{nulltype}, y::nulltype) = begin
-        T = eltype(x)
-        U = typeof(y)
-        result = similar(x, $nullelem)
-        $(symbol(op[1],"nulltype2",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1])(x::nulltype, y::AbstractArrayWrapper{nulltype}) = begin
-        T = typeof(x)
-        U = eltype(y)
-        result = similar(y, $nullelem)
-        $(symbol(op[1],"nulltype1",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1]){T<:nulltype}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-        U = typeof(y)
-        result = similar(x, $nullelem)
-        $(symbol(op[1],"nulltype2",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1]){U<:nulltype}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
-        T = typeof(x)
-        result = similar(y, $nullelem)
-        $(symbol(op[1],"nulltype1",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1]){T<:Nullable}(x::AbstractArrayWrapper{T}, y::nulltype) = begin
-        U = typeof(y)
-        result = similar(x, $nullelem)
-        $(symbol(op[1],"nulltype2",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1]){U<:Nullable}(x::nulltype, y::AbstractArrayWrapper{U}) = begin
-        T = typeof(x)
-        result = similar(y, $nullelem)
-        $(symbol(op[1],"nulltype1",naop_suffix))(result.a, x, y)
-        result
-      end
-
-      $(op[1])(x::nulltype, y::DictArray) = mapvalues($(op[1]), x, y)
-      $(op[1])(x::nulltype, y::LabeledArray) = mapvalues($(op[1]), x, y)
-      $(op[1])(x::DictArray, y::nulltype) = mapvalues($(op[1]), x, y)
-      $(op[1])(x::LabeledArray, y::nulltype) = mapvalues($(op[1]), x, y)
+absarray_binary_wrapper_adhoc(op, adhoctype) = begin
+  nullelem = if length(op) == 2
+    :(promote_nullable_optypes($(op[1]),T,U))
+  elseif length(op) == 3
+    :(preset_nullable_type(T,U,$(op[3])))
+  end
+  quote
+    $(op[1])(x::AbstractArrayWrapper{$adhoctype}, y::$adhoctype) = begin
+      T = eltype(x)
+      U = typeof(y)
+      result = similar(x, $nullelem)
+      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      result
     end
+
+    $(op[1])(x::$adhoctype, y::AbstractArrayWrapper{$adhoctype}) = begin
+      T = typeof(x)
+      U = eltype(y)
+      result = similar(y, $nullelem)
+      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      result
+    end
+
+    $(op[1]){T<:$adhoctype}(x::AbstractArrayWrapper{T}, y::$adhoctype) = begin
+      U = typeof(y)
+      result = similar(x, $nullelem)
+      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      result
+    end
+
+    $(op[1]){U<:$adhoctype}(x::$adhoctype, y::AbstractArrayWrapper{U}) = begin
+      T = typeof(x)
+      result = similar(y, $nullelem)
+      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      result
+    end
+
+    $(op[1]){T<:Nullable}(x::AbstractArrayWrapper{T}, y::$adhoctype) = begin
+      U = typeof(y)
+      result = similar(x, $nullelem)
+      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      result
+    end
+
+    $(op[1]){U<:Nullable}(x::$adhoctype, y::AbstractArrayWrapper{U}) = begin
+      T = typeof(x)
+      result = similar(y, $nullelem)
+      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      result
+    end
+
+    $(op[1])(x::$adhoctype, y::DictArray) = mapvalues($(op[1]), x, y)
+    $(op[1])(x::$adhoctype, y::LabeledArray) = mapvalues($(op[1]), x, y)
+    $(op[1])(x::DictArray, y::$adhoctype) = mapvalues($(op[1]), x, y)
+    $(op[1])(x::LabeledArray, y::$adhoctype) = mapvalues($(op[1]), x, y)
   end
 end
 
@@ -508,6 +514,9 @@ for op in ((:+, :naop_plus), (:-, :naop_minus), (:.+, :naop_plus), (:.-, :naop_m
                          (:.>>, :naop_rsft), (:.^, :naop_exp),
                          (:&, :naop_and), (:|, :naop_or), (:$, :naop_xor))
   eval(absarray_binary_wrapper(op))
+  for adhoctype in LiftToNullableTypes
+    eval(absarray_binary_wrapper_adhoc(op, adhoctype))
+  end
 end
 
 (==){T<:Nullable,U<:Nullable}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
