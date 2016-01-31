@@ -69,12 +69,11 @@ create_dictarray_nocheck{K,VS}(data::LDict{K,VS}) = begin
             eltype(data.values),
             promote_type([eltype(v) for v in data.values]...)}(data)
 end
-DictArray() = throw(ZeroNumberOfFieldsException())
 DictArray(dict::Associative) = DictArray(LDict(dict))
 DictArray(dict::Associative, ks) = DictArray(LDict(dict, ks))
 DictArray(ks::Vector, vs::Vector) = DictArray(LDict(ks, vs))
-DictArray(ps::Pair...) = DictArray(LDict(ps...))
-DictArray(tuples::Tuple...) = DictArray(LDict(tuples...))
+DictArray(p1::Pair, ps::Pair...) = DictArray(LDict(p1, ps...))
+DictArray(t1::Tuple, tuples::Tuple...) = DictArray(LDict(t1, tuples...))
 DictArray(;kwargs...) = DictArray(kwargs...)
 DictArray{K,V,N}(arr::AbstractArray{Nullable{LDict{K,V}},N}) = DictArray(map(x->mapvalues(apply_nullable, x.value), arr))
 DictArray{T<:LDict,N}(arr::AbstractArray{T,N}) = DictArray(map(x->map(apply_nullable,x), arr))
@@ -303,7 +302,7 @@ Base.reshape(arr::DictArray, dims::Tuple{Vararg{Int}}) = reshape(arr, dims...)
 arrayadd(arr1::DictArray, arr2::DictArray) = DictArray(merge(arr1.data, arr2.data))
 arrayadd(arr1::DictArray, args...;kwargs...) = arrayadd(arr1, darr(args...;kwargs...))
 arrayadd(arr1::DictArray, args::AbstractArray) = throw(ArgumentError("cannot implement."))
-arrayadd(arr1::AbstractArray, arr2::AbstractArray) = reshape(collect(zip(arr1, arr2)), size(arr1))
+arrayadd(arr1::AbstractArray, arr2::AbstractArray) = mapna((x,y)->(x,y), arr1, arr2)
 
 """
 
@@ -848,6 +847,7 @@ a  b    |a  b    |a  b    |a  b    |a  b
 
 """
 Base.mapslices(f::Function, arr::DictArray, dims::AbstractVector) = mapslices_darr_larr(f, arr, dims)
+Base.mapslices(f::Function, arr::DictArray, dims::Int...) = mapslices_darr_larr(f, arr, [dims...])
 
 # if dims spans all dimensions, f! cannot be inplace. It will be f!::U->T. Otherwise, f will be f!(AbstractArray{T,N}, AbstractArray{U,N}).
 map_array_preserve_shape!{T,U,N}(f!::Function, tgt::AbstractArray{T,N}, src::AbstractArray{U,N}, dims::Int...;rev=false) = begin

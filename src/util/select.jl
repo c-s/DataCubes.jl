@@ -475,6 +475,9 @@ Base.eltype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = T
 Base.endof(arr::SubArrayView) = length(arr.indices)
 Base.linearindexing{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.LinearFast()
 Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.data, U, dims)
+Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims...)
+# need this special case because the underlying arr.data is not of the same shape as the corresponding SubArrayView.
+Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}) = similar(arr.data, U, size(arr))
 Base.sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, sub(arr.indices, args...))
 Base.slice(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, slice(arr.indices, args...))
 Base.sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(arr.data, sub(arr.indices, args...))

@@ -77,6 +77,10 @@ facts("ArrayHelperFunctions tests") do
   @fact cor(larr(a=[1 2;3 4],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
   @fact cor(larr(a=1.0*[1 2;3 4],b=1.0*[5 6;7 8]))[1,2].value --> roughly(1.0)
   @fact cor(larr(a=[1.0 2.0;3.0 4.0],b=[5 6;7 8]))[1,2].value --> roughly(1.0)
+  @fact cov(larr([1,3,5]*1.0), larr(1.0*[2,4,6])).value --> roughly(4.0)
+  @fact cor(larr([1,3,5]*1.0), larr(1.0*[2,4,6])).value --> roughly(1.0)
+  @fact sum(@rap _ .* _ cor(larr(a=[1,3,5]*1.0,b=[1,2,3]), larr(a=1.0*[2,4,6],b=[5,4,3])) - larr(1.0*[1 -1;1 -1],axis=[:a,:b],axis=[:a,:b])).value < 0.00000001 --> true
+  @fact sum(@rap _ .* _ cov(larr(a=[1,3,5]*1.0,b=[1,2,3]), larr(a=1.0*[2,4,6],b=[5,4,3])) - larr([4 -2;2 -1],axis=[:a,:b],axis=[:a,:b])).value --> roughly(0.0)
   @fact maximum(@nalift([1,10,NA,100,2,3,NA])).value --> roughly(quantile(@nalift([1,10,NA,100,2,3,NA]),1).value)
   @fact maximum(1.0*@nalift([1,10,NA,100,2,3,NA])).value --> roughly(1.0*quantile(@nalift([1,10,NA,100,2,3,NA]),1).value)
   @fact minimum(@nalift([1,10,NA,100,2,3,NA])).value --> roughly(quantile(@nalift([1,10,NA,100,2,3,NA]),0).value)

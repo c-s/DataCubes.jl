@@ -2,6 +2,8 @@ __precompile__()
 
 module DataCubes
 
+import Formatting: sprintf1
+
 # including files.
 include("common.jl")
 include("datatypes/ldict.jl")
@@ -86,7 +88,8 @@ module Tools
            :dropnaiter, :enum_dropnaiter, :zip_dropnaiter,
            # some display setting functions.
            :set_showalongrow!!, :set_showsize!!, :set_showheight!!, :set_showwidth!!, :set_default_showsize!!,
-           :set_dispalongrow!!, :set_dispsize!!, :set_dispheight!!, :set_dispwidth!!, :set_default_dispsize!!]
+           :set_dispalongrow!!, :set_dispsize!!, :set_dispheight!!, :set_dispwidth!!, :set_default_dispsize!!,
+           :set_format_string!!]
   for item in items
     @eval begin
       $item = DataCubes.$item

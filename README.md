@@ -12,8 +12,7 @@ Below, we give a brief description of the package. For more detail, please refer
 
 At the Julia REPL, `Pkg.add("DataCubes")`.
 The package requires [DataFrames](https://github.com/juliastats/dataframes.jl) to convert to and from `DataFrame`,
-and [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) to run some tests.
-The package itself is functionally stand alone.
+, [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) to run some tests.
 
 # Getting Started
 

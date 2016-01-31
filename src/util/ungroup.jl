@@ -68,6 +68,7 @@ ungroup(arr::AbstractArray, ref_field::AbstractArray) = begin
   # the total length of the final ungrouped array will be cumsum-1.
   ungroup(arr, ref_field, cumsum, offsets)
 end
+ungroup(arr::AbstractArray) = ungroup(arr, 1)
 ungroup(arr::AbstractArray, indices::Tuple) = ungroup(arr, arr[indices...])
 ungroup(arr::AbstractArray, axis::Integer) =
   ungroup(arr, ntuple(d->d==axis ? Colon() :
@@ -198,5 +199,3 @@ ungroup(arr::LabeledArray, indices::Tuple) = begin
   end
   error("ungroup a LabeledArray: cannot find an array component whose elements are also arrays.")
 end
-
-

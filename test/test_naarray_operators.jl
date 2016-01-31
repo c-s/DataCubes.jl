@@ -178,6 +178,14 @@ facts("NAArrayOperators tests") do
     @fact wrap_array([1,2,3]) ./ wrap_array([1.0,2.0,3.0])  --> wrap_array([1.0,1.0,1.0])
     @fact 3 * wrap_array([1,2,3]) --> wrap_array([3,6,9])
     @fact wrap_array([1,2,3]) * 3 --> wrap_array([3,6,9])
+    # currently a matrix multiplication between non floating arrays are not supported.
+    @fact larr(a=1.0*[1 2;3 4]) * (1.0 * larr(a=[5 6;7 8])) --> larr(a=[19.0 22.0;43.0 50.0])
+    @fact_throws larr(a=[1 2;3 4]) * 1.0 * larr(a=[5 6;7 8])
+    @fact_throws larr(a=[1 2;3 4]) * larr(a=[5 6;7 8])
+    @fact_throws larr(rand(2,3),axis=[:a,:b],axis=['x','y','z']) * larr(rand(3,4),axis=[:m,:n,:p],axis=[10,11,12,13])
+    @fact size(larr(rand(2,3),axis=[:a,:b],axis=['x','y','z']) * larr(rand(3,4),axis=['x','y','z'],axis=[10,11,12,13])) --> (2,4)
+    @fact size(larr(rand(2,3),axis=[:a,:b],axis=['x','y','z']) / larr(rand(4,3),axis=[10,11,12,13],axis=['x','y','z'])) --> (2,4)
+    @fact_throws size(larr(rand(2,3),axis=[:a,:b],axis=['x','y','z']) / larr(rand(4,3),axis=[10,11,12,13]))
   end
 end
 
