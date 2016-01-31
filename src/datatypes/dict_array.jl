@@ -69,12 +69,11 @@ create_dictarray_nocheck{K,VS}(data::LDict{K,VS}) = begin
             eltype(data.values),
             promote_type([eltype(v) for v in data.values]...)}(data)
 end
-DictArray() = throw(ZeroNumberOfFieldsException())
 DictArray(dict::Associative) = DictArray(LDict(dict))
 DictArray(dict::Associative, ks) = DictArray(LDict(dict, ks))
 DictArray(ks::Vector, vs::Vector) = DictArray(LDict(ks, vs))
-DictArray(ps::Pair...) = DictArray(LDict(ps...))
-DictArray(tuples::Tuple...) = DictArray(LDict(tuples...))
+DictArray(p1::Pair, ps::Pair...) = DictArray(LDict(p1, ps...))
+DictArray(t1::Tuple, tuples::Tuple...) = DictArray(LDict(t1, tuples...))
 DictArray(;kwargs...) = DictArray(kwargs...)
 DictArray{K,V,N}(arr::AbstractArray{Nullable{LDict{K,V}},N}) = DictArray(map(x->mapvalues(apply_nullable, x.value), arr))
 DictArray{T<:LDict,N}(arr::AbstractArray{T,N}) = DictArray(map(x->map(apply_nullable,x), arr))

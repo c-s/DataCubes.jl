@@ -1496,7 +1496,6 @@ else
   throw(ArgumentError("cannot combine an array of type $(typeof(arr1)) with a dict of type $(typeof(ldict))"))
 end
 
-larr(arr::AbstractArray, kwargs...) = larr(convert(LabeledArray, nalift(arr)), kwargs...)
 larr(arr::AbstractArray, pairs...; kwargs...) = if isempty(kwargs) && isempty(pairs)
   convert(LabeledArray, nalift(arr))
 else
