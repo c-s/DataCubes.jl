@@ -517,7 +517,7 @@ end
 
 cummiddle{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false) = begin
   DIVTYPE = typeof(one(T) / 2)
-  function update!(tgt::AbstractArray{Nullable{DIVTYPE}}, src::AbstractArray{Nullable{T}})
+  function update!(tgt, src)
     accmin = Nullable{T}()
     accmax = Nullable{T}()
     for i in eachindex(src)
