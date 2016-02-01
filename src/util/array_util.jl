@@ -1972,6 +1972,7 @@ promote_to_array_if_necessary(x::Colon) = x
 promote_to_array_if_necessary(x) = [x]
 
 create_discard_indices(axis::AbstractVector{Nullable{Function}}, region::Function) = error("this is ambiguous")
+create_discard_indices{T<:Function}(axis::AbstractVector{Nullable{T}}, region::Function) = error("this is ambiguous")
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::AbstractArray{T}) = create_discard_indices(axis, nalift(region))
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::Nullable{T}) = create_discard_indices(axis, wrap_array([region]))
 create_discard_indices{T}(axis::AbstractVector{Nullable{T}}, region::T) = create_discard_indices(axis, wrap_array([Nullable(region)]))
