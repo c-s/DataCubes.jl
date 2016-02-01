@@ -158,6 +158,8 @@ facts("Select tests") do
     # note the reversal of order because the keyword arguments come after pair arguments.
     @fact selct(larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), c=d->length(d), :d=>d->d[:a], where=d->d[:a].>2) --> reshape(@larr(d=[NA,4,NA,5,3,6],c=[NA,4,NA,4,4,4]), 2, 3)
     @fact selct(larr([1 2;3 4;5 6],axis1=darr(k=[10,11,12])), where=Any[d->d[:k] .== 11]) --> larr([3 4], axis1=darr(k=[11]))
+  end
+  context("misc @update misc tests") do
     @fact @update(larr(a=collect(1.0*(1:10)), b=[1,1,1,2,2,3,3,3,3,3]),a=mean(_a), by[:b]) --> larr(a=[2.0,2.0,2.0,4.5,4.5,8.0,8.0,8.0,8.0,8.0], b=[1,1,1,2,2,3,3,3,3,3])
     @fact @update(larr(a=1:10, b=[1,1,1,2,2,3,3,3,3,3]),a=mean(_a), by[:b]) --> larr(a=[2.0,2.0,2.0,4.5,4.5,8.0,8.0,8.0,8.0,8.0], b=[1,1,1,2,2,3,3,3,3,3])
     @fact @update(larr(a=collect(1.0*(1:10)), b=[1,1,1,2,2,3,3,3,3,3], c=[11,12,13,14,11,12,13,14,11,12]),a=mean(_a), by[:b,:c]) --> larr(a=[1.0,2.0,3.0,4.0,5.0,8.0,7.0,8.0,9.0,8.0], b=[1,1,1,2,2,3,3,3,3,3], c=[11,12,13,14,11,12,13,14,11,12])
@@ -178,6 +180,8 @@ facts("Select tests") do
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=mean(_a),where[_a.<5],where[_a.>5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2])) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact update(@larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z]), a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna(d[:b])], by=[:b]) --> @larr(a=[16,11,13,4,5,6,16,16,11,13],b=[1,2,3,NA,NA,NA,1,1,2,3],c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z],d=[8,18,30,NA,NA,NA,7,1,4,9])
+  end
+  context("misc tests") do
     @fact @select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]) --> larr(axis1=darr(b=[:a,:b]), ct=[2,3])
     @fact typeof(pickaxis(@select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
     @fact @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b]) --> @larr(axis1[b=[1.0,2.0]], ct=[3,2])
