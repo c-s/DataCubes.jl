@@ -135,7 +135,7 @@ julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
 set_format_string!!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
 
 # some functions to set the height and width of output LabeledArrays to console.
-default_showsize = () -> ((height,width) = iosize_compat();(height-20,width-6))
+default_showsize = () -> ((height,width) = iosize_compat();(max(20,height-20),width-6))
 
 @doc """
 
