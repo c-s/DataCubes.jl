@@ -95,9 +95,9 @@ arr_width(x::AbstractArray) = 1
 
 format_string_map = Dict{DataType,AbstractString}(Float64=>"%0.8g")
 
-@doc """
+"""
 
-`set_format_string!!(T, format_string)`
+`set_format_string!(T, format_string)`
 
 Set the formatting string for type `T` to `format_string`.
 By default, `Float64` is displayed with the type format string `"%0.8g"`, and this is the only one.
@@ -116,7 +116,7 @@ julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
 3 |0.73599273 7  |0.53117299 4   |0.97372752 8  |0.58885829 4   |0.30529039 8  
 
 
-julia> DataCubes.set_format_string!!(Float64, "%0.2f")
+julia> DataCubes.set_format_string!(Float64, "%0.2f")
 "%0.2f"
 
 julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
@@ -132,57 +132,57 @@ julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
 ```
 
 """
-set_format_string!!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
+set_format_string!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
 
 # some functions to set the height and width of output LabeledArrays to console.
-default_showsize = () -> ((height,width) = iosize_compat();(max(20,height-20),width-6))
+default_showsize = () -> ((height,width) = iosize_compat();(max(20,ceil(Int,height*0.5)),width-7))
 
-@doc """
+"""
 
-`set_default_showsize!!()`
+`set_default_showsize!()`
 
 Set the show height and width limit function to be the default one.
 The default version calculates the height and width based on the current console screen size.
 This is used to set the print limits when showing a `DictArray` or a `LabeledArray`.
 
 """
-set_default_showsize!!() = (global show_size;show_size = default_showsize)
+set_default_showsize!() = (global show_size;show_size = default_showsize)
 show_size = default_showsize
 
-@doc """
+"""
 
-`set_showsize!!(height::Integer, width::Integer)`
+`set_showsize!(height::Integer, width::Integer)`
 
 Set the show height and width limits to be the constant `height` and `width`, respectively.
-To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!!()`.
+To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!()`.
 
 """
-set_showsize!!(height::Integer, width::Integer) = (global show_size;show_size = () -> (height, width))
+set_showsize!(height::Integer, width::Integer) = (global show_size;show_size = () -> (height, width))
 
-@doc """
+"""
 
-`set_showheight!!(height::Integer)`
+`set_showheight!(height::Integer)`
 
 Set the show height limit to the constant `height`.
-To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!!()`.
+To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!()`.
 
 """
-set_showheight!!(height::Integer) = (origwidth=show_size()[2];global show_size;show_size = () -> (height, origwidth))
+set_showheight!(height::Integer) = (origwidth=show_size()[2];global show_size;show_size = () -> (height, origwidth))
 
-@doc """
+"""
 
-`set_showwidth!!(width::Integer)`
+`set_showwidth!(width::Integer)`
 
 Set the show width limit to the constant `width`.
-To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!!()`.
+To get to the default behavior of adjusting to the current console screen size, use `set_default_showsize!()`.
 
 """
-set_showwidth!!(width::Integer) = (origheight=show_size()[1];global show_size;show_size = () -> (origheight, width))
+set_showwidth!(width::Integer) = (origheight=show_size()[1];global show_size;show_size = () -> (origheight, width))
 toshow_alongrow = true
 
-@doc """
+"""
 
-`set_showalongrow!!(alongrow::Bool)`
+`set_showalongrow!(alongrow::Bool)`
 
 Determine how to show the fields of a `DictArray`.
 By default (`alongrow` is `true`), the fields are shown from left to right.
@@ -191,7 +191,7 @@ If `alongrow=false`, the fields are shown from top to bottom.
 ##### Examples
 
 ```julia
-julia> set_showalongrow!!(true)
+julia> set_showalongrow!(true)
 true
 
 julia> darr(a=[1 2 3;4 5 6], b=[:x :y :z;:u :v :w])
@@ -203,7 +203,7 @@ a b |a b |a b
 4 u |5 v |6 w
 
 
-julia> set_showalongrow!!(false)
+julia> set_showalongrow!(false)
 false
 
 julia> darr(a=[1 2 3;4 5 6], b=[:x :y :z;:u :v :w])
@@ -217,64 +217,64 @@ b |u v w
 ```
 
 """
-set_showalongrow!!(alongrow::Bool) = (global toshow_alongrow; toshow_alongrow = alongrow)
+set_showalongrow!(alongrow::Bool) = (global toshow_alongrow; toshow_alongrow = alongrow)
 
 # some functions to set the height and width of output LabeledArrays to html.
 default_dispsize = () -> (80,30)
 
-@doc """
+"""
 
-`set_default_dispsize!!()`
+`set_default_dispsize!()`
 
 Set the display height and width limit function to be the default one.
 This is used to set the display limits when displaying a `DictArray` or a `LabeledArray`.
 
 """
-set_default_dispsize!!() = (global show_size;show_size = default_dispsize)
+set_default_dispsize!() = (global show_size;show_size = default_dispsize)
 dispsize = default_dispsize
 
-@doc """
+"""
 
-`set_dispsize!!(height::Integer, width::Integer)`
+`set_dispsize!(height::Integer, width::Integer)`
 
 Set the display height and width limits to be the constant `height` and `width`, respectively.
-To get to the default behavior, use `set_default_dispsize!!()`.
+To get to the default behavior, use `set_default_dispsize!()`.
 
 """
-set_dispsize!!(height::Integer, width::Integer) = (global dispsize;dispsize = () -> (height, width))
+set_dispsize!(height::Integer, width::Integer) = (global dispsize;dispsize = () -> (height, width))
 
-@doc """
+"""
 
-`set_dispheight!!(height::Integer)`
+`set_dispheight!(height::Integer)`
 
 Set the display height limit to the constant `height`.
-To get to the default behavior, use `set_default_dispsize!!()`.
+To get to the default behavior, use `set_default_dispsize!()`.
 
 """
-set_dispheight!!(height::Integer) = (origwidth=dispsize()[2];global dispsize;dispsize = () -> (height, origwidth))
+set_dispheight!(height::Integer) = (origwidth=dispsize()[2];global dispsize;dispsize = () -> (height, origwidth))
 
-@doc """
+"""
 
-`set_dispwidth!!(width::Integer)`
+`set_dispwidth!(width::Integer)`
 
 Set the display width limit to the constant `width`.
-To get to the default behavior, use `set_default_dispsize!!()`.
+To get to the default behavior, use `set_default_dispsize!()`.
 
 """
-set_dispwidth!!(width::Integer) = (origheight=dispsize()[1];global dispsize;dispsize = () -> (origheight, width))
+set_dispwidth!(width::Integer) = (origheight=dispsize()[1];global dispsize;dispsize = () -> (origheight, width))
 todisp_alongrow = true
 
-@doc """
+"""
 
-`set_dispalongrow!!(alongrow::Bool)`
+`set_dispalongrow!(alongrow::Bool)`
 
 Determine how to display the fields of a `DictArray`.
 By default (`alongrow` is `true`), the fields are displayed from left to right.
 If `alongrow=false`, the fields are displayed from top to bottom.
-See `set_showalongrow!!` to see an analogous example when showing a `DictArray`.
+See `set_showalongrow!` to see an analogous example when showing a `DictArray`.
 
 """
-set_dispalongrow!!(alongrow::Bool) = (global todisp_alongrow; todisp_alongrow = alongrow)
+set_dispalongrow!(alongrow::Bool) = (global todisp_alongrow; todisp_alongrow = alongrow)
 
 """
 
@@ -285,7 +285,7 @@ Show a LabeledArray.
 ##### Arguments
 
 * `height` and `width`(optional, default set by show_size()): sets the maximum height and width to draw, beyond which the table will be cut.
-* `alongrow`(optional, default set by `set_dispalongrow!!`. `tru` by default): if `true`, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.
+* `alongrow`(optional, default set by `set_dispalongrow!`. `tru` by default): if `true`, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.
 
 """
 Base.show{N}(io::IO, table::LabeledArray{TypeVar(:T),N}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
