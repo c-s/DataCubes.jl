@@ -87,9 +87,9 @@ module Tools
            :create_dict, :setna!,
            :dropnaiter, :enum_dropnaiter, :zip_dropnaiter,
            # some display setting functions.
-           :set_showalongrow!!, :set_showsize!!, :set_showheight!!, :set_showwidth!!, :set_default_showsize!!,
-           :set_dispalongrow!!, :set_dispsize!!, :set_dispheight!!, :set_dispwidth!!, :set_default_dispsize!!,
-           :set_format_string!!]
+           :set_showalongrow!, :set_showsize!, :set_showheight!, :set_showwidth!, :set_default_showsize!,
+           :set_dispalongrow!, :set_dispsize!, :set_dispheight!, :set_dispwidth!, :set_default_dispsize!,
+           :set_format_string!]
   for item in items
     @eval begin
       $item = DataCubes.$item

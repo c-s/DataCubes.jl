@@ -18,6 +18,8 @@ subtests = ["test_ldict.jl", "test_dict_array.jl", "test_labeled_array.jl",
 #subtests = ["test_select.jl"]
 #subtests = ["test_join.jl"]
 
+FactCheck.onlystats(true)
+
 for subtest in subtests
   include(subtest)
 end
