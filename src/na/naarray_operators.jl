@@ -673,23 +673,15 @@ Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::Nullable{U
 Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::Nullable{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
 Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
 
-ifelse_inner_similar(cond, x, y, promoted_type) = throw(ArgumentError("at least one argument should be an AbstractArray."))
 ifelse_inner_similar(cond::AbstractArray, x::AbstractArray, y::AbstractArray, promoted_type) = similar(cond, promoted_type)
 ifelse_inner_similar(cond::AbstractArray, x::AbstractArray, y, promoted_type) = similar(cond, promoted_type)
-ifelse_inner_similar(cond, x::AbstractArray, y::AbstractArray, promoted_type) = similar(x, promoted_type)
 ifelse_inner_similar(cond::AbstractArray, x, y::AbstractArray, promoted_type) = similar(cond, promoted_type)
 ifelse_inner_similar(cond::AbstractArray, x, y, promoted_type) = similar(cond, promoted_type)
-ifelse_inner_similar(cond, x::AbstractArray, y, promoted_type) = similar(x, promoted_type)
-ifelse_inner_similar(cond, x, y::AbstractArray, promoted_type) = similar(y, promoted_type)
 
-ifelse_inner_eachindex(cond, x, y, promoted_type) = throw(ArgumentError("at least one argument should be an AbstractArray."))
 ifelse_inner_eachindex(cond::AbstractArray, x::AbstractArray, y::AbstractArray, promoted_type) = eachindex(cond, x, y, promoted_type)
 ifelse_inner_eachindex(cond::AbstractArray, x::AbstractArray, y, promoted_type) = eachindex(cond, x, promoted_type)
-ifelse_inner_eachindex(cond, x::AbstractArray, y::AbstractArray, promoted_type) = eachindex(x, y, promoted_type)
 ifelse_inner_eachindex(cond::AbstractArray, x, y::AbstractArray, promoted_type) = eachindex(cond, y, promoted_type)
 ifelse_inner_eachindex(cond::AbstractArray, x, y, promoted_type) = eachindex(cond, promoted_type)
-ifelse_inner_eachindex(cond, x::AbstractArray, y, promoted_type) = eachindex(x, promoted_type)
-ifelse_inner_eachindex(cond, x, y::AbstractArray, promoted_type) = eachindex(y, promoted_type)
 
 ifelse_inner_getindex{T<:Nullable}(x::AbstractArray{T}, i) = x[i]
 ifelse_inner_getindex(x::AbstractArray, i) = Nullable(x[i])

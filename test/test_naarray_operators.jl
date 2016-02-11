@@ -55,6 +55,9 @@ facts("NAArrayOperators tests") do
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([Nullable(1), Nullable(2), Nullable{Int}()]) --> @nalift([2.0,4.0,NA])
     @fact AbstractArrayWrapper([1.0,2.0,3.0]) + AbstractArrayWrapper([1,2,3]) --> [2.0,4.0,6.0]
     @fact AbstractArrayWrapper([1,2,3]) ./ AbstractArrayWrapper([1,2,3]) --> [1.0,1.0,1.0]
+    @fact wrap_array([true,true,false]) & wrap_array([false,true,true]) --> wrap_array([false,true,false])
+    @fact wrap_array([true,true,false]) & true --> wrap_array([true,true,false])
+    @fact wrap_array([true,true,false]) & false --> wrap_array([false,false,false])
     @fact (2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
     @fact @nalift([1,2,NA]) * (2+3im)--> @nalift([2+3im,4+6im,NA])
     @fact Nullable(2+3im) * @nalift([1,2,NA]) --> @nalift([2+3im,4+6im,NA])
@@ -139,6 +142,8 @@ facts("NAArrayOperators tests") do
     @fact Nullable(im) / nalift(1.0*[1,2,3]) --> nalift(im./(1.0*[1,2,3]))
     @fact nalift(1.0*[1,2,3]) .* im --> nalift(im*1.0*[1,2,3])
     @fact nalift(1.0*[1,2,3]) ./ im --> nalift(-im*1.0*[1,2,3])
+    @fact wrap_array(1.0*[1,2,3]) .* im --> wrap_array(im*1.0*[1,2,3])
+    @fact wrap_array(1.0*[1,2,3]) ./ im --> wrap_array(-im*1.0*[1,2,3])
     @fact larr(a=1.0*[1,2,3]) + 1.0 --> larr(a=1.0*[2,3,4])
     @fact larr(a=1.0*[1,2,3]) .+ 1.0 --> larr(a=1.0*[2,3,4])
     @fact larr(a=1.0*[1,2,3]) .* 2.0 --> larr(a=2.0*[1,2,3])
@@ -336,6 +341,7 @@ facts("NAArrayOperators tests") do
     @fact ifelse(AbstractArrayWrapper([true,false,true,false,true]), [10,9,8,7,6], AbstractArrayWrapper([1,2,3,4,5])) --> @nalift([10,2,8,4,6])
     @fact ifelse(AbstractArrayWrapper([true,false,true,false,true]), [10,9,8,7,6], nalift([1,2,3,4,5])) --> @nalift([10,2,8,4,6])
     @fact ifelse(AbstractArrayWrapper([true,false,true,false,true]), [10,9,8,7,6], [1,2,3,4,5]) --> @nalift([10,2,8,4,6])
+    @fact ifelse(AbstractArrayWrapper([true,false,true,false,true]), nalift([10,9,8,7,6]), [1,2,3,4,5]) --> @nalift([10,2,8,4,6])
     @fact ifelse(@nalift([NA,NA,true,false,true]), AbstractArrayWrapper([1,2,3,4,5]), @nalift([10,NA,8,NA,6])) --> @nalift([NA,NA,3,NA,5])
 
     @fact ifelse(true, AbstractArrayWrapper([1,2,3,4,5]), AbstractArrayWrapper([10,9,8,7,6])) --> @nalift([1,2,3,4,5])
