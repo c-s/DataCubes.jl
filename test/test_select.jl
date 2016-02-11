@@ -180,6 +180,86 @@ facts("Select tests") do
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2]),c=mean(_a),where[_a.<5],where[_a.>5]) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact @update(darr(a=[1,2,3,4,5],b=[1,1,2,2,2])) --> darr(a=[1,2,3,4,5],b=[1,1,2,2,2])
     @fact update(@larr(a=1:10, b=[1,2,3,NA,NA,NA,1,1,2,3], c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z]), a=d->sum(d[:a]), d=d->reverse(d[:a] .* d[:b]), where=[d-> ~isna(d[:b])], by=[:b]) --> @larr(a=[16,11,13,4,5,6,16,16,11,13],b=[1,2,3,NA,NA,NA,1,1,2,3],c=[:x,:x,:x,:x,:y,:y,:y,:z,:z,:z],d=[8,18,30,NA,NA,NA,7,1,4,9])
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]) --> larr(axis1=darr(b=[:a,:b]), ct=[2,3])
+    @fact typeof(pickaxis(@select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b]) --> @larr(axis1[b=[1.0,2.0]], ct=[3,2])
+    @fact (@rap typeof pickaxis(_,1) @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b])) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)) --> @larr(axis1[r=[:a,:b]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)) --> @larr(axis1[r=["a","b"]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},Nullable{ASCIIString}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)) --> @larr(axis1[r=[1.0,2.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r .* 2], s=sum(_a)) --> @larr(axis1[r=[2.0,4.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r.*2], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r]) -->  typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r,r7=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z'],r7=['X','Y','Z']), s=[5,7,9])
+    @fact size(@select(darr(a=repmat(1:1_000,1000),b=1.0*1:1_000_000), by[:a], s=msum(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1_000,1000),b=1.0*1:1_000_000), by[:a], s=msum(_b))) --> (1000000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mprod(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mprod(_b, rev=true, window=10))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmean(_b, window=10))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmean(_b, window=1))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mminimum(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mminimum(_b, 1, window=10))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmaximum(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmaximum(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmedian(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmedian(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmiddle(_b, 1, rev=true))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmiddle(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.2, window=20))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.5))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.1, rev=true))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.8, rev=true))) --> (10000,)
+  end
+  context("misc tests") do
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]) --> larr(axis1=darr(b=[:a,:b]), ct=[2,3])
+    @fact typeof(pickaxis(@select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b]) --> @larr(axis1[b=[1.0,2.0]], ct=[3,2])
+    @fact (@rap typeof pickaxis(_,1) @select(larr(a=[1,1,2,3,4],b=enumeration([1.0,1.0,2.0,1.0,2.0])), ct=length(_), by[:b])) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)) --> @larr(axis1[r=[:a,:b]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Symbol},1,DataCubes.EnumerationArray{Symbol,1,Array{Int64,1},Int64}},Nullable{Symbol}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)) --> @larr(axis1[r=["a","b"]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=enumeration([:a,:a,:b]))), by[r=map(x->string(x.value),_r)], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},Nullable{ASCIIString}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)) --> @larr(axis1[r=[1.0,2.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[:r], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact @select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r .* 2], s=sum(_a)) --> @larr(axis1[r=[2.0,4.0]], s=[12,9])
+    @fact typeof(pickaxis(@select(larr(a=[1 2 3;4 5 6], axis2=darr(r=[1.0,1.0,2.0])), by[r=_r.*2], s=sum(_a)),1)) --> DataCubes.DictArray{Symbol,1,DataCubes.AbstractArrayWrapper{Nullable{Float64},1,DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}},Nullable{Float64}}
+    @fact typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r]) -->  typeof(sub(@select(larr(a=rand(5,3),axis2=darr(r=enumeration([:X,:Y,:Z]))),:r),2,1:2).data.data[:r])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z']), s=[5,7,9])
+    @fact @select(@larr(a=[1 2 3;4 5 6], axis1[k=[:a,:b]], axis2[r=['X','Y','Z']]), by[:r,:r1=>_r,r2=_r,:r3=>_r,:r4=>_r,r5=_r,r6=_r,r7=_r], s=sum(_a)) --> larr(axis1=darr(r=['X','Y','Z'],r1=['X','Y','Z'],r2=['X','Y','Z'],r3=['X','Y','Z'],r4=['X','Y','Z'],r5=['X','Y','Z'],r6=['X','Y','Z'],r7=['X','Y','Z']), s=[5,7,9])
+    @fact size(@select(darr(a=repmat(1:1_000,1000),b=1.0*1:1_000_000), by[:a], s=msum(_b))) --> (1000,)
+    @fact size(@update(darr(a=repmat(1:1_000,1000),b=1.0*1:1_000_000), by[:a], s=msum(_b))) --> (1000000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mprod(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mprod(_b, rev=true, window=10))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmean(_b, window=10))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmean(_b, window=1))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mminimum(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mminimum(_b, 1, window=10))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmaximum(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmaximum(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmedian(_b))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmedian(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmiddle(_b, 1, rev=true))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mmiddle(_b))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.2, window=20))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.5))) --> (10000,)
+    @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.1, rev=true))) --> (100,)
+    @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.8, rev=true))) --> (10000,)
   end
   context("misc tests") do
     @fact @select(larr(a=[1,1,2,3,4],b=enumeration([:a,:a,:b,:b,:b])), ct=length(_), by[:b]) --> larr(axis1=darr(b=[:a,:b]), ct=[2,3])

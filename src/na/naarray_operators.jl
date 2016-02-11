@@ -549,6 +549,143 @@ end
   end
 end
 
+#ifelse_inner{T,U,M,N,P,X,Y,Z}(cond::Union{Bool,Nullable{Bool},
+#                              AbstractArrayWrapper{Bool,M,X},
+#                              AbstractArrayWrapper{Nullable{Bool},M,X}},
+#                 x::Union{T,Nullable{T},
+#                          AbstractArrayWrapper{T,N,Y},
+#                          AbstractArrayWrapper{Nullable{T},N,Y}},
+#                 y::Union{U,Nullable{U},
+#                          AbstractArrayWrapper{U,P,Z},
+#                          AbstractArrayWrapper{Nullable{U},P,Z}}) = begin
+#  promoted_type = promote_type(T,U)
+#  result = ifelse_inner_similar(cond, x, y, promoted_type)
+#  for i in ifelse_inner_eachindex(cond, x, y, result)
+#    condi = ifelse_inner_getindex(cond, i)
+#    xi = ifelse_inner_getindex(x, i)
+#    yi = ifelse_inner_getindex(y, i)
+#    result[i] = condi.isnull ? yi : condi.value ? xi : yi
+#  end
+#  result
+#end
+ifelse_inner{T}(::Type{T}, cond::AbstractArray, x, y) = begin
+  result = ifelse_inner_similar(cond, x, y, Nullable{T})
+  nullelem = Nullable{T}()
+  for i in ifelse_inner_eachindex(cond, x, y, result)
+    condi = ifelse_inner_getindex(cond, i)
+    xi = ifelse_inner_getindex(x, i)
+    yi = ifelse_inner_getindex(y, i)
+    result[i] = condi.isnull ? nullelem : condi.value ? ifelse_inner_wrap_nullable(xi) : ifelse_inner_wrap_nullable(yi)
+  end
+  result
+end
+ifelse_inner{T}(::Type{T}, cond::Bool, x::AbstractArray, y::AbstractArray) = cond ? nalift(x) : nalift(y)
+ifelse_inner{T}(::Type{T}, cond::Nullable{Bool}, x::AbstractArray, y::AbstractArray) = cond.isnull ? ifelse_inner_broadcast_null(T,x) : cond.value ? nalift(x) : nalift(y)
+ifelse_inner{T}(::Type{T}, cond::Bool, x::AbstractArray, y) = cond ? nalift(x) : ifelse_inner_broadcast(x,y)
+ifelse_inner{T}(::Type{T}, cond::Nullable{Bool}, x::AbstractArray, y) = cond.isnull ? ifelse_inner_broadcast_null(T,x) : cond.value ? nalift(x) : ifelse_inner_broadcast(x,y)
+ifelse_inner{T}(::Type{T}, cond::Bool, x, y::AbstractArray) = cond ? ifelse_inner_broadcast(y,x) : nalift(y)
+ifelse_inner{T}(::Type{T}, cond::Nullable{Bool}, x, y::AbstractArray) = cond.isnull ? ifelse_inner_broadcast_null(T,y) : cond.value ? ifelse_inner_broadcast(y,x) : nalift(y)
+
+ifelse_inner_broadcast{U<:Nullable}(template::AbstractArray, v::U) = (r=similar(template,U);fill!(r,v);r)
+ifelse_inner_broadcast{U}(template::AbstractArray, v::U) = (r=similar(template,Nullable{U});nv=Nullable(v);fill!(r,nv);r)
+
+ifelse_inner_broadcast_null{T}(::Type{T}, template::AbstractArray) = (r=similar(template,Nullable{T});n=Nullable{T}();fill!(r,n);r)
+
+ifelse_inner_wrap_nullable(x::Nullable) = x
+ifelse_inner_wrap_nullable(x) = Nullable(x)
+
+# it's difficult to avoid all type ambiguity warnings without listing all these methods...
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{Nullable{T}}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{Nullable{T}}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{T}, y::AbstractArray{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::AbstractArrayWrapper{Nullable{T}}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::AbstractArray{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArrayWrapper{Nullable{T}}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::AbstractArrayWrapper{Nullable{T}}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::Nullable{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::Nullable{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::Nullable{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::Nullable{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::T, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::T, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Bool, x::Nullable{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::Nullable{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArray{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::T, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::Nullable{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::Nullable{T}, y::AbstractArrayWrapper{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+Base.ifelse{T,U}(cond::Bool, x::T, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::Nullable{Bool}, x::T, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArray{T}, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::T, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::AbstractArrayWrapper{Nullable{U}}) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::Nullable{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArray{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::T, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::Nullable{T}, y::AbstractArray{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::Nullable{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArray{T}, y::AbstractArray{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::AbstractArray{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::T, y::AbstractArray{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Bool}, x::T, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::Nullable{T}, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::Nullable{U}) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::Nullable{T}, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+Base.ifelse{T,U}(cond::AbstractArrayWrapper{Nullable{Bool}}, x::T, y::U) = ifelse_inner(promote_type(T,U), cond, x, y)
+
+ifelse_inner_similar(cond::AbstractArray, x::AbstractArray, y::AbstractArray, promoted_type) = similar(cond, promoted_type)
+ifelse_inner_similar(cond::AbstractArray, x::AbstractArray, y, promoted_type) = similar(cond, promoted_type)
+ifelse_inner_similar(cond::AbstractArray, x, y::AbstractArray, promoted_type) = similar(cond, promoted_type)
+ifelse_inner_similar(cond::AbstractArray, x, y, promoted_type) = similar(cond, promoted_type)
+
+ifelse_inner_eachindex(cond::AbstractArray, x::AbstractArray, y::AbstractArray, promoted_type) = eachindex(cond, x, y, promoted_type)
+ifelse_inner_eachindex(cond::AbstractArray, x::AbstractArray, y, promoted_type) = eachindex(cond, x, promoted_type)
+ifelse_inner_eachindex(cond::AbstractArray, x, y::AbstractArray, promoted_type) = eachindex(cond, y, promoted_type)
+ifelse_inner_eachindex(cond::AbstractArray, x, y, promoted_type) = eachindex(cond, promoted_type)
+
+ifelse_inner_getindex{T<:Nullable}(x::AbstractArray{T}, i) = x[i]
+ifelse_inner_getindex(x::AbstractArray, i) = Nullable(x[i])
+ifelse_inner_getindex(x, i) = x
 
 # TODO make sure this blanket definition is okay.
 # remvoed in favor of using == instead of .== for naop_eq (and similarly for naop_noeq).
