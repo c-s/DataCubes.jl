@@ -261,7 +261,6 @@ facts("Select tests") do
     @fact size(@select(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.1, rev=true))) --> (100,)
     @fact size(@update(darr(a=repmat(1:100,100),b=1.0*1:10000), by[:a], s=mquantile(_b, 0.8, rev=true))) --> (10000,)
   end
-
 end
 
 end
