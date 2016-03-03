@@ -99,7 +99,12 @@ facts("LabeledArray tests") do
     @fact pick(merge(d1, d2), [:a,2]) --> pick(d1, [:a,2])
     @fact pick(merge(d1, d2), [:x,:third,:z]) --> pick(d2, [:x,:third,:z])
     @fact keys(peel(merge(d1, d2))) --> Any[:a,2,:third,:x,:z]
-    @fact delete(merge(d1, d2), :a,2,:third) --> pick(d2, [:x, :z])
+    @fact peel(delete(merge(d1, d2), :a,2,:third)) --> pick(d2, [:x, :z])
+    @fact merge(larr(a=[1 2 3;4 5 6]), b=3.0) --> larr(a=[1 2 3;4 5 6], b=fill(3.0,2,3))
+    @fact merge(larr(a=[1 2 3;4 5 6]), darr(x=[:a :b :c;:d :e :f])) --> larr(a=[1 2 3;4 5 6], x=[:a :b :c;:d :e :f])
+    @fact merge(darr(a=[1 2 3;4 5 6]), larr(x=[:a :b :c;:d :e :f])) --> larr(a=[1 2 3;4 5 6], x=[:a :b :c;:d :e :f])
+    @fact merge(larr(a=[1 2 3;4 5 6]), darr(x=[:a :b :c;:d :e :f]), b=3.0) --> larr(a=[1 2 3;4 5 6], x=[:a :b :c;:d :e :f], b=fill(3.0,2,3))
+    @fact merge(darr(a=[1 2 3;4 5 6]), larr(x=[:a :b :c;:d :e :f]), b=3.0) --> larr(a=[1 2 3;4 5 6], x=[:a :b :c;:d :e :f], b=fill(3.0,2,3))
     @fact pick(d1, [:a]) --> DictArray(a=pick(d1, :a))
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[1]) --> @larr(c=[2,2,2], axis1[r=[:m,:n,:p]])
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),1) --> @larr(c=[2,2,2], axis1[r=[:m,:n,:p]])
@@ -130,7 +135,7 @@ facts("LabeledArray tests") do
 
     @fact mapslices(x->x[:a][1,1].value==1 ? LDict(:a=>Nullable(1)) : LDict(:a=>nalift([1 2 3])), larr(a=[1 2 3;4 5 6]),[1]) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:a=>[1 2 3]), LDict(:a=>[1 2 3])]))
     @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:b=>-1), larr(a=[1 2 3;4 5 6],axis1=[:X,:Y]),[1])) --> nalift(DataCubes.simplify_array(Any[LDict(:a=>1), LDict(:a=>2), LDict(:b=>-1)]))
-    @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:a=>-1), larr(a=[1 2 3;4 5 6],axis1=[:X,:Y]),[1])) --> darr(a=[1,2,-1])
+    @fact (i=0;mapslices(x->x[:a][1,1].value<=2 ? (i+=1;LDict(:a=>i)) : LDict(:a=>-1), larr(a=[1 2 3;4 5 6],axis1=[:X,:Y]),[1])) --> larr(a=[1,2,-1])
 
     @fact mapslices(x->[1], larr(a=Int[]), [1])  --> isnull
     @fact size(mapslices(x->[1], larr(a=rand(0,5,3)), [2])) --> (0,3)

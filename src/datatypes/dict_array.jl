@@ -28,7 +28,7 @@ DictArray(;kwargs...)
 ```
 
 """
-immutable DictArray{K,N,VS,SV} <: AbstractArray{LDict{K,SV}, N}
+immutable DictArray{K,N,VS,SV} <: AbstractDictArray{K,N,VS,SV}
   # each element is of type LDictt{K,SV}. The values are combined as a tuple of type V (V is taken out for now).
   # the number of dimensions is N.
   # The values of the array have type VS as a vector of arrays.
@@ -151,11 +151,7 @@ Base.getindex(arr::DictArray, indices::CartesianIndex) = #getindex(arr, indices.
 # some standard implementations to make a DictArray an AbstractArray.
 Base.getindex(arr::DictArray, args...) = begin
   res = LDict(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
-  #if is_scalar_indexing(args)
-  #  res
-  #else
   create_dictarray_nocheck(res)
-  #end
 end
 Base.getindex{K,SV}(arr::DictArray{K,TypeVar(:N),TypeVar(:VS),SV}, args::Int...) =
   create_ldict_nocheck(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
@@ -300,13 +296,14 @@ Base.reshape(arr::DictArray, dims::Int...) = create_dictarray_nocheck(mapvalues(
 Base.reshape(arr::DictArray, dims::Tuple{Vararg{Int}}) = reshape(arr, dims...)
 
 arrayadd(arr1::DictArray, arr2::DictArray) = DictArray(merge(arr1.data, arr2.data))
-arrayadd(arr1::DictArray, args...;kwargs...) = arrayadd(arr1, darr(args...;kwargs...))
+arrayadd(arr1::DictArray, arr2::DictArray, args...;kwargs...) = arrayadd(arr1, darr(arr2, args...;kwargs...))
+arrayadd(arr1::DictArray, args...;kwargs...) = arrayadd(arr1, darr(TableSize(arr1), args...;kwargs...))
 arrayadd(arr1::DictArray, args::AbstractArray) = throw(ArgumentError("cannot implement."))
 arrayadd(arr1::AbstractArray, arr2::AbstractArray) = mapna((x,y)->(x,y), arr1, arr2)
 
 """
 
-`merge(::DictArray, ::DictArray)`
+merge(::DictArray, ::DictArray)`
 
 Merge the two `DictArray`s. A duplicate field in the second `DictArray` will override that in the first one. Otherwise, the new field in the second `DictArray` will be appened after the first `DictArray` fields.
 If the first is `DictArray` and the remaining arguments are used to construct a `DictArray` and then the two are merged.
@@ -1216,6 +1213,18 @@ a b
 """
 function darr end
 
+darr_inner(tblsize::TableSize, kwargs...) = begin
+  sz = tblsize.size
+  for (k,v) in kwargs
+    if isa(v, AbstractArray) && sz != size(v)
+      throw(ArgumentError("the result sizes for different fields are inconsistent: $(string([k=>size(v) for (k,v) in kwargs]))"))
+    end
+  end
+  arraylifted_kwargs = Any[k=>isa(v, AbstractArray) ? v : fill(v, sz) for (k,v) in kwargs]
+  nalifted_kwargs = Any[k=>nalift(v) for (k,v) in arraylifted_kwargs]
+  DictArray(nalifted_kwargs...)
+end
+
 darr_inner(kwargs...) = begin
   common_array_size = Nullable()
   for (k,v) in kwargs
@@ -1236,7 +1245,7 @@ darr_inner(kwargs...) = begin
 end
 
 darr(arr::AbstractArray) = convert(DictArray, nalift(arr))
-darr(arr::DictArray, pairs...; kwargs...) = update_darr(arr, darr(pairs...; kwargs...)) #isempty(kwargs) ? arr : darr(arr, kwargs...)
+darr(arr::DictArray, pairs...; kwargs...) = update_darr(arr, darr(pairs...; kwargs...))
 darr(arr::DictArray) = arr
 darr(args...;kwargs...) = darr_inner(args..., kwargs...)
 

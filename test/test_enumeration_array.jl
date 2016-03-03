@@ -74,7 +74,7 @@ facts("EnumerationArray tests") do
     @fact pick(merge(d1, d2), [:a,2]) --> pick(d1, [:a,2])
     @fact pick(merge(d1, d2), [:x,:third,:z]) --> pick(d2, [:x,:third,:z])
     @fact keys(peel(merge(d1, d2))) --> Any[:a,2,:third,:x,:z]
-    @fact delete(merge(d1, d2), :a,2,:third) --> pick(d2, [:x, :z])
+    @fact peel(delete(merge(d1, d2), :a,2,:third)) --> pick(d2, [:x, :z])
     @fact pick(d1, [:a]) --> DictArray(a=pick(d1, :a))
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=enumeration([1 2 3;4 5 6]),b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[1]) --> @larr(c=[2,2,2], axis1[r=[:m,:n,:p]])
     @fact mapslices(x->LDict(:c=>Nullable(length(x))),@larr(a=enumeration([1 2 3;4 5 6]),b=["a" "b" "c";"d" "e" "f"],axis1[k=[:x,:y]],axis2[r=[:m,:n,:p]]),[2]) --> @larr(c=[3,3], axis1[k=[:x,:y]])

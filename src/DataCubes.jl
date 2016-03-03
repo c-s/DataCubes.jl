@@ -7,6 +7,7 @@ import Formatting: sprintf1
 # including files.
 include("common.jl")
 include("datatypes/ldict.jl")
+include("datatypes/abstract_types.jl")
 include("datatypes/dict_array.jl")
 include("datatypes/labeled_array.jl")
 include("datatypes/enumeration_array.jl")
@@ -18,12 +19,12 @@ include("util/sort.jl")
 include("util/ungroup.jl")
 include("util/array_util.jl")
 include("util/mapslices_base.jl")
-include("util/dataframe_interface.jl")
 include("util/unique.jl")
 include("util/union.jl")
 include("util/intersect.jl")
 include("util/setdiff.jl")
 include("util/array_helper_functions.jl")
+include("interface/dataframe_interface.jl")
 
 export LDict, DictArray, LabeledArray, EnumerationArray
 export @select,

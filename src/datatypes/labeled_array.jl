@@ -13,7 +13,7 @@ A `LabeledArray` consists of one main array, which we call the *base* array, and
 * `LabeledArray(arr; kwargs...)` creates a `LabeledArray` from a *base* array `arr` and a keyword argument of the form `axisN=V` for some integer `N` for the axis direction and a one dimensional array `V`. If `N` in `axisN` is omitted, the smallest available number is automatically chosen.
 
 """
-immutable LabeledArray{T,N,AXES<:Tuple,TN} <: AbstractArray{T,N}
+immutable LabeledArray{T,N,AXES<:Tuple,TN} <: AbstractLabeledArray{T,N,AXES,TN}
   data::TN
   axes::AXES
 
@@ -34,6 +34,9 @@ immutable LabeledArray{T,N,AXES<:Tuple,TN} <: AbstractArray{T,N}
 end
 
 (==)(arr1::LabeledArray, arr2::LabeledArray) = wrap_array(arr1.data)==wrap_array(arr2.data) && all(map(arr1.axes,arr2.axes) do x1,x2;wrap_array(x1)==wrap_array(x2) end)
+(==)(::LabeledArray, ::DictArray) = false
+(==)(::DictArray, ::LabeledArray) = false
+
 Base.copy(arr::LabeledArray) = LabeledArray(copy(arr.data), map(copy, arr.axes))
 
 """
@@ -1466,7 +1469,6 @@ i |X   5 5 X |Y   6 6 X
 """
 function larr end
 
-
 larr0(arr::LabeledArray, kwargs...) = begin
   data = []
   newaxes = Any[arr.axes...]
@@ -1567,12 +1569,17 @@ Base.merge(arr1::LabeledArray, arr2::LabeledArray) = begin
   @assert(pickaxis(arr1) == pickaxis(arr2))
   LabeledArray(merge(peel(arr1), peel(arr2)), pickaxis(arr1))
 end
+Base.merge(arr1::LabeledArray, arr2::LabeledArray, args...;kwargs...) = begin
+  merge(merge(arr1, arr2), args...;kwargs...)
+end
+Base.merge(arr::LabeledArray) = arr
 
 """
 
 `merge(::LabeledArray, ::DictArray...)`
+`merge(::LabeledArray, args...)`
 
-Merge the base of the `LabeledArray` and the rest `DictArray`s.
+Merge the base of the `LabeledArray` and either the rest `DictArray`s, or a `DictArray` created by `args...`.
 Together with the axes set of the input `LabeledArray`, return a new `LabeledArray`.
 
 ##### Examples
@@ -1589,7 +1596,11 @@ c |Z p 6
 ```
 
 """
-Base.merge(arr1::LabeledArray, args::DictArray...) = LabeledArray(merge(peel(arr1), args...), pickaxis(arr1))
+Base.merge(arr1::LabeledArray, arr2::DictArray) = LabeledArray(merge(peel(arr1), arr2), pickaxis(arr1))
+Base.merge(arr1::DictArray, arr2::LabeledArray) = LabeledArray(merge(arr1, peel(arr2)), pickaxis(arr2))
+Base.merge(arr1::LabeledArray, args...;kwargs...) = merge(arr1, darr(TableSize(arr1), args...;kwargs...))
+Base.merge(arr1::LabeledArray, arr2::DictArray, args...;kwargs...) = merge(merge(arr1, arr2), args...;kwargs...)
+Base.merge(arr1::DictArray, arr2::LabeledArray, args...;kwargs...) = merge(merge(arr1, arr2), args...;kwargs...)
 
 Base.similar(arr::LabeledArray) = LabeledArray(similar(peel(arr)), arr.axes)
 Base.similar{T}(arr::LabeledArray, ::Type{T}) = LabeledArray(similar(peel(arr), T), arr.axes)

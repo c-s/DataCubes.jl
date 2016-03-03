@@ -151,7 +151,7 @@ updatefunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
       addres = map(a) do konea
         konea[1] => konea[2](t, nothing)
       end
-      LabeledArray(darr(merge(t.data.data, LDict(addres...))...), t.axes)
+      LabeledArray(merge(t.data, addres...), t.axes)
     else
       # nocond, yesby
       selected_cartesian_indices_all::Vector{NTuple{N,Int}} = getcondition(t, [(tbl, inds) -> inds])
