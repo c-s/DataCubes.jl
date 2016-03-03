@@ -108,6 +108,7 @@ facts("EnumerationArray tests") do
     @fact slice(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
     @fact sub(@larr(a=enumeration([1 2 3;4 5 6]),axis2[r=enumeration([:x,:y,:z])]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
     @fact endof(@enumeration([1,2,3,NA,5])) --> 5
+    @fact DataCubes.wrap_array(reshape(@enumeration(6:-1:1),(2,3))) --> nalift([6 4 2;5 3 1])
     @fact nalift((a=enumeration([10,20,30,10,20]);a[1]=3;a)) --> nalift([30,20,30,10,20])
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, nalift([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1],[1,2,3]))
     @fact DataCubes.wrap_array((a=enumeration([1,2,3]);copy!(a, enumeration([3,2,1]));a)) --> DataCubes.wrap_array(enumeration([3,2,1]))
@@ -118,6 +119,8 @@ facts("EnumerationArray tests") do
     @fact_throws cat(1, enumeration([:a,:b]), enumeration([:c,:d]))
     @fact wrap_array(vcat(enumeration([:a :b :c],[:c,:b,:a,:d]), enumeration([:b :c :d],[:c,:b,:a,:d]), enumeration([:c :d :a],[:c,:b,:a,:d]))) --> wrap_array(enumeration([:a :b :c;:b :c :d;:c :d :a],[:c,:b,:a,:d]))
     @fact wrap_array(hcat(enumeration([:a :b :c],[:c,:b,:a,:d]), enumeration([:b :c :d],[:c,:b,:a,:d]), enumeration([:c :d :a],[:c,:b,:a,:d]))) --> wrap_array(enumeration([:a :b :c :b :c :d :c :d :a],[:c,:b,:a,:d]))
+    @fact enumeration(enumeration([:a,:c,:b]),[:a,:b]).elems --> [1,3,2]
+    @fact enumeration(enumeration([:a,:c,:b]),[:a,:b]).pool --> [:a,:b,:c]
   end
 end
 
