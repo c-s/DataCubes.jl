@@ -109,6 +109,7 @@ facts("DictArray tests") do
     @fact pick(merge(d1, d2), [:x,:third,:z]) --> pick(d2, [:x,:third,:z])
     @fact merge(d1, d2).data.keys --> Any[:a,2,:third,:x,:z]
     @fact delete(merge(d1, d2), :a,2,:third) --> pick(d2, [:x, :z])
+    @fact merge(darr(a=[1 2 3;4 5 6]), b=3.0) --> darr(a=[1 2 3;4 5 6], b=fill(3.0,2,3))
     @fact pick(d1, [:a]) --> DictArray(a=pick(d1, :a))
     @fact mapslices(x->x,@darr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"]),[]) --> @darr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"])
     #@fact mapslices(x->x,@darr(a=[1 2 3;4 5 6],b=["a" "b" "c";"d" "e" "f"]),[1]) --> Any[@darr(a=[1,4], b=["a","d"]),@darr(a=[2,5], b=["b","e"]),@darr(a=[3,6],b=["c","f"])]

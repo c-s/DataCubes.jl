@@ -32,10 +32,10 @@ facts("Ungroup tests") do
     d1 = darr(a=[1 2 3;4 5 6],b=['a' 'b' 'c';'d' 'e' 'f'])
     d2 = @darr(a=[10 11], b=['x' NA])
     combined1 = larr(Any[peel(d1), peel(d2)], axis1=[:set1, :set2])
-    @fact ungroup(combined1, 1) --> @darr(x1=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA])
-    @fact ungroup(combined1) --> @darr(x1=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA])
+    @fact ungroup(combined1, 1) --> @larr(x1=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA])
+    @fact ungroup(combined1) --> @larr(x1=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA])
     combined2 = larr(darr(Any[peel(d1) peel(d2)]), axis2=darr(k=[:set1, :set2]))
-    @fact ungroup(combined2, 2) --> reshape(@darr(k=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA]),1,8)
+    @fact ungroup(combined2, 2) --> reshape(@larr(k=[fill(:set1,6);fill(:set2,2)],a=[1,4,2,5,3,6,10,11],b=['a','d','b','e','c','f','x',NA]),1,8)
   end
 end
 
