@@ -70,7 +70,7 @@ end
 
 
 dictarray_to_dataframe(arr::DictArray{TypeVar(:T),1}) = begin
-  keys = [symbol(k) for k in arr.data.keys]
+  keys = [Symbol(k) for k in arr.data.keys]
   colindex = Index(Dict(map(ik->ik[2]=>ik[1], enumerate(keys))), keys)
   columns = Any[create_dataarray(v) for v in arr.data.values]
   DataFrame(columns, colindex)

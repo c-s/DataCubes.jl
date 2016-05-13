@@ -68,8 +68,8 @@ facts("LabeledArray tests") do
     @fact transpose(arr) --> LabeledArray(DictArray(mapvalues(transpose, arr.data.data)),
                                            axis1=arr.axes[2],
                                            axis2=arr.axes[1])
-    @fact permutedims(arr, (2,1)) --> transpose(arr)
-    @fact_throws permutedims(arr, (2,1,3))
+    @fact permutedims(arr, [2,1]) --> transpose(arr)
+    @fact_throws permutedims(arr, [2,1,3])
     @fact LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) ==
           LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) --> true
     @fact copy(arr) !== arr --> true

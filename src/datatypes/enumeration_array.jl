@@ -205,7 +205,7 @@ enumeration{T}(arr::AbstractArray{Nullable{T}}) = EnumerationArray(arr)
 enumeration(arr::AbstractArray{Nullable}) = throw(ArgumentError("the input array needs to be typed."))
 enumeration{T}(arr::AbstractArray{T}) = EnumerationArray(nalift(arr))
 enumeration{T}(arr::AbstractArray{Nullable{T}}, poolorder::Vector{T}) = EnumerationArray(arr, poolorder)
-enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = throw(ArgumentError("the input array needs to be typed."))
+enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = throw(ArgumentError("the input array needs to be typed.")) #: $(arr), $(eltype(arr)), $(poolorder), $(eltype(poolorder))."))
 enumeration(arr::AbstractArray, poolorder::Vector) = EnumerationArray(nalift(arr), poolorder)
 enumeration(arr::AbstractArray, poolorder) = EnumerationArray(nalift(arr), collect(poolorder))
 

@@ -41,7 +41,7 @@ immutable DictArray{K,N,VS,SV} <: AbstractDictArray{K,N,VS,SV}
     for i in 2:dictsize
       len = size(data.values[i])
       if len != commonlen
-        throw(ArgumentError("field lengths are not the same"))
+        throw(ArgumentError("field lengths are not the same: common length is $commonlen while the length for this particular column is $len."))
       end
     end
     new(data)
@@ -290,9 +290,9 @@ end
 Base.eltype{K,N,VS,SV}(::Type{DictArray{K,N,VS,SV}}) = LDict{K,SV}
 Base.endof(arr::DictArray) = length(arr)
 Base.findfirst(arr::DictArray, v::Tuple) = findfirst(arr, LDict(arr.data.keys, [v...]))
-Base.transpose(arr::DictArray{TypeVar(:T),2}) = create_dictarray_nocheck(mapvalues(transpose, arr.data))
-Base.permutedims(arr::DictArray, perm) = create_dictarray_nocheck(mapvalues(v->permutedims(v,perm), arr.data))
-Base.reshape(arr::DictArray, dims::Int...) = create_dictarray_nocheck(mapvalues(x->reshape(x, dims...), arr.data))
+Base.transpose(arr::DictArray{TypeVar(:T),2}) = mapvalues(transpose, arr)
+Base.permutedims(arr::DictArray, perm) = mapvalues(v->permutedims(v,perm), arr)
+Base.reshape(arr::DictArray, dims::Int...) = mapvalues(x->reshape(x, dims...), arr)
 Base.reshape(arr::DictArray, dims::Tuple{Vararg{Int}}) = reshape(arr, dims...)
 
 arrayadd(arr1::DictArray, arr2::DictArray) = DictArray(merge(arr1.data, arr2.data))
@@ -573,19 +573,19 @@ expand_array_fields(arrs::DictArray...) = begin
     for (k,v) in arr.data
       if haskey(eltypemap, k)
         # 2 eltypes because it is AbstractArray{Nullable{?}}.
-        eltypemap[k] = promote_type(eltype(eltype(v)), eltypemap[k])
+        eltypemap[k] = (k, promote_type(eltype(eltype(v)), eltypemap[k][2]))
       else
-        eltypemap[k] = eltype(eltype(v))
+        eltypemap[k] = (k, eltype(eltype(v)))
       end
     end
   end
   expanded_arrays = map(arrs) do arr
-    create_dictarray_nocheck(create_ldict_nocheck(map(eltypemap) do kv
+    create_dictarray_nocheck(create_ldict_nocheck(mapvalues(eltypemap) do kv
       k = kv[1]
       v = kv[2]
       if haskey(arr.data, k)
         arrdatak = arr.data[k]
-        k => if eltype(eltype(arrdatak)) === v
+        if eltype(eltype(arrdatak)) === v
           arrdatak
         else
           # copy if type promotion is necessary.
@@ -594,7 +594,7 @@ expand_array_fields(arrs::DictArray...) = begin
           copied
         end
       else
-        k => fill(Nullable{v}(), size(arr))
+        fill(Nullable{v}(), size(arr))
       end
     end...))
   end

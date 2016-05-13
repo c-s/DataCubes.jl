@@ -29,7 +29,7 @@ facts("EnumerationArray tests") do
     arr = larr(
                 :a=>enumeration(reshape(repeat(collect(1:4),inner=[1],outer=[5]),5,4)),
                 :b=>2.0*nalift(reshape(1:20,5,4)),
-                2=>enumeration(map(i->symbol(:sym,i), reshape(repeat(collect(1:4),inner=[1],outer=[5]),5,4))),
+                2=>enumeration(map(i->Symbol(:sym,i), reshape(repeat(collect(1:4),inner=[1],outer=[5]),5,4))),
                 :third=>enumeration(map(i->string(:str,i), reshape(repeat(collect(1:4),inner=[1],outer=[5]),5,4))),
           axis1=DictArray(k1=nalift(["a","a","b","b","b"]), k2=nalift(collect(101:105))),
           axis2=DictArray(r1=nalift([:alpha,:beta,:gamma,:delta])))

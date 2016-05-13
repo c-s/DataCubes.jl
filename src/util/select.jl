@@ -231,7 +231,7 @@ end
     @inbounds @nref($M,indcountmat,ids) += 1
   end
   subarrays_buf = Array(NTuple{$N,Int}, length(indices))
-  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},1})
+  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},SUBARRAY_LAST_TYPE})
   indsumsofar::Int = 0
   lenindcountmat::Int = length(indcountmat)
   for i in 1:lenindcountmat
@@ -1081,7 +1081,7 @@ select_inner(func, t, args...) = begin
   end
 end
 
-const verbatim_magic_symbol = symbol("__verbatim__")
+const verbatim_magic_symbol = Symbol("__verbatim__")
 
 lift_to_dict(expr) = begin
   if :head in fieldnames(expr) &&
@@ -1129,21 +1129,21 @@ end
 replace_expr_inner(expr, noescape_symbols...) = begin
   strexpr = string(expr)
   if isa(expr, Symbol) && startswith(strexpr, "__")
-    Expr(:ref, Expr(:call, :igna, :d), QuoteNode(symbol(strexpr[3:endof(strexpr)])))
+    Expr(:ref, Expr(:call, :igna, :d), QuoteNode(Symbol(strexpr[3:endof(strexpr)])))
   elseif isa(expr, Symbol) && startswith(strexpr, "_!")
-    Expr(:ref, Expr(:call, :isna, :d), QuoteNode(symbol(strexpr[3:endof(strexpr)])))
+    Expr(:ref, Expr(:call, :isna, :d), QuoteNode(Symbol(strexpr[3:endof(strexpr)])))
   elseif isa(expr, Symbol) && strexpr == "_"
     :d
   elseif isa(expr, Symbol) && startswith(strexpr, '_')
-    Expr(:ref, :d, QuoteNode(symbol(strexpr[2:endof(strexpr)])))
-  elseif :head in fieldnames(expr) && expr.head==:macrocall && expr.args[1] == symbol("@rap")
+    Expr(:ref, :d, QuoteNode(Symbol(strexpr[2:endof(strexpr)])))
+  elseif :head in fieldnames(expr) && expr.head==:macrocall && expr.args[1] == Symbol("@rap")
     # if it is @rap, give precedence to it.
     replace_expr_inner(recursive_rap(expr.args[2:end]...), noescape_symbols...)
   elseif :head in fieldnames(expr) && expr.head==:kw
     Expr(:kw, expr.args[1], replace_expr_inner(expr.args[2], noescape_symbols...))
-  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("__")
+  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==Symbol("__")
     Expr(:ref, Expr(:call, :igna, :d), esc(expr.args[2]))
-  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("_!")
+  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==Symbol("_!")
     Expr(:ref, Expr(:call, :isna, :d), esc(expr.args[2]))
   elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==:_
     #TODO need to fix this so that it works with an array of field names.
@@ -1189,7 +1189,7 @@ update_by_array{N}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,
     indcountvec[ids] += 1
   end
   subarrays_buf = Array(NTuple{N,Int}, length(indices))
-  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},1})
+  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},SUBARRAY_LAST_TYPE})
   indsumsofar::Int = 0
   lenindcountvec::Int = length(indcountvec)
   for i in 1:lenindcountvec

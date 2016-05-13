@@ -104,7 +104,7 @@ end
 # I need to pass the variable M as a number, so I define it as a mutable function.
 @generated expand_dims{N,M,L}(arr::AbstractArray{TypeVar(:T),N}, front_size::NTuple{M,Int}, back_size::NTuple{L,Int}) = begin
   tgt_ndims = N + M + L
-  srcindices = ntuple(n->symbol("i_",n+M), N)
+  srcindices = ntuple(n->Symbol("i_",n+M), N)
   srcexp = Expr(:ref, :arr, srcindices...)
   quote
     data = similar(arr, (front_size...,size(arr)...,back_size...))
@@ -116,7 +116,7 @@ end
 end
 
 # used internally as a default function to create a new field name.
-generic_fieldname(i::Int) = symbol('x', i)
+generic_fieldname(i::Int) = Symbol('x', i)
 is_generic_fieldname(fieldname) = isa(fieldname, Symbol) && startswith(string(fieldname), "x") && try
   parse(Int, string(fieldname)[2:end])
   true
@@ -414,7 +414,7 @@ replace_axes(arr::LabeledArray, arg; index_counter::Int=1) = begin
   else
     newkey = create_additional_fieldname(arr, tracker)
     axiswithkey = create_ldict_nocheck(newkey => resaxis)
-    res = larr(res, symbol(:axis,axis_index) => create_dictarray_nocheck(axiswithkey))
+    res = larr(res, Symbol(:axis,axis_index) => create_dictarray_nocheck(axiswithkey))
     axiswithkey
   end
   orig_axis_keys = axis.keys
@@ -432,7 +432,8 @@ replace_axes(arr::LabeledArray, arg; index_counter::Int=1) = begin
             1
           end
         end
-        axis_key => wrap_array(collect(selectfield(res, axis_key)[coords...]))
+        axis_value = selectfield(res, axis_key)[coords...]
+        axis_key => wrap_array(reshape(axis_value, length(axis_value)))
       end
     end)...)
   end
@@ -648,12 +649,12 @@ get_nullable_value(x::Nullable, default_axis_value) = x.isnull ? default_axis_va
 
 const default_name_delimeter = '_'
 default_fieldname_collapse_function(axistuple, field) = begin
-  symbol(map(x->string(x, default_name_delimeter), axistuple)..., string(field))
+  Symbol(map(x->string(x, default_name_delimeter), axistuple)..., string(field))
 end
 default_fieldname_collapse_function(axistuple) = if length(axistuple) == 1
   axistuple[1]
 else
-  symbol(join(axistuple, default_name_delimeter))
+  Symbol(join(axistuple, default_name_delimeter))
 end
 
 """
@@ -1737,7 +1738,7 @@ end
       any(x->x==0, coords) ? Nullable{T}() : arr[coords...]
     end
   else
-    result_coords_tuple = Expr(:tuple, [symbol("i_", d) for d in non_scalar_directions]...)
+    result_coords_tuple = Expr(:tuple, [Symbol("i_", d) for d in non_scalar_directions]...)
     quote
       resultsize = [length(ind) for ind in indices][$non_scalar_directions]
       result = similar(arr, resultsize...)

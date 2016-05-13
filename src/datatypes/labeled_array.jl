@@ -695,12 +695,12 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
       break
     end
   end
-  if ndims(dataelem) == v04ndims
-    # this is the expected behavior for v0.4:
-    LabeledArray(dataelem, (axeselem[1:v04ndims]...))
-  else
+  if IS_JULIA_V05
     # this is the expected behavior for v0.5, if one direction before the last non integer index is an integer index.
     LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
+  else
+    # this is the expected behavior for v0.4:
+    LabeledArray(dataelem, (axeselem[1:v04ndims]...))
   end
 end
 
@@ -1270,26 +1270,6 @@ Base.reshape(arr::LabeledArray, dims::Int...) = begin
   LabeledArray(newdata, (newaxes...))
 end
 
-"""
-
-##### Description
-
-reorders the fields such that the first field names are `names`.
-The rest field names are placed sequentially after that.
-
-"""
-function reorder end
-
-"""
-
-##### Description
-
-renames the fields such that the first field names are `names`.
-The rest field names remain the same.
-
-"""
-function rename end
-
 
 """
 
@@ -1605,3 +1585,5 @@ Base.merge(arr1::DictArray, arr2::LabeledArray, args...;kwargs...) = merge(merge
 Base.similar(arr::LabeledArray) = LabeledArray(similar(peel(arr)), arr.axes)
 Base.similar{T}(arr::LabeledArray, ::Type{T}) = LabeledArray(similar(peel(arr), T), arr.axes)
 Base.similar(arr::LabeledArray, args...) = similar(peel(arr), args...)
+Base.similar(arr::LabeledArray, tpe::Type, dims::Tuple) = similar(peel(arr), tpe, dims)
+Base.similar{N}(arr::LabeledArray, tpe::Type, dims::Tuple{Vararg{Int,N}}) = similar(peel(arr), tpe, dims)

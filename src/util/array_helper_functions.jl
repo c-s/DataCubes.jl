@@ -227,7 +227,10 @@ Base.std{T}(arr::AbstractArrayWrapper{Nullable{T}}; corrected::Bool=true, mean=n
 end
 
 # TODO need to optimize this without converting to another arrays first.
-Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
+Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T},1}, arr2::AbstractArrayWrapper{Nullable{U},1}) = cov_base(arr1, arr2)
+Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrapper{Nullable{U},2}) = cov_base(arr1, arr2)
+Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cov_base(arr1, arr2)
+cov_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
   v1 = Array(T,length(arr1))
   v2 = Array(U,length(arr2))
@@ -248,7 +251,10 @@ Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrappe
 end
 
 # TODO need to optimize this without converting to another arrays first.
-Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
+Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T},1}, arr2::AbstractArrayWrapper{Nullable{U},1}) = cor_base(arr1, arr2)
+Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrapper{Nullable{U},2}) = cor_base(arr1, arr2)
+Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cor_base(arr1, arr2)
+cor_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
   v1 = Array(T,length(arr1))
   v2 = Array(U,length(arr2))
@@ -341,8 +347,9 @@ Base.quantile(arr::DictArray, q::Number) = mapvalues(v->quantile(v, q), arr.data
 Base.quantile(arr::LabeledArray, q::Number) = quantile(arr.data, q)
 
 for op = [:cov, :cor]
+  op_base = Symbol(op, "_base")
   @eval begin
-    $(op)(arr1::DictArray, arr2::DictArray) = begin
+    $(op_base)(arr1::DictArray, arr2::DictArray) = begin
       axis1 = keys(arr1)
       axis2 = keys(arr2)
       # the covariance matrix should not be large.
@@ -355,13 +362,19 @@ for op = [:cov, :cor]
       end
       larr(data, axis1=axis1, axis2=axis2)
     end
-    $(op)(arr1::LabeledArray, arr2::LabeledArray) = begin
+    $(op_base)(arr1::LabeledArray, arr2::LabeledArray) = begin
       assert(arr1.axes == arr2.axes)
       $(op)(arr1.data, arr2.data)
     end
+    $(op)(arr1::DictArray,arr2::DictArray) = $(op_base)(arr1, arr2)
+    $(op)(arr1::DictArray{TypeVar(:T),1},arr2::DictArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
+    $(op)(arr1::DictArray{TypeVar(:T),2},arr2::DictArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
     $(op)(arr::DictArray{TypeVar(:T),1}) = $(op)(arr, arr)
     $(op)(arr::DictArray{TypeVar(:T),2}) = $(op)(arr, arr)
     $(op)(arr::DictArray) = $(op)(arr, arr)
+    $(op)(arr1::LabeledArray,arr2::LabeledArray) = $(op_base)(arr1, arr2)
+    $(op)(arr1::LabeledArray{TypeVar(:T),1},arr2::LabeledArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
+    $(op)(arr1::LabeledArray{TypeVar(:T),2},arr2::LabeledArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
     $(op)(arr::LabeledArray{TypeVar(:T),1}) = $(op)(arr, arr)
     $(op)(arr::LabeledArray{TypeVar(:T),2}) = $(op)(arr, arr)
     $(op)(arr::LabeledArray) = $(op)(arr, arr)
@@ -1875,3 +1888,9 @@ shift{T}(arr::AbstractArrayWrapper{Nullable{T}}, offsets::Integer...;isbound=fal
 end
 shift(arr::DictArray, offsets::Integer...;isbound=false) = DictArray(mapvalues(v->shift(v, offsets...;isbound=isbound), arr.data))
 shift(arr::LabeledArray, offsets::Integer...;isbound=false) = LabeledArray(shift(arr.data, offsets...;isbound=isbound), arr.axes)
+
+if IS_JULIA_V05
+  Base.iteratorsize(::ZipNonNAIterator) = Base.SizeUnknown()
+  Base.iteratorsize(::EnumerateNonNAIterator) = Base.SizeUnknown()
+  Base.iteratorsize(::NonNAIterator) = Base.SizeUnknown()
+end

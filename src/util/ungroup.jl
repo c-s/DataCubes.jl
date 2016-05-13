@@ -88,7 +88,7 @@ create_ungroup_offsets(ref_field::AbstractArray) = begin
 end
 
 @generated ungroup{N,M}(arr::AbstractArray{TypeVar(:T),N}, ref_field::AbstractArray{TypeVar(:U),M}, cumsum::Int, offsets::Vector{Int}) = begin
-  isym = symbol("i_", M)
+  isym = Symbol("i_", M)
   quote
     if length(arr) == 0
       error("not yet determined: what to do when ungrouping an empty array?")

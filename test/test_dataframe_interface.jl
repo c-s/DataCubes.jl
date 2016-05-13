@@ -26,20 +26,19 @@ facts("DataFrameInterface tests") do
     @fact DataCubes.wrap_array(DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))) --> DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))
     @fact DataCubes.type_array(DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))) --> DataFrame(@larr(A=collect(1:10), B=repmat(["x","y"],5), C=fill(:sym,10)))
 
-  #using DataCubes;using DataFrames;using RDatasets
   context("RDatasets readability tests") do
     #for pd in zip(collect(values(peel(@select(@darr(datasets()), :Package, :Dataset))))...)
     #  d = @darr(dataset(map(x->x.value, pd)...))
     #  l = @larr(dataset(map(x->x.value, pd)...))
     #  nothing
     #end
-    @fact (dataset("datasets", "iris");nothing) --> nothing
-    @fact @darr(dataset("datasets", "iris")) --> convert(DictArray, dataset("datasets", "iris"))
-    @fact @larr(dataset("datasets", "iris")) --> convert(LabeledArray, dataset("datasets", "iris"))
+    iris = dataset("datasets", "iris")
+    @fact @darr(iris) --> convert(DictArray, iris)
+    @fact @larr(iris) --> convert(LabeledArray, iris)
 
-    @fact (dataset("boot", "neuro");nothing) --> nothing
-    @fact @darr(dataset("boot", "neuro")) --> convert(DictArray, dataset("boot", "neuro"))
-    @fact @larr(dataset("boot", "neuro")) --> convert(LabeledArray, dataset("boot", "neuro"))
+    neuro = dataset("boot", "neuro")
+    @fact @darr(neuro) --> convert(DictArray, neuro)
+    @fact @larr(neuro) --> convert(LabeledArray, neuro)
   end
 end
 
