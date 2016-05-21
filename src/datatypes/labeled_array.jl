@@ -690,7 +690,7 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
   ndimstable = ndims(table)
   v04ndims = ndimstable
   for i in ndimstable:-1:1
-    if !isa(axeselem[i], Real)
+    if !isa(indices[i], Real)
       v04ndims = i
       break
     end
