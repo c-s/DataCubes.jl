@@ -103,9 +103,9 @@ convert_to_dictarray_if_possible{K,V,N}(arr::AbstractArray{Nullable{LDict{K,V}},
   arr
 else
   # needed to use map! instead of map to avoid some "type A is not equal to type A" error in Julia.
-  nullablearr = similar(arr, LDict{K,Nullable})
-  map!(x->mapvalues(apply_nullable, x.value), nullablearr, arr)
-  #nullablearr = map(x->mapvalues(apply_nullable, x.value), arr)
+  #nullablearr = similar(arr, LDict{K,Nullable})
+  #map!(x->mapvalues(apply_nullable, x.value), nullablearr, arr)
+  nullablearr = map(x->mapvalues(apply_nullable, x.value), arr)
   convert_to_dictarray_if_possible(nullablearr)
 end
 convert_to_dictarray_if_possible{K,V<:Nullable,N}(arr::AbstractArray{Nullable{LDict{K,V}},N}) = if any(x->x.isnull, arr)

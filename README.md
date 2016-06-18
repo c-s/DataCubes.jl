@@ -252,7 +252,7 @@ A field name itself creates the same field in the returned array.
 Keyword/pair arguments determine how to aggregate the fields. In the last example, `count=length(_)` creates a field `count` whose value is the length of the selected values for each by-variable.
 Multiple `where[...]` are allowed and they are simply concatenated.
 Then the `by[...]` determines what variables to aggregate the table by:
-A field name in `...` uses that field as the by-variable.
+a field name in `...` uses that field as the by-variable.
 Keyword/pair arguments in `...` creates a new field and use those as by-variables.
 
 `selct` is a function version of `@select`. It is similar but of course does not provide the underscore version of convenient way of creating a function.
