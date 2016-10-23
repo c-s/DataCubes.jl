@@ -140,7 +140,7 @@ facts("ArrayUtil tests") do
     @fact providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)) --> larr(a=reshape(1:10,2,5), axis1=darr("column1"=>[1,2]), axis2=darr("column2"=>[1,2,3,4,5]))
     @fact withdrawnames(providenames(larr(1:10))) --> larr(1:10)
     @fact withdrawnames(providenames(larr(reshape(1:10,2,5), axis1=darr(k=[:x,:y])))) --> larr(reshape(1:10,2,5), axis1=darr(k=[:x,:y]))
-    @fact withdrawnames(providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)), name->isa(name, ASCIIString) && startswith(name, "column")) --> larr(a=reshape(1:10,2,5))
+    @fact withdrawnames(providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)), name->isa(name, String) && startswith(name, "column")) --> larr(a=reshape(1:10,2,5))
   end
   context("darr/larr tests") do
     @fact @larr(@larr(a=[1,2,3]),b=[10,11,12], axis1[r=[:a,:b,"x"]]) --> @larr(a=[1,2,3],b=[10,11,12], axis1[r=[:a,:b,"x"]])
@@ -336,7 +336,7 @@ facts("ArrayUtil tests") do
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a).value --> 1
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a, :b) --> nalift([1,:x])
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))[1].value --> 1
-    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable,1}
+    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable{Any},1}
   end
 end
 

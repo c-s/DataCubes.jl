@@ -154,13 +154,12 @@ Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs
 
 Base.next{T}(arr::FloatNAArray{T}, state) = ((x,ns)=next(arr.data, state);isnan(x) ? (Nullable{T}(),ns) : (Nullable(x),ns))
 Base.linearindexing{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Base.linearindexing(A)
-Base.sub(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
-Base.slice(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(slice(arr.data, args...))
-Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= FloatNAArray(sub(arr.data, args...))
-Base.slice(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(slice(arr.data, args...))
+#Base.sub(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
+Base.view(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(view(arr.data, args...))
+#Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= FloatNAArray(sub(arr.data, args...))
+Base.view(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = FloatNAArray(view(arr.data, args...))
 @delegate(FloatNAArray.data, Base.start, Base.done, Base.size, Base.find)
-@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.reshape, Base.sort, Base.sort!, Base.reverse,
-                                      Base.sub, Base.slice)
+@delegate_and_lift(FloatNAArray.data, Base.transpose, Base.permutedims, Base.reshape, Base.sort, Base.sort!, Base.reverse, Base.view)
 Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, n::Int) = FloatNAArray(repmat(arr.data, n))
 Base.repmat(arr::Union{FloatNAArray{TypeVar(:T),1},FloatNAArray{TypeVar(:T),2}}, m::Int, n::Int) = FloatNAArray(repmat(arr.data, m, n))
 Base.similar{T,N}(arr::FloatNAArray, ::Type{T}, dims::NTuple{N,Int}) = similar(arr.data, T, dims)

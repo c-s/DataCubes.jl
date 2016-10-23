@@ -16,7 +16,8 @@ AbstractArrayLT(arr::Union{DictArray,LabeledArray}, axis::Integer, field_names..
   ndimsarr = ndims(arr)
   fields = map(field_names) do name
     #collect(selectfield(arr, name)[get(kv, Symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...])
-    selectfield(arr, name)[get(kv, Symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...].a
+    r = selectfield(arr, name)[get(kv, Symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...].a
+    r
   end
   AbstractArrayLT{length(field_names),typeof(ords),typeof(fields)}(ords, fields)
 end

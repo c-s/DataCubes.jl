@@ -22,19 +22,21 @@ Base.setindex!{T,N}(arr::AbstractArrayWrapper{T,N}, v::T, args::Int...) = setind
 Base.setindex!{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, v::T, args::Int...) = setindex!(arr.a, v, args...)
 Base.eltype{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = T
 Base.linearindexing{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = Base.linearindexing(A)
-Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
-Base.slice(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(slice(arr.a, args...))
-Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args))
-Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args))
+#Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
+Base.view(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(view(arr.a, args...))
+#Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args))
+Base.view(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(view(arr.a, args))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, n::Int) = AbstractArrayWrapper(repmat(arr.a, n))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, m::Int, n::Int) = AbstractArrayWrapper(repmat(arr.a, m, n))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find, Base.fill!)
 @delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
-                                   Base.sub, Base.slice)
+                                   Base.view)
 Base.sort(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort(arr.a, args))
 Base.sort!(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort!(arr.a, args))
+# necessary to avoid some 'no-op tranpose fallback' warning.
+Base.transpose(x::Nullable) = x
 Base.reshape(arr::AbstractArrayWrapper, args::Tuple{Vararg{Int}}) = AbstractArrayWrapper(reshape(arr.a, args))
 Base.reshape(arr::AbstractArrayWrapper, args::Int...) = AbstractArrayWrapper(reshape(arr.a, args...))
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))

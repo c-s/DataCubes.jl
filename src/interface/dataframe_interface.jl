@@ -40,7 +40,7 @@ create_dataarray{T}(arr::AbstractArray{Nullable{T}}) = begin
   end
   value_array = Array{T}(size(arr))
   arbitrary_array = similar([],T,1)
-  anyelem = if isdefined(arbitrary_array,1)
+  anyelem = if isassigned(arbitrary_array,1)
     arbitrary_array[1]
   else
     find_nonnull(arr)

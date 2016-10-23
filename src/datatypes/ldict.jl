@@ -241,7 +241,7 @@ catch err
   # Without knowing the reason precisely, I just put a try catch expression.
   # Hopefully, this will not impact the performance much.
   if isa(err, TypeError)
-    buf = cell(length(ldict.values))
+    buf = Array{Any}(length(ldict.values))
     map!(f, buf, ldict.values)
     LDict(ldict.keys, collect(simplify_array(buf)))
   else

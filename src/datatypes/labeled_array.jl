@@ -138,7 +138,7 @@ julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
 set_format_string!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
 
 # some functions to set the height and width of output LabeledArrays to console.
-default_showsize = () -> ((height,width) = iosize_compat();(max(20,ceil(Int,height*0.5)),width-7))
+default_showsize = () -> ((height,width) = displaysize();(max(20,ceil(Int,height*0.5)),width-7))
 
 """
 
@@ -695,27 +695,27 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
       break
     end
   end
-  if IS_JULIA_V05
+  #if IS_JULIA_V05
     # this is the expected behavior for v0.5, if one direction before the last non integer index is an integer index.
-    LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
-  else
+  LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
+  #else
     # this is the expected behavior for v0.4:
-    LabeledArray(dataelem, (axeselem[1:v04ndims]...))
-  end
+  #  LabeledArray(dataelem, (axeselem[1:v04ndims]...))
+  #end
 end
 
 wrap_scalar_inner(index, elem) = elem
 wrap_scalar_inner(index::Real, elem) = [elem]
 
 axis_index(axis, index) = axis[index]
-axis_sub(axis, index) = sub(axis, index)
-axis_slice(axis, index) = slice(axis, index)
+#axis_sub(axis, index) = sub(axis, index)
+axis_slice(axis, index) = view(axis, index)
 
 axis_index(axis::DefaultAxis, i::Int) = i
 axis_index(axis::DefaultAxis, ::Colon) = axis
 axis_index(axis::DefaultAxis, index::AbstractArray{Bool}) = DefaultAxis(length(find(index)))
 axis_index(axis::DefaultAxis, index) = DefaultAxis(length(index))
-axis_sub(axis::DefaultAxis, index) = axis_index(axis, index)
+#axis_sub(axis::DefaultAxis, index) = axis_index(axis, index)
 axis_slice(axis::DefaultAxis, index) = axis_index(axis, index)
 
 Base.getindex(table::LabeledArray, indices::Int) =
@@ -745,22 +745,34 @@ Base.permutedims(table::LabeledArray, perms) = begin
     throw(ArgumentError("LabeledArray permutedims: the number of axes is not the same as the length of the permutations."))
   end
   newdata = permutedims(table.data, perms)
-  newaxes = cell(lenaxes)
+  newaxes = Array{Any}(lenaxes)
   for i=1:lenaxes
     newaxes[i] = table.axes[perms[i]]
   end
   LabeledArray(newdata,(newaxes...))
 end
 Base.setindex!(table::LabeledArray, v, args...) = setindex!(table.data, v, args...)
-Base.Multimedia.writemime(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
-Base.sub(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
-  dataelem = sub(table.data, indices...)
-  axeselem = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(table.axes,indices)]
-  newN = ndims(dataelem)
-  LabeledArray(dataelem, (axeselem[1:newN]...))
-end
-Base.slice(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
-  dataelem = slice(table.data, indices...)
+Base.show(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
+#sub(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
+#  dataelem = sub(table.data, indices...)
+#  #axeselem = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(table.axes,indices)]
+#  axeselem = sub_labeled_array_axes_helper(table.axes, indices)
+#  newN = ndims(dataelem)
+#  LabeledArray(dataelem, (axeselem[1:newN]...))
+#end
+#sub_labeled_array_axes_helper_expr = if IS_JULIA_V05
+#  quote
+#    sub_labeled_array_axes_helper(axes, indices) = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(axes, indices))...]]
+#  end
+#else
+#  quote
+#    sub_labeled_array_axes_helper(axes, indices) = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(axes,indices)]
+#  end
+#end
+#eval(sub_labeled_array_axes_helper_expr)
+
+Base.view(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
+  dataelem = view(table.data, indices...)
   axeselem = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
   newN = ndims(dataelem)
   LabeledArray(dataelem, (axeselem[1:newN]...))
@@ -798,15 +810,22 @@ Base.linearindexing(::Type{BroadcastAxis}) = Base.LinearSlow()
 Base.getindex(axis::BroadcastAxis, arg::CartesianIndex) = getindex(axis.axis, arg[axis.index])
 Base.getindex(axis::BroadcastAxis, args...) = begin
   newaxis = getindex(axis.axis, args[axis.index])
-  if isa(newaxis, AbstractArray)
-    newbase = sub(axis.base, args...)
-    BroadcastAxis(newaxis, newbase, axis.index)
-  else
-    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
-    # I cannot think of an alternative. Let's do a copy.
-    fill(newaxis, size(sub(axis.base, args...)))
-  end
+  getindex_broadcast_sub(newaxis, axis, args)
 end
+getindex_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+  newbase = view(axis.base, args...)
+  # Let's figure out the new axis.index.
+  testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
+  testbase = view(axis.base, testargs...)
+  BroadcastAxis(newaxis, newbase, ndims(testbase))
+end
+getindex_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+  # this is definitely not one point.
+  # it is one coord along the axis index, but ranges along some other directions.
+  # I cannot think of an alternative. Let's do a copy.
+  fill(newaxis, size(view(axis.base, args...)))
+end
+
 Base.getindex(axis::BroadcastAxis, index::Int...) = getindex(axis.axis, index[axis.index])
 Base.getindex(axis::BroadcastAxis, index::Int) = begin
   getindex(axis.axis, ind2sub(axis.base, index)[axis.index])
@@ -815,24 +834,31 @@ end
 getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
 getindexvalue(axis::BroadcastAxis, args...) = begin
   newaxis = getindexvalue(axis.axis, args[axis.index])
-  if isa(newaxis, AbstractArray)
-    newbase = sub(axis.base, args...)
-    BroadcastAxis(newaxis, newbase, axis.index)
-  else
-    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
-    # I cannot think of an alternative. Let's do a copy.
-    fill(newaxis, size(sub(axis.base, args...)))
-  end
+  getindexvalue_broadcast_sub(newaxis, axis, args)
 end
+getindexvalue_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+  newbase = view(axis.base, args...)
+  # Let's figure out the new axis.index.
+  testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
+  testbase = view(axis.base, testargs...)
+  BroadcastAxis(newaxis, newbase, ndims(testbase))
+end
+getindexvalue_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+  # this is definitely not one point.
+  # it is one coord along the axis index, but ranges along some other directions.
+  # I cannot think of an alternative. Let's do a copy.
+  fill(newaxis, size(view(axis.base, args...)))
+end
+
 getindexvalue(axis::BroadcastAxis, index::Int...) = getindexvalue(axis.axis, index[axis.index])
 getindexvalue(axis::BroadcastAxis, index::Int) = begin
   getindexvalue(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
-# TODO let's make sub/slice for one dimensional indexing.
-Base.sub(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], sub(arr.base, args...), arr.index)
-Base.slice(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], slice(arr.base, args...), arr.index)
-Base.sub(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= sub(arr, args...)
-Base.slice(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = slice(arr, args...)
+# TODO let's make sub/view for one dimensional indexing.
+#sub(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], sub(arr.base, args...), arr.index)
+Base.view(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], view(arr.base, args...), arr.index)
+#sub(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= sub(arr, args...)
+Base.view(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = view(arr, args...)
 
 """
 
@@ -896,10 +922,10 @@ Base.cat(catdim::Integer, arr1::LabeledArray, arrs::LabeledArray...) = begin
   end
   newdata = cat(catdim, arr1.data, map(x->x.data, arrs)...)
   arrlist = Any[arr1,arrs...]
-  newaxes = cell(max(map(ndims, arrlist)...))
+  newaxes = Array{Any}(max(map(ndims, arrlist)...))
   for arr in arrlist
     for i in 1:length(arr.axes)
-      if i != catdim && isdefined(newaxes, i) && arr.axes[i] != newaxes[i]
+      if i != catdim && isassigned(newaxes, i) && arr.axes[i] != newaxes[i]
         throw(ArgumentError("array dimensions in the arguments for cat do not match."))
       else
         newaxes[i] = arr.axes[i]
@@ -933,12 +959,12 @@ Base.repeat(arr::LabeledArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Ar
   LabeledArray(newdata, (newaxes..., additional_axes...))
 end
 
-Base.Multimedia.writemime{N}(io::IO,
-                             ::MIME"text/html",
-                             table::LabeledArray{TypeVar(:T),N};
-                             height::Int=dispsize()[1],
-                             width::Int=dispsize()[2],
-                             alongrow::Bool=todisp_alongrow) = begin
+Base.show{N}(io::IO,
+             ::MIME"text/html",
+             table::LabeledArray{TypeVar(:T),N};
+             height::Int=dispsize()[1],
+             width::Int=dispsize()[2],
+             alongrow::Bool=todisp_alongrow) = begin
   ndimstable = ndims(table)
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
@@ -957,18 +983,18 @@ Base.Multimedia.writemime{N}(io::IO,
     print(io, index)
     print(io, ']')
     print(io, '\n')
-    Base.Multimedia.writemime(io, MIME("text/html"), getindex(table, coords...); height=height, width=width, alongrow=alongrow)
+    show(io, MIME("text/html"), getindex(table, coords...); height=height, width=width, alongrow=alongrow)
     print(io, "</li>")
   end
   print(io, "</ul>")
 end
 
-Base.Multimedia.writemime(io::IO, ::MIME"text/html", table::LabeledArray{TypeVar(:T),0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show(io::IO, ::MIME"text/html", table::LabeledArray{TypeVar(:T),0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, "0 dimensional LabeledArray")
 end
 
 
-Base.Multimedia.writemime(io::IO, ::MIME"text/html", table::Union{LabeledArray{TypeVar(:T),1},LabeledArray{TypeVar(:T),2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show(io::IO, ::MIME"text/html", table::Union{LabeledArray{TypeVar(:T),1},LabeledArray{TypeVar(:T),2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -1115,7 +1141,7 @@ y |a |3 4
 
 
 julia> create_dict(t)
-Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
+Dict{Nullable{Symbol},Dict{Nullable{String},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
   Nullable(:y) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(4)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(3)))
   Nullable(:x) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(2)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(1)))
 ```
@@ -1510,7 +1536,7 @@ update_larr(base::LabeledArray, data; kwargs...) = begin
   newaxes = if isempty(kwargs)
     base.axes
   else
-    axes = cell(length(base.axes))
+    axes = Array{Any}(length(base.axes))
     copy!(axes, base.axes)
     for (k,v) in kwargs
       kstr = string(k)
