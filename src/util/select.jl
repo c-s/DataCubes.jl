@@ -99,13 +99,8 @@ selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
   end
 end
 
-#select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = begin
-#  result = Array(T, length(indices))
-#  select_cartesian_elements_helper2(fld
-
 @generated select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = quote
   result = Array(T, length(indices))
-  #result::T = similar(fld, length(indices))
   for i in eachindex(result)
     @inbounds index = indices[i]
     @inbounds result[i] = @nref $N fld d->index[d]
@@ -116,7 +111,6 @@ end
 @generated select_cartesian_elements_helper{T<:AbstractFloat,N,A}(fld::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                                 indices::Vector{NTuple{N,Int}}) = quote
   result = Array(T, length(indices))
-  #result::T = similar(fld, length(indices))
   fldunderlying = fld.a.data
   for i in eachindex(result)
     @inbounds index = indices[i]
@@ -231,13 +225,13 @@ end
     @inbounds @nref($M,indcountmat,ids) += 1
   end
   subarrays_buf = Array(NTuple{$N,Int}, length(indices))
-  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},1})
+  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},true})
   indsumsofar::Int = 0
   lenindcountmat::Int = length(indcountmat)
   for i in 1:lenindcountmat
     prevsum = indsumsofar
     @inbounds indsumsofar += indcountmat[i]
-    @inbounds index_subarrays[i] = sub(subarrays_buf, prevsum+1:indsumsofar)
+    @inbounds index_subarrays[i] = view(subarrays_buf, prevsum+1:indsumsofar)
   end
   # change the meaning of indcountmat, not to create another buffer.
   fill!(indcountmat, 0)
@@ -300,15 +294,9 @@ end
   end
 end
 
-#bymap_coords_calculate_helper{T}(bymap::Dict{T,Int}, byvec, bytype::Type{T}, i::Int) = begin
-#  v::T = getindexvalue(byvec,bytype,i)
-#  bymap[v]::Int
-#end
-
 create_bymap(byvec::DictArray, skip_ordering::Bool=false) = begin
   # N 1 dimensional vectors to store the result axis labels.
   labelvecs = ntuple(length(byvec.data)) do d
-    #elvaluetype(byvec.data.values[d])[]
     create_zero_byvec(byvec.data.values[d])
   end
   create_bymap_inner(byvec, labelvecs, Tuple{[elvaluetype(v) for v in byvec.data.values]...}, skip_ordering)
@@ -478,11 +466,10 @@ Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,
 Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims...)
 # need this special case because the underlying arr.data is not of the same shape as the corresponding SubArrayView.
 Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}) = similar(arr.data, U, size(arr))
-Base.sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, sub(arr.indices, args...))
-Base.slice(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, slice(arr.indices, args...))
-Base.sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(arr.data, sub(arr.indices, args...))
-Base.slice(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = SubArrayView(arr.data, slice(arr.indices, args...))
-#getindexvalue{T}(arr::SubArrayView, ::Type{T}, arg::Int) = getindexvalue(arr.data, T, arr.indices[arg]...)
+sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, sub(arr.indices, args...))
+view(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, view(arr.indices, args...))
+sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(arr.data, sub(arr.indices, args...))
+view(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = SubArrayView(arr.data, view(arr.indices, args...))
 getindexvalue(arr::SubArrayView, arg::Int) = getindexvalue(arr.data, arr.indices[arg]...)
 
 
@@ -501,7 +488,7 @@ end
 selectfield(t::LabeledArray, fld, inds) = AbstractArrayWrapper(SubArrayView(selectfield(t,fld), inds))
 selectfield{K,N}(t::LabeledArray, fld::AbstractArray{Nullable{K},N}, ::Void) = begin
   # use a slower version: find a field for each ind.
-  @inbounds r=simplify_array([onefld.isnull ? Nullable{Any}() : selectfield(t,onefld.value)[i] for (i,onefld) in zip(eachindex(fld), fld)])
+  @inbounds r=simplify_array([onefld.isnull ? Nullable{Any}() : selectfield(t,onefld.value)[i] for (i,onefld) in zip(eachindex(fld), reshape(fld, length(fld)))])
   reshape(r, size(fld))
 end
 
@@ -517,9 +504,11 @@ end
 # create an array of cartesian indices of a LabeledArray that satisfies
 # the conditions in c.
 @generated getcondition{T,N}(t::LabeledArray{T,N}, c) = quote
-  indices::Array{NTuple{$N,Int},1} = Array(NTuple{$N,Int}, length(t))
+  indices::Array{NTuple{$N,Int},1} = Array{NTuple{$N,Int}}(length(t))
   index = 1
-  @nloops $N i t begin
+
+  # for some reason, t didn't work, so d->1:size(t,d) is used.
+  @nloops $N i d->1:size(t,d) begin
     tupleind::NTuple{$N,Int} = @ntuple $N i
     @inbounds indices[index] = tupleind
     index += 1
@@ -1081,7 +1070,7 @@ select_inner(func, t, args...) = begin
   end
 end
 
-const verbatim_magic_symbol = symbol("__verbatim__")
+const verbatim_magic_symbol = Symbol("__verbatim__")
 
 lift_to_dict(expr) = begin
   if :head in fieldnames(expr) &&
@@ -1129,21 +1118,21 @@ end
 replace_expr_inner(expr, noescape_symbols...) = begin
   strexpr = string(expr)
   if isa(expr, Symbol) && startswith(strexpr, "__")
-    Expr(:ref, Expr(:call, :igna, :d), QuoteNode(symbol(strexpr[3:endof(strexpr)])))
+    Expr(:ref, Expr(:call, :igna, :d), QuoteNode(Symbol(strexpr[3:endof(strexpr)])))
   elseif isa(expr, Symbol) && startswith(strexpr, "_!")
-    Expr(:ref, Expr(:call, :isna, :d), QuoteNode(symbol(strexpr[3:endof(strexpr)])))
+    Expr(:ref, Expr(:call, :isna, :d), QuoteNode(Symbol(strexpr[3:endof(strexpr)])))
   elseif isa(expr, Symbol) && strexpr == "_"
     :d
   elseif isa(expr, Symbol) && startswith(strexpr, '_')
-    Expr(:ref, :d, QuoteNode(symbol(strexpr[2:endof(strexpr)])))
-  elseif :head in fieldnames(expr) && expr.head==:macrocall && expr.args[1] == symbol("@rap")
+    Expr(:ref, :d, QuoteNode(Symbol(strexpr[2:endof(strexpr)])))
+  elseif :head in fieldnames(expr) && expr.head==:macrocall && expr.args[1] == Symbol("@rap")
     # if it is @rap, give precedence to it.
     replace_expr_inner(recursive_rap(expr.args[2:end]...), noescape_symbols...)
   elseif :head in fieldnames(expr) && expr.head==:kw
     Expr(:kw, expr.args[1], replace_expr_inner(expr.args[2], noescape_symbols...))
-  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("__")
+  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==Symbol("__")
     Expr(:ref, Expr(:call, :igna, :d), esc(expr.args[2]))
-  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==symbol("_!")
+  elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==Symbol("_!")
     Expr(:ref, Expr(:call, :isna, :d), esc(expr.args[2]))
   elseif :head in fieldnames(expr) && expr.head==:ref && expr.args[1]==:_
     #TODO need to fix this so that it works with an array of field names.
@@ -1188,14 +1177,14 @@ update_by_array{N}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,
     ids = indexvec[i]
     indcountvec[ids] += 1
   end
-  subarrays_buf = Array(NTuple{N,Int}, length(indices))
-  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},1})
+  subarrays_buf = Array{NTuple{N,Int}}(length(indices))
+  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},true})
   indsumsofar::Int = 0
   lenindcountvec::Int = length(indcountvec)
   for i in 1:lenindcountvec
     prevsum = indsumsofar
     @inbounds indsumsofar += indcountvec[i]
-    @inbounds index_subarrays[i] = sub(subarrays_buf, prevsum+1:indsumsofar)
+    @inbounds index_subarrays[i] = view(subarrays_buf, prevsum+1:indsumsofar)
   end
   # change the meaning of indcountmat, not to create another buffer.
   fill!(indcountvec, 0)

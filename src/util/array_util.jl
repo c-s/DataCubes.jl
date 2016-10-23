@@ -49,7 +49,7 @@ type_array{T}(x::AbstractArray{T}) = begin
     # well, not having this makes the code more than twice faster...
     # if !isa(T,Union) && !(T<:Nullable) && isempty(subtypes(T))
     #  x
-    if !isdefined(x, 1)
+    if !isassigned(x, 1)
       x
     else
       common_type = typeof(x[1])
@@ -104,7 +104,7 @@ end
 # I need to pass the variable M as a number, so I define it as a mutable function.
 @generated expand_dims{N,M,L}(arr::AbstractArray{TypeVar(:T),N}, front_size::NTuple{M,Int}, back_size::NTuple{L,Int}) = begin
   tgt_ndims = N + M + L
-  srcindices = ntuple(n->symbol("i_",n+M), N)
+  srcindices = ntuple(n->Symbol("i_",n+M), N)
   srcexp = Expr(:ref, :arr, srcindices...)
   quote
     data = similar(arr, (front_size...,size(arr)...,back_size...))
@@ -116,7 +116,7 @@ end
 end
 
 # used internally as a default function to create a new field name.
-generic_fieldname(i::Int) = symbol('x', i)
+generic_fieldname(i::Int) = Symbol('x', i)
 is_generic_fieldname(fieldname) = isa(fieldname, Symbol) && startswith(string(fieldname), "x") && try
   parse(Int, string(fieldname)[2:end])
   true
@@ -222,7 +222,7 @@ collapse_axes(arr::LabeledArray, front_dim::Integer, back_dim::Integer) = begin
   sizearr = size(arr)
   newdata = collapse_axes(arr.data, front_dim, back_dim)
   arraxes = collect(arr.axes)
-  newaxes = cell(ndimsarr - (back_dim-front_dim))
+  newaxes = Array{Any}(ndimsarr - (back_dim-front_dim))
   newaxes[1:front_dim-1] = arraxes[1:front_dim-1]
   newaxes[front_dim+1:end] = arraxes[back_dim+1:end]
   collapsed_axes_vec = map(filter(d->!isa(arraxes[d],DefaultAxis), front_dim:back_dim)) do d
@@ -414,7 +414,7 @@ replace_axes(arr::LabeledArray, arg; index_counter::Int=1) = begin
   else
     newkey = create_additional_fieldname(arr, tracker)
     axiswithkey = create_ldict_nocheck(newkey => resaxis)
-    res = larr(res, symbol(:axis,axis_index) => create_dictarray_nocheck(axiswithkey))
+    res = larr(res, Symbol(:axis,axis_index) => create_dictarray_nocheck(axiswithkey))
     axiswithkey
   end
   orig_axis_keys = axis.keys
@@ -432,7 +432,8 @@ replace_axes(arr::LabeledArray, arg; index_counter::Int=1) = begin
             1
           end
         end
-        axis_key => wrap_array(collect(selectfield(res, axis_key)[coords...]))
+        axis_value = selectfield(res, axis_key)[coords...]
+        axis_key => wrap_array(reshape(axis_value, length(axis_value)))
       end
     end)...)
   end
@@ -648,12 +649,12 @@ get_nullable_value(x::Nullable, default_axis_value) = x.isnull ? default_axis_va
 
 const default_name_delimeter = '_'
 default_fieldname_collapse_function(axistuple, field) = begin
-  symbol(map(x->string(x, default_name_delimeter), axistuple)..., string(field))
+  Symbol(map(x->string(x, default_name_delimeter), axistuple)..., string(field))
 end
 default_fieldname_collapse_function(axistuple) = if length(axistuple) == 1
   axistuple[1]
 else
-  symbol(join(axistuple, default_name_delimeter))
+  Symbol(join(axistuple, default_name_delimeter))
 end
 
 """
@@ -901,7 +902,7 @@ julia> pick(t, :a, :k)
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)
- 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{String},2,DataCubes.BroadcastAxis{Nullable{String},2,DataCubes.AbstractArrayWrapper{Nullable{String},1,Array{Nullable{String},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
  Nullable("Z")  Nullable("Z")
@@ -912,7 +913,7 @@ julia> pick(t, (:a, :k))
  Nullable(1)  Nullable(2)
  Nullable(3)  Nullable(4)
  Nullable(5)  Nullable(6)
- 3x2 DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},2,DataCubes.BroadcastAxis{Nullable{ASCIIString},2,DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
+ 3x2 DataCubes.AbstractArrayWrapper{Nullable{String},2,DataCubes.BroadcastAxis{Nullable{String},2,DataCubes.AbstractArrayWrapper{Nullable{String},1,Array{Nullable{String},1}},DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{T,2,A<:AbstractArray{T,N}},Nullable{T}}}}:
  Nullable("X")  Nullable("X")
  Nullable("Y")  Nullable("Y")
  Nullable("Z")  Nullable("Z")
@@ -989,7 +990,7 @@ Z
 
 
 julia> pickaxis(t, 1, :k)
-3-element DataCubes.AbstractArrayWrapper{Nullable{ASCIIString},1,Array{Nullable{ASCIIString},1}}:
+3-element DataCubes.AbstractArrayWrapper{Nullable{String},1,Array{Nullable{String},1}}:
  Nullable("X")
  Nullable("Y")
  Nullable("Z")
@@ -1509,8 +1510,8 @@ extract_inner(arr::LabeledArray, ns::Tuple) = begin
   #scalar_directions_type = ([(isa(v, AbstractArray) || isa(v, Function) || isa(v, Colon) || isa(v, RepeatRange)) ? Colon() : 0 for v in extended_ns]...)
   extended_ns = map(x->x[1], extended_ns_tuples)
   scalar_directions_type = map(x->x[2], extended_ns_tuples)
-  indices = [create_extract_indices(axis, region) for (axis,region) in zip(arr.axes, extended_ns)]
-  choose_array(arr, (indices...), scalar_directions_type)
+  inds = [create_extract_indices(axis, region) for (axis,region) in zip(arr.axes, extended_ns)]
+  choose_array(arr, (inds...), scalar_directions_type)
 end
 
 process_one_range(axis, x::AbstractArray) = (x, Colon())
@@ -1683,13 +1684,13 @@ discard(ldict::LDict, ks::AbstractArray) = deletekeys(ldict, ks...)
 discard(ldict::LDict, ks::Function) = begin
   inds = convert_boolarray_if_necessary(ks(keys(ldict)))
   lendict = length(ldict)
-  indices = trues(lendict)
+  posinds = trues(lendict)
   for i in inds
-    if checkbounds(Bool, lendict, i)
-      indices[i] = false
+    if checkbounds(Bool, 1:lendict, i)
+      posinds[i] = false
     end
   end
-  LDict(keys(ldict)[indices], values(ldict)[indices])
+  LDict(keys(ldict)[posinds], values(ldict)[posinds])
 end
 
 discard_inner(arr::LabeledArray, ns::Tuple) = begin
@@ -1701,15 +1702,15 @@ discard_inner(arr::LabeledArray, ns::Tuple) = begin
       []
     end
   end
-  indices = [create_discard_indices(axis, region) for (axis,region) in zip(arr.axes, extended_ns)]
-  choose_array(arr, (indices...), ntuple(d->Colon(), ndims(arr)))
+  inds = [create_discard_indices(axis, region) for (axis,region) in zip(arr.axes, extended_ns)]
+  choose_array(arr, (inds...), ntuple(d->Colon(), ndims(arr)))
 end
 
-choose_array{N}(arr::LabeledArray{TypeVar(:T),N}, indices::NTuple{N}, scalar_directions_type) = begin
+choose_array{N}(arr::LabeledArray{TypeVar(:T),N}, inds::NTuple{N}, scalar_directions_type) = begin
   non_scalar_directions = find([x==Colon() for x in scalar_directions_type])
-  locs_tuple = map(x->x[2], indices)
+  locs_tuple = map(x->x[2], inds)
   newdata = choose_array(peel(arr), locs_tuple, scalar_directions_type)
-  newaxis = ([x[1] for x in indices][non_scalar_directions]...)
+  newaxis = ([x[1] for x in inds][non_scalar_directions]...)
   if isempty(non_scalar_directions)
     newdata
   else
@@ -1717,32 +1718,32 @@ choose_array{N}(arr::LabeledArray{TypeVar(:T),N}, indices::NTuple{N}, scalar_dir
   end
 end
 
-choose_array{N}(arr::DictArray{TypeVar(:K),N}, indices::NTuple{N}, scalar_directions_type) = begin
+choose_array{N}(arr::DictArray{TypeVar(:K),N}, inds::NTuple{N}, scalar_directions_type) = begin
   non_scalar_directions = find([x==Colon() for x in scalar_directions_type])
   if isempty(non_scalar_directions)
-    mapvalues(v->choose_array(v, indices, scalar_directions_type), peel(arr))
+    mapvalues(v->choose_array(v, inds, scalar_directions_type), peel(arr))
   else
-    DictArray(mapvalues(v->choose_array(v, indices, scalar_directions_type), peel(arr)))
+    DictArray(mapvalues(v->choose_array(v, inds, scalar_directions_type), peel(arr)))
   end
 end
 
 
-@generated choose_array{T,N}(arr::AbstractArray{Nullable{T},N}, indices::NTuple{N}, scalar_directions_type) = begin
+@generated choose_array{T,N}(arr::AbstractArray{Nullable{T},N}, inds::NTuple{N}, scalar_directions_type) = begin
   scalar_directions = find([t == Int for t in scalar_directions_type.types])
   non_scalar_directions = find([t == Colon for t in scalar_directions_type.types])
   if isempty(non_scalar_directions)
     # the result is a scalar, not an array.
     quote
-      coords = @ntuple($N, d->indices[d][1])
+      coords = @ntuple($N, d->inds[d][1])
       any(x->x==0, coords) ? Nullable{T}() : arr[coords...]
     end
   else
-    result_coords_tuple = Expr(:tuple, [symbol("i_", d) for d in non_scalar_directions]...)
+    result_coords_tuple = Expr(:tuple, [Symbol("i_", d) for d in non_scalar_directions]...)
     quote
-      resultsize = [length(ind) for ind in indices][$non_scalar_directions]
+      resultsize = [length(ind) for ind in inds][$non_scalar_directions]
       result = similar(arr, resultsize...)
-      @nloops $N i d->eachindex(indices[d]) begin
-        coords = @ntuple($N,d->indices[d][i_d])
+      @nloops $N i d->eachindex(inds[d]) begin
+        coords = @ntuple($N,d->inds[d][i_d])
         result[$result_coords_tuple...] = any(x->x==0, coords) ? Nullable{T}() : arr[coords...]
       end
       result
@@ -1756,37 +1757,37 @@ end
 create_extract_indices(axis::AbstractVector, region0::RepeatRange) = begin
   region = region0.n
   lenaxis = length(axis)
-  indices::Array{Int,1}
+  inds::Array{Int,1}
   result = if region >= 0
     if region <= lenaxis
       1:region
     else
-      indices = Array(Int, region)
+      inds = Array{Int}(region)
       pos = 1
-      for i in eachindex(indices)
-        indices[i] = pos
+      for i in eachindex(inds)
+        inds[i] = pos
         pos += 1
         if pos > lenaxis
           pos = 1
         end
       end
-      indices
+      inds
     end
   else
     nregion = -region
     if nregion <= lenaxis
       lenaxis-nregion+1:lenaxis
     else
-      indices = Array(Int, nregion)
+      inds = Array{Int}(nregion)
       pos = lenaxis
-      for i in length(indices):-1:1
-        indices[i] = pos
+      for i in length(inds):-1:1
+        inds[i] = pos
         pos -= 1
         if pos == 0
           pos = lenaxis
         end
       end
-      indices
+      inds
     end
   end
   (isa(axis, DefaultAxis) ? DefaultAxis(length(result)) : axis[result]), result
@@ -1795,31 +1796,36 @@ create_extract_indices(axis::AbstractVector{Nullable{RepeatRange}}, region0::Rep
 create_extract_indices(axis::AbstractVector{Nullable{Colon}}, region::Colon) = axis, eachindex(axis)
 create_extract_indices(axis::AbstractVector, region::Colon) = axis, eachindex(axis)
 create_extract_indices(axis::DefaultAxis, region::AbstractArray{Nullable{Int}}) = begin
-  lenaxis = length(axis)
-  indices = map(region) do i
+  #lenaxis = length(axis)
+  axisrange = indices(axis, 1)
+  inds = map(region) do i
     if i.isnull
       0
-    elseif checkbounds(Bool, lenaxis, i.value)
+    elseif checkbounds(Bool, axisrange, i.value)
+    #elseif checkbounds(Bool, lenaxis, i.value)
       i.value
     else
       0
     end
   end
-  DefaultAxis(length(indices)), indices
+  DefaultAxis(length(inds)), inds
 end
 create_extract_indices(axis::DefaultAxis, region::AbstractArray{Int}) = begin
-  lenaxis = length(axis)
-  if checkbounds(Bool, lenaxis, region)
+  #lenaxis = length(axis)
+  axisrange = indices(axis, 1)
+  #if checkbounds(Bool, lenaxis, region)
+  if checkindex(Bool, axisrange, region)
     DefaultAxis(length(region)), region
   else
-    indices = map(region) do i
-      if checkbounds(Bool, lenaxis, i)
+    inds = map(region) do i
+      if checkindex(Bool, axisrange, i)
+      #if checkbounds(Bool, lenaxis, i)
         i
       else
         0
       end
     end
-    DefaultAxis(length(indices)), indices
+    DefaultAxis(length(inds)), inds
   end
 end
 create_extract_indices(axis::DictArray, region::LDict) = create_extract_indices(axis, DictArray(mapvalues(v->wrap_array([v]), region)))
@@ -1834,7 +1840,7 @@ create_extract_indices_typed{T}(::Type{T}, axis::DictArray, region::DictArray) =
     value::T = getindexvalue(axis, T, i)
     indmap[value] = i
   end
-  indices = map(1:length(region)) do i
+  inds = map(1:length(region)) do i
     value::T = getindexvalue(region, T, i)
     if haskey(indmap, value)
       indmap[value]
@@ -1842,7 +1848,7 @@ create_extract_indices_typed{T}(::Type{T}, axis::DictArray, region::DictArray) =
       0
     end
   end
-  region, indices
+  region, inds
 end
 create_extract_indices{T}(axis::AbstractVector{Nullable{T}}, region::AbstractArray{T}) = create_extract_indices(axis, nalift(region))
 create_extract_indices{T}(axis::AbstractVector{Nullable{T}}, region::Nullable{T}) = create_extract_indices(axis, wrap_array([region]))
@@ -1854,9 +1860,9 @@ create_extract_indices(axis::DictArray, region::Indices) = create_extract_indice
 create_extract_indices_typed{T}(axis::DictArray, region::Indices, ::Type{T}) = begin
   converted_indices = collect(region.inds)
   converted_region = similar(axis, length(converted_indices))
-  lenaxis = length(axis)
+  axisrange = indices(axis, 1)
   for i in eachindex(converted_indices)
-    if checkbounds(Bool, lenaxis, converted_indices[i])
+    if checkbounds(Bool, axisrange, converted_indices[i])
       converted_region[i] = getindexvalue(axis, T, converted_indices[i])
     else
       setna!(converted_region, i)
@@ -1869,9 +1875,9 @@ end
 create_extract_indices{T}(axis::AbstractVector{Nullable{T}}, region::Indices) = begin
   converted_indices = collect(region.inds)
   converted_region = similar(axis, length(converted_indices))
-  lenaxis = length(axis)
+  axisrange = indices(axis, 1)
   for i in eachindex(converted_indices)
-    if checkbounds(Bool, lenaxis, converted_indices[i])
+    if checkbounds(Bool, axisrange, converted_indices[i])
       converted_region[i] = axis[converted_indices[i]]
     else
       converted_region[i] = Nullable{T}()
@@ -1880,9 +1886,9 @@ create_extract_indices{T}(axis::AbstractVector{Nullable{T}}, region::Indices) = 
   end
   converted_region, converted_indices
 end
-convert_boolarray_if_necessary(indices::AbstractArray{Bool,1}) = find(indices)
-convert_boolarray_if_necessary(indices::AbstractArray{Nullable{Bool},1}) = find(ignabool(indices))
-convert_boolarray_if_necessary(indices) = indices
+convert_boolarray_if_necessary(inds::AbstractArray{Bool,1}) = find(inds)
+convert_boolarray_if_necessary(inds::AbstractArray{Nullable{Bool},1}) = find(ignabool(inds))
+convert_boolarray_if_necessary(inds) = inds
 
 create_extract_indices{T}(axis::AbstractVector{T}, region::AbstractArray{T}) = begin
   lenaxis = length(axis)
@@ -1891,7 +1897,7 @@ create_extract_indices{T}(axis::AbstractVector{T}, region::AbstractArray{T}) = b
     value::T = axis[i]
     indmap[value] = i
   end
-  indices = map(1:length(region)) do i
+  inds = map(1:length(region)) do i
     value::T = region[i]
     if haskey(indmap, value)
       indmap[value]
@@ -1899,7 +1905,7 @@ create_extract_indices{T}(axis::AbstractVector{T}, region::AbstractArray{T}) = b
       0
     end
   end
-  region, indices
+  region, inds
 end
 
 # if the region is a positive integer, drop the first region elements.
@@ -1907,22 +1913,22 @@ end
 create_discard_indices(axis::AbstractArray, region0::RepeatRange) = begin
   region = region0.n
   lenaxis = length(axis)
-  indices = if region >= 0
+  inds = if region >= 0
     region+1:lenaxis
   else
     1:lenaxis+region
   end
-  axis[indices], indices
+  axis[inds], inds
 end
 create_discard_indices(axis::DefaultAxis, region0::RepeatRange) = begin
   region = region0.n
   lenaxis = length(axis)
-  indices = if region >= 0
+  inds = if region >= 0
     region+1:lenaxis
   else
     1:lenaxis+region
   end
-  DefaultAxis(length(indices)), indices
+  DefaultAxis(length(inds)), inds
 end
 create_discard_indices(axis::AbstractVector{Nullable{RepeatRange}}, region0::RepeatRange) = error("this should not be called")
 create_discard_indices(axis::AbstractVector{Nullable{Colon}}, region::Colon) = axis[Int[]], Int[]
@@ -1932,14 +1938,14 @@ create_discard_indices(axis::DefaultAxis, region::AbstractArray{Int}) = begin
   if isempty(region)
     return axis, eachindex(axis)
   end
-  lenaxis = length(axis)
-  indices = trues(lenaxis)
+  axisrange = indices(axis, 1)
+  inds = trues(axisrange)
   for i in region
-    if checkbounds(Bool, lenaxis, i)
-      indices[i] = false
+    if checkbounds(Bool, axisrange, i)
+      inds[i] = false
     end
   end
-  locs = find(indices)
+  locs = find(inds)
   DefaultAxis(length(locs)), locs
 end
 create_discard_indices(axis::DictArray, region::LDict) = create_discard_indices(axis, DictArray(mapvalues(v->wrap_array([v]), region)))
@@ -1957,14 +1963,14 @@ create_discard_indices_typed{T}(::Type{T}, axis::DictArray, region::DictArray) =
     value::T = getindexvalue(axis, T, i)
     indmap[value] = i
   end
-  indices = trues(lenaxis)
+  inds = trues(lenaxis)
   for i in 1:length(region)
     value::T = getindexvalue(region, T, i)
     if haskey(indmap, value)
-      indices[indmap[value]] = false
+      inds[indmap[value]] = false
     end
   end
-  locs = find(indices)
+  locs = find(inds)
   axis[locs], locs
 end
 promote_to_array_if_necessary(x::AbstractArray) = x
@@ -1982,14 +1988,14 @@ create_discard_indices(axis::AbstractVector, region::Function) = begin
   if isempty(converted_indices)
     return axis, eachindex(axis)
   end
-  lenaxis = length(axis)
-  indices = trues(lenaxis)
+  axisrange = indices(axis, 1)
+  inds = trues(axisrange)
   for i in converted_indices
-    if checkbounds(Bool, lenaxis, i)
-      indices[i] = false
+    if checkbounds(Bool, axisrange, i)
+      inds[i] = false
     end
   end
-  locs = find(indices)
+  locs = find(inds)
   axis[locs], locs
 end
 
@@ -2003,14 +2009,14 @@ create_discard_indices{T}(axis::AbstractVector{T}, region::AbstractArray{T}) = b
     value::T = axis[i]
     indmap[value] = i
   end
-  indices = trues(lenaxis)
+  inds = trues(lenaxis)
   for i in 1:length(region)
     value::T = region[i]
     if haskey(indmap, value)
-      indices[indmap[value]] = false
+      inds[indmap[value]] = false
     end
   end
-  locs = find(indices)
+  locs = find(inds)
   axis[locs], locs
 end
 create_discard_indices{T<:AbstractArray}(axis::AbstractVector{Nullable{T}}, region::AbstractArray{T}) = create_discard_indices_generic(axis, region)

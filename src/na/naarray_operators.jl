@@ -22,17 +22,21 @@ Base.setindex!{T,N}(arr::AbstractArrayWrapper{T,N}, v::T, args::Int...) = setind
 Base.setindex!{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, v::T, args::Int...) = setindex!(arr.a, v, args...)
 Base.eltype{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = T
 Base.linearindexing{T,N,A}(::Type{AbstractArrayWrapper{T,N,A}}) = Base.linearindexing(A)
-Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
-Base.slice(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(slice(arr.a, args...))
-Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args))
-Base.slice(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(slice(arr.a, args))
+#Base.sub(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(sub(arr.a, args...))
+Base.view(arr::AbstractArrayWrapper, args::Union{Colon,Int,AbstractVector}...) = AbstractArrayWrapper(view(arr.a, args...))
+#Base.sub(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= AbstractArrayWrapper(sub(arr.a, args))
+Base.view(arr::AbstractArrayWrapper, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = AbstractArrayWrapper(view(arr.a, args))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, n::Int) = AbstractArrayWrapper(repmat(arr.a, n))
 Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{TypeVar(:T),2}}, m::Int, n::Int) = AbstractArrayWrapper(repmat(arr.a, m, n))
 @delegate(AbstractArrayWrapper.a, Base.start, Base.next, Base.done, Base.size,
                            Base.ndims, Base.length, Base.setindex!, Base.find, Base.fill!)
 @delegate_and_lift(AbstractArrayWrapper.a, Base.transpose, Base.permutedims,
                                    Base.sort, Base.sort!, Base.sortperm, Base.reverse,
-                                   Base.sub, Base.slice)
+                                   Base.view)
+Base.sort(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort(arr.a, args))
+Base.sort!(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort!(arr.a, args))
+# necessary to avoid some 'no-op tranpose fallback' warning.
+Base.transpose(x::Nullable) = x
 Base.reshape(arr::AbstractArrayWrapper, args::Tuple{Vararg{Int}}) = AbstractArrayWrapper(reshape(arr.a, args))
 Base.reshape(arr::AbstractArrayWrapper, args::Int...) = AbstractArrayWrapper(reshape(arr.a, args...))
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))
@@ -86,16 +90,16 @@ absarray_unary_wrapper(op) = begin
     $(op[1])(x::AbstractArrayWrapper) = begin
       # AbstractArrayWrapper(map($(op[2]), x.a))
       result = similar(x)
-      $(symbol(op[1],naop_suffix))(result.a, x)
+      $(Symbol(op[1],naop_suffix))(result.a, x)
       result
     end
-    $(symbol(op[1],naop_suffix))(result, x::AbstractArrayWrapper) = begin
+    $(Symbol(op[1],naop_suffix))(result, x::AbstractArrayWrapper) = begin
       xa = x.a
       for i in eachindex(xa)
         @inbounds result[i] = $(op[2])(xa[i])
       end
     end
-    $(symbol(op[1],naop_suffix)){T<:AbstractFloat,N,A}(result, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+    $(Symbol(op[1],naop_suffix)){T<:AbstractFloat,N,A}(result, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
       xadata = x.a.data
       resultdata = result.data
       for i in eachindex(xadata)
@@ -144,17 +148,17 @@ absarray_binary_wrapper(op) = begin
     $(op[1]){T,U}(x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
       @assert(size(x) == size(y))
       result = similar(x, $nullelem)
-      $(symbol(op[1],naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],naop_suffix))(result.a, x, y)
       result
     end
-    $(symbol(op[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
+    $(Symbol(op[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::AbstractArrayWrapper{U}) = begin
       xa = x.a
       ya = y.a
       for i in eachindex(xa,ya)
         @inbounds result[i] = $(op[2])(xa[i],ya[i])
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,A,U,B}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,A,U,B}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                    y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,B}}) = begin
       xadata = x.a.data
@@ -164,7 +168,7 @@ absarray_binary_wrapper(op) = begin
         @inbounds resultdata[i] = $(op[2])(xadata[i],yadata[i])
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,A,U<:Nullable}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,A,U<:Nullable}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xadata = x.a.data
@@ -180,7 +184,7 @@ absarray_binary_wrapper(op) = begin
         end
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T<:Nullable,U,B}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T<:Nullable,U,B}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,B}}) = begin
       xa= x.a
@@ -196,7 +200,7 @@ absarray_binary_wrapper(op) = begin
         end
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T<:Nullable,U<:Nullable}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T<:Nullable,U<:Nullable}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xa= x.a
@@ -208,7 +212,7 @@ absarray_binary_wrapper(op) = begin
         @inbounds resultdata[i] = v.isnull ? na : v.value
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,A,U}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,A,U}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xadata = x.a.data
@@ -218,7 +222,7 @@ absarray_binary_wrapper(op) = begin
         @inbounds resultdata[i] = $(op[2])(xadata[i],ya[i])
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,U,B}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,U,B}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,B}}) = begin
       xa= x.a
@@ -229,7 +233,7 @@ absarray_binary_wrapper(op) = begin
       end
     end
 
-    $(symbol(op[1],naop_suffix)){N,K,T<:Nullable,U}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T<:Nullable,U}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xa= x.a
@@ -241,7 +245,7 @@ absarray_binary_wrapper(op) = begin
         @inbounds resultdata[i] = v.isnull ? na : v.value
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,U<:Nullable}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,U<:Nullable}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xa= x.a
@@ -253,7 +257,7 @@ absarray_binary_wrapper(op) = begin
         @inbounds resultdata[i] = v.isnull ? na : v.value
       end
     end
-    $(symbol(op[1],naop_suffix)){N,K,T,U}(result::FloatNAArray{K,N},
+    $(Symbol(op[1],naop_suffix)){N,K,T,U}(result::FloatNAArray{K,N},
                                                    x::AbstractArrayWrapper{T,N},
                                                    y::AbstractArrayWrapper{U,N}) = begin
       xa= x.a
@@ -267,16 +271,16 @@ absarray_binary_wrapper(op) = begin
 
     $(op[1]){T,U<:Nullable}(x::AbstractArrayWrapper{T}, y::U) = begin
       result = similar(x, $nullelem)
-      $(symbol(op[1],naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],naop_suffix))(result.a, x, y)
       result
     end
-    $(symbol(op[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::U) = begin
+    $(Symbol(op[1],naop_suffix)){T,U}(result, x::AbstractArrayWrapper{T}, y::U) = begin
       xa = x.a
       for i in eachindex(xa)
         @inbounds result[i] = $(op[2])(xa[i],y)
       end
     end
-    $(symbol(op[1],naop_suffix)){K,T,U<:Nullable,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y::U) = begin
+    $(Symbol(op[1],naop_suffix)){K,T,U<:Nullable,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y::U) = begin
       if y.isnull
         setna!(result)
       else
@@ -292,16 +296,16 @@ absarray_binary_wrapper(op) = begin
     $(op[1]){T<:Nullable,U}(x::T, y::AbstractArrayWrapper{U}) = begin
       #AbstractArrayWrapper(map(v->$(op[2])(x,v), y.a))
       result = similar(y, $nullelem)
-      $(symbol(op[1],naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],naop_suffix))(result.a, x, y)
       result
     end
-    $(symbol(op[1],naop_suffix)){T,U}(result, x::T, y::AbstractArrayWrapper{U}) = begin
+    $(Symbol(op[1],naop_suffix)){T,U}(result, x::T, y::AbstractArrayWrapper{U}) = begin
       ya = y.a
       for i in eachindex(ya)
         @inbounds result[i] = $(op[2])(x,ya[i])
       end
     end
-    $(symbol(op[1],naop_suffix)){K,T<:Nullable,U,N,A}(result::FloatNAArray{K,N}, x::T, y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,A}}) = begin
+    $(Symbol(op[1],naop_suffix)){K,T<:Nullable,U,N,A}(result::FloatNAArray{K,N}, x::T, y::AbstractArrayWrapper{Nullable{U},N,FloatNAArray{U,N,A}}) = begin
       if x.isnull
         setna!(result)
       else
@@ -314,13 +318,13 @@ absarray_binary_wrapper(op) = begin
       end
     end
 
-    $(symbol(op[1],"adhoctype2", naop_suffix))(result, x::AbstractArrayWrapper, y) = begin
+    $(Symbol(op[1],"adhoctype2", naop_suffix))(result, x::AbstractArrayWrapper, y) = begin
       xa = x.a
       for i in eachindex(xa)
         @inbounds result[i] = $(op[2])(xa[i],y)
       end
     end
-    $(symbol(op[1],"adhoctype2", naop_suffix)){K,T,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y) = begin
+    $(Symbol(op[1],"adhoctype2", naop_suffix)){K,T,N,A}(result::FloatNAArray{K,N}, x::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}, y) = begin
       xadata = x.a.data
       resultdata = result.data
       for i in eachindex(xadata)
@@ -328,13 +332,13 @@ absarray_binary_wrapper(op) = begin
       end
     end
 
-    $(symbol(op[1],"adhoctype1", naop_suffix))(result, x, y::AbstractArrayWrapper) = begin
+    $(Symbol(op[1],"adhoctype1", naop_suffix))(result, x, y::AbstractArrayWrapper) = begin
       ya = y.a
       for i in eachindex(ya)
         @inbounds result[i] = $(op[2])(x,ya[i])
       end
     end
-    $(symbol(op[1],"adhoctype1", naop_suffix)){K,N,T,A}(result::FloatNAArray{K,N}, x, y::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
+    $(Symbol(op[1],"adhoctype1", naop_suffix)){K,N,T,A}(result::FloatNAArray{K,N}, x, y::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = begin
       yadata = y.a.data
       resultdata = result.data
       for i in eachindex(yadata)
@@ -363,7 +367,7 @@ absarray_binary_wrapper_adhoc(op, adhoctype) = begin
       T = eltype(x)
       U = typeof(y)
       result = similar(x, $nullelem)
-      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
       result
     end
 
@@ -371,35 +375,35 @@ absarray_binary_wrapper_adhoc(op, adhoctype) = begin
       T = typeof(x)
       U = eltype(y)
       result = similar(y, $nullelem)
-      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
       result
     end
 
     $(op[1]){T<:$adhoctype}(x::AbstractArrayWrapper{T}, y::$adhoctype) = begin
       U = typeof(y)
       result = similar(x, $nullelem)
-      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
       result
     end
 
     $(op[1]){U<:$adhoctype}(x::$adhoctype, y::AbstractArrayWrapper{U}) = begin
       T = typeof(x)
       result = similar(y, $nullelem)
-      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
       result
     end
 
     $(op[1]){T<:Nullable}(x::AbstractArrayWrapper{T}, y::$adhoctype) = begin
       U = typeof(y)
       result = similar(x, $nullelem)
-      $(symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype2",naop_suffix))(result.a, x, y)
       result
     end
 
     $(op[1]){U<:Nullable}(x::$adhoctype, y::AbstractArrayWrapper{U}) = begin
       T = typeof(x)
       result = similar(y, $nullelem)
-      $(symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
+      $(Symbol(op[1],"adhoctype1",naop_suffix))(result.a, x, y)
       result
     end
 

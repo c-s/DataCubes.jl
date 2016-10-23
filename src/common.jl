@@ -14,13 +14,10 @@ end
 TableSize(arr::AbstractArray) = TableSize(size(arr))
 
 # some statements for compatibility.
+const IS_JULIA_V06 = startswith(string(VERSION), "0.6")
 
-iosize_expr = if startswith(string(VERSION), "0.5")
-  :(iosize_compat = Base.displaysize)
-  #:(iosize_compat = Base.iosize)
-else
-  :(iosize_compat = Base.tty_size)
-end
-
-eval(iosize_expr)
-
+# to keep some warnings from happening.
+Base.transpose(x::Symbol) = x
+Base.transpose(x::Char) = x
+Base.transpose(x::Function) = x
+Base.transpose(x::String) = x

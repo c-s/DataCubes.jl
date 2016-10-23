@@ -7,16 +7,17 @@ end
 AbstractArrayLT(arr::Union{DictArray,LabeledArray}, axis::Integer, field_names...; kwargs...) = begin
   kv = Dict(kwargs)
   ords = map(field_names) do field
-    lt = get(kv, symbol(field, "_lt"), isless)
-    by = get(kv, symbol(field, "_by"), identity)
-    rev = get(kv, symbol(field, "_rev"), false)
-    order = get(kv, symbol(field, "_ord"), Base.Forward)
+    lt = get(kv, Symbol(field, "_lt"), isless)
+    by = get(kv, Symbol(field, "_by"), identity)
+    rev = get(kv, Symbol(field, "_rev"), false)
+    order = get(kv, Symbol(field, "_ord"), Base.Forward)
     Base.Order.ord(lt, by, rev, order)
   end
   ndimsarr = ndims(arr)
   fields = map(field_names) do name
-    #collect(selectfield(arr, name)[get(kv, symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...])
-    selectfield(arr, name)[get(kv, symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...].a
+    #collect(selectfield(arr, name)[get(kv, Symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...])
+    r = selectfield(arr, name)[get(kv, Symbol(name, "_coords"), ntuple(d->d==axis ? Colon() : 1, ndimsarr))...].a
+    r
   end
   AbstractArrayLT{length(field_names),typeof(ords),typeof(fields)}(ords, fields)
 end

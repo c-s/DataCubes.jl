@@ -134,8 +134,8 @@ Base.cat(dim::Int, arr1::EnumerationArray, arrs::EnumerationArray...) = begin
 end
 Base.vcat(arrs::EnumerationArray...) = cat(1, arrs...)
 Base.hcat(arrs::EnumerationArray...) = cat(2, arrs...)
-Base.sub(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((sub(arr.elems, args...), arr.pool))
-Base.slice(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((slice(arr.elems, args...), arr.pool))
+#Base.sub(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((view(arr.elems, args...), arr.pool))
+Base.view(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((view(arr.elems, args...), arr.pool))
 Base.reverse(arr::EnumerationArray, args...) = EnumerationArray((reverse(arr.elems, args...), arr.pool))
 
 
@@ -205,7 +205,7 @@ enumeration{T}(arr::AbstractArray{Nullable{T}}) = EnumerationArray(arr)
 enumeration(arr::AbstractArray{Nullable}) = throw(ArgumentError("the input array needs to be typed."))
 enumeration{T}(arr::AbstractArray{T}) = EnumerationArray(nalift(arr))
 enumeration{T}(arr::AbstractArray{Nullable{T}}, poolorder::Vector{T}) = EnumerationArray(arr, poolorder)
-enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = throw(ArgumentError("the input array needs to be typed."))
+enumeration{T}(arr::AbstractArray{Nullable}, poolorder::Vector{T}) = throw(ArgumentError("the input array needs to be typed.")) #: $(arr), $(eltype(arr)), $(poolorder), $(eltype(poolorder))."))
 enumeration(arr::AbstractArray, poolorder::Vector) = EnumerationArray(nalift(arr), poolorder)
 enumeration(arr::AbstractArray, poolorder) = EnumerationArray(nalift(arr), collect(poolorder))
 

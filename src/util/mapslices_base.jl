@@ -32,7 +32,7 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
-    :(slice(arr, coords...))
+    :(view(arr, coords...))
   end
   quote
     if isempty(arr)
@@ -65,10 +65,10 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
         end
       end)
       colons = ntuple(d->Colon(), ndims(testres))
-      ST = typeof(slice(large_result, colons..., ntuple(d->1, length(ressize))...))
+      ST = typeof(view(large_result, colons..., ntuple(d->1, length(ressize))...))
       temp_result = similar(arr, ST, ressize)
       @nloops $slice_ndims i temp_result begin
-        @nref($slice_ndims,temp_result,i) = slice(large_result, colons..., @ntuple($slice_ndims,i)...)
+        @nref($slice_ndims,temp_result,i) = view(large_result, colons..., @ntuple($slice_ndims,i)...)
       end
       # it's important to assign this mutable function's return to the same variable because of fallback.
       newresult = mapslices_darr_larr_inner_typed!(temp_result, f, arr, dims, testres)
@@ -81,10 +81,10 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
       ndimstestres = ndims(testres)
       large_result = similar(testres, (size(testres)...,ressize...))
       colons = ntuple(d->Colon(), ndims(testres))
-      ST = typeof(slice(large_result, colons..., ntuple(d->1, length(ressize))...))
+      ST = typeof(view(large_result, colons..., ntuple(d->1, length(ressize))...))
       temp_result = similar(arr, ST, ressize)
       @nloops $slice_ndims i temp_result begin
-        @nref($slice_ndims,temp_result,i) = slice(large_result, colons..., @ntuple($slice_ndims,i)...)
+        @nref($slice_ndims,temp_result,i) = view(large_result, colons..., @ntuple($slice_ndims,i)...)
       end
       # it's important to assign this mutable function's return to the same variable because of fallback.
       newresult = mapslices_darr_larr_inner_typed!(temp_result, f, arr, dims, testres)
@@ -113,7 +113,7 @@ end
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
-    :(slice(arr, coords...))
+    :(view(arr, coords...))
   end
   quote
     sizearr = size(arr)
@@ -160,7 +160,7 @@ end
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
-    :(slice(arr, coords...))
+    :(view(arr, coords...))
   end
   quote
     sizearr = size(arr)
@@ -209,7 +209,7 @@ end
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
-    :(slice(arr, coords...))
+    :(view(arr, coords...))
   end
   quote
     sizearr = size(arr)
@@ -219,7 +219,7 @@ end
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
       fill!(coords, Colon())
       @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-      oneslice = $slice_exp #slice(arr, coords...)
+      oneslice = $slice_exp
       oneres = if is_the_first
         is_the_first = false
         testres
@@ -248,7 +248,7 @@ end
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
-    :(slice(arr, coords...))
+    :(view(arr, coords...))
   end
   quote
     sizearr = size(arr)
@@ -257,7 +257,7 @@ end
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
       fill!(coords, Colon())
       @nexprs $slice_ndims j->(coords[$slice_indices[j]] = i_j)
-      oneslice = $slice_exp #slice(arr, coords...)
+      oneslice = $slice_exp
       icoords = CartesianIndex(@ntuple($slice_ndims, i))
       try
         if counts < counts_so_far

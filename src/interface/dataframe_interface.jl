@@ -40,7 +40,7 @@ create_dataarray{T}(arr::AbstractArray{Nullable{T}}) = begin
   end
   value_array = Array{T}(size(arr))
   arbitrary_array = similar([],T,1)
-  anyelem = if isdefined(arbitrary_array,1)
+  anyelem = if isassigned(arbitrary_array,1)
     arbitrary_array[1]
   else
     find_nonnull(arr)
@@ -70,7 +70,7 @@ end
 
 
 dictarray_to_dataframe(arr::DictArray{TypeVar(:T),1}) = begin
-  keys = [symbol(k) for k in arr.data.keys]
+  keys = [Symbol(k) for k in arr.data.keys]
   colindex = Index(Dict(map(ik->ik[2]=>ik[1], enumerate(keys))), keys)
   columns = Any[create_dataarray(v) for v in arr.data.values]
   DataFrame(columns, colindex)

@@ -91,10 +91,10 @@ facts("ArrayUtil tests") do
     @fact permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]), axisname="newaxis", fieldname="newfield"),(2,3,1))[:,:,1] -->
           LabeledArray(@darr("newfield"=>nalift([1 'a';2 'b';3 'c'])), axis1=@darr(k=[100,200,300]), axis2=@darr("newaxis"=>[:X,:Y]))
     @fact axis2flds(@larr(col=[1 2;3 4],axis1[k=[:a,:b]],axis2[r=[:x,:y]])) --> @larr(x_col=[1,3],:y_col=>[2,4],axis1[k=[:a,:b]])
-    @fact axis2flds(@larr(col=[1 2;3 4],axis1[k=[:a,:b]],axis2[r=[:x,NA]]), default_axis_value=3) --> @larr(x_col=[1,3],symbol("3_col")=>[2,4],axis1[k=[:a,:b]])
-    @fact axis2flds(permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis),(3,2,1))[:,:,1]) --> @larr(symbol("100_newfield")=>[1,'a'],symbol("200_newfield")=>[2,'b'],symbol("300_newfield")=>[3,'c'], axis1[newaxis=[:X,:Y]])
-    @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis)) --> @larr(symbol("X_newfield")=>[1 2 3],symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
-    @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield")) --> @larr(symbol("X_newfield")=>[1 2 3],symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
+    @fact axis2flds(@larr(col=[1 2;3 4],axis1[k=[:a,:b]],axis2[r=[:x,NA]]), default_axis_value=3) --> @larr(x_col=[1,3],Symbol("3_col")=>[2,4],axis1[k=[:a,:b]])
+    @fact axis2flds(permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis),(3,2,1))[:,:,1]) --> @larr(Symbol("100_newfield")=>[1,'a'],Symbol("200_newfield")=>[2,'b'],Symbol("300_newfield")=>[3,'c'], axis1[newaxis=[:X,:Y]])
+    @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis)) --> @larr(Symbol("X_newfield")=>[1 2 3],Symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
+    @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield")) --> @larr(Symbol("X_newfield")=>[1 2 3],Symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
     @fact flds2axis(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e'])) --> LabeledArray(transpose(nalift([1 2 3 4 5;:x :y :z :v :w;'a' 'b' 'c' 'd' 'e'])), axis2=nalift([:a,:b,:c]))
     @fact axis2flds(flds2axis(@select(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e']),:a))) --> @select(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e']),:a)
     @fact axis2flds(larr(reshape(1:10,5,2), axis1=darr(k=['a','b','c','d','e']), axis2=darr(r1=[:M,:N],r2=["A","A"]))) --> larr(M_A=[1,2,3,4,5],N_A=[6,7,8,9,10], axis1=darr(k=['a','b','c','d','e']))
@@ -140,7 +140,7 @@ facts("ArrayUtil tests") do
     @fact providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)) --> larr(a=reshape(1:10,2,5), axis1=darr("column1"=>[1,2]), axis2=darr("column2"=>[1,2,3,4,5]))
     @fact withdrawnames(providenames(larr(1:10))) --> larr(1:10)
     @fact withdrawnames(providenames(larr(reshape(1:10,2,5), axis1=darr(k=[:x,:y])))) --> larr(reshape(1:10,2,5), axis1=darr(k=[:x,:y]))
-    @fact withdrawnames(providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)), name->isa(name, ASCIIString) && startswith(name, "column")) --> larr(a=reshape(1:10,2,5))
+    @fact withdrawnames(providenames(larr(a=reshape(1:10,2,5)), i->string("column",i)), name->isa(name, String) && startswith(name, "column")) --> larr(a=reshape(1:10,2,5))
   end
   context("darr/larr tests") do
     @fact @larr(@larr(a=[1,2,3]),b=[10,11,12], axis1[r=[:a,:b,"x"]]) --> @larr(a=[1,2,3],b=[10,11,12], axis1[r=[:a,:b,"x"]])
@@ -336,7 +336,7 @@ facts("ArrayUtil tests") do
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a).value --> 1
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a, :b) --> nalift([1,:x])
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))[1].value --> 1
-    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable,1}
+    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable{Any},1}
   end
 end
 
