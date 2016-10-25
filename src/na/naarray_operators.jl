@@ -35,8 +35,6 @@ Base.repmat(arr::Union{AbstractArrayWrapper{TypeVar(:T),1},AbstractArrayWrapper{
                                    Base.view)
 Base.sort(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort(arr.a, args))
 Base.sort!(arr::AbstractArrayWrapper, args::Integer) = AbstractArrayWrapper(sort!(arr.a, args))
-# necessary to avoid some 'no-op tranpose fallback' warning.
-Base.transpose(x::Nullable) = x
 Base.reshape(arr::AbstractArrayWrapper, args::Tuple{Vararg{Int}}) = AbstractArrayWrapper(reshape(arr.a, args))
 Base.reshape(arr::AbstractArrayWrapper, args::Int...) = AbstractArrayWrapper(reshape(arr.a, args...))
 Base.similar{T,N}(arr::AbstractArrayWrapper, ::Type{T}, dims::NTuple{N,Int}) = AbstractArrayWrapper(similar(arr.a, T, dims))
