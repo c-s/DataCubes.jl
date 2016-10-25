@@ -118,7 +118,8 @@ facts("ArrayUtil tests") do
     @fact (@rap sin cos(_) sin 1) --> sin(cos(sin(1)))
     @fact (@rap sin cos(_) sin(_) 1) --> sin(cos(sin(1)))
     @fact (@rap _*8 _*2 3) --> 48
-    @fact (@rap sum sin' cos(_)' nalift([1,2,3])).value --> sum(map(sin, map(cos, [1,2,3])))
+    #temporarily suppress the usage of ': it's not documented anymore, and it is reserved for transpose already.
+    #@fact (@rap sum sin' cos(_)' nalift([1,2,3])).value --> sum(map(sin, map(cos, [1,2,3])))
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])) --> @larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]]), :a) --> @larr(b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]]), :k2) --> @larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"]])
@@ -181,8 +182,8 @@ facts("ArrayUtil tests") do
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -8) --> repeat(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])),outer=[4,1])
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), 1) --> larr(a=[1 2 3],b=['x' 'y' 'z'], axis1=[:m], axis2=darr(r=["A","B","C"]))
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -1) --> larr(a=[4 5 6],b=['u' 'v' 'w'], axis1=[:n], axis2=darr(r=["A","B","C"]))
-    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, 1) --> larr(a=[1 4]',b=['x' 'u']', axis1=[:m,:n], axis2=darr(r=["A"]))
-    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, -1) --> larr(a=[3 6]',b=['z' 'w']', axis1=[:m,:n], axis2=darr(r=["C"]))
+    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, 1) --> larr(a=[1 4]',b=permutedims(['x' 'u'], (2,1)), axis1=[:m,:n], axis2=darr(r=["A"]))
+    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, -1) --> larr(a=permutedims([3 6], (2,1)),b=permutedims(['z' 'w'], (2,1)), axis1=[:m,:n], axis2=darr(r=["C"]))
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -2) --> larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"]))
     @fact gtake(nalift([1 3 2 5 4]), :, 2:3) --> nalift([3 2])
     @fact gtake(nalift([1 3 2 5 4]), :, 2) --> nalift([1 3])

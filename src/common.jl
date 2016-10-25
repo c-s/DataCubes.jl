@@ -15,9 +15,3 @@ TableSize(arr::AbstractArray) = TableSize(size(arr))
 
 # some statements for compatibility.
 const IS_JULIA_V06 = startswith(string(VERSION), "0.6")
-
-# to keep some warnings from happening.
-Base.transpose(x::Symbol) = x
-Base.transpose(x::Char) = x
-Base.transpose(x::Function) = x
-Base.transpose(x::String) = x
