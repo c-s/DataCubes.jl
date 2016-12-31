@@ -80,7 +80,7 @@ facts("DictArray tests") do
     @fact peel(d)[:b][2,2].value --> 206.0
     @fact pick(d, 2) --> peel(d)[2]
     @fact endof(d) --> length(d)
-    @fact transpose(d) --> DictArray(mapvalues(transpose, d.data))
+    @fact permutedims(d, [2,1]) --> DictArray(mapvalues(x->permutedims(x, [2,1]), d.data))
     @fact permutedims(d, [1,2]) --> DictArray(mapvalues(v->permutedims(v,[1,2]), d.data))
     @fact DictArray(a=nalift([1,2,3]),b=nalift([1.0,2.0,3.0])) == DictArray(a=nalift([1,2,3]),b=nalift([1.0,2.0,3.0])) --> true
     @fact copy(d) !== d --> true

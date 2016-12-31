@@ -95,7 +95,7 @@ facts("ArrayUtil tests") do
     @fact axis2flds(permutedims(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis),(3,2,1))[:,:,1]) --> @larr(Symbol("100_newfield")=>[1,'a'],Symbol("200_newfield")=>[2,'b'],Symbol("300_newfield")=>[3,'c'], axis1[newaxis=[:X,:Y]])
     @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield",axisname=:newaxis)) --> @larr(Symbol("X_newfield")=>[1 2 3],Symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
     @fact axis2flds(flds2axis(@larr(X=[1 2 3],Y=['a' 'b' 'c'], axis2[k=[100,200,300]]),fieldname="newfield")) --> @larr(Symbol("X_newfield")=>[1 2 3],Symbol("Y_newfield")=>['a' 'b' 'c'], axis2[k=[100,200,300]])
-    @fact flds2axis(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e'])) --> LabeledArray(transpose(nalift([1 2 3 4 5;:x :y :z :v :w;'a' 'b' 'c' 'd' 'e'])), axis2=nalift([:a,:b,:c]))
+    @fact flds2axis(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e'])) --> LabeledArray(permutedims(nalift([1 2 3 4 5;:x :y :z :v :w;'a' 'b' 'c' 'd' 'e']), [2,1]), axis2=nalift([:a,:b,:c]))
     @fact axis2flds(flds2axis(@select(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e']),:a))) --> @select(@larr(a=[1,2,3,4,5],b=[:x,:y,:z,:v,:w],c=['a','b','c','d','e']),:a)
     @fact axis2flds(larr(reshape(1:10,5,2), axis1=darr(k=['a','b','c','d','e']), axis2=darr(r1=[:M,:N],r2=["A","A"]))) --> larr(M_A=[1,2,3,4,5],N_A=[6,7,8,9,10], axis1=darr(k=['a','b','c','d','e']))
   end
