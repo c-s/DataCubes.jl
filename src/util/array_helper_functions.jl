@@ -1846,13 +1846,14 @@ function shift end
 @generated shift{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, offsets::NTuple{N,Int};isbound=false) = quote
   result = similar(arr)
   sizearr = size(arr)
+  indicesarr = indices(arr)
   if isbound
     @nloops $N i arr d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
       @nref($N,result,i) = @nref($N,arr,j)
     end
   else
     @nloops $N i arr d->j_d=i_d+offsets[d] begin
-      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
+      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, indicesarr[d], j_d))
         @nref($N,arr,j)
       else
         Nullable{T}()
@@ -1866,6 +1867,7 @@ end
   arradata = arr.a.data
   result = similar(arradata)
   sizearr = size(arradata)
+  indicesarr = indices(arradata)
   na = convert(T, NaN)
   if isbound
     @nloops $N i arradata d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
@@ -1873,7 +1875,7 @@ end
     end
   else
     @nloops $N i arr d->j_d=i_d+offsets[d] begin
-      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
+      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, indicesarr[d], j_d))
         @nref($N,arradata,j)
       else
         na
@@ -1889,8 +1891,6 @@ end
 shift(arr::DictArray, offsets::Integer...;isbound=false) = DictArray(mapvalues(v->shift(v, offsets...;isbound=isbound), arr.data))
 shift(arr::LabeledArray, offsets::Integer...;isbound=false) = LabeledArray(shift(arr.data, offsets...;isbound=isbound), arr.axes)
 
-if IS_JULIA_V05
-  Base.iteratorsize(::ZipNonNAIterator) = Base.SizeUnknown()
-  Base.iteratorsize(::EnumerateNonNAIterator) = Base.SizeUnknown()
-  Base.iteratorsize(::NonNAIterator) = Base.SizeUnknown()
-end
+Base.iteratorsize(::ZipNonNAIterator) = Base.SizeUnknown()
+Base.iteratorsize(::EnumerateNonNAIterator) = Base.SizeUnknown()
+Base.iteratorsize(::NonNAIterator) = Base.SizeUnknown()
