@@ -225,7 +225,7 @@ facts("ArrayUtil tests") do
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),[:a,:b,:d]) --> LDict(:a=>Nullable(1),:b=>Nullable(3),:d=>Nullable{Any}())
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable(5)),[:a,:b,:d]) --> LDict(:a=>Nullable(1),:b=>Nullable(3),:d=>Nullable{Int}())
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:a).value --> 1
-    @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:x).isnull --> true
+    @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:x) --> isnull
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->d .== :a) --> LDict(:a=>Nullable(1))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2:3) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2).value --> 3
@@ -300,7 +300,7 @@ facts("ArrayUtil tests") do
     @fact namerge(Nullable{Int}(), 1).value --> 1
     @fact namerge(Nullable(1), Nullable(2)).value --> 2
     @fact namerge(1, 2).value --> 2
-    @fact namerge(Nullable{Int}(), Nullable{Int}()) --> x->x.isnull
+    @fact namerge(Nullable{Int}(), Nullable{Int}()) --> isnull
     @fact namerge(@nalift([1 2 NA;4 5 6])) --> @nalift([1 2 NA;4 5 6])
     @fact namerge(@nalift([1 2 NA;4 5 6])) --> @nalift([1 2 NA;4 5 6])
     @fact namerge(@larr([1 2 NA;4 5 6])) --> @larr([1 2 NA;4 5 6])

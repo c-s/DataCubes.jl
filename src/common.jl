@@ -14,7 +14,8 @@ end
 TableSize(arr::AbstractArray) = TableSize(size(arr))
 
 # some statements for compatibility.
-const IS_JULIA_V05 = startswith(string(VERSION), "0.5")
+const IS_JULIA_V05 = startswith(string(VERSION), "0.5") || startswith(string(VERSION), "0.6")
+
 
 iosize_expr = if IS_JULIA_V05
   :(iosize_compat = Base.displaysize)

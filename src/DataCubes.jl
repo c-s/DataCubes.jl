@@ -2,7 +2,13 @@ __precompile__()
 
 module DataCubes
 
+using Compat
+
 import Formatting: sprintf1
+import Compat.sub
+import Compat.slice
+import Base.show
+import Base.view
 
 # including files.
 include("common.jl")
@@ -75,7 +81,9 @@ export @select,
        nafill, # fill forward/backword na's.
        describe,
        shift,
-       namerge
+       namerge,
+
+       selectfield
 
 export dcube
 

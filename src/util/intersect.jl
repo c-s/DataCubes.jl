@@ -118,7 +118,7 @@ immutable DummyNullableWrapper{T<:Nullable}
   x::T
 end
 
-(==)(x::DummyNullableWrapper, y::DummyNullableWrapper) = x.x.isnull && y.x.isnull || ignabool(naop_eq(x.x, y.x))
+(==)(x::DummyNullableWrapper, y::DummyNullableWrapper) = isnull(x.x) && isnull(y.x) || ignabool(naop_eq(x.x, y.x))
 
 dummy_nullable_wrap_if_necessary(x::Nullable) = DummyNullableWrapper(x)
 dummy_nullable_wrap_if_necessary(x) = x

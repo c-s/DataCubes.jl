@@ -48,7 +48,7 @@ EnumerationArray{R<:Integer,T,N}(::Type{R}, arr::AbstractArray{Nullable{T},N}, p
   pool = Array(T, length(poolorder))
   copy!(pool, poolorder)
   elems = map(arr) do elem
-    if elem.isnull
+    if isnull(elem)
       zeroR
     elseif haskey(d, elem.value)
       d[elem.value]
@@ -78,7 +78,7 @@ Base.eltype{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Nullable{T}
 Base.length(arr::EnumerationArray) = length(arr.elems)
 Base.endof(arr::EnumerationArray) = length(arr)
 Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::Nullable{T}, indices...) = begin
-  if v.isnull
+  if isnull(v)
     setindex!(arr.elems, zero(R), indices...)
     arr
   else
@@ -109,13 +109,13 @@ Base.reshape(arr::EnumerationArray, args::Int...) = EnumerationArray((reshape(ar
 Base.transpose(arr::EnumerationArray, args...) = EnumerationArray((transpose(arr.elems, args...), arr.pool))
 Base.permutedims(arr::EnumerationArray, args...) = EnumerationArray((permutedims(arr.elems, args...), arr.pool))
 Base.repeat(arr::EnumerationArray, args...;kwargs...) = EnumerationArray((repeat(arr.elems, args...;kwargs...), arr.pool))
-Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
-Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
+Base.repmat{T,U}(arr::Union{EnumerationArray{T,1},EnumerationArray{U,2}}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
+Base.repmat{T,U}(arr::Union{EnumerationArray{T,1},EnumerationArray{U,2}}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
 Base.sort(arr::EnumerationArray, args...) = EnumerationArray((sort(arr.elems, args...), arr.pool))
 Base.sort!(arr::EnumerationArray, args...) = (sort!(arr.elems, args...); arr)
 Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Integer) = fill!(arr.elems, convert(R,elem))
 Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Nullable{T}) = begin
-  if elem.isnull
+  if isnull(elem)
     fill!(arr.elems, zero(R))
   else
     order = convert(R, findfirst(arr.pool, elem.value))
@@ -134,8 +134,8 @@ Base.cat(dim::Int, arr1::EnumerationArray, arrs::EnumerationArray...) = begin
 end
 Base.vcat(arrs::EnumerationArray...) = cat(1, arrs...)
 Base.hcat(arrs::EnumerationArray...) = cat(2, arrs...)
-Base.sub(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((sub(arr.elems, args...), arr.pool))
-Base.slice(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((slice(arr.elems, args...), arr.pool))
+#Base.sub(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((view(arr.elems, args...), arr.pool))
+Base.view(arr::EnumerationArray, args::Union{Base.Colon,Int,AbstractVector}...) = EnumerationArray((view(arr.elems, args...), arr.pool))
 Base.reverse(arr::EnumerationArray, args...) = EnumerationArray((reverse(arr.elems, args...), arr.pool))
 
 

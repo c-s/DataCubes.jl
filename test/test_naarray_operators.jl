@@ -105,7 +105,7 @@ facts("NAArrayOperators tests") do
     @fact 1.0/@nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
     @fact 1 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
     @fact 1.0 ./ @nalift([1,2,NA]) --> @nalift([1.0,0.5,NA])
-    @fact e .^ @nalift([1,2,NA]) --> map(x->x.isnull ? Nullable{Float64}() : Nullable(e^x.value), @nalift([1,2,NA]))
+    @fact e .^ @nalift([1,2,NA]) --> map(isnull ? Nullable{Float64}() : Nullable(e^x.value), @nalift([1,2,NA]))
     @fact e .^ DataCubes.wrap_array([1.0,2.0]) --> DataCubes.wrap_array(map(x->e^x, [1.0,2.0]))
     @fact e .^ DataCubes.wrap_array(Real[1.0,2]) --> DataCubes.wrap_array(map(x->e^x, Real[1.0,2]))
     @fact @nalift([1,3,NA]) == @nalift([1,NA,3]) --> false

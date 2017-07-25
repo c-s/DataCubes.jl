@@ -40,14 +40,14 @@ create_dataarray{T}(arr::AbstractArray{Nullable{T}}) = begin
   end
   value_array = Array{T}(size(arr))
   arbitrary_array = similar([],T,1)
-  anyelem = if isdefined(arbitrary_array,1)
+  anyelem = if isassigned(arbitrary_array,1)
     arbitrary_array[1]
   else
     find_nonnull(arr)
   end
   if !isempty(value_array)
     map!(value_array, arr) do elem
-      if elem.isnull
+      if isnull(elem)
         anyelem
       else
         elem.value
@@ -62,14 +62,14 @@ create_dataarray(arr::AbstractArray{Nullable}) = create_dataarray(convert(Abstra
 
 find_nonnull(x::AbstractArray) = begin
   for elem in x
-    if !elem.isnull
+    if !isnull(elem)
       return elem.value
     end
   end
 end
 
 
-dictarray_to_dataframe(arr::DictArray{TypeVar(:T),1}) = begin
+dictarray_to_dataframe{T}(arr::DictArray{T,1}) = begin
   keys = [Symbol(k) for k in arr.data.keys]
   colindex = Index(Dict(map(ik->ik[2]=>ik[1], enumerate(keys))), keys)
   columns = Any[create_dataarray(v) for v in arr.data.values]

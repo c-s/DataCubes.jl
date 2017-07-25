@@ -84,12 +84,12 @@ y |z 2 |u 4 |v 6
 """
 function leftjoin end
 
-leftjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_axes::Int...) = begin
+leftjoin{V,N}(base::LabeledArray{V,N}, src::LabeledArray, join_axes::Int...) = begin
   # needs to find corresponding fields in base, so src axes for joining should be DictArray.
   for axis_index in join_axes
     @assert isa(src.axes[axis_index], DictArray)
   end
-  base_key_arrays = AbstractArray{TypeVar(:V),N}[]
+  base_key_arrays = AbstractArray{V,N}[]
   for axis_index in join_axes
     for field in src.axes[axis_index].data.keys
       push!(base_key_arrays, selectfield(base, field))
@@ -104,7 +104,7 @@ leftjoin(base::DictArray, src::LabeledArray, join_axes::Int...) = leftjoin(Label
 leftjoin(base::DictArray, src::LabeledArray) = leftjoin(LabeledArray(base), src)
 leftjoin(base::DictArray, src::LabeledArray, join_pairs::Pair{Int}...) = leftjoin(LabeledArray(base), src, join_pairs...)
 
-leftjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_pairs::Pair{Int}...) = begin
+leftjoin{V,N}(base::LabeledArray{V,N}, src::LabeledArray, join_pairs::Pair{Int}...) = begin
   join_axes = Int[join_pair[1] for join_pair in join_pairs]
   axis_labeled_src = LabeledArray(src.data, ntuple(length(src.axes)) do d
     srcaxesd = src.axes[d]
@@ -114,7 +114,7 @@ leftjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_pairs::Pa
       srcaxesd
     end
   end)
-  base_key_arrays = AbstractArray{TypeVar(:V),N}[]
+  base_key_arrays = AbstractArray{V,N}[]
   for (axis_index, axis_values0) in join_pairs
     axis_values = lift_axis_values0_helper1(axis_values0, base, src.axes[axis_index])
     push!(base_key_arrays, axis_values...)
@@ -135,9 +135,9 @@ end
 lift_axis_values0_helper2(arr::DictArray, srcaxis) = values(arr)
 lift_axis_values0_helper2(arr, srcaxis) = Any[arr]
 
-@generated perform_leftjoin{N,M,L,K}(base::LabeledArray{TypeVar(:T),N},
-               src::LabeledArray{TypeVar(:U),M},
-               base_key_arrays::NTuple{L,AbstractArray{TypeVar(:V),N}},
+@generated perform_leftjoin{T,U,V,N,M,L,K}(base::LabeledArray{T,N},
+               src::LabeledArray{U,M},
+               base_key_arrays::NTuple{L,AbstractArray{V,N}},
                src_key_axis_indices::NTuple{K,Int},
                concat_function::Function=default_concat_array_function) = begin
   rest_dims = M - K
@@ -259,12 +259,12 @@ u |u   |v 2
 """
 function innerjoin end
 
-innerjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_axes::Int...) = begin
+innerjoin{V,N}(base::LabeledArray{V,N}, src::LabeledArray, join_axes::Int...) = begin
   # needs to find corresponding fields in base, so src axes for joining should be DictArray.
   for axis_index in join_axes
     @assert isa(src.axes[axis_index], DictArray)
   end
-  base_key_arrays = AbstractArray{TypeVar(:V),N}[]
+  base_key_arrays = AbstractArray{V,N}[]
   for axis_index in join_axes
     for field in src.axes[axis_index].data.keys
       push!(base_key_arrays, selectfield(base, field))
@@ -278,7 +278,7 @@ innerjoin(base::DictArray, src::LabeledArray, join_axes::Int...) = innerjoin(Lab
 innerjoin(base::DictArray, src::LabeledArray) = innerjoin(LabeledArray(base), src)
 innerjoin(base::DictArray, src::LabeledArray, join_pairs::Pair{Int}...) = innerjoin(LabeledArray(base), src, join_pairs...)
 
-innerjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_pairs::Pair{Int}...) = begin
+innerjoin{V,N}(base::LabeledArray{V,N}, src::LabeledArray, join_pairs::Pair{Int}...) = begin
   join_axes = Int[join_pair[1] for join_pair in join_pairs]
   axis_labeled_src = LabeledArray(src.data, ntuple(length(src.axes)) do d
     srcaxesd = src.axes[d]
@@ -288,7 +288,7 @@ innerjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_pairs::P
       srcaxesd
     end
   end)
-  base_key_arrays = AbstractArray{TypeVar(:V),N}[]
+  base_key_arrays = AbstractArray{V,N}[]
   for (axis_index, axis_values0) in join_pairs
     axis_values = lift_axis_values0_helper1(axis_values0, base, src.axes[axis_index])
     push!(base_key_arrays, axis_values...)
@@ -297,9 +297,9 @@ innerjoin{N}(base::LabeledArray{TypeVar(:V),N}, src::LabeledArray, join_pairs::P
 end
 
 
-@generated perform_innerjoin{N,M,L,K}(base::LabeledArray{TypeVar(:T),N},
-               src::LabeledArray{TypeVar(:U),M},
-               base_key_arrays::NTuple{L,AbstractArray{TypeVar(:V),N}},
+@generated perform_innerjoin{T,U,V,N,M,L,K}(base::LabeledArray{T,N},
+               src::LabeledArray{U,M},
+               base_key_arrays::NTuple{L,AbstractArray{V,N}},
                src_key_axis_indices::NTuple{K,Int},
                concat_function::Function=default_concat_array_function) = begin
   rest_dims = M - K
@@ -347,9 +347,9 @@ end
   end
 end
 
-@generated fill_srctobasedata_join_helper!{N,K,MKN,M}(srctobasedata::AbstractArray{TypeVar(:KK),MKN},
+@generated fill_srctobasedata_join_helper!{KK,TT,N,K,MKN,M}(srctobasedata::AbstractArray{KK,MKN},
                                                       base_to_src_loc_map::AbstractArray{NTuple{K,Int},N},
-                                                      permutedsrcdata::AbstractArray{TypeVar(:TT),M}) = begin
+                                                      permutedsrcdata::AbstractArray{TT,M}) = begin
   rest_dims = M - K
   @assert(MKN == M-K+N)
   quote
@@ -364,9 +364,9 @@ end
   end
 end
 
-fill_srctobasedata_join_helper!{N,K,MKN,M}(srctobasedata::DictArray{TypeVar(:KK),MKN},
+fill_srctobasedata_join_helper!{KK,TT,N,K,MKN,M}(srctobasedata::DictArray{KK,MKN},
                                            base_to_src_loc_map::AbstractArray{NTuple{K,Int},N},
-                                           permutedsrcdata::DictArray{TypeVar(:TT),M}) = begin
+                                           permutedsrcdata::DictArray{TT,M}) = begin
   for i in eachindex(srctobasedata.data.values, permutedsrcdata.data.values)
     fill_srctobasedata_join_helper!(srctobasedata.data.values[i], base_to_src_loc_map, permutedsrcdata.data.values[i])
   end
@@ -424,7 +424,7 @@ end
   end
 end
 
-default_concat_array_function{N}(x::LabeledArray{TypeVar(:T),N}, y::LabeledArray{TypeVar(:T),N}) = begin
+default_concat_array_function{T,U,N}(x::LabeledArray{T,N}, y::LabeledArray{U,N}) = begin
   tracker = Any[allfieldnames(x)...;allfieldnames(y)...] # need Array, not AbstractArrayWrapper, hence ...
   xdata = if isa(x.data, DictArray)
     x.data

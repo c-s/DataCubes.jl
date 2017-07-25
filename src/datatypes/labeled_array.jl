@@ -138,7 +138,7 @@ julia> @larr(a=rand(3,5),b=rand(1.0*1:10,3,5))
 set_format_string!{T}(::Type{T}, fmt::AbstractString) = (global format_string_map;format_string_map[T] = fmt)
 
 # some functions to set the height and width of output LabeledArrays to console.
-default_showsize = () -> ((height,width) = iosize_compat();(max(20,ceil(Int,height*0.5)),width-7))
+default_showsize = () -> ((height,width) = displaysize();(max(20,ceil(Int,height*0.5)),width-7))
 
 """
 
@@ -291,7 +291,7 @@ Show a LabeledArray.
 * `alongrow`(optional, default set by `set_dispalongrow!`. `tru` by default): if `true`, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.
 
 """
-Base.show{N}(io::IO, table::LabeledArray{TypeVar(:T),N}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T,N}(io::IO, table::LabeledArray{T,N}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -314,12 +314,12 @@ Base.show{N}(io::IO, table::LabeledArray{TypeVar(:T),N}, indent=0; height::Int=s
   end
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),0}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,0}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   println(io, "0 dimensional LabeledArray")
   show(io, table.data)
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),1}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,1}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -335,7 +335,7 @@ end
 # returns a tuple of (string matrix, locations of horizontal lines, locations of vertical lines).
 # location 10 of horizonal line means, e.g., there is a horizontal line to be inserted
 # between the 9th and 10th rows.
-create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),1}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongrow{T}(table::LabeledArray{T,1}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   tableaxes1 = table.axes[1]
@@ -362,7 +362,7 @@ create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),1}; height::Int=s
   (result, [2], [nkeys+1])
 end
 
-create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),1}; height::Int=show_size()[1], width=show_size()[2]) = begin
+create_string_reprmat_alongcol{T}(table::LabeledArray{T,1}; height::Int=show_size()[1], width=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   tableaxes1 = table.axes[1]
@@ -397,7 +397,7 @@ create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),1}; height::Int=s
   (result, collect(2+widthtabledata*(0:1+fld(nrows,widthtabledata))), [nkeys+1,nkeys+2])
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),2}, indent; height::Int=show_size()[1], width::Int=show_size()[2], alongrow=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,2}, indent; height::Int=show_size()[1], width::Int=show_size()[2], alongrow=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -414,7 +414,7 @@ end
 # returns a tuple of (string matrix, locations of horizontal lines, locations of vertical lines).
 # location 10 of horizonal line means, e.g., there is a horizontal line to be inserted
 # between the 9th and 10th rows.
-create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongrow{T}(table::LabeledArray{T,2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   (tableheight,tablewidth) = size(tabledata)
@@ -481,7 +481,7 @@ create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),2}; height::Int=s
   (result, [widthtableaxes2+1,widthtableaxes2+2], map(x->nkeys+1+widthtabledata*(x-1), 1:ncols))
 end
 
-create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongcol{T}(table::LabeledArray{T,2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   (tableheight,tablewidth) = size(tabledata)
@@ -695,27 +695,27 @@ getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
       break
     end
   end
-  if IS_JULIA_V05
+  #if IS_JULIA_V05
     # this is the expected behavior for v0.5, if one direction before the last non integer index is an integer index.
-    LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
-  else
+  LabeledArray(dataelem, ([axis_index(axis, index) for (axis, index) in filtered_zippedindices]...))
+  #else
     # this is the expected behavior for v0.4:
-    LabeledArray(dataelem, (axeselem[1:v04ndims]...))
-  end
+  #  LabeledArray(dataelem, (axeselem[1:v04ndims]...))
+  #end
 end
 
 wrap_scalar_inner(index, elem) = elem
 wrap_scalar_inner(index::Real, elem) = [elem]
 
 axis_index(axis, index) = axis[index]
-axis_sub(axis, index) = sub(axis, index)
-axis_slice(axis, index) = slice(axis, index)
+#axis_sub(axis, index) = sub(axis, index)
+axis_slice(axis, index) = view(axis, index)
 
 axis_index(axis::DefaultAxis, i::Int) = i
 axis_index(axis::DefaultAxis, ::Colon) = axis
 axis_index(axis::DefaultAxis, index::AbstractArray{Bool}) = DefaultAxis(length(find(index)))
 axis_index(axis::DefaultAxis, index) = DefaultAxis(length(index))
-axis_sub(axis::DefaultAxis, index) = axis_index(axis, index)
+#axis_sub(axis::DefaultAxis, index) = axis_index(axis, index)
 axis_slice(axis::DefaultAxis, index) = axis_index(axis, index)
 
 Base.getindex(table::LabeledArray, indices::Int) =
@@ -730,37 +730,32 @@ getindexpair(table::LabeledArray, indices::Int) =
   getindexpair_inner(table, ind2sub(table, indices))
 getindexpair(table::LabeledArray, indices::Int...) =
   getindexpair_inner(table, indices)
-getindexpair_inner{N}(table::LabeledArray{TypeVar(:T),N}, indices::NTuple{N,Int}) = begin
+getindexpair_inner{T,N}(table::LabeledArray{T,N}, indices::NTuple{N,Int}) = begin
   tableaxes = table.axes
   foldr((x,acc)->Pair(x,acc),
         getindex(table.data, indices...),
         [x[y] for (x,y) in zip(tableaxes,indices)])
 end
 
-Base.size{N}(table::LabeledArray{TypeVar(:T),N}) = size(table.data)::NTuple{N,Int}
-Base.transpose(table::LabeledArray{TypeVar(:T),2}) = LabeledArray(transpose(table.data), (table.axes[2],table.axes[1]))
+Base.size{T,N}(table::LabeledArray{T,N}) = size(table.data)::NTuple{N,Int}
+Base.transpose{T}(table::LabeledArray{T,2}) = LabeledArray(transpose(table.data), (table.axes[2],table.axes[1]))
 Base.permutedims(table::LabeledArray, perms) = begin
   lenaxes = length(table.axes)
   if length(perms) != lenaxes
     throw(ArgumentError("LabeledArray permutedims: the number of axes is not the same as the length of the permutations."))
   end
   newdata = permutedims(table.data, perms)
-  newaxes = cell(lenaxes)
+  newaxes = Array{Any}(lenaxes)
   for i=1:lenaxes
     newaxes[i] = table.axes[perms[i]]
   end
   LabeledArray(newdata,(newaxes...))
 end
 Base.setindex!(table::LabeledArray, v, args...) = setindex!(table.data, v, args...)
-Base.Multimedia.writemime(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
-Base.sub(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
-  dataelem = sub(table.data, indices...)
-  axeselem = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(table.axes,indices)]
-  newN = ndims(dataelem)
-  LabeledArray(dataelem, (axeselem[1:newN]...))
-end
-Base.slice(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
-  dataelem = slice(table.data, indices...)
+Base.show(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
+
+Base.view{T}(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{T,1}}...) = begin
+  dataelem = view(table.data, indices...)
   axeselem = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
   newN = ndims(dataelem)
   LabeledArray(dataelem, (axeselem[1:newN]...))
@@ -791,22 +786,29 @@ immutable BroadcastAxis{T,N,V,W} <: AbstractArray{T,N}
 end
 (==)(arr1::BroadcastAxis, arr2::BroadcastAxis) =
   arr1.index==arr2.index && size(arr1.base)==size(arr2.base) && arr1.axis==arr2.axis
-BroadcastAxis{T,N}(axis::AbstractArray{T,1}, base::AbstractArray{TypeVar(:U),N}, index::Int) = BroadcastAxis{T,N,typeof(axis),typeof(base)}(axis, base, index)
+BroadcastAxis{T,U,N}(axis::AbstractArray{T,1}, base::AbstractArray{U,N}, index::Int) = BroadcastAxis{T,N,typeof(axis),typeof(base)}(axis, base, index)
 BroadcastAxis(axis::DictArray, base::AbstractArray, index::Int) = create_dictarray_nocheck(mapvalues(v->BroadcastAxis(v, base, index), peel(axis)))
 Base.size(axis::BroadcastAxis) = size(axis.base)
 Base.linearindexing(::Type{BroadcastAxis}) = Base.LinearSlow()
 Base.getindex(axis::BroadcastAxis, arg::CartesianIndex) = getindex(axis.axis, arg[axis.index])
 Base.getindex(axis::BroadcastAxis, args...) = begin
   newaxis = getindex(axis.axis, args[axis.index])
-  if isa(newaxis, AbstractArray)
-    newbase = sub(axis.base, args...)
-    BroadcastAxis(newaxis, newbase, axis.index)
-  else
-    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
-    # I cannot think of an alternative. Let's do a copy.
-    fill(newaxis, size(sub(axis.base, args...)))
-  end
+  getindex_broadcast_sub(newaxis, axis, args)
 end
+getindex_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+  newbase = view(axis.base, args...)
+  # Let's figure out the new axis.index.
+  testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
+  testbase = view(axis.base, testargs...)
+  BroadcastAxis(newaxis, newbase, ndims(testbase))
+end
+getindex_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+  # this is definitely not one point.
+  # it is one coord along the axis index, but ranges along some other directions.
+  # I cannot think of an alternative. Let's do a copy.
+  fill(newaxis, size(view(axis.base, args...)))
+end
+
 Base.getindex(axis::BroadcastAxis, index::Int...) = getindex(axis.axis, index[axis.index])
 Base.getindex(axis::BroadcastAxis, index::Int) = begin
   getindex(axis.axis, ind2sub(axis.base, index)[axis.index])
@@ -815,24 +817,31 @@ end
 getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
 getindexvalue(axis::BroadcastAxis, args...) = begin
   newaxis = getindexvalue(axis.axis, args[axis.index])
-  if isa(newaxis, AbstractArray)
-    newbase = sub(axis.base, args...)
-    BroadcastAxis(newaxis, newbase, axis.index)
-  else
-    # this is definitely not one point. it is one coord along the axis index, but ranges along some other directions.
-    # I cannot think of an alternative. Let's do a copy.
-    fill(newaxis, size(sub(axis.base, args...)))
-  end
+  getindexvalue_broadcast_sub(newaxis, axis, args)
 end
+getindexvalue_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+  newbase = view(axis.base, args...)
+  # Let's figure out the new axis.index.
+  testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
+  testbase = view(axis.base, testargs...)
+  BroadcastAxis(newaxis, newbase, ndims(testbase))
+end
+getindexvalue_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+  # this is definitely not one point.
+  # it is one coord along the axis index, but ranges along some other directions.
+  # I cannot think of an alternative. Let's do a copy.
+  fill(newaxis, size(view(axis.base, args...)))
+end
+
 getindexvalue(axis::BroadcastAxis, index::Int...) = getindexvalue(axis.axis, index[axis.index])
 getindexvalue(axis::BroadcastAxis, index::Int) = begin
   getindexvalue(axis.axis, ind2sub(axis.base, index)[axis.index])
 end
-# TODO let's make sub/slice for one dimensional indexing.
-Base.sub(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], sub(arr.base, args...), arr.index)
-Base.slice(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], slice(arr.base, args...), arr.index)
-Base.sub(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= sub(arr, args...)
-Base.slice(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = slice(arr, args...)
+# TODO let's make sub/view for one dimensional indexing.
+#sub(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], sub(arr.base, args...), arr.index)
+Base.view(arr::BroadcastAxis, args::Union{Colon,Int,AbstractVector}...) = BroadcastAxis(arr.axis[args[arr.index]], view(arr.base, args...), arr.index)
+#sub(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= sub(arr, args...)
+Base.view(arr::BroadcastAxis, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = view(arr, args...)
 
 """
 
@@ -841,8 +850,8 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 """
 allfieldnames(table::LabeledArray) = simplify_array(unique(vcat(vcat(map(allfieldnames, table.axes)...),allfieldnames(table.data))))
 allfieldnames(table::AbstractArray) = Array(Any, 0)
-cell_to_string(cell::Nullable) = cell.isnull ? "" : string(cell.value)
-cell_to_string{T}(cell::Nullable{T}) = cell.isnull ? "" : haskey(format_string_map,T) ? sprintf1(format_string_map[T], cell.value) : string(cell.value)
+cell_to_string(cell::Nullable) = isnull(cell) ? "" : string(cell.value)
+cell_to_string{T}(cell::Nullable{T}) = isnull(cell) ? "" : haskey(format_string_map,T) ? sprintf1(format_string_map[T], cell.value) : string(cell.value)
 cell_to_string{K,T}(cell::LDict{K,Nullable{T}}) = string(cell)
 cell_to_string(cell::AbstractArray) = string(map(x->string(cell_to_string(x)," "), cell)...)
 
@@ -896,10 +905,10 @@ Base.cat(catdim::Integer, arr1::LabeledArray, arrs::LabeledArray...) = begin
   end
   newdata = cat(catdim, arr1.data, map(x->x.data, arrs)...)
   arrlist = Any[arr1,arrs...]
-  newaxes = cell(max(map(ndims, arrlist)...))
+  newaxes = Array{Any}(max(map(ndims, arrlist)...))
   for arr in arrlist
     for i in 1:length(arr.axes)
-      if i != catdim && isdefined(newaxes, i) && arr.axes[i] != newaxes[i]
+      if i != catdim && isassigned(newaxes, i) && arr.axes[i] != newaxes[i]
         throw(ArgumentError("array dimensions in the arguments for cat do not match."))
       else
         newaxes[i] = arr.axes[i]
@@ -933,12 +942,12 @@ Base.repeat(arr::LabeledArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Ar
   LabeledArray(newdata, (newaxes..., additional_axes...))
 end
 
-Base.Multimedia.writemime{N}(io::IO,
-                             ::MIME"text/html",
-                             table::LabeledArray{TypeVar(:T),N};
-                             height::Int=dispsize()[1],
-                             width::Int=dispsize()[2],
-                             alongrow::Bool=todisp_alongrow) = begin
+Base.show{T,N}(io::IO,
+             ::MIME"text/html",
+             table::LabeledArray{T,N};
+             height::Int=dispsize()[1],
+             width::Int=dispsize()[2],
+             alongrow::Bool=todisp_alongrow) = begin
   ndimstable = ndims(table)
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
@@ -957,18 +966,18 @@ Base.Multimedia.writemime{N}(io::IO,
     print(io, index)
     print(io, ']')
     print(io, '\n')
-    Base.Multimedia.writemime(io, MIME("text/html"), getindex(table, coords...); height=height, width=width, alongrow=alongrow)
+    show(io, MIME("text/html"), getindex(table, coords...); height=height, width=width, alongrow=alongrow)
     print(io, "</li>")
   end
   print(io, "</ul>")
 end
 
-Base.Multimedia.writemime(io::IO, ::MIME"text/html", table::LabeledArray{TypeVar(:T),0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show{T}(io::IO, ::MIME"text/html", table::LabeledArray{T,0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, "0 dimensional LabeledArray")
 end
 
 
-Base.Multimedia.writemime(io::IO, ::MIME"text/html", table::Union{LabeledArray{TypeVar(:T),1},LabeledArray{TypeVar(:T),2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show{T}(io::IO, ::MIME"text/html", table::Union{LabeledArray{T,1},LabeledArray{T,2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -1115,7 +1124,7 @@ y |a |3 4
 
 
 julia> create_dict(t)
-Dict{Nullable{Symbol},Dict{Nullable{ASCIIString},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
+Dict{Nullable{Symbol},Dict{Nullable{String},DataCubes.LDict{Symbol,Nullable{Int64}}}} with 2 entries:
   Nullable(:y) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(4)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(3)))
   Nullable(:x) => Dict(Nullable("B")=>DataCubes.LDict(:a=>Nullable(2)),Nullable("A")=>DataCubes.LDict(:a=>Nullable(1)))
 ```
@@ -1363,13 +1372,13 @@ macro larr(args...)
           @nalift($(esc(arg.args[2])))
         end))
       end
-    elseif template.isnull #length(args) == 1
+    elseif isnull(template) #length(args) == 1
       template = Nullable(arg)
     else
       throw(ArgumentError("not a key=value type argument or an array argument $arg, or two or more base LabeledArrays are provided."))
     end
   end
-  dataexp = if template.isnull && isempty(data_pairs)
+  dataexp = if isnull(template) && isempty(data_pairs)
     throw(ArgumentError("neither a base LabeledArray or a fieldname=>array pair provided."))
   elseif isempty(data_pairs)
     nothing
@@ -1385,7 +1394,7 @@ macro larr(args...)
       Expr(:kw, axisname, Expr(:call, :darr, Expr(:..., Expr(:vect, axisvalue...))))
     end
   end
-  if template.isnull
+  if isnull(template)
     Expr(:call, :larr, dataexp, axesexp...)
   else
     Expr(:call, :update_larr, quote @nalift($(esc(template.value))) end, dataexp, axesexp...)
@@ -1510,7 +1519,7 @@ update_larr(base::LabeledArray, data; kwargs...) = begin
   newaxes = if isempty(kwargs)
     base.axes
   else
-    axes = cell(length(base.axes))
+    axes = Array{Any}(length(base.axes))
     copy!(axes, base.axes)
     for (k,v) in kwargs
       kstr = string(k)

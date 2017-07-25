@@ -52,7 +52,7 @@ facts("ArrayHelperFunctions tests") do
   @fact quantile(@nalift([1.0,10.0,NA,100.0,2.0,3.0,NA]),1.0).value --> roughly(100.0)
   @fact nalift(quantile(@nalift([1,10,NA,100,2,3,NA]),[0.0,0.25,0.5,0.75,1.0])) --> nalift([1.0,2.0,3.0,10.0,100.0])
   @fact nalift(quantile(2.0*@nalift([1,10,NA,100,2,3,NA]),[0.0,0.25,0.5,0.75,1.0])) --> 2.0*nalift([1.0,2.0,3.0,10.0,100.0])
-  @fact quantile(nalift([Nullable{Int}(),Nullable{Int}()]),0.5) --> x->x.isnull
+  @fact quantile(nalift([Nullable{Int}(),Nullable{Int}()]),0.5) --> isnull
   @fact cumsum(larr(a=reshape(1:10,2,5), axis1=darr(k=[:x,:y]))) --> larr(a=[1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))
   @fact cumsum(larr(a=1.0 * reshape(1:10,2,5), axis1=darr(k=[:x,:y]))) --> larr(a=1.0 * [1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))
   @fact cumsum(larr(a=reshape(1:10,2,5), axis1=darr(k=[:x,:y])),1) --> larr(a=[1 3 5 7 9;3 7 11 15 19], axis1=darr(k=[:x,:y]))

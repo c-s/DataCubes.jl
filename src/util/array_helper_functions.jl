@@ -51,12 +51,12 @@ Base.eltype{T,N,A}(::Type{NonNAIterator{T,N,A}}) = T
 Base.start(iter::NonNAIterator) = start(iter.array)
 Base.next{T,N,U,A}(iter::NonNAIterator{T,N,A}, state::U) = begin
   (next_item::Nullable{T}, next_state::U) = next(iter.array, state)
-  while next_item.isnull
+  while isnull(next_item)
     (next_item, next_state) = next(iter.array, next_state)
   end
   (next_item.value, next_state)::Tuple{T,U}
   # recursion does not increase/decrease performance in some case.
-  #if next_item.isnull
+  #if isnull(next_item)
   #  # I need to check if TCO is applied here.
   #  next(iter, next_state)::Tuple{T,U}
   #else
@@ -69,7 +69,7 @@ Base.done{T,N,U,A}(iter::NonNAIterator{T,N,A}, state::U) = begin
     true
   else
     (next_item, next_state) = next(iter.array, state)
-    if next_item.isnull
+    if isnull(next_item)
       done(iter, next_state)::Bool
     else
       false
@@ -85,7 +85,7 @@ Base.eltype{T,N,A}(::Type{EnumerateNonNAIterator{T,N,A}}) = Tuple{Int,T}
 Base.start{T,N}(iter::EnumerateNonNAIterator{T,N}) = (1, start(iter.array))
 Base.next{T,N}(iter::EnumerateNonNAIterator{T,N}, state) = begin
   (next_item, next_state) = next(iter.array, state[2])
-  if next_item.isnull
+  if isnull(next_item)
     next(iter, (state[1]+1, next_state)) #::Tuple{Tuple{Int,T},Tuple{Int,typeof(state)}}
   else
     ((state[1], next_item.value), (state[1]+1, next_state)) #::Tuple{Tuple{Int,T},Tuple{Int,typeof(state)}}
@@ -97,7 +97,7 @@ Base.done{T,N}(iter::EnumerateNonNAIterator{T,N}, state) = begin
     true
   else
     (next_item, next_state) = next(iter.array, state[2])
-    if next_item.isnull
+    if isnull(next_item)
       done(iter, (state[1]+1, next_state))::Bool
     else
       false
@@ -129,7 +129,7 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 ```
 
 """
-zip_dropnaiter{N}(arrs::AbstractArray{TypeVar(:T),N}...) = begin
+zip_dropnaiter{U,N}(arrs::AbstractArray{U,N}...) = begin
   T = Tuple{map(x->eltype(eltype(x)), arrs)...}
   ZipNonNAIterator{T,N,length(arrs),typeof(arrs)}(arrs)
 end
@@ -138,7 +138,7 @@ Base.start{T,N,M}(iter::ZipNonNAIterator{T,N,M}) = map(start, iter.arrays)
 Base.next{T,N,M}(iter::ZipNonNAIterator{T,N,M}, state) = begin
   nexts = map(iter.arrays, state) do array,s; next(array,s) end
   for (n,s) in nexts
-    if n.isnull
+    if isnull(n)
       return next(iter, map(x->x[2],nexts))
     end
   end
@@ -151,7 +151,7 @@ Base.done{T,N,M}(iter::ZipNonNAIterator{T,N,M}, state) = begin
   end
   nexts = map(iter.arrays, state) do array,s; next(array,s) end
   for (n,s) in nexts
-    if n.isnull
+    if isnull(n)
       return done(iter, map(x->x[2],nexts))::Bool
     end
   end
@@ -163,7 +163,7 @@ end
 Base.sum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   acc = zero(T)
   for x in arr
-    if !x.isnull
+    if !isnull(x)
       acc += x.value
     end
   end
@@ -183,7 +183,7 @@ end
 Base.prod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   acc = one(T)
   for x in arr
-    if !x.isnull
+    if !isnull(x)
       acc *= x.value
     end
   end
@@ -367,16 +367,16 @@ for op = [:cov, :cor]
       $(op)(arr1.data, arr2.data)
     end
     $(op)(arr1::DictArray,arr2::DictArray) = $(op_base)(arr1, arr2)
-    $(op)(arr1::DictArray{TypeVar(:T),1},arr2::DictArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
-    $(op)(arr1::DictArray{TypeVar(:T),2},arr2::DictArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
-    $(op)(arr::DictArray{TypeVar(:T),1}) = $(op)(arr, arr)
-    $(op)(arr::DictArray{TypeVar(:T),2}) = $(op)(arr, arr)
+    $(op){T,U}(arr1::DictArray{T,1},arr2::DictArray{U,1}) = $(op_base)(arr1, arr2)
+    $(op){T,U}(arr1::DictArray{T,2},arr2::DictArray{U,2}) = $(op_base)(arr1, arr2)
+    $(op){T}(arr::DictArray{T,1}) = $(op)(arr, arr)
+    $(op){T}(arr::DictArray{T,2}) = $(op)(arr, arr)
     $(op)(arr::DictArray) = $(op)(arr, arr)
     $(op)(arr1::LabeledArray,arr2::LabeledArray) = $(op_base)(arr1, arr2)
-    $(op)(arr1::LabeledArray{TypeVar(:T),1},arr2::LabeledArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
-    $(op)(arr1::LabeledArray{TypeVar(:T),2},arr2::LabeledArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
-    $(op)(arr::LabeledArray{TypeVar(:T),1}) = $(op)(arr, arr)
-    $(op)(arr::LabeledArray{TypeVar(:T),2}) = $(op)(arr, arr)
+    $(op){T,U}(arr1::LabeledArray{T,1},arr2::LabeledArray{U,1}) = $(op_base)(arr1, arr2)
+    $(op){T,U}(arr1::LabeledArray{T,2},arr2::LabeledArray{U,2}) = $(op_base)(arr1, arr2)
+    $(op){T}(arr::LabeledArray{T,1}) = $(op)(arr, arr)
+    $(op){T}(arr::LabeledArray{T,2}) = $(op)(arr, arr)
     $(op)(arr::LabeledArray) = $(op)(arr, arr)
   end
 end
@@ -410,7 +410,7 @@ Base.cumsum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = zero(T)
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         acc += src[i].value
       end
       tgt[i] = Nullable(acc)
@@ -439,7 +439,7 @@ Base.cumprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fal
   function update!(tgt, src)
     acc = one(T)
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         acc *= src[i].value
       end
       tgt[i] = Nullable(acc)
@@ -470,8 +470,8 @@ Base.cummin{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        acc = acc.isnull ? src[i] : Nullable(min(acc.value, src[i].value))
+      if !isnull(src[i])
+        acc = isnull(acc)
       end
       tgt[i] = acc
     end
@@ -501,8 +501,8 @@ Base.cummax{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        acc = acc.isnull ? src[i] : Nullable(max(acc.value, src[i].value))
+      if !isnull(src[i])
+        acc = isnull(acc) ? src[i] : Nullable(max(acc.value, src[i].value))
       end
       tgt[i] = acc
     end
@@ -534,11 +534,11 @@ cummiddle{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false)
     accmin = Nullable{T}()
     accmax = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        accmin = accmin.isnull ? src[i] : Nullable(min(accmin.value, src[i].value))
-        accmax = accmax.isnull ? src[i] : Nullable(max(accmax.value, src[i].value))
+      if !isnull(src[i])
+        accmin = isnull(accmin) ? src[i] : Nullable(min(accmin.value, src[i].value))
+        accmax = isnull(accmax) ? src[i] : Nullable(max(accmax.value, src[i].value))
       end
-      tgt[i] = (accmin.isnull || accmax.isnull ? Nullable{DIVTYPE}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{DIVTYPE}
+      tgt[i] = (isnull(accmin) || isnull(accmax) ? Nullable{DIVTYPE}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{DIVTYPE}
     end
   end
   result = similar(arr, Nullable{DIVTYPE})
@@ -568,7 +568,7 @@ nafill0{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false) = begin
   function update!(tgt, src)
     lastelem = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         lastelem = src[i]
       end
       tgt[i] = lastelem
@@ -658,7 +658,7 @@ nafill{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false, window=0)
     lastelem = Nullable{T}()
     age = 0
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         age += 1
         if age >= window
           lastelem = Nullable{T}()
@@ -847,7 +847,7 @@ msum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false,windo
     acc = zero(T)
     ringbuf_index = 1
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         acc -= ringbuf[ringbuf_index]
         ringbuf[ringbuf_index] = zero(T)
       else
@@ -960,7 +960,7 @@ mprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, win
     acc = one(T)
     ringbuf_index = 1
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         acc /= ringbuf[ringbuf_index]
         ringbuf[ringbuf_index] = one(T)
       else
@@ -1092,11 +1092,11 @@ function mmean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{
   ringbuf_index = 1
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       num_non_nullable += 1
       acc += srci.value
     end
-    if !ringbuf[ringbuf_index].isnull
+    if !isnull(ringbuf[ringbuf_index])
       num_non_nullable -= 1
       acc -= ringbuf[ringbuf_index].value
     end
@@ -1139,7 +1139,7 @@ function cummean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArra
   num_non_nullable = 0
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       num_non_nullable += 1
       acc += srci.value
     end
@@ -1540,12 +1540,12 @@ function moving_update!{T,U}(f::Function,
     ringbuf[ringbuf_index] = src[i]
     index = 0
     for j in 1:eff_size
-      if !ringbuf[j].isnull
+      if !isnull(ringbuf[j])
         index += 1
         projbuf[index] = ringbuf[j].value
       end
     end
-    tgt[i] = index==0 ? Nullable{T}() : Nullable(f(slice(projbuf, 1:index)))
+    tgt[i] = index==0 ? Nullable{T}() : Nullable(f(view(projbuf, 1:index)))
 
     if ringbuf_index == window
       ringbuf_index = 1
@@ -1576,7 +1576,7 @@ function moving_update!{T,U}(f::Function,
         projbuf[index] = ringbuf[j]
       end
     end
-    tgt[i] = index==0 ? na : f(slice(projbuf, 1:index))
+    tgt[i] = index==0 ? na : f(view(projbuf, 1:index))
 
     if ringbuf_index == window
       ringbuf_index = 1
@@ -1601,12 +1601,12 @@ function moving_update!{T,U}(f::Function,
     ringbuf[ringbuf_index] = src[i]
     index = 0
     for j in 1:eff_size
-      if !ringbuf[j].isnull
+      if !isnull(ringbuf[j])
         index += 1
         projbuf[index] = ringbuf[j].value
       end
     end
-    tgt[i] = index==0 ? na : f(slice(projbuf, 1:index))
+    tgt[i] = index==0 ? na : f(view(projbuf, 1:index))
 
     if ringbuf_index == window
       ringbuf_index = 1
@@ -1636,7 +1636,7 @@ function moving_update!{T,U}(f::Function,
         projbuf[index] = ringbuf[j]
       end
     end
-    tgt[i] = index==0 ? Nullable{T}() : Nullable(f(slice(projbuf, 1:index)))
+    tgt[i] = index==0 ? Nullable{T}() : Nullable(f(view(projbuf, 1:index)))
 
     if ringbuf_index == window
       ringbuf_index = 1
@@ -1661,7 +1661,7 @@ cumquantile_update!{T,U,R}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{N
   dummy_index = 0
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       dummy_index += 1
       if isempty(highqueue) || Collections.peek(highqueue)[2] < srci.value
         Collections.enqueue!(highqueue, dummy_index, srci.value)

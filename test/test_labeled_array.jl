@@ -195,10 +195,10 @@ facts("LabeledArray tests") do
     @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
     @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
-    @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
-    @fact slice(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=1.0*[5,2])
-    @fact slice(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
-    @fact slice(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2,3], axis1=darr(r=[:y,:z]))
+    @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
+    @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=1.0*[5,2])
+    @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
+    @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2,3], axis1=darr(r=[:y,:z]))
     @fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
     @fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2 3], axis2=darr(r=[:y,:z]))
     @fact_throws larr(a=[1,2,3], axis1=[4,5,6], axis2=[:a,:b,:c])
@@ -249,16 +249,16 @@ facts("LabeledArray tests") do
       @fact (dcube.set_format_string!(Float64, "%0.2f");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_format_string!(Float64, "%0.8g");show(larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
 
-      @fact (dcube.set_dispsize!(5,5);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispheight!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),larr(a=rand(2,3,4)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),larr(a=slice([1,2],1)))) --> nothing
+      @fact (dcube.set_dispsize!(5,5);show(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispheight!(3);show(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),larr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),larr(a=rand(2,3,4)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),larr(a=slice([1,2],1)))) --> nothing
       @fact (dcube.set_default_dispsize!();nothing) --> nothing
-      @fact (dcube.set_dispalongrow!(false);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_dispalongrow!(true);writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_format_string!(Float64, "%0.2f");writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_format_string!(Float64, "%0.8g");writemime(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_dispalongrow!(false);show(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_dispalongrow!(true);show(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!(Float64, "%0.2f");show(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!(Float64, "%0.8g");show(STDOUT,MIME("text/html"),larr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
     end
   end
 end

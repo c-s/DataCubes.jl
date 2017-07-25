@@ -148,10 +148,10 @@ facts("DictArray tests") do
     @fact mapslices(x->msum(x,1,2), darr(a=reshape(1:24,2,3,4)),2,1) --> darr(a=reshape([1,3,6,10,15,21,7,15,24,34,45,57,13,27,42,58,75,93,19,39,60,82,105,129],2,3,4))
     @fact mapslices(x->msum(x,2,1), 3.0*darr(a=reshape(1:24,2,3,4)),[2,1]) --> 3.0*darr(a=reshape([1,3,6,10,15,21,7,15,24,34,45,57,13,27,42,58,75,93,19,39,60,82,105,129],2,3,4))
 
-    @fact sub(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
-    @fact sub(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
-    @fact slice(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
-    @fact slice(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
+    #@fact sub(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    #@fact sub(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
+    @fact view(darr(a=1.0*[1 2 3;4 5 6]),2:2,1:2) --> darr(a=1.0*[4 5])
+    @fact view(darr(a=1.0*[1 2 3;4 5 6]),(2:2,1:2)) --> darr(a=1.0*[4 5])
     @fact typeof(repeat(darr(a=1.0*[1 2 3;4 5 6]), inner=[2,1], outer=[1,3])) --> DataCubes.DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
     @fact reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6) --> darr(a=1.0*[1 2 3 4 5 6])
     @fact typeof(reshape(darr(a=1.0*[1 3 5;2 4 6]), 1, 6)) --> DictArray{Symbol,2,DataCubes.AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}},Nullable{Float64}}
@@ -215,7 +215,7 @@ facts("DictArray tests") do
     @fact show(darr(a=rand(2,3,2,2))) --> nothing
 
     context("show tests") do
-      @fact show(darr(a=slice([1,2],1))) --> nothing
+      @fact show(darr(a=view([1,2],1))) --> nothing
       @fact show(darr(a=[])) --> nothing
       @fact show(darr(a=rand(2))) --> nothing
       @fact show(darr(a=rand(2,3))) --> nothing
@@ -232,16 +232,16 @@ facts("DictArray tests") do
       @fact (dcube.set_showalongrow!(true);show(darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_format_string!(Float64, "%0.2f");show(darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
       @fact (dcube.set_format_string!(Float64, "%0.8g");show(darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_dispsize!(5,5);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispheight!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),darr(a=rand(2,3,4)))) --> nothing
-      @fact (dcube.set_dispwidth!(3);writemime(STDOUT,MIME("text/html"),darr(a=slice([1,2],1)))) --> nothing
+      @fact (dcube.set_dispsize!(5,5);show(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispheight!(3);show(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),darr(a=rand(10,10)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),darr(a=rand(2,3,4)))) --> nothing
+      @fact (dcube.set_dispwidth!(3);show(STDOUT,MIME("text/html"),darr(a=view([1,2],1)))) --> nothing
       @fact (dcube.set_default_dispsize!();nothing) --> nothing
-      @fact (dcube.set_dispalongrow!(false);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_dispalongrow!(true);writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_format_string!(Float64, "%0.2f");writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
-      @fact (dcube.set_format_string!(Float64, "%0.8g");writemime(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_dispalongrow!(false);show(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_dispalongrow!(true);show(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!(Float64, "%0.2f");show(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
+      @fact (dcube.set_format_string!(Float64, "%0.8g");show(STDOUT,MIME("text/html"),darr(a=rand(3,5),b=rand(3,5),c=fill(:X,3,5)))) --> nothing
     end
   end
 end

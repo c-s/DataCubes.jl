@@ -21,8 +21,9 @@ facts("LDict tests") do
     @fact keys(LDict(:a=>3,:b=>2)) --> [:a,:b]
     @fact values(LDict(:a=>3,:b=>2)) --> [3,2]
     @fact_throws LDict(:a=>3,:b=>'a')[:x]
-    @fact get!(LDict(:a=>3,:b=>'a'), :a, 1.0) --> 3
-    @fact get!(LDict(:a=>3,:b=>'a'), :c, 1.0) --> 1.0
+    d5 = LDict(:a=>3, :b=>'a')
+    @fact get!(d5, :a, 1.0) --> 3
+    @fact get!(d5, :c, 1.0) --> 1.0
   end
   context("method tests") do
     @fact merge(LDict(:a=>1, :b=>2, :c=>3), LDict(:a=>10, :d=>15)) -->
