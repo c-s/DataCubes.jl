@@ -25,7 +25,7 @@ facts("NA tests") do
   @fact typeof(DataCubes.simplify_floatarray(Nullable{Float64}[])) --> DataCubes.FloatNAArray{Float64,1,Array{Float64,1}}
   @fact nalift(FloatNAArray([1.0 2.0 NaN])) --> @nalift([1.0 2.0 NA])
   @fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);t) --> nalift(fill(Nullable{Any}(),1,3))
-  @fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);typeof(t)) --> DataCubes.AbstractArrayWrapper{Nullable,2,Array{Nullable,2}}
+  #@fact (t=@nalift([1.0 NA 3]);DataCubes.setna!(t);typeof(t)) --> DataCubes.AbstractArrayWrapper{Nullable,2,Array{Nullable,2}} # in v0.5, it is promoted to FloatNAArray.
   @fact (t=@nalift([1.0 2.0 3.0]);DataCubes.setna!(t);t) --> nalift(fill(NaN,1,3))
   @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t);wrap_array(t)) --> wrap_array(fill(Nullable{Symbol}(),3))
   @fact (t=enumeration([:a,:b,:a]);DataCubes.setna!(t,1);wrap_array(t)) --> wrap_array(@enumeration([NA,:b,:a],[:a,:b]))
@@ -42,9 +42,10 @@ facts("NA tests") do
   @fact igna(Array(Nullable{Int},0)) --> Array(Int,0)
   @fact igna(Array(Nullable{Int},0),1) --> Array(Int,0)
   @fact_throws igna(@nalift([1,2,NA]))
-  @fact_throws igna(@nalift([1,2.0,NA]))
+  #@fact_throws igna(@nalift([1,2.0,NA])) # does not throw anymore in v0.5, because it is promoted to FloatNAArray.
   @fact igna(@nalift([1 3 NA]), 1) --> [1 3 1]
-  @fact igna(@nalift([1 3.0 NA]), 1) --> [1 3.0 1]
+  @fact igna(@nalift([1 3.0 NA]), 1.0) --> [1 3.0 1] # it is now promoted to FloatNAArray in v0.5.
+  #@fact igna(@nalift([1 3.0 NA]), 1) --> [1 3.0 1]
   @fact igna(Array(Nullable,0), 1) --> Array(Nullable,0)
   @fact igna(@nalift([1 3 5]), 1) --> [1 3 5]
   @fact igna(@nalift([1.0 3.0 NA]), 1.0) --> [1.0 3.0 1.0]
@@ -104,10 +105,10 @@ facts("NA tests") do
     @fact (arr=nalift([1.0,2.0,3.0]);arr[1:2]=nalift([0.0,-1.0]) ;arr) --> nalift([0.0,-1.0,3.0])
     @fact (arr=nalift([1.0,2.0,3.0]);arr[1:2]=Nullable(1.0) ;arr) --> nalift([1.0,1.0,3.0])
     @fact typeof(1.0*nalift([1 2])) --> AbstractArrayWrapper{Nullable{Float64},2,DataCubes.FloatNAArray{Float64,2,Array{Float64,2}}}
-    @fact sub(1.0*nalift([1 2 3;4 5 6]),1:2,1:1) --> nalift([1.0 4.0]')
-    @fact slice(1.0*nalift([1 2 3;4 5 6]),1:2,1) --> nalift([1.0,4.0])
-    @fact sub(1.0*nalift([1 2 3;4 5 6]),(1:2,1:1)) --> nalift([1.0 4.0]')
-    @fact slice(1.0*nalift([1 2 3;4 5 6]),(1:2,1)) --> nalift([1.0,4.0])
+    #@fact sub(1.0*nalift([1 2 3;4 5 6]),1:2,1:1) --> nalift([1.0 4.0]')
+    @fact view(1.0*nalift([1 2 3;4 5 6]),1:2,1) --> nalift([1.0,4.0])
+    #@fact sub(1.0*nalift([1 2 3;4 5 6]),(1:2,1:1)) --> nalift([1.0 4.0]')
+    @fact view(1.0*nalift([1 2 3;4 5 6]),(1:2,1)) --> nalift([1.0,4.0])
   end
 end
 
