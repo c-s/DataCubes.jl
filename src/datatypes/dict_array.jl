@@ -33,7 +33,7 @@ immutable DictArray{K,N,VS,SV} <: AbstractDictArray{K,N,VS,SV}
   # the number of dimensions is N.
   # The values of the array have type VS as a vector of arrays.
   data::LDict{K,VS}
-  DictArray(data::LDict{K,VS}) = begin
+  DictArray{K,N,VS,SV}(data::LDict{K,VS}) where {K,N,VS,SV} = begin
     dictsize = length(data)
     if dictsize > 0
       commonlen = size(data.values[1])
@@ -157,7 +157,7 @@ Base.getindex{N}(arr::DictArray, args::Tuple{N,Symbol}) = map(a->selectfield(arr
 Base.getindex(arr::DictArray, args::AbstractVector{Symbol}) = selectfields(arr, args...)
 
 Base.getindex(arr::DictArray, indices::CartesianIndex) = #getindex(arr, indices.I...)
-  LDict(arr.data.keys, map(x->getindex(x, indices), arr.data.values))
+  create_ldict_nocheck(arr.data.keys, map(x->getindex(x, indices), arr.data.values))
 
 # some standard implementations to make a DictArray an AbstractArray.
 Base.getindex(arr::DictArray, args...) = begin
@@ -165,7 +165,7 @@ Base.getindex(arr::DictArray, args...) = begin
   create_dictarray_nocheck(res)
 end
 Base.getindex{K,N,VS,SV}(arr::DictArray{K,N,VS,SV}, args::Int...) = begin
-  LDict(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
+  create_ldict_nocheck(arr.data.keys, map(x->getindex(x, args...), arr.data.values))
 end
 # used internally to skip key check.
 setindex_nocheck!(arr::DictArray, v::DictArray, args...) = begin
@@ -177,9 +177,9 @@ end
 setindex_nocheck!(arr::AbstractArray, v::LDict, args...) = setindex!(arr, v, args...)
 setindex_nocheck!(arr::AbstractArray, v, args...) = setindex!(arr, v, args...)
 
-Base.view{T}(arr::DictArray, args::Union{Colon, Int64, AbstractArray{T, 1}}...) =
-  create_dictarray_nocheck(LDict(arr.data.keys, map(x->view(x, args...), arr.data.values)))
-Base.view{T}(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray{T,1}}}}) = view(arr, args...)
+Base.view(arr::DictArray, args::Union{Colon, Int64, AbstractArray}...) =
+  create_dictarray_nocheck(create_ldict_nocheck(arr.data.keys, map(x->view(x, args...), arr.data.values)))
+Base.view(arr::DictArray, args::Tuple{Vararg{Union{Colon, Int64, AbstractArray}}}) = view(arr, args...)
 
 """
 
@@ -277,10 +277,10 @@ else
 end
 
 # assume that each column has the same linearindexing..
-Base.linearindexing(arr::DictArray) = if isempty(arr.data)
+Base.IndexStyle(arr::DictArray) = if isempty(arr.data)
   throw(ZeroNumberOfFieldsExceptin())
 else
-  Base.linearindexing(typeof(arr.data.values[1]))
+  Base.IndexStyle(typeof(arr.data.values[1]))
 end
 
 # assume all arrays in DictArray are of the same form.
@@ -671,8 +671,10 @@ Base.repeat(arr::DictArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Array
 # move this to LabeledArray.jl
 #Base.convert(::Type{DictArray}, larr::LabeledArray) = selectfields(larr, allfieldnames(larr)...)
 
-Base.repmat{T,U}(arr::Union{DictArray{T,1},DictArray{U,2}}, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,n), arr.data))
-Base.repmat{T,U}(arr::Union{DictArray{T,1},DictArray{U,2}}, m::Int, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,m,n), arr.data))
+Base.repmat{T}(arr::DictArray{T,1}, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,n), arr.data))
+Base.repmat{T}(arr::DictArray{T,2}, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,n), arr.data))
+Base.repmat{T}(arr::DictArray{T,1}, m::Int, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,m,n), arr.data))
+Base.repmat{T}(arr::DictArray{T,2}, m::Int, n::Int) = create_dictarray_nocheck(mapvalues(x->repmat(x,m,n), arr.data))
 
 Base.show{T,N}(io::IO,
                 ::MIME"text/html",
@@ -705,7 +707,10 @@ Base.show{T}(io::IO, ::MIME"text/html", table::DictArray{T,0}; height::Int=disps
   print(io, "0 dimensional DictArray")
 end
 
-Base.show{T,U}(io::IO, ::MIME"text/html", table::Union{DictArray{T,1},DictArray{U,2}}; height=dispsize()[1], width=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show{T}(io::IO, ::MIME"text/html", table::DictArray{T,1}; height=dispsize()[1], width=dispsize()[2], alongrow::Bool=todisp_alongrow) = showDictArray12(io, table; height=height, width=width, alongrow=alongrow)
+Base.show{T}(io::IO, ::MIME"text/html", table::DictArray{T,2}; height=dispsize()[1], width=dispsize()[2], alongrow::Bool=todisp_alongrow) = showDictArray12(io, table; height=height, width=width, alongrow=alongrow)
+
+showDictArray12(io::IO, table; height=dispsize()[1], width=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " DictArray")
   print(io, '\n')
@@ -875,7 +880,7 @@ end
   # slice_ndims is N if all dims are numbers, i.e., if applying f to each element. tgt will be map(f, src). f::U->T, except that f is inplace.
   # slice_ndims is 0 if applying f to the entire array. i.e. tgt will be f(src). f::AbsractArray{U,N}->AbstractArray{T,N}, except that f is inplace.
   slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_indices = Int[map(it->it[1], Iterators.filter(it->it[2]==Int, enumerate(dimtypes)))...]
   tgt_slice_exp = if slice_ndims == N
     :(tgt[coords...])
   else
@@ -896,7 +901,7 @@ end
     end
   end
   quote
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     # assume that the types are all the same.
     @nloops $slice_ndims i j->1:size(src,$slice_indices[j]) begin
       fill!(coords, Colon())
@@ -1145,7 +1150,6 @@ macro darr(args...)
   data_pairs = Any[]
   template = Nullable()
   for arg in args
-    @show arg
     if :head in fieldnames(arg) && (arg.head == :kw || arg.head == :(=) || arg.head == :(=>))
       key = arg.head==:kw || arg.head==:(=) ? quote_symbol(arg.args[1]) : arg.args[1]
       value = arg.args[2]
@@ -1163,21 +1167,17 @@ macro darr(args...)
     elseif :head in fieldnames(arg) && arg.head == :call && arg.args[1] == :Dict
       throw(ArgumentError("an array/dictionary expression is not allowed."))
     elseif isnull(template)
-      @show "template is null."
       template = Nullable(arg)
     else
-      @show arg.head
-      @show arg.args
       throw(ArgumentError("not a key=value type argument or an array argument $arg, or two or more base DictArrays are provided."))
     end
-    @show data_pairs
   end
   dataexp = if isnull(template) && isempty(data_pairs)
     throw(ArgumentError("neither a base DictArray or a fieldname=>array pair provided."))
   elseif isempty(data_pairs)
     nothing
   else
-    Expr(:call, :darr, Expr(:..., Expr(:vect, data_pairs...)))
+    Expr(:call, :darr, Expr(:..., Expr(:ref, :Any, data_pairs...)))
   end
   if isnull(template)
     dataexp
@@ -1246,11 +1246,8 @@ darr_inner(tblsize::TableSize, kwargs...) = begin
 end
 
 darr_inner(kwargs...) = begin
-  @show kwargs
   common_array_size = Nullable()
   for (k,v) in kwargs
-    @show typeof(v)
-    @show isa(v, AbstractArray)
     if isa(v, AbstractArray)
       if isnull(common_array_size)
         common_array_size = Nullable(size(v))

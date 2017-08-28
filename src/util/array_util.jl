@@ -34,11 +34,8 @@ julia> type_array(Any[1, 3.0, 'x'])
 function type_array end
 
 type_array(arr::FloatNAArray) = arr
-
 type_array{F,N,A<:FloatNAArray}(x::AbstractArrayWrapper{F,N,A}) = x
-
 type_array{T,N}(x::AbstractArray{Nullable{T},N}) = x
-
 type_array{T}(x::AbstractArray{T}) = begin
   if isempty(x) # || (isa(x, AbstractArrayWrapper) && isa(x.a, FloatNAArray))
     x
@@ -64,15 +61,23 @@ type_array{T}(x::AbstractArray{T}) = begin
         if !type_changed && elemtype !== T
           type_changed = true
         end
-        if !isa(elem, common_type)
-        #if !(typeof(elem)<:common_type)
-          common_type = promote_type(common_type, elemtype)
-        end
+        common_type = promote_type(common_type, elemtype)
       end
       if type_changed
         result = similar(x, common_type)
-        copy!(result, x)
-        result
+        try
+          copy!(result, x)
+          result
+        catch
+          @show "copy1"
+          @show result
+          @show x
+          @show typeof(result)
+          @show typeof(x)
+          result = similar(x, Any) # practically Nullable, but Any is the most general...
+          copy!(result, x)
+          result
+        end
       else
         x
       end
@@ -745,7 +750,7 @@ mapvalues(f::Function, arr::LabeledArray) = begin
   end
 end
 mapvalues(f::Function, xs...) = begin
-  allkeys = union(filter(x->!isempty(x), map(mapvalues_getkeys_helper, xs))...)
+  allkeys = union(Iterators.filter(x->!isempty(x), map(mapvalues_getkeys_helper, xs))...)
   reordered_xs = map(x->mapvalues_reorder_helper(allkeys,x), xs)
   isanydarr = any(x->isa(x,DictArray) || (isa(x,LabeledArray) && isa(peel(x),DictArray)), xs)
   labels = Nullable()
@@ -1192,7 +1197,7 @@ mapna_typecheck(f::Function, args...) = begin
 end
 
 mapna_get_eltype_nullable{T}(::Nullable{T}) = T
-mapna_get_eltype_nullable(::Nullable) = Any
+#mapna_get_eltype_nullable(::Nullable) = Any
 mapna_get_eltype_nullable{T}(::T) = T
 
 mapna_inner{T}(f::Function, typ::Type{T}, args...) = map(args...) do xs...

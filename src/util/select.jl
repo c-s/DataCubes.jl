@@ -473,7 +473,7 @@ Base.done(iter::SubArrayView, state) = state > length(iter.indices)
 Base.size(arr::SubArrayView) = (length(arr.indices),)
 Base.eltype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = T
 Base.endof(arr::SubArrayView) = length(arr.indices)
-Base.linearindexing{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.LinearFast()
+Base.IndexStyle{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.IndexLinear()
 Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.data, U, dims)
 Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims...)
 # need this special case because the underlying arr.data is not of the same shape as the corresponding SubArrayView.
@@ -514,33 +514,21 @@ selectfield{K,N}(t::LabeledArray, fld::AbstractVector{Nullable{K}}, inds::Abstra
   r
 end
 
+getcondition_apply_where(t, onec) = (inds, onec) -> onec(t, inds)
+
 # create an array of cartesian indices of a LabeledArray that satisfies
 # the conditions in c.
 @generated getcondition{T,N}(t::LabeledArray{T,N}, c) = quote
-  @show "start"
   indices = Array{NTuple{$N,Int}}(length(t))
-  #indices::Array{NTuple{$N,Int},1} = Array{NTuple{$N,Int}}(length(t))
-
-  @show indices
 
   index = 1
 
-
   @nloops $N i t begin
-    @show "hello"
-    #@show $N
-    #@show i
-    #@show "hmm"
-    #@show (@ntuple $N i)
-    #@show "hello"
-    #@show $N
-    #@show i
-    #tupleind::NTuple{$N,Int} = @ntuple $N i
-    #@show tupleind
-    #@inbounds indices[index] = tupleind
-    #index += 1
+    tupleind::NTuple{$N,Int} = @ntuple $N i
+    @inbounds indices[index] = tupleind
+    index += 1
   end
-  #foldl((inds, onec) -> onec(t, inds), indices, c)
+  foldl(getcondition_apply_where(t, onec), indices, c)
 end
 
 # larray -> indices -> field name -> element.
@@ -567,6 +555,12 @@ Base.get{K}(d::ISNALazilySelectedLabeledArray, k::AbstractArray{Nullable{K}}, _)
 Base.get{K}(d::LazilySelectedLabeledArray, k::K, _) = selectfield(d.larray, k, d.indices)
 Base.get{K}(d::IGNALazilySelectedLabeledArray, k::K, _) = igna(selectfield(d.larray, k, d.indices))
 Base.get{K}(d::ISNALazilySelectedLabeledArray, k::K, _) = isna(selectfield(d.larray, k, d.indices))
+
+# TODO: this is only introduced to suppress error when transitioning from julia 0.5 to 0.6.
+Base.getindex{K}(d::LazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+Base.getindex{K}(d::IGNALazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+Base.getindex{K}(d::ISNALazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+
 Base.length{T,N,AXES<:Tuple,TN}(d::LazilySelectedLabeledArray{T,N,AXES,TN,Void}) = length(d.larray)
 Base.length{T,N,AXES<:Tuple,TN,I}(d::LazilySelectedLabeledArray{T,N,AXES,TN,I}) = length(d.indices)
 Base.length{T,N,AXES<:Tuple,TN}(d::IGNALazilySelectedLabeledArray{T,N,AXES,TN,Void}) = length(d.larray)

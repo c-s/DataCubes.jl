@@ -153,7 +153,7 @@ Base.reshape(arr::FloatNAArray, args::Int...) = FloatNAArray(reshape(arr.data, a
 Base.repeat(arr::FloatNAArray; kwargs...) = FloatNAArray(repeat(arr.data; kwargs...))
 
 Base.next{T}(arr::FloatNAArray{T}, state) = ((x,ns)=next(arr.data, state);isnan(x) ? (Nullable{T}(),ns) : (Nullable(x),ns))
-Base.linearindexing{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Base.linearindexing(A)
+Base.IndexStyle{T<:AbstractFloat,N,A}(::Type{FloatNAArray{T,N,A}}) = Base.IndexStyle(A)
 #Base.sub(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(sub(arr.data, args...))
 Base.view(arr::FloatNAArray, args::Union{Colon,Int,AbstractVector}...) = FloatNAArray(view(arr.data, args...))
 #Base.sub(arr::FloatNAArray, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= FloatNAArray(sub(arr.data, args...))
@@ -379,7 +379,6 @@ macro nalift(expr)
   newexpr = quote
     nalift(simplify_array(recursive_wrap_array($new_expr)))
   end
-  @show newexpr
   newexpr
 end
 

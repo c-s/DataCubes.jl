@@ -19,8 +19,8 @@ immutable LDict{K,V} <: Associative{K,V}
   keys::Vector{K}
   values::Vector{V}
 
-  LDict() = new(Vector{K}(), Vector{V}())
-  LDict(ks::Vector{K}, vs::Vector{V}) =
+  LDict{K,V}() where {K,V} = new(Vector{K}(), Vector{V}())
+  LDict{K,V}(ks::Vector{K}, vs::Vector{V}) where {K,V} =
     if length(ks) == length(vs)
       new(ks, vs)
     else
@@ -120,14 +120,22 @@ Base.merge(dict::LDict, ds::Associative...) = begin
           keys = newkeys
           keys[end] = k
         end
-        if isa(v, valuetype)
-          push!(values, v)
-        else
+        function final_try()
           valuetype = promote_type(valuetype, typeof(v))
           newvalues = similar(values, valuetype, length(values) + 1)
           copy!(newvalues, values)
           values = newvalues
           values[end] = v
+        end
+        if isa(v, valuetype)
+          try
+            push!(values, v)
+          catch
+            @show "probably a bug in `isa` function. Let's try to promote the common type."
+            final_try()
+          end
+        else
+          final_try()
         end
       end
     end

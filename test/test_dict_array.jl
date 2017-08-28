@@ -195,7 +195,9 @@ facts("DictArray tests") do
     @fact cat(1, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=['x' 'y' 'z'], d=[:m :n :p])) --> reshape(@darr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=['x','y'], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
-    @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
+    # TODO: decide whether to allow type promotion from Nullabe{T} to Nullable{U} if T can be promoted to U.
+    # currently, do not do that.
+    # @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact vcat(darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact hcat(darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0 4.0 5.0 6.0])
@@ -204,8 +206,6 @@ facts("DictArray tests") do
     @fact cat(2, darr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f'],['a','b','c','d','e','f'])), darr(b=enumeration(['a','b'],['a','b','c','d','e','f']), d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','a','b'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact cat(2, darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
     @fact hcat(darr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f']), darr(b=[10,11], d=[:m,:n])) --> reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)
-    @fact cat(1,darr(k=[1 2 3]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
-    @fact cat(1,darr(k=[1.0 2.0 3.0]),darr(k=[4.0 5.0 6.0])) --> darr(k=[1.0 2.0 3.0;4.0 5.0 6.0])
     @fact reshape(darr(a=enumeration(11:16)),2,3) --> darr(a=[11 13 15;12 14 16])
     @fact reshape(darr(a=enumeration(11:16)),(2,3)) --> darr(a=[11 13 15;12 14 16])
     @fact mapna((x,y)->(x,y),nalift([1 2 3;4 5 6]),nalift(1.0*[2 3 4;5 6 7])) --> nalift([(1,2.0) (2,3.0) (3,4.0);(4,5.0) (5,6.0) (6,7.0)])

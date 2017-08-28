@@ -2,11 +2,7 @@ __precompile__()
 
 module DataCubes
 
-using Compat
-
 import Formatting: sprintf1
-import Compat.sub
-import Compat.slice
 import Base.show
 import Base.view
 

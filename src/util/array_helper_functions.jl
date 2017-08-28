@@ -1846,14 +1846,13 @@ function shift end
 @generated shift{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, offsets::NTuple{N,Int};isbound=false) = quote
   result = similar(arr)
   sizearr = size(arr)
-  indicesarr = indices(arr)
   if isbound
     @nloops $N i arr d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
       @nref($N,result,i) = @nref($N,arr,j)
     end
   else
     @nloops $N i arr d->j_d=i_d+offsets[d] begin
-      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, indicesarr[d], j_d))
+      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
         @nref($N,arr,j)
       else
         Nullable{T}()
