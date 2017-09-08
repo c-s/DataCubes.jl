@@ -44,9 +44,9 @@ end
 @inline base_lt_helper{F<:AbstractFloat}(ord::Base.Order.ReverseOrdering, x::F, y::F) =
   (!isnan(x) && isnan(y)) || (!isnan(x) && !isnan(y) && Base.lt(ord, x, y))
 @inline base_lt_helper{O,X,Y}(ord::O, x::Nullable{X}, y::Nullable{Y}) =
-  (x.isnull && !y.isnull) || (!x.isnull && !y.isnull && Base.lt(ord, x.value, y.value))
+  (isnull(x) && !isnull(y)) || (!isnull(x) && !isnull(y) && Base.lt(ord, x.value, y.value))
 @inline base_lt_helper{X,Y}(ord::Base.Order.ReverseOrdering, x::Nullable{X}, y::Nullable{Y}) =
-  (!x.isnull && y.isnull) || (!x.isnull && !y.isnull && Base.lt(ord, x.value, y.value))
+  (!isnull(x) && isnull(y)) || (!isnull(x) && !isnull(y) && Base.lt(ord, x.value, y.value))
 
 sortpermbase(arr::Union{DictArray, LabeledArray}, axis::Integer, algorithm, order::Base.Ordering) = begin
   sorted_indices = collect(1:size(arr, axis))

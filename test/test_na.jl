@@ -39,14 +39,14 @@ facts("NA tests") do
   @fact igna(Nullable{Int}(), 3) --> 3
   @fact igna(Nullable(1), 3) --> 1
   @fact igna(Nullable(1.0), 3.0) --> 1.0
-  @fact igna(Array(Nullable{Int},0)) --> Array(Int,0)
-  @fact igna(Array(Nullable{Int},0),1) --> Array(Int,0)
+  @fact igna(Array{Nullable{Int}}(0)) --> Array{Int}(0)
+  @fact igna(Array{Nullable{Int}}(0),1) --> Array{Int}(0)
   @fact_throws igna(@nalift([1,2,NA]))
   #@fact_throws igna(@nalift([1,2.0,NA])) # does not throw anymore in v0.5, because it is promoted to FloatNAArray.
   @fact igna(@nalift([1 3 NA]), 1) --> [1 3 1]
   @fact igna(@nalift([1 3.0 NA]), 1.0) --> [1 3.0 1] # it is now promoted to FloatNAArray in v0.5.
   #@fact igna(@nalift([1 3.0 NA]), 1) --> [1 3.0 1]
-  @fact igna(Array(Nullable,0), 1) --> Array(Nullable,0)
+  @fact igna(Array{Nullable}(0), 1) --> Array{Nullable}(0)
   @fact igna(@nalift([1 3 5]), 1) --> [1 3 5]
   @fact igna(@nalift([1.0 3.0 NA]), 1.0) --> [1.0 3.0 1.0]
   @fact igna(@nalift([1.0 3.0 NA]))[3] --> isnan
@@ -91,15 +91,15 @@ facts("NA tests") do
   @fact nalift([1,2,3]) == pickaxis(larr(a=[1,2,3]),1) --> false
 
   context("FloatNAArray tests") do
-    @fact map(identity, FloatNAArray(Array(Float64,0))) --> Array(Nullable{Any},0)
+    @fact map(identity, FloatNAArray(Array{Float64}(0))) --> Array{Nullable{Any}}(0)
     @fact nalift([1.0,2.0]) --> DataCubes.wrap_array(FloatNAArray([1.0,2.0]))
     @fact FloatNAArray([1.0,2.0,3.0])[1].value --> 1.0
     @fact FloatNAArray([1.0,2.0,3.0])[1:2].data --> [1.0,2.0]
     @fact wrap_array(DataCubes.simplify_floatarray(FloatNAArray([1.0 2.0]))) --> wrap_array(FloatNAArray([1.0 2.0]))
-    @fact typeof(DataCubes.simplify_floatarray(FloatNAArray(Array(Float64,0)))) --> FloatNAArray{Float64,1,Array{Float64,1}}
+    @fact typeof(DataCubes.simplify_floatarray(FloatNAArray(Array{Float64}(0)))) --> FloatNAArray{Float64,1,Array{Float64,1}}
     @fact nalift(nalift([1.0,2.0,3.0])) --> nalift([1.0,2.0,3.0])
-    @fact typeof(igna(nalift(Array(Float64,0)))) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
-    @fact typeof(igna(nalift(Array(Float64,0)),3.0)) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
+    @fact typeof(igna(nalift(Array{Float64}(0)))) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
+    @fact typeof(igna(nalift(Array{Float64}(0)),3.0)) --> DataCubes.AbstractArrayWrapper{Float64,1,Array{Float64,1}}
     @fact (arr=nalift([1.0,2.0,3.0]);arr[1]=0.0;arr) --> nalift([0.0,2.0,3.0])
     @fact (arr=nalift([1.0,2.0,3.0]);arr[1]=Nullable{Float64}();arr) --> @nalift([NA,2.0,3.0])
     @fact (arr=nalift([1.0,2.0,3.0]);arr[1:2]=nalift([0.0,-1.0]) ;arr) --> nalift([0.0,-1.0,3.0])

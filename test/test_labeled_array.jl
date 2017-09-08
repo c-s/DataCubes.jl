@@ -65,10 +65,10 @@ facts("LabeledArray tests") do
     @fact pick(arr,(:a,))[1][1,1].value --> 1
     @fact pick(arr,(:b,))[1][1,1].value --> 2.0
     @fact endof(arr) --> length(arr)
-    @fact permutedims(arr, [2,1]) --> LabeledArray(DictArray(mapvalues(x->permutedims(x,[2,1]), arr.data.data)),
+    @fact transpose(arr) --> LabeledArray(DictArray(mapvalues(transpose, arr.data.data)),
                                            axis1=arr.axes[2],
                                            axis2=arr.axes[1])
-    #@fact permutedims(arr, [2,1]) --> transpose(arr)
+    @fact permutedims(arr, [2,1]) --> transpose(arr)
     @fact_throws permutedims(arr, [2,1,3])
     @fact LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) ==
           LabeledArray(DictArray(a=nalift([1 2 3])), axes2=nalift([100,101,102])) --> true
@@ -157,7 +157,7 @@ facts("LabeledArray tests") do
     @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),6) --> larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
     @fact_throws reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),2,1,5)
     @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),(6,)) --> larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
-    @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,6) --> @rap permutedims(_,[2,1]) reshape(_,6,1) larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
+    @fact reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,6) --> @rap transpose reshape(_,6,1) larr(a=[1,4,2,5,3,6],b=[10,13,11,14,12,15], axis1=darr(k1=repmat([:a,:b],3),k2=repmat([100,101],3),x1=[:m,:m,:n,:n,:p,:p]))
     @fact_throws reshape(larr(a=[1 2 3;4 5 6],b=[10 11 12;13 14 15],axis1=darr(k1=[:a,:b],k2=[100,101]),axis2=[:m,:n,:p]),1,3)
     @fact reshape(larr([1 2 3;4 5 6],axis1=[10,11]),1,6) --> larr([1 4 2 5 3 6], axis2=repmat([10,11],3))
     @fact reducedim((x,y)->x+y[:a].value, larr(a=reshape(1:24,2,3,4)),[1],0) --> larr([3 15 27 39;7 19 31 43;11 23 35 47])
@@ -167,7 +167,7 @@ facts("LabeledArray tests") do
     @fact reducedim((x,y)->x+y[:a].value, larr(a=reshape(1:24,2,3,4),axis1=darr(k1=[:a,:b]),axis3=[:x,:y,:z,:w]),[1,2],0) --> larr([21,57,93,129],axis1=[:x,:y,:z,:w])
     @fact reducedim((x,y)->x+y[:a].value, larr(a=reshape(1:24,2,3,4),axis1=darr(k1=[:a,:b]),axis3=[:x,:y,:z,:w]),[1,2,3],0).value --> 300
     # runnability test when the result is empty.
-    @fact size(@rap permutedims(_,[2,1]) @select((@rap permutedims(_,[2,1]) larr(r=rand(8,20), axis1=darr(a=rand(8),b=101:108))), :r=_r.*100, where[_r.>1])) --> (0,0)
+    @fact size(@rap transpose @select((@rap transpose larr(r=rand(8,20), axis1=darr(a=rand(8),b=101:108))), :r=broadcast(*, _r, 100), where[broadcast(>, _r, 1)])) --> (0,0)
     @fact reorder(larr('x'=>1:10, 3=>11:20, axis1=101:110), 3) --> larr(3=>11:20, 'x'=>1:10, axis1=101:110)
     @fact reorder(larr(c1=1:10,c2=11:20),:c2,:c1) --> reorder(larr(c1=1:10,c2=11:20),:c2)
     @fact reorder(larr(c1=1:10,c2=11:20),:c2,:c1) --> larr(c2=11:20,c1=1:10)
@@ -183,24 +183,22 @@ facts("LabeledArray tests") do
     @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=darr(r=[:x,:y,:z])), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=@darr(r=[:x,:y,:z,NA]))
     # this will cause a NullException().
     #@fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=[10 11]', d=[:m :n]',axis1=[100,200],axis2=darr(r=[:k]))) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,LDict(:r=>Nullable(:k))])
-    @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=permutedims([10 11], (2,1)), d=permutedims([:m :n], (2,1)),axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
-    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=permutedims([10 11], (2,1)), d=permutedims([:m :n], (2,1)),axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
+    @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=reshape([10 11],2,1), d=reshape([:m :n],2,1),axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
+    @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'],axis1=[100,200]), larr(b=reshape([10 11],2,1), d=reshape([:m :n],2,1),axis1=[100,200],axis2=[:k])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[100,200],axis2=[1,2,3,:k])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=[:x,:y,:z]), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=[Nullable(:x),Nullable(:y),Nullable(:z),Nullable{Symbol}()])
     @fact cat(2, larr(a=1.0*[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis2=[:x,:y,:z]), larr(b=[10,11], d=[:m,:n])) --> larr(reshape(@darr(a=[1.0,4.0,2.0,5.0,3.0,6.0,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis2=[Nullable(:x),Nullable(:y),Nullable(:z),Nullable{Symbol}()])
     @fact merge(larr(a=[1,2,3],b=[:x,:y,:z],axis1=[:a,:b,:c]),darr(c=[4,5,6],b=[:m,:n,:p]),darr(a=["X","Y","Z"])) --> larr(a=["X","Y","Z"],b=[:m,:n,:p],c=[4,5,6],axis1=[:a,:b,:c])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[2:-1:1,2] --> larr(a=[5,2])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2] --> larr(a=[5,2])
     @fact @larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]])[[2,1],2:3] --> larr(a=[5 6;2 3],axis2=darr(r=[:y,:z]))
-    #@fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
-    #@fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
-    #@fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
-    #@fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
+    @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
+    @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2)
+    @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
+    @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3) --> getindex(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2:3)
     @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=[5,2])
     @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),[2,1],2) --> larr(a=1.0*[5,2])
     @fact view(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2,3], axis1=darr(r=[:y,:z]))
     @fact view(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2,3], axis1=darr(r=[:y,:z]))
-    #@fact sub(@larr(a=[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=[2 3], axis2=darr(r=[:y,:z]))
-    #@fact sub(@larr(a=1.0*[1 2 3;4 5 6],axis2[r=[:x,:y,:z]]),1, 2:3) --> larr(a=1.0*[2 3], axis2=darr(r=[:y,:z]))
     @fact_throws larr(a=[1,2,3], axis1=[4,5,6], axis2=[:a,:b,:c])
     @fact_throws larr(a=[1,2,3], axis1=[4,5])
     @fact_throws larr(axis1=[4,5])

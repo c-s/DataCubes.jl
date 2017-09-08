@@ -123,17 +123,21 @@ Base.unique(arr::LabeledArray, dim::Int, dims::Int...) = begin
   LabeledArray(newdata, newaxes)
 end
 
+unique_inner_private_notxindims(dims) = x -> !(x in dims)
+unique_inner_private_colon_func(_) = Colon()
+unique_inner_private_false_comprehension(N, sizearr, dims) = [falses(sizearr[dims[i]]) for i in 1:N]
+
 @generated unique_inner{N}(arr::DictArray, dims::NTuple{N,Int}) = quote
   # first rearrange the axes so that the calculatioin can be more convenient.
   # this might be later optimized.
   ndimsarr = ndims(arr)
   sizearr = size(arr)
-  remainingdirs = filter(x->!(x in dims), 1:ndimsarr)
-  remainingcoords = ntuple(d->Colon(), length(remainingdirs))
+  remainingdirs = filter(unique_inner_private_notxindims(dims), 1:ndimsarr)
+  remainingcoords = ntuple(unique_inner_private_colon_func, length(remainingdirs))
   newdirs = (remainingdirs...,dims...)
   permuted_arr = permutedims_if_necessary(arr, newdirs)
   elems_sofar = Set()
-  axiselems_toshow = [falses(sizearr[dims[i]]) for i in 1:$N]
+  axiselems_toshow = unique_inner_private_false_comprehension($N, sizearr, dims)
   result = similar(permuted_arr)
   @nloops $N i d->1:sizearr[dims[d]] begin
     coords = @ntuple($N,i)
@@ -149,8 +153,8 @@ end
       result[full_coords...] = oneslice
     end
   end
-  coords_toshow = [find(axiselems_toshow[i]) for i in 1:$N]
-  (coords_toshow, ipermutedims_if_necessary(result[remainingcoords...,coords_toshow...], newdirs))
+  coords_toshow = Array{Int}[find(axiselems_toshow[i]) for i in 1:$N]
+  (coords_toshow, permutedims_if_necessary(result[remainingcoords...,coords_toshow...], invperm(newdirs)))
 end
 
 @generated unique_inner{T,N}(arr::AbstractArray{Nullable{T}}, dims::NTuple{N,Int}) = quote
@@ -158,12 +162,12 @@ end
   # this might be later optimized.
   ndimsarr = ndims(arr)
   sizearr = size(arr)
-  remainingdirs = filter(x->!(x in dims), 1:ndimsarr)
-  remainingcoords = ntuple(d->Colon(), length(remainingdirs))
+  remainingdirs = filter(unique_inner_private_notxindims(dims), 1:ndimsarr)
+  remainingcoords = ntuple(unique_inner_private_colon_func, length(remainingdirs))
   newdirs = (remainingdirs...,dims...)
   permuted_arr = permutedims_if_necessary(arr, newdirs)
   elems_sofar = Set()
-  axiselems_toshow = [falses(sizearr[dims[i]]) for i in 1:$N]
+  axiselems_toshow = unique_inner_private_false_comprehension($N, sizearr, dims)
   result = similar(permuted_arr)
   @nloops $N i d->1:sizearr[dims[d]] begin
     coords = @ntuple($N,i)
@@ -179,6 +183,6 @@ end
       result[full_coords...] = oneslice
     end
   end
-  coords_toshow = [find(axiselems_toshow[i]) for i in 1:$N]
-  (coords_toshow, ipermutedims_if_necessary(result[remainingcoords...,coords_toshow...], newdirs))
+  coords_toshow = Array{Int}[find(axiselems_toshow[i]) for i in 1:$N]
+  (coords_toshow, permutedims_if_necessary(result[remainingcoords...,coords_toshow...], invperm(newdirs)))
 end

@@ -1,5 +1,7 @@
 import Base: sum, prod, diff, mean, var, std, quantile, minimum, maximum, median, middle, cov, cor, cumprod, cumsum, cummin, cummax
 
+import DataStructures
+
 # define several helper functions such as sum or mean over nullable arrays (AbstractArrayWrapper{Nullable{T}}).
 
 """
@@ -51,12 +53,12 @@ Base.eltype{T,N,A}(::Type{NonNAIterator{T,N,A}}) = T
 Base.start(iter::NonNAIterator) = start(iter.array)
 Base.next{T,N,U,A}(iter::NonNAIterator{T,N,A}, state::U) = begin
   (next_item::Nullable{T}, next_state::U) = next(iter.array, state)
-  while next_item.isnull
+  while isnull(next_item)
     (next_item, next_state) = next(iter.array, next_state)
   end
   (next_item.value, next_state)::Tuple{T,U}
   # recursion does not increase/decrease performance in some case.
-  #if next_item.isnull
+  #if isnull(next_item)
   #  # I need to check if TCO is applied here.
   #  next(iter, next_state)::Tuple{T,U}
   #else
@@ -69,7 +71,7 @@ Base.done{T,N,U,A}(iter::NonNAIterator{T,N,A}, state::U) = begin
     true
   else
     (next_item, next_state) = next(iter.array, state)
-    if next_item.isnull
+    if isnull(next_item)
       done(iter, next_state)::Bool
     else
       false
@@ -85,7 +87,7 @@ Base.eltype{T,N,A}(::Type{EnumerateNonNAIterator{T,N,A}}) = Tuple{Int,T}
 Base.start{T,N}(iter::EnumerateNonNAIterator{T,N}) = (1, start(iter.array))
 Base.next{T,N}(iter::EnumerateNonNAIterator{T,N}, state) = begin
   (next_item, next_state) = next(iter.array, state[2])
-  if next_item.isnull
+  if isnull(next_item)
     next(iter, (state[1]+1, next_state)) #::Tuple{Tuple{Int,T},Tuple{Int,typeof(state)}}
   else
     ((state[1], next_item.value), (state[1]+1, next_state)) #::Tuple{Tuple{Int,T},Tuple{Int,typeof(state)}}
@@ -97,7 +99,7 @@ Base.done{T,N}(iter::EnumerateNonNAIterator{T,N}, state) = begin
     true
   else
     (next_item, next_state) = next(iter.array, state[2])
-    if next_item.isnull
+    if isnull(next_item)
       done(iter, (state[1]+1, next_state))::Bool
     else
       false
@@ -129,16 +131,16 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 ```
 
 """
-zip_dropnaiter{N}(arrs::AbstractArray{TypeVar(:T),N}...) = begin
+zip_dropnaiter(arrs::AbstractArray...) = begin
   T = Tuple{map(x->eltype(eltype(x)), arrs)...}
-  ZipNonNAIterator{T,N,length(arrs),typeof(arrs)}(arrs)
+  ZipNonNAIterator{T,length(arrs),length(arrs),typeof(arrs)}(arrs)
 end
 Base.eltype{T,N,M,A}(::Type{ZipNonNAIterator{T,N,M,A}}) = T
 Base.start{T,N,M}(iter::ZipNonNAIterator{T,N,M}) = map(start, iter.arrays)
 Base.next{T,N,M}(iter::ZipNonNAIterator{T,N,M}, state) = begin
   nexts = map(iter.arrays, state) do array,s; next(array,s) end
   for (n,s) in nexts
-    if n.isnull
+    if isnull(n)
       return next(iter, map(x->x[2],nexts))
     end
   end
@@ -151,7 +153,7 @@ Base.done{T,N,M}(iter::ZipNonNAIterator{T,N,M}, state) = begin
   end
   nexts = map(iter.arrays, state) do array,s; next(array,s) end
   for (n,s) in nexts
-    if n.isnull
+    if isnull(n)
       return done(iter, map(x->x[2],nexts))::Bool
     end
   end
@@ -163,7 +165,7 @@ end
 Base.sum{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   acc = zero(T)
   for x in arr
-    if !x.isnull
+    if !isnull(x)
       acc += x.value
     end
   end
@@ -183,7 +185,7 @@ end
 Base.prod{T,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,A}) = begin
   acc = one(T)
   for x in arr
-    if !x.isnull
+    if !isnull(x)
       acc *= x.value
     end
   end
@@ -232,8 +234,8 @@ Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrap
 Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cov_base(arr1, arr2)
 cov_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
-  v1 = Array(T,length(arr1))
-  v2 = Array(U,length(arr2))
+  v1 = Array{T}(length(arr1))
+  v2 = Array{U}(length(arr2))
   n = 1
   for z in zipped
     v1[n] = z[1]
@@ -256,8 +258,8 @@ Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrap
 Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cor_base(arr1, arr2)
 cor_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
-  v1 = Array(T,length(arr1))
-  v2 = Array(U,length(arr2))
+  v1 = Array{T}(length(arr1))
+  v2 = Array{U}(length(arr2))
   n = 1
   for z in zipped
     v1[n] = z[1]
@@ -283,13 +285,15 @@ Base.minimum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(minimum(r))
 end
-Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.maximum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(maximum(r))
 end
-Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.median{T}(arr::AbstractArrayWrapper{Nullable{T}}) = median_helper(typeof(one(T) / 2), arr)
 median_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}) = begin
@@ -316,7 +320,8 @@ middle_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{DIVTYPE}() : Nullable(middle(r))
 end
-Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.quantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = quantile_helper(typeof(one(T) / 2), arr, q)
 quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = begin
@@ -367,16 +372,16 @@ for op = [:cov, :cor]
       $(op)(arr1.data, arr2.data)
     end
     $(op)(arr1::DictArray,arr2::DictArray) = $(op_base)(arr1, arr2)
-    $(op)(arr1::DictArray{TypeVar(:T),1},arr2::DictArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
-    $(op)(arr1::DictArray{TypeVar(:T),2},arr2::DictArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
-    $(op)(arr::DictArray{TypeVar(:T),1}) = $(op)(arr, arr)
-    $(op)(arr::DictArray{TypeVar(:T),2}) = $(op)(arr, arr)
+    $(op){T,U}(arr1::DictArray{T,1},arr2::DictArray{U,1}) = $(op_base)(arr1, arr2)
+    $(op){T,U}(arr1::DictArray{T,2},arr2::DictArray{U,2}) = $(op_base)(arr1, arr2)
+    $(op){T}(arr::DictArray{T,1}) = $(op)(arr, arr)
+    $(op){T}(arr::DictArray{T,2}) = $(op)(arr, arr)
     $(op)(arr::DictArray) = $(op)(arr, arr)
     $(op)(arr1::LabeledArray,arr2::LabeledArray) = $(op_base)(arr1, arr2)
-    $(op)(arr1::LabeledArray{TypeVar(:T),1},arr2::LabeledArray{TypeVar(:U),1}) = $(op_base)(arr1, arr2)
-    $(op)(arr1::LabeledArray{TypeVar(:T),2},arr2::LabeledArray{TypeVar(:U),2}) = $(op_base)(arr1, arr2)
-    $(op)(arr::LabeledArray{TypeVar(:T),1}) = $(op)(arr, arr)
-    $(op)(arr::LabeledArray{TypeVar(:T),2}) = $(op)(arr, arr)
+    $(op){T,U}(arr1::LabeledArray{T,1},arr2::LabeledArray{U,1}) = $(op_base)(arr1, arr2)
+    $(op){T,U}(arr1::LabeledArray{T,2},arr2::LabeledArray{U,2}) = $(op_base)(arr1, arr2)
+    $(op){T}(arr::LabeledArray{T,1}) = $(op)(arr, arr)
+    $(op){T}(arr::LabeledArray{T,2}) = $(op)(arr, arr)
     $(op)(arr::LabeledArray) = $(op)(arr, arr)
   end
 end
@@ -410,7 +415,7 @@ Base.cumsum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = zero(T)
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         acc += src[i].value
       end
       tgt[i] = Nullable(acc)
@@ -439,7 +444,7 @@ Base.cumprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fal
   function update!(tgt, src)
     acc = one(T)
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         acc *= src[i].value
       end
       tgt[i] = Nullable(acc)
@@ -470,8 +475,8 @@ Base.cummin{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        acc = acc.isnull ? src[i] : Nullable(min(acc.value, src[i].value))
+      if !isnull(src[i])
+        acc = isnull(acc) ? src[i] : Nullable(min(acc.value, src[i].value))
       end
       tgt[i] = acc
     end
@@ -501,8 +506,8 @@ Base.cummax{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
   function update!(tgt, src)
     acc = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        acc = acc.isnull ? src[i] : Nullable(max(acc.value, src[i].value))
+      if !isnull(src[i])
+        acc = isnull(acc) ? src[i] : Nullable(max(acc.value, src[i].value))
       end
       tgt[i] = acc
     end
@@ -534,11 +539,11 @@ cummiddle{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false)
     accmin = Nullable{T}()
     accmax = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
-        accmin = accmin.isnull ? src[i] : Nullable(min(accmin.value, src[i].value))
-        accmax = accmax.isnull ? src[i] : Nullable(max(accmax.value, src[i].value))
+      if !isnull(src[i])
+        accmin = isnull(accmin) ? src[i] : Nullable(min(accmin.value, src[i].value))
+        accmax = isnull(accmax) ? src[i] : Nullable(max(accmax.value, src[i].value))
       end
-      tgt[i] = (accmin.isnull || accmax.isnull ? Nullable{DIVTYPE}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{DIVTYPE}
+      tgt[i] = (isnull(accmin) || isnull(accmax) ? Nullable{DIVTYPE}() : Nullable((accmin.value + accmax.value) / 2)) :: Nullable{DIVTYPE}
     end
   end
   result = similar(arr, Nullable{DIVTYPE})
@@ -568,7 +573,7 @@ nafill0{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false) = begin
   function update!(tgt, src)
     lastelem = Nullable{T}()
     for i in eachindex(src)
-      if !src[i].isnull
+      if !isnull(src[i])
         lastelem = src[i]
       end
       tgt[i] = lastelem
@@ -658,7 +663,7 @@ nafill{T}(arr::AbstractArray{Nullable{T}}, dims::Integer...;rev=false, window=0)
     lastelem = Nullable{T}()
     age = 0
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         age += 1
         if age >= window
           lastelem = Nullable{T}()
@@ -847,7 +852,7 @@ msum{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false,windo
     acc = zero(T)
     ringbuf_index = 1
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         acc -= ringbuf[ringbuf_index]
         ringbuf[ringbuf_index] = zero(T)
       else
@@ -960,7 +965,7 @@ mprod{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=false, win
     acc = one(T)
     ringbuf_index = 1
     for i in eachindex(src)
-      if src[i].isnull
+      if isnull(src[i])
         acc /= ringbuf[ringbuf_index]
         ringbuf[ringbuf_index] = one(T)
       else
@@ -1092,11 +1097,11 @@ function mmean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{
   ringbuf_index = 1
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       num_non_nullable += 1
       acc += srci.value
     end
-    if !ringbuf[ringbuf_index].isnull
+    if !isnull(ringbuf[ringbuf_index])
       num_non_nullable -= 1
       acc -= ringbuf[ringbuf_index].value
     end
@@ -1139,7 +1144,7 @@ function cummean_update!{T,U}(tgt::AbstractArray{Nullable{T}}, src::AbstractArra
   num_non_nullable = 0
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       num_non_nullable += 1
       acc += srci.value
     end
@@ -1532,15 +1537,15 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::AbstractArray{Nullable{T}},
                              src::AbstractArray{Nullable{U}})
-  ringbuf = Array(Nullable{U}, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{Nullable{U}}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   for i in eachindex(src)
     ringbuf[ringbuf_index] = src[i]
     index = 0
     for j in 1:eff_size
-      if !ringbuf[j].isnull
+      if !isnull(ringbuf[j])
         index += 1
         projbuf[index] = ringbuf[j].value
       end
@@ -1561,8 +1566,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::FloatNAArray{T},
                              src::FloatNAArray{U})
-  ringbuf = Array(U, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{U}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   srcdata = src.data
@@ -1592,8 +1597,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::FloatNAArray{T},
                              src::AbstractArray{Nullable{U}})
-  ringbuf = Array(Nullable{U}, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{Nullable{U}}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   na = convert(T, NaN)
@@ -1601,7 +1606,7 @@ function moving_update!{T,U}(f::Function,
     ringbuf[ringbuf_index] = src[i]
     index = 0
     for j in 1:eff_size
-      if !ringbuf[j].isnull
+      if !isnull(ringbuf[j])
         index += 1
         projbuf[index] = ringbuf[j].value
       end
@@ -1622,8 +1627,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::AbstractArray{Nullable{T}},
                              src::FloatNAArray{U})
-  ringbuf = Array(U, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{U}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   srcdata = src.data
@@ -1655,47 +1660,47 @@ cumquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::Number, dims::Integer.
 end
 
 cumquantile_update!{T,U,R}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{Nullable{U}}, q::R) = begin
-  lowqueue = Collections.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Reverse) # queue for smaller elements. Easy to get the maximum element.
-  highqueue = Collections.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Forward) # queue for larger elements. Easy to get the minimum element.
+  lowqueue = DataStructures.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Reverse) # queue for smaller elements. Easy to get the maximum element.
+  highqueue = DataStructures.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Forward) # queue for larger elements. Easy to get the minimum element.
 
   dummy_index = 0
   for i in eachindex(src)
     srci = src[i]
-    if !srci.isnull
+    if !isnull(srci)
       dummy_index += 1
-      if isempty(highqueue) || Collections.peek(highqueue)[2] < srci.value
-        Collections.enqueue!(highqueue, dummy_index, srci.value)
+      if isempty(highqueue) || DataStructures.peek(highqueue)[2] < srci.value
+        DataStructures.enqueue!(highqueue, dummy_index, srci.value)
       elseif isempty(lowqueue)
-        Collections.enqueue!(lowqueue, dummy_index, srci.value)
+        DataStructures.enqueue!(lowqueue, dummy_index, srci.value)
       end
       # check the queues and shuffle elements if necessary.
       quantile_denom = length(lowqueue) + length(highqueue) - 1
       while q < (length(lowqueue)-1) / quantile_denom
-        elem = Collections.peek(lowqueue)
-        Collections.dequeue!(lowqueue)
-        Collections.enqueue!(highqueue, elem...)
+        elem = DataStructures.peek(lowqueue)
+        DataStructures.dequeue!(lowqueue)
+        DataStructures.enqueue!(highqueue, elem...)
       end
       while q > length(lowqueue) / quantile_denom
-        elem = Collections.peek(highqueue)
-        Collections.dequeue!(highqueue)
-        Collections.enqueue!(lowqueue, elem...)
+        elem = DataStructures.peek(highqueue)
+        DataStructures.dequeue!(highqueue)
+        DataStructures.enqueue!(lowqueue, elem...)
       end
     end
     tgt[i] = if isempty(lowqueue)
       if isempty(highqueue)
         Nullable{T}()
       else
-        Nullable(convert(T, Collections.peek(highqueue)[2]))
+        Nullable(convert(T, DataStructures.peek(highqueue)[2]))
       end
     elseif isempty(highqueue)
-      Nullable(convert(T, Collections.peek(lowqueue)[2]))
+      Nullable(convert(T, DataStructures.peek(lowqueue)[2]))
     else
       lowlen = length(lowqueue)
       highlen = length(highqueue)
       low_quantile = (lowlen - 1) / (lowlen + highlen - 1)
       high_quantile = lowlen / (lowlen + highlen - 1)
-      lowpeek = Collections.peek(lowqueue)[2]
-      highpeek = Collections.peek(highqueue)[2]
+      lowpeek = DataStructures.peek(lowqueue)[2]
+      highpeek = DataStructures.peek(highqueue)[2]
       Nullable((lowpeek + (q - low_quantile) * (highpeek - lowpeek) / (high_quantile - low_quantile))::T)
     end
   end
@@ -1846,14 +1851,13 @@ function shift end
 @generated shift{T,N}(arr::AbstractArrayWrapper{Nullable{T},N}, offsets::NTuple{N,Int};isbound=false) = quote
   result = similar(arr)
   sizearr = size(arr)
-  indicesarr = indices(arr)
   if isbound
     @nloops $N i arr d->j_d=max(1,min(sizearr[d],i_d+offsets[d])) begin
       @nref($N,result,i) = @nref($N,arr,j)
     end
   else
     @nloops $N i arr d->j_d=i_d+offsets[d] begin
-      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, indicesarr[d], j_d))
+      @nref($N,result,i) = if @nall($N, d->checkbounds(Bool, sizearr[d], j_d))
         @nref($N,arr,j)
       else
         Nullable{T}()

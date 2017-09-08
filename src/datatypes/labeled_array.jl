@@ -17,7 +17,7 @@ immutable LabeledArray{T,N,AXES<:Tuple,TN} <: AbstractLabeledArray{T,N,AXES,TN}
   data::TN
   axes::AXES
 
-  LabeledArray(data::TN, axes::AXES) = begin
+  LabeledArray{T,N,AXES,TN}(data::TN, axes::AXES) where {T,N,AXES<:Tuple,TN} = begin
     if length(axes) != ndims(data)
       throw(ArgumentError("LabeledArray: the number of axes $(length(axes)) is not the same as the number of dimensions of data $(ndims(data))."))
     end
@@ -51,7 +51,7 @@ immutable DefaultAxis <: AbstractArray{Nullable{Int}, 1}
   counts::Int
 end
 Base.size(axis::DefaultAxis) = (axis.counts,)
-Base.linearindexing(::Type{DefaultAxis}) = Base.LinearFast()
+Base.IndexStyle(::Type{DefaultAxis}) = IndexLinear()
 Base.getindex(axis::DefaultAxis, i::Int) = Nullable(i)
 Base.getindex(axis::DefaultAxis, i...) = begin
   labeledarray_mapnullable_inner((1:axis.counts)[i...])
@@ -291,7 +291,7 @@ Show a LabeledArray.
 * `alongrow`(optional, default set by `set_dispalongrow!`. `tru` by default): if `true`, the fields in the array will be displayed along the row in each cell. Otherwise, they will be stacked on top of each other.
 
 """
-Base.show{N}(io::IO, table::LabeledArray{TypeVar(:T),N}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T,N}(io::IO, table::LabeledArray{T,N}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -314,12 +314,12 @@ Base.show{N}(io::IO, table::LabeledArray{TypeVar(:T),N}, indent=0; height::Int=s
   end
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),0}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,0}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   println(io, "0 dimensional LabeledArray")
   show(io, table.data)
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),1}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,1}, indent=0; height::Int=show_size()[1], width::Int=show_size()[2], alongrow::Bool=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -335,7 +335,7 @@ end
 # returns a tuple of (string matrix, locations of horizontal lines, locations of vertical lines).
 # location 10 of horizonal line means, e.g., there is a horizontal line to be inserted
 # between the 9th and 10th rows.
-create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),1}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongrow{T}(table::LabeledArray{T,1}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   tableaxes1 = table.axes[1]
@@ -362,7 +362,7 @@ create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),1}; height::Int=s
   (result, [2], [nkeys+1])
 end
 
-create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),1}; height::Int=show_size()[1], width=show_size()[2]) = begin
+create_string_reprmat_alongcol{T}(table::LabeledArray{T,1}; height::Int=show_size()[1], width=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   tableaxes1 = table.axes[1]
@@ -397,7 +397,7 @@ create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),1}; height::Int=s
   (result, collect(2+widthtabledata*(0:1+fld(nrows,widthtabledata))), [nkeys+1,nkeys+2])
 end
 
-Base.show(io::IO, table::LabeledArray{TypeVar(:T),2}, indent; height::Int=show_size()[1], width::Int=show_size()[2], alongrow=toshow_alongrow) = begin
+Base.show{T}(io::IO, table::LabeledArray{T,2}, indent; height::Int=show_size()[1], width::Int=show_size()[2], alongrow=toshow_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -414,7 +414,7 @@ end
 # returns a tuple of (string matrix, locations of horizontal lines, locations of vertical lines).
 # location 10 of horizonal line means, e.g., there is a horizontal line to be inserted
 # between the 9th and 10th rows.
-create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongrow{T}(table::LabeledArray{T,2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   (tableheight,tablewidth) = size(tabledata)
@@ -481,7 +481,7 @@ create_string_reprmat_alongrow(table::LabeledArray{TypeVar(:T),2}; height::Int=s
   (result, [widthtableaxes2+1,widthtableaxes2+2], map(x->nkeys+1+widthtabledata*(x-1), 1:ncols))
 end
 
-create_string_reprmat_alongcol(table::LabeledArray{TypeVar(:T),2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
+create_string_reprmat_alongcol{T}(table::LabeledArray{T,2}; height::Int=show_size()[1], width::Int=show_size()[2]) = begin
   show_height,show_width = (height, width)
   tabledata = table.data
   (tableheight,tablewidth) = size(tabledata)
@@ -670,7 +670,7 @@ Base.next(arr::LabeledArray, state) = begin
   (nextvalue, (state[1], state[2], nextstate))
 end
 Base.done(arr::LabeledArray, state) = done(state[2], state[3])
-Base.linearindexing{T,N,AXES<:Tuple,TN}(::Type{LabeledArray{T,N,AXES,TN}}) = Base.LinearSlow()
+Base.IndexStyle{T,N,AXES<:Tuple,TN}(::Type{LabeledArray{T,N,AXES,TN}}) = IndexCartesian()
 Base.eltype{T,N,AXES<:Tuple,TN}(::Type{LabeledArray{T,N,AXES,TN}}) = T
 Base.length(table::LabeledArray) = length(table.data)
 Base.getindex(arr::LabeledArray, arg::Symbol) = selectfield(arr, arg)
@@ -685,7 +685,7 @@ end
 getindex_labeledarray_nonscalar_indexing(table::LabeledArray, indices) = begin
   dataelem = getindex(table.data, indices...)
   zippedindices = zip(table.axes, indices)
-  filtered_zippedindices = [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]
+  filtered_zippedindices = [Iterators.filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]
   axeselem = [wrap_scalar_inner(index, axis_index(axis,index)) for (axis, index) in zippedindices]
   ndimstable = ndims(table)
   v04ndims = ndimstable
@@ -730,15 +730,15 @@ getindexpair(table::LabeledArray, indices::Int) =
   getindexpair_inner(table, ind2sub(table, indices))
 getindexpair(table::LabeledArray, indices::Int...) =
   getindexpair_inner(table, indices)
-getindexpair_inner{N}(table::LabeledArray{TypeVar(:T),N}, indices::NTuple{N,Int}) = begin
+getindexpair_inner{T,N}(table::LabeledArray{T,N}, indices::NTuple{N,Int}) = begin
   tableaxes = table.axes
   foldr((x,acc)->Pair(x,acc),
         getindex(table.data, indices...),
         [x[y] for (x,y) in zip(tableaxes,indices)])
 end
 
-Base.size{N}(table::LabeledArray{TypeVar(:T),N}) = size(table.data)::NTuple{N,Int}
-Base.transpose(table::LabeledArray{TypeVar(:T),2}) = LabeledArray(transpose(table.data), (table.axes[2],table.axes[1]))
+Base.size{T,N}(table::LabeledArray{T,N}) = size(table.data)::NTuple{N,Int}
+Base.transpose{T}(table::LabeledArray{T,2}) = LabeledArray(transpose(table.data), (table.axes[2],table.axes[1]))
 Base.permutedims(table::LabeledArray, perms) = begin
   lenaxes = length(table.axes)
   if length(perms) != lenaxes
@@ -753,27 +753,10 @@ Base.permutedims(table::LabeledArray, perms) = begin
 end
 Base.setindex!(table::LabeledArray, v, args...) = setindex!(table.data, v, args...)
 Base.show(io::IO, ::MIME"text/plain", table::LabeledArray) = show(io, table)
-#sub(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
-#  dataelem = sub(table.data, indices...)
-#  #axeselem = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(table.axes,indices)]
-#  axeselem = sub_labeled_array_axes_helper(table.axes, indices)
-#  newN = ndims(dataelem)
-#  LabeledArray(dataelem, (axeselem[1:newN]...))
-#end
-#sub_labeled_array_axes_helper_expr = if IS_JULIA_V05
-#  quote
-#    sub_labeled_array_axes_helper(axes, indices) = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(axes, indices))...]]
-#  end
-#else
-#  quote
-#    sub_labeled_array_axes_helper(axes, indices) = [axis_sub(axis, isa(index,Int) ? (index:index) : index) for (axis, index) in zip(axes,indices)]
-#  end
-#end
-#eval(sub_labeled_array_axes_helper_expr)
 
-Base.view(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray{TypeVar(:T),1}}...) = begin
+Base.view(table::LabeledArray, indices::Union{Colon, Int64, AbstractArray}...) = begin
   dataelem = view(table.data, indices...)
-  axeselem = [axis_slice(axis, index) for (axis, index) in [filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
+  axeselem = [axis_slice(axis, index) for (axis, index) in [Iterators.filter(elem->!isa(elem[2], Real), zip(table.axes, indices))...]]
   newN = ndims(dataelem)
   LabeledArray(dataelem, (axeselem[1:newN]...))
 end
@@ -803,10 +786,10 @@ immutable BroadcastAxis{T,N,V,W} <: AbstractArray{T,N}
 end
 (==)(arr1::BroadcastAxis, arr2::BroadcastAxis) =
   arr1.index==arr2.index && size(arr1.base)==size(arr2.base) && arr1.axis==arr2.axis
-BroadcastAxis{T,N}(axis::AbstractArray{T,1}, base::AbstractArray{TypeVar(:U),N}, index::Int) = BroadcastAxis{T,N,typeof(axis),typeof(base)}(axis, base, index)
+BroadcastAxis{T,U,N}(axis::AbstractArray{T,1}, base::AbstractArray{U,N}, index::Int) = BroadcastAxis{T,N,typeof(axis),typeof(base)}(axis, base, index)
 BroadcastAxis(axis::DictArray, base::AbstractArray, index::Int) = create_dictarray_nocheck(mapvalues(v->BroadcastAxis(v, base, index), peel(axis)))
 Base.size(axis::BroadcastAxis) = size(axis.base)
-Base.linearindexing(::Type{BroadcastAxis}) = Base.LinearSlow()
+Base.IndexStyle(::Type{BroadcastAxis}) = IndexCartesian()
 Base.getindex(axis::BroadcastAxis, arg::CartesianIndex) = getindex(axis.axis, arg[axis.index])
 Base.getindex(axis::BroadcastAxis, args...) = begin
   newaxis = getindex(axis.axis, args[axis.index])
@@ -834,16 +817,16 @@ end
 getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
 getindexvalue(axis::BroadcastAxis, args...) = begin
   newaxis = getindexvalue(axis.axis, args[axis.index])
-  getindexvalue_broadcast_sub(newaxis, axis, args)
+  getindexvalue_broadcast_view(newaxis, axis, args)
 end
-getindexvalue_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+getindexvalue_broadcast_view(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
   newbase = view(axis.base, args...)
   # Let's figure out the new axis.index.
   testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
   testbase = view(axis.base, testargs...)
   BroadcastAxis(newaxis, newbase, ndims(testbase))
 end
-getindexvalue_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+getindexvalue_broadcast_view(newaxis, axis::BroadcastAxis, args) = begin
   # this is definitely not one point.
   # it is one coord along the axis index, but ranges along some other directions.
   # I cannot think of an alternative. Let's do a copy.
@@ -866,9 +849,10 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 
 """
 allfieldnames(table::LabeledArray) = simplify_array(unique(vcat(vcat(map(allfieldnames, table.axes)...),allfieldnames(table.data))))
-allfieldnames(table::AbstractArray) = Array(Any, 0)
-cell_to_string(cell::Nullable) = cell.isnull ? "" : string(cell.value)
-cell_to_string{T}(cell::Nullable{T}) = cell.isnull ? "" : haskey(format_string_map,T) ? sprintf1(format_string_map[T], cell.value) : string(cell.value)
+allfieldnames(table::AbstractArray) = Array{Any}(0)
+#cell_to_string(cell::Nullable) = isnull(cell) ? "" : string(cell.value)
+#cell_to_string{T}(cell::Nullable{T}) = isnull(cell) ? "" : haskey(format_string_map,T) ? @sprintf(format_string_map[T], cell.value) : string(cell.value)
+cell_to_string{T}(cell::Nullable{T}) = isnull(cell) ? "" : string(cell.value) # let's not format for now while the first goal is to make 0.6 compatible...
 cell_to_string{K,T}(cell::LDict{K,Nullable{T}}) = string(cell)
 cell_to_string(cell::AbstractArray) = string(map(x->string(cell_to_string(x)," "), cell)...)
 
@@ -886,7 +870,7 @@ The axis along the `catdim` direction will be the concatenation of the axis of e
 
 ```julia
 julia> t1 = larr(a=[1 2 3;4 5 6], axis1=[:x,:y], axis2=["A","B","C"])
-t2 x 3 LabeledArray
+2 x 3 LabeledArray
 
   |  |A B C
 --+--+------
@@ -959,9 +943,9 @@ Base.repeat(arr::LabeledArray; inner::Array{Int}=ones(Int,ndims(arr)), outer::Ar
   LabeledArray(newdata, (newaxes..., additional_axes...))
 end
 
-Base.show{N}(io::IO,
+Base.show{T,N}(io::IO,
              ::MIME"text/html",
-             table::LabeledArray{TypeVar(:T),N};
+             table::LabeledArray{T,N};
              height::Int=dispsize()[1],
              width::Int=dispsize()[2],
              alongrow::Bool=todisp_alongrow) = begin
@@ -989,12 +973,12 @@ Base.show{N}(io::IO,
   print(io, "</ul>")
 end
 
-Base.show(io::IO, ::MIME"text/html", table::LabeledArray{TypeVar(:T),0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show{T}(io::IO, ::MIME"text/html", table::LabeledArray{T,0}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, "0 dimensional LabeledArray")
 end
 
 
-Base.show(io::IO, ::MIME"text/html", table::Union{LabeledArray{TypeVar(:T),1},LabeledArray{TypeVar(:T),2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
+Base.show{T}(io::IO, ::MIME"text/html", table::Union{LabeledArray{T,1},LabeledArray{T,2}}; height::Int=dispsize()[1], width::Int=dispsize()[2], alongrow::Bool=todisp_alongrow) = begin
   print(io, join(size(table), " x "))
   print(io, " LabeledArray")
   print(io, '\n')
@@ -1368,13 +1352,19 @@ macro larr(args...)
   axes_pairs = Any[]
   template = Nullable()
   for arg in args
-    if :head in fieldnames(arg) && (arg.head == :kw || arg.head == :(=>))
-      key = arg.head==:kw ? quote_symbol(arg.args[1]) : arg.args[1]
+    if :head in fieldnames(arg) && (arg.head == :kw || arg.head == :(=>) || arg.head == :(=))
+      key = (arg.head==:kw || arg.head==:(=)) ? quote_symbol(arg.args[1]) : arg.args[1]
       value = arg.args[2]
       push!(data_pairs, quote
         $key => @nalift($(esc(value)))
       end)
-    elseif :head in fieldnames(arg) && arg.head ==:ref && startswith(string(arg.args[1]), "axis") &&
+    elseif :head in fieldnames(arg) && arg.head == :call && arg.args[1] == :(=>)
+      key = arg.args[2]
+      value = arg.args[3]
+      push!(data_pairs, quote
+        $key => @nalift($(esc(value)))
+      end)
+    elseif :head in fieldnames(arg) && arg.head == :ref && startswith(string(arg.args[1]), "axis") &&
            all(Bool[is_kw(a) for a in arg.args[2:end]])
       push!(axes_pairs, arg.args[1] => read_kws(arg.args[2:end]))
     elseif :head in fieldnames(arg) && arg.head == :ref && startswith(string(arg.args[1]), "axis") && length(arg.args) > 1
@@ -1389,18 +1379,18 @@ macro larr(args...)
           @nalift($(esc(arg.args[2])))
         end))
       end
-    elseif template.isnull #length(args) == 1
+    elseif isnull(template) #length(args) == 1
       template = Nullable(arg)
     else
       throw(ArgumentError("not a key=value type argument or an array argument $arg, or two or more base LabeledArrays are provided."))
     end
   end
-  dataexp = if template.isnull && isempty(data_pairs)
+  dataexp = if isnull(template) && isempty(data_pairs)
     throw(ArgumentError("neither a base LabeledArray or a fieldname=>array pair provided."))
   elseif isempty(data_pairs)
     nothing
   else
-    Expr(:call, :darr, Expr(:..., Expr(:vect, data_pairs...)))
+    Expr(:call, :darr, data_pairs...)
   end
   axesexp = map(axes_pairs) do axispair
     axisname = axispair[1]
@@ -1408,10 +1398,10 @@ macro larr(args...)
     axisexpr = if isa(axisvalue, Tuple) && length(axisvalue) == 2 && axisvalue[1] == verbatim_magic_symbol
       Expr(:kw, axisname, axisvalue[2])
     else
-      Expr(:kw, axisname, Expr(:call, :darr, Expr(:..., Expr(:vect, axisvalue...))))
+      Expr(:kw, axisname, Expr(:call, :darr, axisvalue...))
     end
   end
-  if template.isnull
+  if isnull(template)
     Expr(:call, :larr, dataexp, axesexp...)
   else
     Expr(:call, :update_larr, quote @nalift($(esc(template.value))) end, dataexp, axesexp...)

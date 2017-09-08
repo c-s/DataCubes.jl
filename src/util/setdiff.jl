@@ -104,7 +104,7 @@ Base.setdiff(dim::Int, arr1::LabeledArray, arr2::LabeledArray) = begin
   #setdiff_slices = setdiff(result_arrs...)
   coords_toshow = sort(collect(values(elems))) #[elems[slice] for slice in setdiff_slices]
   result = permuted_arrs[1][remainingcoords..., coords_toshow]
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end
 
 
@@ -131,7 +131,7 @@ Base.setdiff(dim::Int, arr1::DictArray, arr2::DictArray) = begin
   for (i,arr) in enumerate(setdiff_slices)
     result[remainingcoords...,i] = arr
   end
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end
 
 Base.setdiff{T,U}(dim::Int,
@@ -159,5 +159,5 @@ Base.setdiff{T,U}(dim::Int,
   for (i,arr) in enumerate(setdiff_slices)
     result[remainingcoords...,i] = arr
   end
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end

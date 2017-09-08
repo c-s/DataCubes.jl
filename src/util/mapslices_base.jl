@@ -21,14 +21,27 @@ mapslices_darr_larr(f::Function, arr::AbstractArray, dims::AbstractVector) = beg
 end
 
 peeloff_zero_array_if_necessary(x) = x
-peeloff_zero_array_if_necessary(arr::AbstractArray{TypeVar(:T),0}) = arr[1]
-peeloff_zero_array_if_necessary(arr::DictArray{TypeVar(:K),0}) = mapvalues(x->x[1], peel(arr))
-peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero_array_if_necessary(peel(arr))
+peeloff_zero_array_if_necessary{T}(arr::AbstractArray{T,0}) = arr[1]
+peeloff_zero_array_if_necessary{K}(arr::DictArray{K,0}) = mapvalues(x->x[1], peel(arr))
+peeloff_zero_array_if_necessary{T}(arr::LabeledArray{T,0}) = peeloff_zero_array_if_necessary(peel(arr))
+
+mapslices_lambda_acc_int(acc, x) = acc + (x==Int)
+mapslices_lambda_first(it) = it[1]
+mapslices_lambda_second_int(it) = it[2] == Int
+mapslices_lambda_colon(d) = Colon()
+mapslices_lambda_one(d) = 1
+mapslices_lambda_axis_tuple_func(testres, ressize, ndimstestres) = d -> begin
+  if d<=ndimstestres
+    pickaxis(testres, d)
+  else
+    DefaultAxis(ressize[d-ndimstestres])
+  end
+end
 
 @generated mapslices_darr_larr_inner{V,N,T}(f::Function, arr::AbstractArray{V,N}, dims::T) = begin
   dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_ndims = foldl(mapslices_lambda_acc_int, 0, dimtypes)
+  slice_indices = Int[map(mapslices_lambda_first, Iterators.filter(mapslices_lambda_second_int, enumerate(dimtypes)))...]
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
@@ -36,8 +49,6 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
   end
   quote
     if isempty(arr)
-      @debug_stmt @show "zero size array"
-      @debug_stmt @show arr
       if $slice_ndims == 0
         return Nullable{Any}()
       else
@@ -45,7 +56,7 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
       end
     end
     sizearr = size(arr)
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     # assume that the types are all the same.
     fill!(coords, Colon())
     coords[$slice_indices] = 1
@@ -57,22 +68,16 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
     ressize = sizearr[$slice_indices]
     result = if reseltype<:LabeledArray
       ndimstestres = ndims(testres)
-      large_result = LabeledArray(similar(peel(testres), (size(testres)...,ressize...)), ntuple(ndimstestres+length(ressize)) do d
-        if d<=ndimstestres
-          pickaxis(testres, d)
-        else
-          DefaultAxis(ressize[d-ndimstestres])
-        end
-      end)
-      colons = ntuple(d->Colon(), ndims(testres))
-      ST = typeof(view(large_result, colons..., ntuple(d->1, length(ressize))...))
+      large_result = LabeledArray(similar(peel(testres), (size(testres)...,ressize...)), ntuple(mapslices_lambda_axis_tuple_func(testres, ressize, ndimstestres), ndimstestres+length(ressize)))
+      colons = ntuple(mapslices_lambda_colon, ndims(testres))
+      ST = typeof(view(large_result, colons..., ntuple(mapslices_lambda_one, length(ressize))...))
       temp_result = similar(arr, ST, ressize)
       @nloops $slice_ndims i temp_result begin
         @nref($slice_ndims,temp_result,i) = view(large_result, colons..., @ntuple($slice_ndims,i)...)
       end
       # it's important to assign this mutable function's return to the same variable because of fallback.
-      newresult = mapslices_darr_larr_inner_typed!(temp_result, f, arr, dims, testres)
-      if newresult.isnull
+      newresult = mapslices_darr_larr_inner_typed_wrapper!(temp_result, f, arr, dims, testres)
+      if isnull(newresult)
         create_labeled_array_mapslices_inner(large_result, ndimstestres, arr, $slice_indices)
       else
         newresult.value
@@ -80,15 +85,15 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
     elseif reseltype<:AbstractArray
       ndimstestres = ndims(testres)
       large_result = similar(testres, (size(testres)...,ressize...))
-      colons = ntuple(d->Colon(), ndims(testres))
-      ST = typeof(view(large_result, colons..., ntuple(d->1, length(ressize))...))
+      colons = ntuple(mapslices_lambda_colon, ndims(testres))
+      ST = typeof(view(large_result, colons..., ntuple(mapslices_lambda_one, length(ressize))...))
       temp_result = similar(arr, ST, ressize)
       @nloops $slice_ndims i temp_result begin
         @nref($slice_ndims,temp_result,i) = view(large_result, colons..., @ntuple($slice_ndims,i)...)
       end
       # it's important to assign this mutable function's return to the same variable because of fallback.
-      newresult = mapslices_darr_larr_inner_typed!(temp_result, f, arr, dims, testres)
-      if newresult.isnull
+      newresult = mapslices_darr_larr_inner_typed_wrapper!(temp_result, f, arr, dims, testres)
+      if isnull(newresult)
         if isa(arr, LabeledArray)
           create_labeled_array_mapslices_inner(LabeledArray(large_result), ndimstestres, arr, $slice_indices)
         else
@@ -99,17 +104,20 @@ peeloff_zero_array_if_necessary(arr::LabeledArray{TypeVar(:T),0}) = peeloff_zero
       end
     else
       res = similar_mapslices_inner(arr, testres, $slice_indices)
-      newresult = mapslices_darr_larr_inner_typed!(res, f, arr, dims, testres)
-      newresult.isnull ? res : newresult.value
+      newresult = mapslices_darr_larr_inner_typed_wrapper!(res, f, arr, dims, testres)
+      isnull(newresult) ? res : newresult.value
     end
     result
   end
 end
 
+mapslices_darr_larr_inner_typed_wrapper!{M,K,N,T,U<:AbstractArray,V}(result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::V) =
+  mapslices_darr_larr_inner_typed!(result, f, arr, dims, testres)
+
 @generated mapslices_darr_larr_inner_typed!{M,K,N,T,U<:AbstractArray,V}(result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::V) = begin
   dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_ndims = foldl(mapslices_lambda_acc_int, 0, dimtypes)
+  slice_indices = Int[map(mapslices_lambda_first, Iterators.filter(mapslices_lambda_second_int, enumerate(dimtypes)))...]
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
@@ -117,7 +125,7 @@ end
   end
   quote
     sizearr = size(arr)
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     # assume that the types are all the same.
     #ldict_keys_sofar = Nullable{Vector{KK}}() #testres.keys
     size_sofar = size(testres)
@@ -137,7 +145,7 @@ end
       #same_size &= size_sofar == size(oneres)
       if size_sofar != size(oneres)
         fallback_result = similar(arr, typeof(testres), sizearr[$slice_indices])
-        return Nullable(mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far))
+        return Nullable(mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts_so_far))
       end
       #Haven't implemented the case when same_size==false yet.
       try
@@ -145,7 +153,7 @@ end
       catch
         # if an exception occurs, just try once again with the fallback version.
         fallback_result = similar(arr, promote_type(typeof(oneres), typeof(testres)), sizearr[$slice_indices])
-        return Nullable(mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far))
+        return Nullable(mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts_so_far))
       end
       counts_so_far += 1
     end
@@ -153,10 +161,14 @@ end
   end
 end
 
-@generated mapslices_darr_larr_inner_typed!{KK,VV,M,K,N,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::LDict{KK,VV}) = begin
+# TODO: VV and VVV should be actually the same, but what to do with VV=Nullable{Any} and VVV=Nullable?
+mapslices_darr_larr_inner_typed_wrapper!{KK,VV,VVV,M,K,N,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::LDict{KK,VVV}) =
+  mapslices_darr_larr_inner_typed!(result, f, arr, dims, testres)
+
+@generated mapslices_darr_larr_inner_typed!{KK,VV,VVV,M,K,N,T}(result::AbstractArray{LDict{KK,VV},M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::LDict{KK,VVV}) = begin
   dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_ndims = foldl(mapslices_lambda_acc_int, 0, dimtypes)
+  slice_indices = Int[map(mapslices_lambda_first, Iterators.filter(mapslices_lambda_second_int, enumerate(dimtypes)))...]
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
@@ -164,7 +176,7 @@ end
   end
   quote
     sizearr = size(arr)
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     # assume that the types are all the same.
     ldict_keys_sofar = Nullable{Vector{KK}}() #testres.keys
     same_ldict::Bool = true
@@ -180,21 +192,21 @@ end
       else
         nalift(f(oneslice))
       end
-      same_ldict &= (ldict_keys_sofar.isnull || ldict_keys_sofar.value == oneres.keys)
+      same_ldict &= (isnull(ldict_keys_sofar) || ldict_keys_sofar.value == oneres.keys)
       if same_ldict
-        if ldict_keys_sofar.isnull
+        if isnull(ldict_keys_sofar)
           ldict_keys_sofar = Nullable(oneres.keys)
         end
       else
         fallback_result = similar(arr, typeof(testres), sizearr[$slice_indices])
-        return Nullable(mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far))
+        return Nullable(mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts_so_far))
       end
       try
         @nref($slice_ndims, result, i) = oneres
       catch
         # if an exception occurs, just try once again with the fallback version.
         fallback_result = similar(arr, promote_type(typeof(oneres), typeof(testres)), sizearr[$slice_indices])
-        return Nullable(mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far))
+        return Nullable(mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts_so_far))
       end
       counts_so_far += 1
     end
@@ -202,10 +214,13 @@ end
   end
 end
 
+mapslices_darr_larr_inner_typed_wrapper!{U,M,K,N,T}(result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::U) =
+  mapslices_darr_larr_inner_typed!(result, f, arr, dims, testres)
+
 @generated mapslices_darr_larr_inner_typed!{U,M,K,N,T}(result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, testres::U) = begin
   dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_ndims = foldl(mapslices_lambda_acc_int, 0, dimtypes)
+  slice_indices = Int[map(mapslices_lambda_first, Iterators.filter(mapslices_lambda_second_int, enumerate(dimtypes)))...]
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
@@ -213,7 +228,7 @@ end
   end
   quote
     sizearr = size(arr)
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     is_the_first = true
     counts_so_far = 0
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
@@ -231,7 +246,7 @@ end
       catch
         # if an exception occurs, just try once again with the fallback version.
         fallback_result = similar(arr, promote_type(typeof(oneres), typeof(testres)), sizearr[$slice_indices])
-        return Nullable(mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far))
+        return Nullable(mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts_so_far))
       end
       counts_so_far += 1
     end
@@ -240,11 +255,14 @@ end
   end
 end
 
+mapslices_darr_larr_inner_typed_fallback_wrapper!{V,U,M,K,N,T}(fallback_result::AbstractArray{V,M}, result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, counts_so_far::Int) =
+  mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts_so_far)
+
 @generated mapslices_darr_larr_inner_typed_fallback!{V,U,M,K,N,T}(fallback_result::AbstractArray{V,M}, result::AbstractArray{U,M}, f::Function, arr::AbstractArray{K,N}, dims::T, counts_so_far::Int) = begin
   @debug_stmt @show "mapslices_darr_larr_inner_typed! exception occurs presumably due to type mismatch. a fallback version will run."
   dimtypes = dims.types
-  slice_ndims = foldl((acc,x)->acc + (x==Int), 0, dimtypes)
-  slice_indices = Int[map(it->it[1], filter(it->it[2]==Int, enumerate(dimtypes)))...]
+  slice_ndims = foldl(mapslices_lambda_acc_int, 0, dimtypes)
+  slice_indices = Int[map(mapslices_lambda_first, Iterators.filter(mapslices_lambda_second_int, enumerate(dimtypes)))...]
   slice_exp = if slice_ndims == N
     :(arr[coords...])
   else
@@ -252,7 +270,7 @@ end
   end
   quote
     sizearr = size(arr)
-    coords = Array(Any, $N)
+    coords = Array{Any}($N)
     counts = 0
     @nloops $slice_ndims i j->1:sizearr[$slice_indices[j]] begin
       fill!(coords, Colon())
@@ -274,7 +292,7 @@ end
           rethrow()
         end
         fallback_result = similar(arr, promote_type(typeof(oneres), V), sizearr[$slice_indices])
-        return mapslices_darr_larr_inner_typed_fallback!(fallback_result, result, f, arr, dims, counts)
+        return mapslices_darr_larr_inner_typed_fallback_wrapper!(fallback_result, result, f, arr, dims, counts)
       end
       counts += 1
     end

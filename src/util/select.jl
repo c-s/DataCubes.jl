@@ -31,7 +31,7 @@ main select function. This function is internal and is meant to be used via `sel
 * c : an array of pairs of field name => function `(t, inds)` -> array. `t` is a LabeledArray and inds is either `nothing` to choose the entire `t` or an array of Cartesian indices.
 
 """
-selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
+selectfunc{T,N}(t::LabeledArray{T,N}, c, b, a) = begin
   nocond = isempty(c)
   noby = isempty(b)
   noagg = isempty(a)
@@ -99,8 +99,13 @@ selectfunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
   end
 end
 
+#select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = begin
+#  result = Array(T, length(indices))
+#  select_cartesian_elements_helper2(fld
+
 @generated select_cartesian_elements_helper{T,N}(fld::AbstractArray{T,N}, indices::Vector{NTuple{N,Int}}) = quote
-  result = Array(T, length(indices))
+  result = Array{T}(length(indices))
+  #result::T = similar(fld, length(indices))
   for i in eachindex(result)
     @inbounds index = indices[i]
     @inbounds result[i] = @nref $N fld d->index[d]
@@ -110,7 +115,8 @@ end
 
 @generated select_cartesian_elements_helper{T<:AbstractFloat,N,A}(fld::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}},
                                                                 indices::Vector{NTuple{N,Int}}) = quote
-  result = Array(T, length(indices))
+  result = Array{T}(length(indices))
+  #result::T = similar(fld, length(indices))
   fldunderlying = fld.a.data
   for i in eachindex(result)
     @inbounds index = indices[i]
@@ -133,7 +139,7 @@ main update function. This function is internal and is meant to be used via `upd
 * `c` : an array of pairs of field name => function `(t, inds)` -> array. `t` is a LabeledArray and inds is either `nothing` to choose the entire `t` or an array of Cartesian indices.
 
 """
-updatefunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
+updatefunc{T,N}(t::LabeledArray{T,N}, c, b, a) = begin
   nocond = isempty(c)
   noby = isempty(b)
   noagg = isempty(a)
@@ -207,25 +213,31 @@ updatefunc{N}(t::LabeledArray{TypeVar(:T),N}, c, b, a) = begin
   end
 end
 
+zero_func(_) = 0
 # creates a by array for selectfunc.
-create_by_array(t, a, indices, byvecs, bymaps) = begin
-  create_by_array_inner(t, a, indices, byvecs, bymaps, Array(Int,ntuple(_->0, length(bymaps))...))
-end
+create_by_array(t, a, indices, byvecs, bymaps) =
+  create_by_array_inner(t, a, indices, byvecs, bymaps, Array{Int}(ntuple(zero_func, length(bymaps))...))
 
+create_by_array_inner_private_first(x) = x[1]
+create_by_array_inner_private_second(x) = x[2]
+create_by_array_inner_private_len(x) = length(x[1][1])
+create_by_array_inner_private_indexsubarrays(index_subarrays) = tp -> similar(index_subarrays, tp)
+create_by_array_inner_private_comprehension1(t) = [(k, (t,r) -> selectfield(t,k,r)) for (k,_) in t.data.data]
+create_by_array_inner_private_comprehension2(effa, results) = [(konea[1], result) for (konea, result) in zip(effa, results)]
 # N is the original array dimensions.
 # M is the byarray dimentions.
-@generated create_by_array_inner{N,M}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,Int}}, byvecs, bymaps, dummy::Array{Int,M}) = quote
-  labels::NTuple{$M} = (map(x->x[1], bymaps)...)
+@generated create_by_array_inner{T,N,M}(t::AbstractArray{T,N}, a, indices::Vector{NTuple{N,Int}}, byvecs, bymaps, dummy::Array{Int,M}) = quote
+  labels::Tuple = (map(create_by_array_inner_private_first, bymaps)...)
   # assumes there is at least one label for each axis.
-  ressize::NTuple{$M,Int} = (map(x->length(x[1][1]), bymaps)...)
-  indexvecs::NTuple{$M,Vector{Int}} = (map(x->x[2], bymaps)...)
+  ressize::NTuple{$M,Int} = (map(create_by_array_inner_private_len, bymaps)...)
+  indexvecs::NTuple{$M,Vector{Int}} = (map(create_by_array_inner_private_second, bymaps)...)
   indcountmat::Array{Int,$M} = fill(0, ressize)
   for i in eachindex(indices)
     @inbounds @nexprs $M j->(ids_j = indexvecs[j][i])
     @inbounds @nref($M,indcountmat,ids) += 1
   end
-  subarrays_buf = Array(NTuple{$N,Int}, length(indices))
-  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},true})
+  subarrays_buf = Array{NTuple{$N,Int}}(length(indices))
+  index_subarrays = similar(indcountmat, SubArray{NTuple{$N,Int},1,Array{NTuple{$N,Int},1},Tuple{UnitRange{Int}},SUBARRAY_LAST_TYPE})
   indsumsofar::Int = 0
   lenindcountmat::Int = length(indcountmat)
   for i in 1:lenindcountmat
@@ -244,7 +256,7 @@ end
     @inbounds subarray[current_count] = indices[i]
   end
   effa = if isempty(a)
-    [(k, ((t,r) -> selectfield(t,k,r))) for (k,_) in t.data.data]
+    create_by_array_inner_private_comprehension1(t)
   else
     a
   end
@@ -258,31 +270,33 @@ end
   # and implement another method, by creating an empty array for each onea in a, and fill it up.
   # But first, we need to check the type of each element in each onea, which can be done by examining any
   # non zero length array results. We assume that all elements have the same type.
-  restypes = map(effa) do konea
-    onea = konea[2]
-    for inds in index_subarrays
-      # perhaps it is okay to just use one index.
-      # but do not attempt it now.
-      #return typeof(apply_nullable(onea(t,inds[1:1])))
-      if !isempty(inds)
-        return typeof(apply_nullable(onea(t,inds)))
-      end
-    end
-    return Any
-  end
+  restypes = map(create_by_array_inner_private_lambda1(index_subarrays, t), effa)
   # Now, let's create empty arrays to fill up results later.
-  results = map(tp -> similar(index_subarrays, tp), restypes)
+  results = map(create_by_array_inner_private_indexsubarrays(index_subarrays), restypes)
   for (konea, result) in zip(effa, results)
     fill_byarrays!(result, konea[2], index_subarrays, t)
   end
-  aggvecs = DictArray(LDict([(konea[1], result) for (konea, result) in zip(effa, results)]...))
-  newaxes = map(byvecs, labels) do byvec, label
-    DictArray(byvec.data.keys, collect(label))
-  end
+  aggvecs = DictArray(LDict(create_by_array_inner_private_comprehension2(effa, results)...))
+  newaxes = map(create_by_array_inner_private_lambda2, byvecs, labels)
   LabeledArray(aggvecs, (newaxes...))
 end
 
-@generated fill_byarrays!{T,M}(result::AbstractArray{Nullable{T},M}, onea, index_subarrays::AbstractArray{TypeVar(:V),M}, t::LabeledArray) = quote
+create_by_array_inner_private_lambda1(index_subarrays, t) = konea -> begin
+  onea = konea[2]
+  for inds in index_subarrays
+    # perhaps it is okay to just use one index.
+    # but do not attempt it now.
+    #return typeof(apply_nullable(onea(t,inds[1:1])))
+    if !isempty(inds)
+      return typeof(apply_nullable(onea(t,inds)))
+    end
+  end
+  return Any
+end
+
+create_by_array_inner_private_lambda2(byvec, label) = DictArray(byvec.data.keys, collect(label))
+
+@generated fill_byarrays!{T,M,V}(result::AbstractArray{Nullable{T},M}, onea, index_subarrays::AbstractArray{V,M}, t::LabeledArray) = quote
   @nloops $M i result begin
     inds = @nref($M,index_subarrays,i)
     value = if isempty(inds)
@@ -294,9 +308,15 @@ end
   end
 end
 
+#bymap_coords_calculate_helper{T}(bymap::Dict{T,Int}, byvec, bytype::Type{T}, i::Int) = begin
+#  v::T = getindexvalue(byvec,bytype,i)
+#  bymap[v]::Int
+#end
+
 create_bymap(byvec::DictArray, skip_ordering::Bool=false) = begin
   # N 1 dimensional vectors to store the result axis labels.
   labelvecs = ntuple(length(byvec.data)) do d
+    #elvaluetype(byvec.data.values[d])[]
     create_zero_byvec(byvec.data.values[d])
   end
   create_bymap_inner(byvec, labelvecs, Tuple{[elvaluetype(v) for v in byvec.data.values]...}, skip_ordering)
@@ -308,7 +328,7 @@ create_bymap_inner{T,L}(byvec::DictArray, labelvecs::L, ::Type{T}, skip_ordering
   resmap = Dict{T,Int}()
   # well, this type annotation is necessary to enhance performance!
   # don't know why the type is not inferred stably.
-  indexvec::Vector{Int} = Array(Int, lenbyvec)
+  indexvec::Vector{Int} = Array{Int}(lenbyvec)
   counter = 1
   for i in 1:lenbyvec
     value::T = getindexvalue(byvec, T, i)
@@ -337,7 +357,7 @@ create_bymap_inner{T,L}(byvec::DictArray, labelvecs::L, ::Type{T}, skip_ordering
     len = length(toorder_labels)
     # well, this type annotation is necessary to enhance performance!
     # don't know why the type is not inferred correctly.
-    inverse_order::Vector{Int} = Array(Int, len)
+    inverse_order::Vector{Int} = Array{Int}(len)
     for i in eachindex(neworder)
       @inbounds inverse_order[neworder[i]] = i
     end
@@ -353,8 +373,11 @@ else
   error("did not implelment yet.")
 end
 
-@generated push_labelvecs_inner!{N}(labelvecs::NTuple{N}, value::NTuple{N}) = begin
-  exprs = [:(push!(labelvecs[$i], value[$i])) for i in 1:N]
+# TODO logically the below should be fine, and was fine til julia v0.5.
+#@generated push_labelvecs_inner!{N}(labelvecs::NTuple{N}, value::NTuple{N}) = begin
+@generated push_labelvecs_inner!(labelvecs::Tuple, value::Tuple) = begin
+  N = length(value.types)
+  exprs = Any[:(push!(labelvecs[$i], value[$i])) for i in 1:N]
   Expr(:block, exprs...)
 end
 
@@ -364,9 +387,10 @@ peel_nullabletype(::Type{Nullable}) = Any
 
 @inline byarray_isless(x, y) = isless(x, y)
 @inline byarray_isless{T}(x::Nullable{T}, y::Nullable{T}) =
-  (x.isnull && !y.isnull) || (!x.isnull && !y.isnull && isless(x.value, y.value))
+  (isnull(x) && !isnull(y)) || (!isnull(x) && !isnull(y) && isless(x.value, y.value))
 
-@generated byarray_isless{N}(x::NTuple{N}, y::NTuple{N}) = begin
+@generated byarray_isless(x::Tuple, y::Tuple) = begin
+  N = length(x.types)
   exprs = map(1:N) do n
     quote
       if byarray_isless(x[$n],y[$n])
@@ -385,7 +409,7 @@ create_square_array{T,N}(aggvec, t::AbstractArray{T,N}, inds::Vector{NTuple{N,In
   create_square_array_helper1!(boolvecs, inds)
   wherevecs::NTuple{N,Vector{Int}} = ntuple(d->find(boolvecs[d]), N)
   reversemapvec::NTuple{N,Vector{Int}} = map(boolvecs, wherevecs) do boolvec, wherevec
-    v = Array(Int, length(boolvec))
+    v = Array{Int}(length(boolvec))
     @inbounds v[wherevec] = 1:length(wherevec)
     v
   end
@@ -407,7 +431,7 @@ end
 end
 
 @generated create_square_array_helper2{N}(inds::AbstractVector{NTuple{N,Int}}, reversemapvec::NTuple{N,Vector{Int}}) = quote
-  newinds = Array(NTuple{$N,Int}, length(inds))
+  newinds = Array{NTuple{$N,Int}}(length(inds))
   for i in eachindex(newinds)
     tpl = @ntuple $N d->reversemapvec[d][inds[i][d]]
     @inbounds newinds[i] = tpl
@@ -461,15 +485,14 @@ Base.done(iter::SubArrayView, state) = state > length(iter.indices)
 Base.size(arr::SubArrayView) = (length(arr.indices),)
 Base.eltype{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = T
 Base.endof(arr::SubArrayView) = length(arr.indices)
-Base.linearindexing{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.LinearFast()
+Base.IndexStyle{T,N,A,I}(::Type{SubArrayView{T,N,A,I}}) = Base.IndexLinear()
 Base.similar{T,N,A,I,U,M}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.data, U, dims)
 Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}, dims::Int...) = similar(arr.data, U, dims...)
 # need this special case because the underlying arr.data is not of the same shape as the corresponding SubArrayView.
 Base.similar{T,N,A,I,U}(arr::SubArrayView{T,N,A,I}, ::Type{U}) = similar(arr.data, U, size(arr))
-sub(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, sub(arr.indices, args...))
 view(arr::SubArrayView, args::Union{Colon,Int,AbstractVector}...) = SubArrayView(arr.data, view(arr.indices, args...))
-sub(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}})= SubArrayView(arr.data, sub(arr.indices, args...))
 view(arr::SubArrayView, args::Tuple{Vararg{Union{Colon,Int,AbstractVector}}}) = SubArrayView(arr.data, view(arr.indices, args...))
+#getindexvalue{T}(arr::SubArrayView, ::Type{T}, arg::Int) = getindexvalue(arr.data, T, arr.indices[arg]...)
 getindexvalue(arr::SubArrayView, arg::Int) = getindexvalue(arr.data, arr.indices[arg]...)
 
 
@@ -488,7 +511,9 @@ end
 selectfield(t::LabeledArray, fld, inds) = AbstractArrayWrapper(SubArrayView(selectfield(t,fld), inds))
 selectfield{K,N}(t::LabeledArray, fld::AbstractArray{Nullable{K},N}, ::Void) = begin
   # use a slower version: find a field for each ind.
-  @inbounds r=simplify_array([onefld.isnull ? Nullable{Any}() : selectfield(t,onefld.value)[i] for (i,onefld) in zip(eachindex(fld), reshape(fld, length(fld)))])
+  @inbounds r=simplify_array([isnull(onefld) ? Nullable{Any}() : selectfield(t,onefld.value)[i] for (i,onefld) in enumerate(fld)])
+  #TODO this does not work anymore in julia v0.6.
+  #@inbounds r=simplify_array([isnull(onefld) ? Nullable{Any}() : selectfield(t,onefld.value)[i] for (i,onefld) in zip(eachindex(fld), fld)])
   reshape(r, size(fld))
 end
 
@@ -497,39 +522,41 @@ selectfield{K,N}(t::LabeledArray, fld::AbstractVector{Nullable{K}}, inds::Abstra
     throw(ArgumentError("key lengths do not match with indices length."))
   end
   # use a slower version: find a field for each ind.
-  @inbounds r=simplify_array([onefld.isnull ? Nullable{Any}() : selectfield(t,onefld.value)[i...] for (i,onefld) in zip(inds,fld)])
+  @inbounds r=simplify_array([isnull(onefld) ? Nullable{Any}() : selectfield(t,onefld.value)[i...] for (i,onefld) in zip(inds,fld)])
   r
 end
+
+getcondition_apply_where(t) = (inds, onec) -> onec(t, inds)
 
 # create an array of cartesian indices of a LabeledArray that satisfies
 # the conditions in c.
 @generated getcondition{T,N}(t::LabeledArray{T,N}, c) = quote
-  indices::Array{NTuple{$N,Int},1} = Array{NTuple{$N,Int}}(length(t))
+  indices_array = Array{NTuple{$N,Int}}(length(t))
+
   index = 1
 
-  # for some reason, t didn't work, so d->1:size(t,d) is used.
-  @nloops $N i d->1:size(t,d) begin
+  @nloops $N i t begin
     tupleind::NTuple{$N,Int} = @ntuple $N i
-    @inbounds indices[index] = tupleind
+    @inbounds indices_array[index] = tupleind
     index += 1
   end
-  foldl((inds, onec) -> onec(t, inds), indices, c)
+  foldl(getcondition_apply_where(t), indices_array, c)
 end
 
 # larray -> indices -> field name -> element.
 # Implementationwise, it is easier to do larray -> fieldname -> indices -> element.
 # This and other *LazilySelectedLabeledArray class help to use the other mapping above.
-immutable LazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} <: Associative
+immutable LazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} #<: Associative
   larray::LabeledArray{T,N,AXES,TN}
   indices::I #::{Array{NTuple{N,Int}}
 end
 
-immutable IGNALazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} <: Associative
+immutable IGNALazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} #<: Associative
   larray::LabeledArray{T,N,AXES,TN}
   indices::I #::Array{NTuple{N,Int}}
 end
 
-immutable ISNALazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} <: Associative
+immutable ISNALazilySelectedLabeledArray{T,N,AXES<:Tuple,TN,I} #<: Associative
   larray::LabeledArray{T,N,AXES,TN}
   indices::I #Array{NTuple{N,Int}}
 end
@@ -540,6 +567,12 @@ Base.get{K}(d::ISNALazilySelectedLabeledArray, k::AbstractArray{Nullable{K}}, _)
 Base.get{K}(d::LazilySelectedLabeledArray, k::K, _) = selectfield(d.larray, k, d.indices)
 Base.get{K}(d::IGNALazilySelectedLabeledArray, k::K, _) = igna(selectfield(d.larray, k, d.indices))
 Base.get{K}(d::ISNALazilySelectedLabeledArray, k::K, _) = isna(selectfield(d.larray, k, d.indices))
+
+# TODO: this is only introduced to suppress error when transitioning from julia 0.5 to 0.6.
+Base.getindex{K}(d::LazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+Base.getindex{K}(d::IGNALazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+Base.getindex{K}(d::ISNALazilySelectedLabeledArray, k::K) = get(d, k, nothing)
+
 Base.length{T,N,AXES<:Tuple,TN}(d::LazilySelectedLabeledArray{T,N,AXES,TN,Void}) = length(d.larray)
 Base.length{T,N,AXES<:Tuple,TN,I}(d::LazilySelectedLabeledArray{T,N,AXES,TN,I}) = length(d.indices)
 Base.length{T,N,AXES<:Tuple,TN}(d::IGNALazilySelectedLabeledArray{T,N,AXES,TN,Void}) = length(d.larray)
@@ -1050,6 +1083,8 @@ select_inner(func, t, args...) = begin
     if :head in fieldnames(arg)
       if arg.head == :kw || arg.head == :(=>) || arg.head == :(=)
         push!(aexprs, replace_expr(arg))
+      elseif arg.head == :call && arg.args[1] == :(=>)
+        push!(aexprs, replace_expr(arg))
       elseif arg.head == :ref && arg.args[1] == :where
         push!(cexprs, map(replace_expr, arg.args[2:end])...)
       elseif arg.head == :ref && arg.args[1] == :by
@@ -1070,14 +1105,16 @@ select_inner(func, t, args...) = begin
   end
 end
 
-const verbatim_magic_symbol = Symbol("__verbatim__")
+const verbatim_magic_symbol = Symbol("datacubes_verbatim__")
 
 lift_to_dict(expr) = begin
   if :head in fieldnames(expr) &&
      (expr.head == :kw || expr.head == :(=>) || expr.head == :(=))
     expr
+  elseif :head in fieldnames(expr) && expr.head == :call && expr.args[1] == :(=>)
+    expr
   else
-    Expr(:(=>), expr, Expr(:ref, verbatim_magic_symbol, expr))
+    Expr(:call, :(=>), expr, Expr(:ref, verbatim_magic_symbol, expr))
   end
 end
 
@@ -1103,10 +1140,18 @@ replace_expr(expr) = begin
     # this is for a or b case.
     key = if expr.head == :(=) || expr.head == :kw; quote_symbol(expr.args[1]) else expr.args[1] end
     if :head in fieldnames(expr.args[2]) && expr.args[2].head == :ref && expr.args[2].args[1] == verbatim_magic_symbol
-      Expr(:(=>), esc(key), esc(expr.args[2].args[2]))
+      Expr(:call, :(=>), esc(key), esc(expr.args[2].args[2]))
     else
       value = replace_expr_inner(expr.args[2], noescape_symbols...)
-      Expr(:(=>), esc(key), Expr(:(->), :d, Expr(:call, :nalift, value)))
+      Expr(:call, :(=>), esc(key), Expr(:(->), :d, Expr(:call, :nalift, value)))
+    end
+  elseif :head in fieldnames(expr) && expr.head == :call && expr.args[1] == :(=>)
+    key = expr.args[2]
+    if :head in fieldnames(expr.args[3]) && expr.args[3].head == :ref && expr.args[3].args[1] == verbatim_magic_symbol
+      Expr(:call, :(=>), esc(key), esc(expr.args[3].args[2]))
+    else
+      value = replace_expr_inner(expr.args[3], noescape_symbols...)
+      Expr(:call, :(=>), esc(key), Expr(:(->), :d, Expr(:call, :nalift, value)))
     end
   else
     # this is for c case.
@@ -1167,7 +1212,7 @@ get_function_arguments_exprs(expr) = begin
 end
 
 # N is the original array dimensions.
-update_by_array{N}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,Int}}, byvec, bymap) = begin
+update_by_array{T,N}(t::AbstractArray{T,N}, a, indices::Vector{NTuple{N,Int}}, byvec, bymap) = begin
   label = bymap[1]
   # assumes there is at least one label for each axis.
   reslen = length(bymap[1][1])
@@ -1178,7 +1223,7 @@ update_by_array{N}(t::AbstractArray{TypeVar(:T),N}, a, indices::Vector{NTuple{N,
     indcountvec[ids] += 1
   end
   subarrays_buf = Array{NTuple{N,Int}}(length(indices))
-  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},true})
+  index_subarrays = similar(indcountvec, SubArray{NTuple{N,Int},1,Array{NTuple{N,Int},1},Tuple{UnitRange{Int}},SUBARRAY_LAST_TYPE})
   indsumsofar::Int = 0
   lenindcountvec::Int = length(indcountvec)
   for i in 1:lenindcountvec

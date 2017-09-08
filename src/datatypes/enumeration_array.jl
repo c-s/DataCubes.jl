@@ -10,10 +10,10 @@ immutable EnumerationArray{T,N,V,R<:Integer} <: AbstractArray{Nullable{T},N}
   # element 0 in the `pool` member variable means `NA`.
   pool::Vector{T}
   # it can be confusing if T is Integer, if we do not combine elems and pool as a tuple.
-  EnumerationArray(elems_pool::Tuple{V, Vector{T}}) = new(elems_pool[1], elems_pool[2])
+  EnumerationArray{V,T}(elems_pool::Tuple{V, Vector{T}}) where {V,T} = new{T,ndims(elems_pool[1]),V,eltype(elems_pool[1])}(elems_pool[1], elems_pool[2])
 end
 
-EnumerationArray{T,V<:AbstractArray}(elems_pool::Tuple{V,Vector{T}}) = EnumerationArray{T,ndims(elems_pool[1]),typeof(elems_pool[1]),eltype(elems_pool[1])}((elems_pool[1], elems_pool[2]))
+EnumerationArray{T,V<:AbstractArray}(elems_pool::Tuple{V,Vector{T}}) = EnumerationArray{typeof(elems_pool[1]),T}((elems_pool[1], elems_pool[2]))
 #EnumerationArray{R<:Integer,N,T}(elems::AbstractArray{R,N}, pool::Vector{T}) = EnumerationArray{T,N,typeof(elems),R}(elems, pool)
 EnumerationArray{T,N,V,R<:Integer}(arr::EnumerationArray{T,N,V,R}, poolorder::AbstractVector{T}) = begin
   zeroR = zero(R)
@@ -45,10 +45,10 @@ EnumerationArray{R<:Integer,T,N}(::Type{R}, arr::AbstractArray{Nullable{T},N}, p
     d[p] = counter
     counter += oneR
   end
-  pool = Array(T, length(poolorder))
+  pool = Array{T}(length(poolorder))
   copy!(pool, poolorder)
   elems = map(arr) do elem
-    if elem.isnull
+    if isnull(elem)
       zeroR
     elseif haskey(d, elem.value)
       d[elem.value]
@@ -60,7 +60,7 @@ EnumerationArray{R<:Integer,T,N}(::Type{R}, arr::AbstractArray{Nullable{T},N}, p
       tempcounter
     end
   end
-  EnumerationArray{T,N,typeof(elems),R}((elems, pool))
+  EnumerationArray{typeof(elems),T}((elems, pool))
 end
 EnumerationArray{T,N}(arr::AbstractArray{Nullable{T},N}) = EnumerationArray(Int, arr)
 EnumerationArray{T,N}(arr::AbstractArray{Nullable{T},N}, poolorder::AbstractVector{T}) = EnumerationArray(Int, arr, poolorder)
@@ -78,7 +78,7 @@ Base.eltype{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Nullable{T}
 Base.length(arr::EnumerationArray) = length(arr.elems)
 Base.endof(arr::EnumerationArray) = length(arr)
 Base.setindex!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, v::Nullable{T}, indices...) = begin
-  if v.isnull
+  if isnull(v)
     setindex!(arr.elems, zero(R), indices...)
     arr
   else
@@ -103,19 +103,21 @@ Base.similar{T,N,V,R,M}(arr::EnumerationArray{T,N,V,R}, dims::NTuple{M,Int}) = E
 Base.similar{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, dims::Int...) = EnumerationArray((similar(arr.elems, dims...),arr.pool))
 Base.similar{T,N,V,R,U,M}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::NTuple{M,Int}) = similar(arr.elems, U, dims)
 Base.similar{T,N,V,R,U}(arr::EnumerationArray{T,N,V,R}, ::Type{U}, dims::Int...) = similar(arr.elems, U, dims...)
-Base.linearindexing{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.linearindexing(V)
+Base.IndexStyle{T,N,V,R}(::Type{EnumerationArray{T,N,V,R}}) = Base.IndexStyle(V)
 Base.reshape(arr::EnumerationArray, args::Tuple{Vararg{Int}}) = EnumerationArray((reshape(arr.elems, args), arr.pool))
 Base.reshape(arr::EnumerationArray, args::Int...) = EnumerationArray((reshape(arr.elems, args...), arr.pool))
 Base.transpose(arr::EnumerationArray, args...) = EnumerationArray((transpose(arr.elems, args...), arr.pool))
 Base.permutedims(arr::EnumerationArray, args...) = EnumerationArray((permutedims(arr.elems, args...), arr.pool))
 Base.repeat(arr::EnumerationArray, args...;kwargs...) = EnumerationArray((repeat(arr.elems, args...;kwargs...), arr.pool))
-Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
-Base.repmat(arr::Union{EnumerationArray{TypeVar(:T),1},EnumerationArray{TypeVar(:T),2}}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
+Base.repmat{T,V,R}(arr::EnumerationArray{T,1,V,R}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
+Base.repmat{T,V,R}(arr::EnumerationArray{T,2,V,R}, n::Int) = EnumerationArray((repmat(arr.elems, n), arr.pool))
+Base.repmat{T,V,R}(arr::EnumerationArray{T,1,V,R}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
+Base.repmat{T,V,R}(arr::EnumerationArray{T,2,V,R}, m::Int, n::Int) = EnumerationArray((repmat(arr.elems, m, n), arr.pool))
 Base.sort(arr::EnumerationArray, args...) = EnumerationArray((sort(arr.elems, args...), arr.pool))
 Base.sort!(arr::EnumerationArray, args...) = (sort!(arr.elems, args...); arr)
 Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Integer) = fill!(arr.elems, convert(R,elem))
 Base.fill!{T,N,V,R}(arr::EnumerationArray{T,N,V,R}, elem::Nullable{T}) = begin
-  if elem.isnull
+  if isnull(elem)
     fill!(arr.elems, zero(R))
   else
     order = convert(R, findfirst(arr.pool, elem.value))
