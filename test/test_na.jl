@@ -91,7 +91,7 @@ facts("NA tests") do
   @fact nalift([1,2,3]) == pickaxis(larr(a=[1,2,3]),1) --> false
 
   context("FloatNAArray tests") do
-    @fact map(identity, FloatNAArray(Array(Float64,0))) --> Array{Nullable{Any}}(0)
+    @fact map(identity, FloatNAArray(Array{Float64}(0))) --> Array{Nullable{Any}}(0)
     @fact nalift([1.0,2.0]) --> DataCubes.wrap_array(FloatNAArray([1.0,2.0]))
     @fact FloatNAArray([1.0,2.0,3.0])[1].value --> 1.0
     @fact FloatNAArray([1.0,2.0,3.0])[1:2].data --> [1.0,2.0]

@@ -77,7 +77,7 @@ ungroup(arr::AbstractArray, axis::Integer) =
 
 create_ungroup_offsets(ref_field::AbstractArray) = begin
   lenref = length(ref_field)
-  offsets = Array(Int, lenref + 1)
+  offsets = Array{Int}(lenref + 1)
   cumsum = 1
   for i in 1:lenref
     @inbounds offsets[i] = cumsum
@@ -87,6 +87,14 @@ create_ungroup_offsets(ref_field::AbstractArray) = begin
   (cumsum, offsets)
 end
 
+ungroup_private_ntuple_func(M, cumsum, sizearr) = d -> begin
+  if d == M
+    cumsum-1
+  else
+    sizearr[d]
+  end
+end
+
 @generated ungroup{T,U,N,M}(arr::AbstractArray{T,N}, ref_field::AbstractArray{U,M}, cumsum::Int, offsets::Vector{Int}) = begin
   isym = Symbol("i_", M)
   quote
@@ -94,13 +102,7 @@ end
       error("not yet determined: what to do when ungrouping an empty array?")
     end
     sizearr = size(arr)
-    resultsize = ntuple(ndims(arr)) do d
-      if d == $M
-        cumsum-1
-      else
-        sizearr[d]
-      end
-    end
+    resultsize = ntuple(ungroup_private_ntuple_func($M, cumsum, sizearr), ndims(arr))
     elemtype = peel_nullabletype(eltype(arr))
     if elemtype <: AbstractArray
       result = similar(arr, eltype(elemtype), resultsize)

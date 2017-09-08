@@ -47,8 +47,8 @@ facts("ArrayUtil tests") do
     @fact DataCubes.create_additional_fieldname(@larr(x1=[1,2,3],axis1[x2=[:a,:b,:c]])) --> :x3
     @fact mapvalues(x->x+1,[3,2,1]) --> [4,3,2]
     @fact mapvalues(LDict(:a=>1,:b=>3,:c=>5)) do x;x*2 end --> LDict(:a=>2,:b=>6,:c=>10)
-    @fact mapvalues(x->x .+ 1, darr(a=[1,2,3], b=[4,5,6])) --> darr(a=[2,3,4], b=[5,6,7])
-    @fact mapvalues(x->x .+ 1, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p])) --> larr(a=[2,3,4], b=[5,6,7], axis1=[:m,:n,:p])
+    @fact mapvalues(x->broadcast(+, x, 1), darr(a=[1,2,3], b=[4,5,6])) --> darr(a=[2,3,4], b=[5,6,7])
+    @fact mapvalues(x->broadcast(+, x, 1), larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p])) --> larr(a=[2,3,4], b=[5,6,7], axis1=[:m,:n,:p])
     @fact mapvalues(sum, darr(a=[1,2,3], b=[4,5,6])) --> LDict(:a=>Nullable(6), :b=>Nullable(15))
     @fact mapvalues(sum, larr(a=[1,2,3], b=[4,5,6], axis1=[:m,:n,:p])) --> LDict(:a=>Nullable(6), :b=>Nullable(15))
     @fact replace_axes(@larr(c1=[1 2 3;4 5 6],
@@ -118,7 +118,8 @@ facts("ArrayUtil tests") do
     @fact (@rap sin cos(_) sin 1) --> sin(cos(sin(1)))
     @fact (@rap sin cos(_) sin(_) 1) --> sin(cos(sin(1)))
     @fact (@rap _*8 _*2 3) --> 48
-    @fact (@rap sum sin' cos(_)' nalift([1,2,3])).value --> sum(map(sin, map(cos, [1,2,3])))
+    #TODO ' seems to conflict with transpose in julia 0.6.
+    #@fact (@rap sum sin' cos(_)' nalift([1,2,3])).value --> sum(map(sin, map(cos, [1,2,3])))
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])) --> @larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]]), :a) --> @larr(b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]])
     @fact delete(@larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"], k2=[:u,:u]]), :k2) --> @larr(a=reshape(1:6,2,3), b=[:x NA :y;:z :w NA], axis1[k1=["m","n"]])
@@ -181,8 +182,8 @@ facts("ArrayUtil tests") do
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -8) --> repeat(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])),outer=[4,1])
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), 1) --> larr(a=[1 2 3],b=['x' 'y' 'z'], axis1=[:m], axis2=darr(r=["A","B","C"]))
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -1) --> larr(a=[4 5 6],b=['u' 'v' 'w'], axis1=[:n], axis2=darr(r=["A","B","C"]))
-    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, 1) --> larr(a=[1 4]',b=['x' 'u']', axis1=[:m,:n], axis2=darr(r=["A"]))
-    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, -1) --> larr(a=[3 6]',b=['z' 'w']', axis1=[:m,:n], axis2=darr(r=["C"]))
+    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, 1) --> larr(a=reshape([1 4],2,1),b=reshape(['x' 'u'],2,1), axis1=[:m,:n], axis2=darr(r=["A"]))
+    @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), :, -1) --> larr(a=reshape([3 6],2,1),b=reshape(['z' 'w'],2,1), axis1=[:m,:n], axis2=darr(r=["C"]))
     @fact gtake(larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"])), -2) --> larr(a=[1 2 3;4 5 6],b=['x' 'y' 'z';'u' 'v' 'w'], axis1=[:m,:n], axis2=darr(r=["A","B","C"]))
     @fact gtake(nalift([1 3 2 5 4]), :, 2:3) --> nalift([3 2])
     @fact gtake(nalift([1 3 2 5 4]), :, 2) --> nalift([1 3])
@@ -203,12 +204,12 @@ facts("ArrayUtil tests") do
 
     @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),1:2,nalift(1:3)) --> larr(a=[101 104 107;102 105 108], b=[1 4 7;2 5 8])
     @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5),axis2=[:x,:y,:z,:u,:v]),2) --> larr(a=[102,105,108,111,114],b=[2,5,8,11,14],axis1=[:x,:y,:z,:u,:v])
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->wrap_array(d) .> 2) --> larr(a=[103 106 109 112 115], b=[3 6 9 12 15])
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->wrap_array(d) .> 3) --> isempty
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->d[:k] .== :y) --> larr(a=[102 105 108 111 114], b=[2 5 8 11 14], axis1=darr(k=[:y]))
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->d[:k] .== :w) --> isempty
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),:,d->d .> 8) --> larr(a=[101 104;102 105;103 106],b=[1 4;2 5;3 6],axis1=darr(k=[:x,:y,:z]),axis2=[10,9])
-    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),:,d->d .> 10) --> isempty
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->broadcast(>, wrap_array(d), 2)) --> larr(a=[103 106 109 112 115], b=[3 6 9 12 15])
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->broadcast(>, wrap_array(d), 3)) --> isempty
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->broadcast(==, d[:k], :y)) --> larr(a=[102 105 108 111 114], b=[2 5 8 11 14], axis1=darr(k=[:y]))
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->broadcast(==, d[:k], :w)) --> isempty
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),:,d->broadcast(>, d, 8)) --> larr(a=[101 104;102 105;103 106],b=[1 4;2 5;3 6],axis1=darr(k=[:x,:y,:z]),axis2=[10,9])
+    @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),:,d->broadcast(>, d, 10)) --> isempty
     @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->1:1,d->2:3) --> larr(a=[104 107],b=[4 7],axis1=darr(k=[:x]),axis2=[9,8])
     @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->2:4,d->0:1) --> @larr(a=[NA 102;NA 103;NA NA],b=[NA 2;NA 3;NA NA],axis1[@darr(k=[:y,:z,NA])],axis2[@nalift([NA,10])])
     @fact extract(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->2:4,d->1) --> @larr(a=[102,103,NA],b=[2,3,NA],axis1[@darr(k=[:y,:z,NA])])
@@ -226,7 +227,7 @@ facts("ArrayUtil tests") do
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable(5)),[:a,:b,:d]) --> LDict(:a=>Nullable(1),:b=>Nullable(3),:d=>Nullable{Int}())
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:a).value --> 1
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:x) --> isnull
-    @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->d .== :a) --> LDict(:a=>Nullable(1))
+    @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->broadcast(==, d, :a)) --> LDict(:a=>Nullable(1))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2:3) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact extract(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2).value --> 3
     @fact extract(nalift(LDict(:a=>1,:b=>3)), :a).value --> 1
@@ -262,12 +263,12 @@ facts("ArrayUtil tests") do
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable(5)),[:a,:b,:d]) --> LDict(:c=>Nullable(5))
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),1:2,nalift(1:3)) --> larr(a=[112 115],b=[12 15])
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5),axis2=[:x,:y,:z,:u,:v]),2) --> larr(a=[101 104 107 110 113;103 106 109 112 115],b=[1 4 7 10 13;3 6 9 12 15],axis2=[:x,:y,:z,:u,:v])
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->wrap_array(d) .> 2) --> larr(a=[101 104 107 110 113;102 105 108 111 114],b=[1 4 7 10 13;2 5 8 11 14])
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->wrap_array(d) .> 3) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5))
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->d[:k] .== :y) --> discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),(Nullable(:y),))
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->d[:k] .== :w) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]))
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),[],d->d .> 8) --> larr(a=reshape(107:115,3,3),b=reshape(7:15,3,3),axis1=darr(k=[:x,:y,:z]),axis2=[8,7,6])
-    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),[],d->d .> 10) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6])
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->broadcast(>, wrap_array(d), 2)) --> larr(a=[101 104 107 110 113;102 105 108 111 114],b=[1 4 7 10 13;2 5 8 11 14])
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)),d->broadcast(>, wrap_array(d), 3)) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5))
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->broadcast(==, d[:k], :y)) --> discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),(Nullable(:y),))
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z])),d->broadcast(==, d[:k], :w)) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]))
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),[],d->broadcast(>, d, 8)) --> larr(a=reshape(107:115,3,3),b=reshape(7:15,3,3),axis1=darr(k=[:x,:y,:z]),axis2=[8,7,6])
+    @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),[],d->broadcast(>, d, 10)) --> larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6])
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->1:1,d->2:3) --> discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),LDict(:k=>Nullable(:x)),[8,9])
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->2:4,d->0:1) --> discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),darr(k=[:y,:z]), [100,10])
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),d->2:4,d->1:1) --> discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5), axis1=darr(k=[:x,:y,:z]), axis2=[10,9,8,7,6]),darr(k=[:y,:z]), [100,10])
@@ -275,7 +276,7 @@ facts("ArrayUtil tests") do
     @fact discard(larr(a=reshape(101:115,3,5),b=reshape(1:15,3,5)), d->-1:1,d->[2,3]) --> larr(a=[102 111 114;103 112 115],b=[2 11 14;3 12 15])
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:a) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),:x) --> LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x"))
-    @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->d .== :a) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
+    @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),d->broadcast(==, d, :a)) --> LDict(:b=>Nullable(3), :c=>Nullable("x"))
     @fact discard(LDict(:a=>Nullable(1),:b=>Nullable(3),:c=>Nullable("x")),_->2:30) --> LDict(:a=>Nullable(1))
     @fact discard(larr(a=[1 2 3;4 5 6]), 1:1, 2:3) --> larr(a=[4]')
 
@@ -336,7 +337,7 @@ facts("ArrayUtil tests") do
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a).value --> 1
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], :a, :b) --> nalift([1,:x])
     @fact pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))[1].value --> 1
-    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable{Any},1}
+    @fact typeof(pick(darr(a=[1,2,3],b=[:x,:y,:z])[1], (:a,))) --> Array{Nullable{Int},1}
   end
 end
 

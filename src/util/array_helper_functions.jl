@@ -1,5 +1,7 @@
 import Base: sum, prod, diff, mean, var, std, quantile, minimum, maximum, median, middle, cov, cor, cumprod, cumsum, cummin, cummax
 
+import DataStructures
+
 # define several helper functions such as sum or mean over nullable arrays (AbstractArrayWrapper{Nullable{T}}).
 
 """
@@ -129,9 +131,9 @@ julia> for x in zip_dropnaiter(@nalift([11,12,NA,NA,15]),
 ```
 
 """
-zip_dropnaiter{U,N}(arrs::AbstractArray{U,N}...) = begin
+zip_dropnaiter(arrs::AbstractArray...) = begin
   T = Tuple{map(x->eltype(eltype(x)), arrs)...}
-  ZipNonNAIterator{T,N,length(arrs),typeof(arrs)}(arrs)
+  ZipNonNAIterator{T,length(arrs),length(arrs),typeof(arrs)}(arrs)
 end
 Base.eltype{T,N,M,A}(::Type{ZipNonNAIterator{T,N,M,A}}) = T
 Base.start{T,N,M}(iter::ZipNonNAIterator{T,N,M}) = map(start, iter.arrays)
@@ -232,8 +234,8 @@ Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrap
 Base.cov{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cov_base(arr1, arr2)
 cov_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
-  v1 = Array(T,length(arr1))
-  v2 = Array(U,length(arr2))
+  v1 = Array{T}(length(arr1))
+  v2 = Array{U}(length(arr2))
   n = 1
   for z in zipped
     v1[n] = z[1]
@@ -256,8 +258,8 @@ Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T},2}, arr2::AbstractArrayWrap
 Base.cor{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = cor_base(arr1, arr2)
 cor_base{T,U}(arr1::AbstractArrayWrapper{Nullable{T}}, arr2::AbstractArrayWrapper{Nullable{U}}) = begin
   zipped = zip_dropnaiter(arr1, arr2)
-  v1 = Array(T,length(arr1))
-  v2 = Array(U,length(arr2))
+  v1 = Array{T}(length(arr1))
+  v2 = Array{U}(length(arr2))
   n = 1
   for z in zipped
     v1[n] = z[1]
@@ -283,13 +285,15 @@ Base.minimum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(minimum(r))
 end
-Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.minimum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=minimum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.maximum{T}(arr::AbstractArrayWrapper{Nullable{T}}) = begin
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{T}() : Nullable(maximum(r))
 end
-Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.maximum{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=maximum(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.median{T}(arr::AbstractArrayWrapper{Nullable{T}}) = median_helper(typeof(one(T) / 2), arr)
 median_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}) = begin
@@ -316,7 +320,8 @@ middle_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}
   r=type_array(collect(dropnaiter(arr)))
   isempty(r) ? Nullable{DIVTYPE}() : Nullable(middle(r))
 end
-Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
+#TODO NaN behavior changed from julia v0.5 to v0.6. Suppress this specialization for now.
+#Base.middle{T<:AbstractFloat,N,A}(arr::AbstractArrayWrapper{Nullable{T},N,FloatNAArray{T,N,A}}) = (r=middle(arr.a.data);isnan(r) ? Nullable{T}() : Nullable(r))
 
 Base.quantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = quantile_helper(typeof(one(T) / 2), arr, q)
 quantile_helper{T,DIVTYPE}(::Type{DIVTYPE}, arr::AbstractArrayWrapper{Nullable{T}}, q::AbstractVector) = begin
@@ -471,7 +476,7 @@ Base.cummin{T}(arr::AbstractArrayWrapper{Nullable{T}}, dims::Integer...;rev=fals
     acc = Nullable{T}()
     for i in eachindex(src)
       if !isnull(src[i])
-        acc = isnull(acc)
+        acc = isnull(acc) ? src[i] : Nullable(min(acc.value, src[i].value))
       end
       tgt[i] = acc
     end
@@ -1532,8 +1537,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::AbstractArray{Nullable{T}},
                              src::AbstractArray{Nullable{U}})
-  ringbuf = Array(Nullable{U}, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{Nullable{U}}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   for i in eachindex(src)
@@ -1561,8 +1566,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::FloatNAArray{T},
                              src::FloatNAArray{U})
-  ringbuf = Array(U, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{U}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   srcdata = src.data
@@ -1592,8 +1597,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::FloatNAArray{T},
                              src::AbstractArray{Nullable{U}})
-  ringbuf = Array(Nullable{U}, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{Nullable{U}}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   na = convert(T, NaN)
@@ -1622,8 +1627,8 @@ function moving_update!{T,U}(f::Function,
                              window::Integer,
                              tgt::AbstractArray{Nullable{T}},
                              src::FloatNAArray{U})
-  ringbuf = Array(U, window)
-  projbuf = Array(U, window)
+  ringbuf = Array{U}(window)
+  projbuf = Array{U}(window)
   ringbuf_index = 1
   eff_size = 1
   srcdata = src.data
@@ -1655,47 +1660,47 @@ cumquantile{T}(arr::AbstractArrayWrapper{Nullable{T}}, q::Number, dims::Integer.
 end
 
 cumquantile_update!{T,U,R}(tgt::AbstractArray{Nullable{T}}, src::AbstractArray{Nullable{U}}, q::R) = begin
-  lowqueue = Collections.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Reverse) # queue for smaller elements. Easy to get the maximum element.
-  highqueue = Collections.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Forward) # queue for larger elements. Easy to get the minimum element.
+  lowqueue = DataStructures.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Reverse) # queue for smaller elements. Easy to get the maximum element.
+  highqueue = DataStructures.PriorityQueue{U,U,Base.Order.Ordering}(Base.Order.Forward) # queue for larger elements. Easy to get the minimum element.
 
   dummy_index = 0
   for i in eachindex(src)
     srci = src[i]
     if !isnull(srci)
       dummy_index += 1
-      if isempty(highqueue) || Collections.peek(highqueue)[2] < srci.value
-        Collections.enqueue!(highqueue, dummy_index, srci.value)
+      if isempty(highqueue) || DataStructures.peek(highqueue)[2] < srci.value
+        DataStructures.enqueue!(highqueue, dummy_index, srci.value)
       elseif isempty(lowqueue)
-        Collections.enqueue!(lowqueue, dummy_index, srci.value)
+        DataStructures.enqueue!(lowqueue, dummy_index, srci.value)
       end
       # check the queues and shuffle elements if necessary.
       quantile_denom = length(lowqueue) + length(highqueue) - 1
       while q < (length(lowqueue)-1) / quantile_denom
-        elem = Collections.peek(lowqueue)
-        Collections.dequeue!(lowqueue)
-        Collections.enqueue!(highqueue, elem...)
+        elem = DataStructures.peek(lowqueue)
+        DataStructures.dequeue!(lowqueue)
+        DataStructures.enqueue!(highqueue, elem...)
       end
       while q > length(lowqueue) / quantile_denom
-        elem = Collections.peek(highqueue)
-        Collections.dequeue!(highqueue)
-        Collections.enqueue!(lowqueue, elem...)
+        elem = DataStructures.peek(highqueue)
+        DataStructures.dequeue!(highqueue)
+        DataStructures.enqueue!(lowqueue, elem...)
       end
     end
     tgt[i] = if isempty(lowqueue)
       if isempty(highqueue)
         Nullable{T}()
       else
-        Nullable(convert(T, Collections.peek(highqueue)[2]))
+        Nullable(convert(T, DataStructures.peek(highqueue)[2]))
       end
     elseif isempty(highqueue)
-      Nullable(convert(T, Collections.peek(lowqueue)[2]))
+      Nullable(convert(T, DataStructures.peek(lowqueue)[2]))
     else
       lowlen = length(lowqueue)
       highlen = length(highqueue)
       low_quantile = (lowlen - 1) / (lowlen + highlen - 1)
       high_quantile = lowlen / (lowlen + highlen - 1)
-      lowpeek = Collections.peek(lowqueue)[2]
-      highpeek = Collections.peek(highqueue)[2]
+      lowpeek = DataStructures.peek(lowqueue)[2]
+      highpeek = DataStructures.peek(highqueue)[2]
       Nullable((lowpeek + (q - low_quantile) * (highpeek - lowpeek) / (high_quantile - low_quantile))::T)
     end
   end

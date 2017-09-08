@@ -110,7 +110,7 @@ Base.intersect(dim::Integer, arr0::LabeledArray, arr_rest::LabeledArray...) = be
   intersect_slices = intersect(result_arrs...)
   coords_toshow = [elems[slice] for slice in intersect_slices]
   result = permuted_arrs[1][remainingcoords..., coords_toshow]
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end
 
 # this is to avoid null exception in doing intersect.
@@ -146,7 +146,7 @@ Base.intersect(dim::Int, arr0::DictArray, arr_rest::DictArray...) = begin
   for (i,arr) in enumerate(intersect_slices)
     result[remainingcoords...,i] = arr
   end
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end
 
 Base.intersect{T,U}(dim::Int,
@@ -175,5 +175,5 @@ Base.intersect{T,U}(dim::Int,
   for (i,arr) in enumerate(intersect_slices)
     result[remainingcoords...,i] = arr
   end
-  ipermutedims_if_necessary(result, newdirs)
+  permutedims_if_necessary(result, invperm(newdirs))
 end

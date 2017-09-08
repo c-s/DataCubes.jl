@@ -97,7 +97,7 @@ facts("EnumerationArray tests") do
     @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(24:-1:1,2,3,4))),[1,2,3],0).value --> 300
     @fact reducedim((x,y)->x+y[:a].value, larr(a=enumeration(reshape(1:24,2,3,4)),axis1=darr(k1=[:a,:b]),axis3=[:x,:y,:z,:w]),[1,2,3],0).value --> 300
     # runnability test when the result is empty.
-    @fact size(@rap permutedims(_,[2,1]) @select((@rap permutedims(_,[2,1]) larr(r=enumeration(rand(8,20)), axis1=darr(a=rand(8),b=101:108))), :r=_r.*100, where[_r.>1])) --> (0,0)
+    @fact size(@rap permutedims(_,[2,1]) @select((@rap permutedims(_,[2,1]) larr(r=enumeration(rand(8,20)), axis1=darr(a=rand(8),b=101:108))), :r=broadcast(*, _r, 100), where[broadcast(>, _r, 1)])) --> (0,0)
     @fact cat(1, larr(a=enumeration([1 2 3;4 5 6]), b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x' 'y' 'z'], d=[:m :n :p], axis1=[3])) --> larr(reshape(@larr(a=[1,4,NA,2,5,NA,3,6,NA],b=['a','d','x','b','e','y','c','f','z'],d=[NA,NA,:m,NA,NA,:n,NA,NA,:p]), 3, 3), axis1=[:u,:v,3])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=['a' 'b' 'c';'d' 'e' 'f'], axis1=[:u,:v]), larr(b=['x','y'], d=[:m,:n], axis1=[:u,:v])) --> larr(reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f','x','y'], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4), axis1=[:u,:v])
     @fact cat(2, larr(a=[1 2 3;4 5 6], b=enumeration(['a' 'b' 'c';'d' 'e' 'f'])), larr(b=[10,11], d=[:m,:n])) --> reshape(@larr(a=[1,4,2,5,3,6,NA,NA], b=['a','d','b','e','c','f',10,11], d=[NA,NA,NA,NA,NA,NA,:m,:n]), 2, 4)

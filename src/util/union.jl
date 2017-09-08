@@ -91,7 +91,7 @@ Base.union(dim::Int, arr0::LabeledArray, arr_rest::LabeledArray...) = begin
       arr[remainingcoords..., coords_toshow]
     end
   end
-  ipermutedims_if_necessary(cat(ndimsarr, result_arrs...), newdirs)
+  permutedims_if_necessary(cat(ndimsarr, result_arrs...), invperm(newdirs))
 end
 
 
@@ -119,7 +119,7 @@ Base.union(dim::Int, arr0::DictArray, arr_rest::DictArray...) = begin
     end
     arr[remainingcoords..., coords_toshow]
   end
-  ipermutedims_if_necessary(cat(ndimsarr, result_arrs...), newdirs)
+  permutedims_if_necessary(cat(ndimsarr, result_arrs...), invperm(newdirs))
 end
 
 Base.union{T,U}(dim::Int,
@@ -148,5 +148,5 @@ Base.union{T,U}(dim::Int,
     end
     arr[remainingcoords..., coords_toshow]
   end
-  ipermutedims_if_necessary(cat(ndimsarr, result_arrs...), newdirs)
+  permutedims_if_necessary(cat(ndimsarr, result_arrs...), invperm(newdirs))
 end

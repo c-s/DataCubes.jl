@@ -817,16 +817,16 @@ end
 getindexvalue(axis::BroadcastAxis, arg::CartesianIndex) = getindexvalue(axis.axis, arg[axis.index])
 getindexvalue(axis::BroadcastAxis, args...) = begin
   newaxis = getindexvalue(axis.axis, args[axis.index])
-  getindexvalue_broadcast_sub(newaxis, axis, args)
+  getindexvalue_broadcast_view(newaxis, axis, args)
 end
-getindexvalue_broadcast_sub(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
+getindexvalue_broadcast_view(newaxis::AbstractArray, axis::BroadcastAxis, args) = begin
   newbase = view(axis.base, args...)
   # Let's figure out the new axis.index.
   testargs = ntuple(d->d<=axis.index ? args[d] : 1, length(args))
   testbase = view(axis.base, testargs...)
   BroadcastAxis(newaxis, newbase, ndims(testbase))
 end
-getindexvalue_broadcast_sub(newaxis, axis::BroadcastAxis, args) = begin
+getindexvalue_broadcast_view(newaxis, axis::BroadcastAxis, args) = begin
   # this is definitely not one point.
   # it is one coord along the axis index, but ranges along some other directions.
   # I cannot think of an alternative. Let's do a copy.
@@ -849,7 +849,7 @@ returns all field names for LabeledArray or DictArray. Returns an empty array fo
 
 """
 allfieldnames(table::LabeledArray) = simplify_array(unique(vcat(vcat(map(allfieldnames, table.axes)...),allfieldnames(table.data))))
-allfieldnames(table::AbstractArray) = Array(Any, 0)
+allfieldnames(table::AbstractArray) = Array{Any}(0)
 #cell_to_string(cell::Nullable) = isnull(cell) ? "" : string(cell.value)
 #cell_to_string{T}(cell::Nullable{T}) = isnull(cell) ? "" : haskey(format_string_map,T) ? @sprintf(format_string_map[T], cell.value) : string(cell.value)
 cell_to_string{T}(cell::Nullable{T}) = isnull(cell) ? "" : string(cell.value) # let's not format for now while the first goal is to make 0.6 compatible...
