@@ -69,11 +69,6 @@ type_array{T}(x::AbstractArray{T}) = begin
           copy!(result, x)
           result
         catch
-          @show "copy1"
-          @show result
-          @show x
-          @show typeof(result)
-          @show typeof(x)
           result = similar(x, Any) # practically Nullable, but Any is the most general...
           copy!(result, x)
           result
